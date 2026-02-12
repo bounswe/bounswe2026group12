@@ -26,12 +26,6 @@ assignees: ''
 - [ ] Work adheres to relevant guidelines or standards
 - [ ] Outcome is reviewable and verifiable
 
-## Estimated Effort
-<!-- Estimated time to complete this issue (e.g., 2 hours, 1 day)-->
-
-## Priority
-<!-- High / Medium / Low -->
-
 ## References
 <!-- Links to related issues, documentation, or external resources -->
 
