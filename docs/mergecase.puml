@@ -1,0 +1,143 @@
+@startuml
+
+left to right direction
+
+actor "Authenticated User" as AU
+actor "Student Learner" as Student
+actor "Recipe Creator\n       (Cook)" as Cook
+actor "Guest User" as Guest
+
+' Generalization (specialized roles inherit from Authenticated User)
+Student --|> AU
+Cook --|> AU
+
+
+
+'Scenario #1: Connecting with the Cook Logic
+
+' Scenario #1 Use Case Diagram
+usecase "View Recipe Page" as UC_ViewRecipePage
+usecase "View Q&A Section" as UC_ViewQnASection
+usecase "Mark Reply as Helpful" as UC_MarkReplyAsHelpful
+usecase "Reply to Question" as UC_ReplyToQuestion
+usecase "Reply Notification" as UC_ReplyNotification
+usecase "Ask Question on Recipe" as UC_AskQuestionOnRecipe
+usecase "Question Notification" as UC_QuestionNotification
+
+' Scenario #1 Use Case Diagram
+usecase "View Recipe Page" as UC_ViewRecipePage
+usecase "View Q&A Section" as UC_ViewQnASection
+usecase "Mark Reply as Helpful" as UC_MarkReplyAsHelpful
+usecase "Reply to Question" as UC_ReplyToQuestion
+usecase "Reply Notification" as UC_ReplyNotification
+usecase "Ask Question on Recipe" as UC_AskQuestionOnRecipe
+usecase "Question Notification" as UC_QuestionNotification
+
+
+' Scenario #1 Relations
+Student -- UC_ViewRecipePage
+Student -- UC_ViewQnASection
+Student -- UC_MarkReplyAsHelpful
+
+Cook -- UC_ViewRecipePage
+Cook -- UC_ViewQnASection
+Cook -- UC_ReplyToQuestion
+
+UC_ViewRecipePage <.. UC_ViewQnASection : <<extend>>
+UC_ViewRecipePage <.. UC_AskQuestionOnRecipe : <<extend>>
+UC_AskQuestionOnRecipe ..> UC_QuestionNotification : <<include>>
+UC_ViewQnASection <.. UC_ReplyToQuestion : <<extend>>
+UC_ViewQnASection <.. UC_MarkReplyAsHelpful : <<extend>>
+UC_ReplyToQuestion ..> UC_ReplyNotification : <<include>>
+
+
+
+
+'Scenario #2: Searching a Recipe or A Story on a Region
+
+' Scenario #2 Use Case Diagram
+usecase "Execute Search Function" as UC_ExecuteSearchFunction
+usecase "Execute Search a Region" as UC_ExecuteSearchARegion
+usecase "Select a Region" as UC_SelectARegion
+usecase "Navigate a Recipe" as UC_NavigateARecipe
+usecase "Select a Recipe" as UC_SelectARecipe
+usecase "Navigate a Story" as UC_NavigateAStory
+usecase "Select a Story" as UC_SelectAStory
+
+
+' Scenario #2 Relations
+Guest -- UC_ExecuteSearchFunction
+
+UC_ExecuteSearchFunction <.. UC_ExecuteSearchARegion : <<extend>>
+UC_ExecuteSearchARegion ..> UC_SelectARegion : <<include>>
+UC_ExecuteSearchARegion <.. UC_NavigateARecipe : <<extend>>
+UC_NavigateARecipe ..> UC_SelectARecipe : <<include>>
+UC_ExecuteSearchARegion <.. UC_NavigateAStory : <<extend>>
+UC_NavigateAStory ..> UC_SelectAStory : <<include>>
+
+
+
+
+'Scenario #3: Unit Conversion and Ingredient Substitutions
+
+' Scenario #3 Use Case Diagram
+usecase "Navigate to Home Page" as UC_NavigateToHomePage
+usecase "Search Recipes/Stories" as UC_SearchRecipesStories
+usecase "View Search Results" as UC_ViewSearchResults
+usecase "View Username of Recipe Owner" as UC_ViewUsernameOfRecipeOwner
+usecase "View Recipe/Story Detail" as UC_ViewRecipeStoryDetail
+usecase "Check Off Available Ingredients" as UC_CheckOffAvailableIngredients
+usecase "Find Ingredient Substitutions" as UC_FindIngredientSubstitutions
+usecase "View Substitution Suggestions" as UC_ViewSubstitutionSuggestions
+usecase "Select Substitutes" as UC_SelectSubstitutes
+usecase "date Shopping List" as UC_dateShoppingList
+usecase "Convert Units" as UC_ConvertUnits
+usecase "Toggle Between Unit Systems" as UC_ToggleBetweenUnitSystems
+
+' Scenario #3 Relations
+AU -- UC_NavigateToHomePage
+AU -- UC_ViewSearchResults
+
+UC_NavigateToHomePage <.. UC_SearchRecipesStories : <<extend>>
+UC_ViewSearchResults <.. UC_ViewUsernameOfRecipeOwner : <<extend>>
+UC_ViewSearchResults ..> UC_ViewRecipeStoryDetail : <<include>>
+UC_ViewRecipeStoryDetail <.. UC_CheckOffAvailableIngredients : <<extend>>
+UC_ViewRecipeStoryDetail <.. UC_FindIngredientSubstitutions : <<extend>>
+UC_FindIngredientSubstitutions ..> UC_ViewSubstitutionSuggestions : <<include>>
+UC_ViewSubstitutionSuggestions <.. UC_SelectSubstitutes : <<extend>>
+UC_SelectSubstitutes ..> UC_dateShoppingList : <<include>>
+UC_ViewRecipeStoryDetail <.. UC_ConvertUnits : <<extend>>
+UC_ConvertUnits ..> UC_ToggleBetweenUnitSystems : <<include>>
+
+
+
+'Scenario #4: Story Creation and Linking to a Recipe
+
+' Scenario #4 Use Case Diagram
+usecase "View Home Page" as UC_ViewHomePage
+usecase "Open Share Options" as UC_OpenShareOptions
+usecase "Share Recipe" as UC_ShareRecipe
+usecase "Share Story" as UC_ShareStory
+usecase "Publish Story" as UC_PublishStory
+usecase "Link Existing Recipe" as UC_LinkExistingRecipe
+usecase "Select Recipe" as UC_SelectRecipe
+usecase "List & Preview Recipes" as UC_ListPreviewRecipes
+usecase "Fill Title and Body" as UC_FillTitleAndBody
+
+' Scenario #4 Relations
+AU -- UC_ViewHomePage
+
+UC_ViewHomePage ..> UC_OpenShareOptions : <<include>>
+UC_OpenShareOptions ..> UC_ShareRecipe : <<include>>
+UC_OpenShareOptions ..> UC_ShareStory : <<include>>
+UC_ShareStory ..> UC_PublishStory : <<include>>
+UC_ShareStory <.. UC_LinkExistingRecipe : <<extend>>
+UC_LinkExistingRecipe ..> UC_SelectRecipe : <<include>>
+UC_LinkExistingRecipe ..> UC_ListPreviewRecipes : <<include>>
+UC_ShareStory ..> UC_FillTitleAndBody : <<include>> 
+
+' --- GRID SCAFFOLD (hidden links) ---
+' UC_ViewHomePage -[hidden]down- UC_NavigateToHomePage
+UC_ViewSearchResults -[hidden]up- UC_ViewHomePage
+
+@enduml
