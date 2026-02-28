@@ -1,0 +1,112 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+' Optimized actors
+actor "Authenticated User" as AuthUser
+actor "Recipe Creator (Cook)" as RecipeCreator
+
+rectangle "Final Unified Recipe, Story & Q&A Platform" {
+
+  ' Diagram 1 use cases
+  usecase "View Home Page" as UC_ViewHomePage
+  usecase "Open Share Options" as UC_OpenShareOptions
+  usecase "Share Recipe" as UC_ShareRecipe
+  usecase "Share Story" as UC_ShareStory
+  usecase "Publish Story" as UC_PublishStory
+  usecase "Link Existing Recipe" as UC_LinkExistingRecipe
+  usecase "Select Recipe" as UC_SelectRecipe
+  usecase "List & Preview Recipes" as UC_ListPreviewRecipes
+  usecase "Fill Title and Body" as UC_FillTitleBody
+
+  ' Diagram 2 use cases
+  usecase "Navigate to Home Page" as UC_NavigateHome
+  usecase "Search Recipes/Stories" as UC_SearchRecipesStories
+  usecase "View Search Results" as UC_ViewSearchResults
+  usecase "View Username of Recipe Owner" as UC_ViewOwnerUsername
+  usecase "View Recipe/Story Detail" as UC_ViewDetail
+  usecase "Check Off Available Ingredients" as UC_CheckOffIngredients
+  usecase "Find Ingredient Substitutions" as UC_FindSubstitutions
+  usecase "View Substitution Suggestions" as UC_ViewSubstitutionSuggestions
+  usecase "Select Substitutes" as UC_SelectSubstitutes
+  usecase "Update Shopping List" as UC_UpdateShoppingList
+  usecase "Convert Units" as UC_ConvertUnits
+  usecase "Toggle Between Unit Systems" as UC_ToggleUnits
+
+  ' Diagram 3 use cases
+  usecase "Execute search" as UC_ExecuteSearch
+  usecase "Execute search region" as UC_ExecuteSearchRegion
+  usecase "Select region" as UC_SelectRegion
+  usecase "Navigate a recipe" as UC_NavigateRecipe
+  usecase "Select a recipe" as UC_SelectARecipe
+  usecase "Navigate a story" as UC_NavigateStory
+  usecase "Select a story" as UC_SelectAStory
+
+  ' Diagram 4 use cases
+  usecase "View Recipe Page" as UC_ViewRecipePage
+  usecase "Ask Question on Recipe" as UC_AskQuestion
+  usecase "Question Notification" as UC_QuestionNotification
+  usecase "View Q&A Section" as UC_ViewQA
+  usecase "Reply to Question" as UC_ReplyQuestion
+  usecase "Reply Notification" as UC_ReplyNotification
+  usecase "Mark Reply as Helpful" as UC_MarkHelpful
+}
+
+' Actor hierarchy
+RecipeCreator --|> AuthUser
+
+' Actor associations (top-level interactions)
+AuthUser --> UC_ViewHomePage
+AuthUser --> UC_NavigateHome
+AuthUser --> UC_ExecuteSearch
+AuthUser --> UC_SearchRecipesStories
+AuthUser --> UC_ViewSearchResults
+AuthUser --> UC_ViewRecipePage
+AuthUser --> UC_AskQuestion
+AuthUser --> UC_ViewQA
+AuthUser --> UC_MarkHelpful
+AuthUser --> UC_OpenShareOptions
+
+' Recipe creator specific interaction
+RecipeCreator --> UC_ReplyQuestion
+
+' Diagram 1 relations
+UC_ViewHomePage ..> UC_OpenShareOptions : <<include>>
+UC_OpenShareOptions ..> UC_ShareRecipe : <<include>>
+UC_OpenShareOptions ..> UC_ShareStory : <<include>>
+UC_ShareStory ..> UC_PublishStory : <<include>>
+UC_ShareStory ..> UC_FillTitleBody : <<include>>
+UC_ShareStory ..> UC_LinkExistingRecipe : <<extend>>
+UC_LinkExistingRecipe ..> UC_SelectRecipe : <<include>>
+UC_LinkExistingRecipe ..> UC_ListPreviewRecipes : <<include>>
+
+' Diagram 2 relations
+UC_SearchRecipesStories ..> UC_NavigateHome : <<extend>>
+UC_ViewOwnerUsername ..> UC_ViewSearchResults : <<extend>>
+UC_ViewSearchResults ..> UC_ViewDetail : <<include>>
+UC_CheckOffIngredients ..> UC_ViewDetail : <<extend>>
+UC_FindSubstitutions ..> UC_ViewDetail : <<extend>>
+UC_FindSubstitutions ..> UC_ViewSubstitutionSuggestions : <<include>>
+UC_SelectSubstitutes ..> UC_ViewSubstitutionSuggestions : <<extend>>
+UC_SelectSubstitutes ..> UC_UpdateShoppingList : <<include>>
+UC_ConvertUnits ..> UC_ViewDetail : <<extend>>
+UC_ConvertUnits ..> UC_ToggleUnits : <<include>>
+
+' Diagram 3 relations
+UC_ExecuteSearchRegion ..> UC_ExecuteSearch : <<extend>>
+UC_ExecuteSearchRegion ..> UC_SelectRegion : <<include>>
+UC_NavigateRecipe ..> UC_ExecuteSearchRegion : <<extend>>
+UC_NavigateStory ..> UC_ExecuteSearchRegion : <<extend>>
+UC_NavigateRecipe ..> UC_SelectARecipe : <<include>>
+UC_NavigateStory ..> UC_SelectAStory : <<include>>
+
+' Diagram 4 relations
+UC_AskQuestion ..> UC_ViewRecipePage : <<extend>>
+UC_AskQuestion ..> UC_QuestionNotification : <<include>>
+UC_ViewQA ..> UC_ViewRecipePage : <<extend>>
+UC_ReplyQuestion ..> UC_ViewQA : <<extend>>
+UC_ReplyQuestion ..> UC_ReplyNotification : <<include>>
+UC_MarkHelpful ..> UC_ReplyQuestion : <<extend>>
+
+@enduml
