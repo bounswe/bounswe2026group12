@@ -24,31 +24,31 @@ usecase "Log In"   as UC_Login
 
 ' ── Navigation ────────────────────────────────────────────────────────────
 usecase "View Own Recipe Posts\n(My Recipes / Profile)" as UC_ViewOwn
-usecase "Open Three-Dot\nOptions Menu\n(own cards only)" as UC_ThreeDot
+usecase "Open Three-Dot\nOptions Menu" as UC_ThreeDot
 
 ' ── Core Edit Use Case ────────────────────────────────────────────────────
 usecase "Edit Recipe Post\n(pre-filled Edit Page)" as UC_EditRecipe
 
 ' ── Ingredient Entry ──────────────────────────────────────────────────────
 usecase "Add Ingredient" as UC_AddIngredient
-usecase "Select Ingredient\nfrom Dropdown\n(req 3.7.1, 3.7.3)" as UC_SelectIng
-usecase "Propose New Ingredient\n(flagged for moderation)" as UC_AddNewIng
-usecase "Enter Ingredient Amount\n(positive number, req 3.2.8)" as UC_EnterAmount
-usecase "Select Unit\nfrom Dropdown\n(req 3.7.2)" as UC_SelectUnit
-usecase "Propose New Unit\n(flagged for moderation)" as UC_AddNewUnit
+usecase "Select Ingredient\nfrom Dropdown" as UC_SelectIng
+usecase "Propose New Ingredient" as UC_AddNewIng
+usecase "Enter Ingredient Amount" as UC_EnterAmount
+usecase "Select Unit\nfrom Dropdown" as UC_SelectUnit
+usecase "Propose New Unit" as UC_AddNewUnit
 
 ' ── Description Edit ──────────────────────────────────────────────────────
-usecase "Edit Free-Text\nDescription\n(req 3.2.10)" as UC_EditDescription
+usecase "Edit Free-Text\nDescription" as UC_EditDescription
 
 ' ── Validation & Persistence ─────────────────────────────────────────────
-usecase "Validate Required Fields\n(title, at least 1 ingredient, description)\n(req 3.2.11)" as UC_Validate
-usecase "Save / Update Recipe\n(req 3.2.5)" as UC_Save
-usecase "Receive Update\nConfirmation\n(req 3.2.6)" as UC_Confirm
-usecase "Restore Draft\n(on failure / nav-away, req 4.4.3)" as UC_Draft
-usecase "View Updated\nRecipe Detail\n(req 3.6.8)" as UC_ViewUpdated
+usecase "Validate Required Fields" as UC_Validate
+usecase "Save / Update Recipe" as UC_Save
+usecase "Receive Update\nConfirmation" as UC_Confirm
+usecase "Restore Draft" as UC_Draft
+usecase "View Updated\nRecipe Detail" as UC_ViewUpdated
 
 ' ── Moderation ───────────────────────────────────────────────────────────
-usecase "Flag New Ingredient /\nUnit for Moderation\n(req 4.4.2)" as UC_Flag
+usecase "Flag New Ingredient /\nUnit for Moderation" as UC_Flag
 
 ' ── Guest reaches auth only ───────────────────────────────────────────────
 Guest -- UC_Register
@@ -58,10 +58,11 @@ Guest -- UC_Login
 Creator -- UC_Register
 Creator -- UC_Login
 Creator -- UC_ViewOwn
+Creator -- UC_EditRecipe
 
 ' ── Navigation chain: Profile -> ThreeDot -> EditPage ────────────────────
-UC_ViewOwn ..> UC_ThreeDot    : <<include>>
-UC_ThreeDot ..> UC_EditRecipe : <<include>>
+UC_EditRecipe ..> UC_ThreeDot : <<include>>
+UC_ThreeDot ..> UC_ViewOwn : <<include>>
 
 ' ── Edit Recipe optionally extends to add ingredient or edit description ──
 UC_EditRecipe <.. UC_AddIngredient   : <<extend>>
