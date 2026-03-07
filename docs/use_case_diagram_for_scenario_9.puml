@@ -1,0 +1,91 @@
+@startuml Scenario9_UseCase
+
+skinparam backgroundColor #FAFAFA
+skinparam ActorBorderColor #333333
+skinparam ActorBackgroundColor #FAFAFA
+skinparam UsecaseBorderColor #555555
+skinparam UsecaseBackgroundColor #FFFDE7
+skinparam ArrowColor #444444
+skinparam PackageBorderColor #888888
+skinparam PackageBackgroundColor #F5F5F5
+skinparam NoteBackgroundColor #FFF9C4
+skinparam NoteBorderColor #AAAAAA
+
+left to right direction
+
+title Scenario 9 — Content Creator: Edit Recipe After Sharing
+
+' ── Actors ──────────────────────────────────────────────────────────────
+actor "Guest" as Guest
+actor "Authenticated\nUser\n(Content Creator)" as Creator
+
+
+' ── Auth ──────────────────────────────────────────────────────────
+usecase "Register" as UC_Register
+usecase "Log In"   as UC_Login
+
+' ── Recipe Management ─────────────────────────────────────────────
+usecase "View Own Recipe Posts\n(My Recipes / Profile)" as UC_ViewOwn
+usecase "Open Three-Dot\nOptions Menu\n(own cards only)"  as UC_ThreeDot
+usecase "Edit Recipe Post"                                  as UC_EditRecipe
+
+usecase "Edit Preparation Steps"             as UC_EditSteps
+usecase "Add Preparation Step"               as UC_AddStep
+usecase "Edit Existing Step"                 as UC_EditExistingStep
+
+usecase "Add Ingredient"                     as UC_AddIngredient
+usecase "Select Ingredient\nfrom Dropdown"   as UC_SelectIng
+usecase "Add New Ingredient\nto Database"    as UC_AddNewIng
+usecase "Select Unit\nfrom Dropdown"         as UC_SelectUnit
+usecase "Add New Unit\nto Database"          as UC_AddNewUnit
+usecase "Enter Ingredient Amount"            as UC_EnterAmount
+
+
+' ── Persistence ───────────────────────────────────────────────────
+usecase "Save / Update Recipe"        as UC_Save
+usecase "Receive Update\nConfirmation" as UC_Confirm
+usecase "View Updated\nRecipe Detail"  as UC_ViewUpdated
+
+' ── Moderation (system-side) ──────────────────────────────────────
+usecase "Flag New Ingredient /\nUnit for Moderation" as UC_Flag
+
+' ── Guest can only reach auth ────────────────────────────────────────────
+Guest -- UC_Register
+Guest -- UC_Login
+
+' ── Authenticated Creator top-level actions ──────────────────────────────
+Creator -- UC_EditRecipe
+Creator -- UC_ViewOwn
+
+UC_ThreeDot ..> UC_ViewOwn : <<include>>
+
+' ── Edit Recipe decomposes into ──────────────────────────────────────────
+UC_EditRecipe <.. UC_EditSteps     : <<extend>>
+UC_EditRecipe <.. UC_AddIngredient : <<extend>>
+
+' ── Steps sub-actions ────────────────────────────────────────────────────
+UC_EditSteps <.. UC_AddStep           : <<extend>>
+UC_EditSteps <.. UC_EditExistingStep  : <<extend>>
+
+' ── Ingredient entry sub-actions ─────────────────────────────────────────
+UC_AddIngredient ..> UC_SelectIng    : <<include>>
+UC_AddIngredient ..> UC_SelectUnit   : <<include>>
+UC_AddIngredient ..> UC_EnterAmount  : <<include>>
+
+' ── Fallback: not found in dropdown ─────────────────────────────────────
+UC_SelectIng  <.. UC_AddNewIng  : <<extend>>
+UC_SelectUnit <.. UC_AddNewUnit : <<extend>>
+
+' ── New entries flagged for moderation ───────────────────────────────────
+UC_AddNewIng  ..> UC_Flag : <<include>>
+UC_AddNewUnit ..> UC_Flag : <<include>>
+
+' ── Save flow ────────────────────────────────────────────────────────────
+UC_EditRecipe ..> UC_Save    : <<include>>
+UC_Save       ..> UC_Confirm : <<include>>
+Creator --> UC_ViewUpdated
+
+' ── Navigation guard ─────────────────────────────────────────────────────
+UC_EditRecipe ..> UC_ThreeDot  : <<include>>
+
+@enduml
