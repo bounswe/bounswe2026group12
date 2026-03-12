@@ -5,7 +5,7 @@
  * Update BUTTON_LABELS to set the text displayed on each button.
  */
 
-const NUM_BUTTONS = 6;
+const NUM_BUTTONS = 9;
 
 const BUTTON_LABELS = [
   "Button 1",
@@ -13,6 +13,9 @@ const BUTTON_LABELS = [
   "Button 3",
   "Button 4",
   "Button 5",
+  "Button 6",
+  "Button 7",
+  "Button 8",
   "Mustafa Ocak",
 ];
 
@@ -24,5 +27,8 @@ const BUTTON_HANDLERS = [
   null, // Button 3 - use default
   null, // Button 4 - use default
   null, // Button 5 - use default
-  "onButton_MustafaOcakClick", // Button 6 - custom handler
+  null, // Button 6 - use default
+  null, // Button 7 - use default
+  null, // Button 8 - use default
+  "onButton_MustafaOcakClick", // Button 9 - custom handler
 ];
