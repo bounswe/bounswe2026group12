@@ -9,8 +9,8 @@ function onButton1Click() {
   console.log("Button 1 clicked -- implement me!");
 }
 
-function onButton2Click() {
-  console.log("Button 2 clicked -- implement me!");
+function onButtonerencanozkayaClick() {
+  window.location.href = "joke.html";
 }
 
 function onButton3Click() {
