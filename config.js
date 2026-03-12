@@ -5,7 +5,7 @@
  * Update BUTTON_LABELS to set the text displayed on each button.
  */
 
-const NUM_BUTTONS = 5;
+const NUM_BUTTONS = 6;
 
 const BUTTON_LABELS = [
   "Button 1",
@@ -13,4 +13,15 @@ const BUTTON_LABELS = [
   "Button 3",
   "Button 4",
   "Button 5",
+  "Ahmet Ayberk Durak",
+];
+
+// Optional: custom handler function name per button (by index). Omit or leave undefined to use onButton1Click, onButton2Click, etc.
+const BUTTON_HANDLERS = [
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  "onButtonAhmetAyberkDurakClick",
 ];

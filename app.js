@@ -3,7 +3,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   for (var i = 0; i < NUM_BUTTONS; i++) {
     var label = BUTTON_LABELS[i] || "Button " + (i + 1);
-    var handlerName = "onButton" + (i + 1) + "Click";
+    // Use custom handler if specified, otherwise use default pattern
+    var handlerName = (typeof BUTTON_HANDLERS !== "undefined" && BUTTON_HANDLERS[i])
+      ? BUTTON_HANDLERS[i]
+      : "onButton" + (i + 1) + "Click";
     var handler =
       typeof window[handlerName] === "function"
         ? window[handlerName]
