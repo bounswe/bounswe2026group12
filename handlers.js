@@ -26,31 +26,15 @@ function onButton5Click() {
 }
 
 function onButton6Click() {
-  console.log("ahmet fun fact");
-    // Opening a new window for our fun fact.
-    const newWindow = window.open('', '_blank');
-    //fetch the response
-    fetch('https://uselessfacts.jsph.pl/api/v2/facts/random?language=en')
-          .then(res => res.json())
-          .then(data => {
-              newWindow.document.write(`
-                  <html>
-                  <head><title>Random Fun Fact</title></head>
-                  <body style="font-family: Arial; padding: 40px; text-align:
-  center;">
-                      <h1>Random Fun Fact</h1>
-                      <p style="font-size: 20px;">${data.text}</p>
-                      <hr>
-                      <h3>What does this API return?</h3>
-                      <p>The Useless Facts API returns a random useselss funfact
-                      from a database. Each response includes the fact
-   text,
-                      its source URL, and language info.</p>
-                      <h4>Raw API Response:</h4>
-                      <pre style="text-align:left; background:#f4f4f4;
-  padding:15px; border-radius:8px;">${JSON.stringify(data, null, 2)}</pre>
-                  </body>
-                  </html>
-              `);
-          });
+  console.log("Button 6 clicked -- implement me!");
 }
+
+function onButton7Click() {
+  // Navigate to Ahmet Akdag's Fun Fact page
+  window.location.href = "ahmet-akdag-fun-fact.html";
+}
+
+function onButton8Click() {
+  console.log("Button 8 clicked -- implement me!");
+}
+
