@@ -20,19 +20,10 @@ const BUTTON_LABELS = [
 // Custom handler names for specific buttons (optional)
 // If not specified, defaults to onButton{N}Click pattern
 const BUTTON_HANDLERS = [
-  null, // Button 1 - use default
+  "onButton1Click",
   null, // Button 2 - use default
   null, // Button 3 - use default
   null, // Button 4 - use default
   null, // Button 5 - use default
   "onButton_MustafaOcakClick", // Button 6 - custom handler
-];
-
-// Optional: custom handler function name per button (by index). Omit or leave undefined to use onButton1Click, onButton2Click, etc.
-const BUTTON_HANDLERS = [
-  "onButton1Click",
-  undefined,
-  undefined,
-  undefined,
-  undefined,
 ];
