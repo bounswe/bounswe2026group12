@@ -74,6 +74,29 @@
     #button-grid button:active {
       background-color: #3730a3;
     }
+
+    #button-grid button.cagan-btn {
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    #button-grid button.cagan-btn:hover {
+      background: linear-gradient(135deg, #ea580c, #dc2626);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+    }
+
+    #cagan-result {
+      display: none;
+      margin-top: 24px;
+      padding: 16px 20px;
+      background: #fef3c7;
+      border-left: 4px solid #f97316;
+      border-radius: 8px;
+      color: #1e293b;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -81,6 +104,7 @@
     <h1>Stub App</h1>
     <p>Click a button to trigger its handler function.</p>
     <div id="button-grid"></div>
+    <div id="cagan-result"></div>
   </div>
 
   <script src="config.js"></script>

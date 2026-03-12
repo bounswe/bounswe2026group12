@@ -30,11 +30,9 @@ function onButton6Click() {
 }
 
 function onButton7Click() {
-  // Navigate to Ahmet Akdag's Fun Fact page
   window.location.href = "ahmet-akdag-fun-fact.html";
 }
 
 function onButton8Click() {
-  console.log("Button 8 clicked -- implement me!");
+  window.location.href = "cagan.html";
 }
-
