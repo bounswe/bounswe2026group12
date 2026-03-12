@@ -26,7 +26,7 @@ function onButton5Click() {
 }
 
 function onButton6Click() {
-  console.log("Button 6 clicked -- implement me!");
+  window.location.href = "button-uygar.html";
 }
 
 function onButton7Click() {
