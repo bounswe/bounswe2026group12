@@ -15,5 +15,5 @@ const BUTTON_LABELS = [
   "Button 5",
   "Button 6",
   "akdag fun fact",
-  "Button 8",
+  "Cagan",
 ];
