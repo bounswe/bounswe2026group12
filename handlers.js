@@ -24,3 +24,17 @@ function onButton4Click() {
 function onButton5Click() {
   console.log("Button 5 clicked -- implement me!");
 }
+
+function onButton6Click() {
+  console.log("Button 6 clicked -- implement me!");
+}
+
+function onButton7Click() {
+  // Navigate to Ahmet Akdag's Fun Fact page
+  window.location.href = "ahmet-akdag-fun-fact.html";
+}
+
+function onButton8Click() {
+  console.log("Button 8 clicked -- implement me!");
+}
+
