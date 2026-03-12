@@ -3,11 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   for (var i = 0; i < NUM_BUTTONS; i++) {
     var label = BUTTON_LABELS[i] || "Button " + (i + 1);
-    var handlerName = "onButton" + (i + 1) + "Click";
+    var labelName = "onButton" + label.replace(/\s+/g, "") + "Click";
+    var indexName = "onButton" + (i + 1) + "Click";
     var handler =
-      typeof window[handlerName] === "function"
-        ? window[handlerName]
-        : createFallbackHandler(i + 1);
+      typeof window[labelName] === "function"
+        ? window[labelName]
+        : typeof window[indexName] === "function"
+          ? window[indexName]
+          : createFallbackHandler(i + 1);
 
     var btn = document.createElement("button");
     btn.textContent = label;
