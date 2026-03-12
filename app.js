@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var btn = document.createElement("button");
     btn.textContent = label;
+    if (label === "Cagan") {
+      btn.classList.add("cagan-btn");
+    }
     btn.addEventListener("click", handler);
     grid.appendChild(btn);
   }
