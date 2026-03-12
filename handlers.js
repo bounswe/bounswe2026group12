@@ -26,19 +26,5 @@ function onButton5Click() {
 }
 
 function onButton6Click() {
-  var resultBox = document.getElementById("cagan-result");
-  resultBox.style.display = "block";
-  resultBox.textContent = "Loading...";
-
-  fetch("https://catfact.ninja/fact")
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      resultBox.innerHTML =
-        '<strong>🐱 Cagan\'s Cat Fact:</strong><br>' + data.fact;
-    })
-    .catch(function (error) {
-      resultBox.textContent = "Error: " + error.message;
-    });
+  window.location.href = "cagan.html";
 }
