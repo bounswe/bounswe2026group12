@@ -13,15 +13,13 @@ const BUTTON_LABELS = [
   "Button 3",
   "Button 4",
   "Button 5",
-  "Ahmet Ayberk Durak",
 ];
 
 // Optional: custom handler function name per button (by index). Omit or leave undefined to use onButton1Click, onButton2Click, etc.
 const BUTTON_HANDLERS = [
+  "onButton1Click",
   undefined,
   undefined,
   undefined,
   undefined,
-  undefined,
-  "onButtonAhmetAyberkDurakClick",
 ];
