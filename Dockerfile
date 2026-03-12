@@ -1,14 +1,11 @@
-# Simple Dockerfile to build and serve the static app
+# Use a lightweight web server image
 FROM nginx:alpine
 
-# Remove default nginx static content
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy app files into nginx root
-COPY index.html button1-api-page.html app.js config.js handlers.js /usr/share/nginx/html/
+# Copy all application files to nginx html directory
+COPY . /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
 
-# nginx runs in foreground by default in alpine image
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

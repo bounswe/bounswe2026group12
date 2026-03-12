@@ -24,3 +24,8 @@ function onButton4Click() {
 function onButton5Click() {
   console.log("Button 5 clicked -- implement me!");
 }
+
+function onButton_MustafaOcakClick() {
+  // Navigate to Mustafa Ocak's API page
+  window.location.href = "mustafa-ocak-api-page.html";
+}
