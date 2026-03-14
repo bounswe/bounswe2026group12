@@ -13,7 +13,7 @@ const BUTTON_LABELS = [
   "Button 3",
   "Button 4",
   "ButtonUygar",
-  "Button 6",
+  "Live Location of ISS by Ufuk Altunbulak",
   "akdag fun fact",
   "Cagan",
   "Button 9",
