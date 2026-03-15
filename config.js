@@ -8,10 +8,10 @@
 const NUM_BUTTONS = 9;
 
 const BUTTON_LABELS = [
-  "Button 1",
-  "erencanozkaya",
-  "Button 2",
   "🌤️ Daglar - Weather",
+  "erencanozkaya",
+  "Emirhan",
+  "Button 4",
   "ButtonUygar",
   "Live Location of ISS by Ufuk Altunbulak",
   "akdag fun fact",
