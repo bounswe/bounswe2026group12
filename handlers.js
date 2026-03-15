@@ -25,6 +25,10 @@ function onButton5Click() {
   window.location.href = "button-uygar.html";
 }
 
+function onButton6Click() {
+  window.location.href = "ufuk.html";
+}
+
 function onButton7Click() {
   window.location.href = "ahmet-akdag-fun-fact.html";
 }
