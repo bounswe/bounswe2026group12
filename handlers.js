@@ -9,8 +9,8 @@ function onButton1Click() {
   window.location.href = "button1-api-page.html";
 }
 
-function onButton2Click() {
-  console.log("Button 2 clicked -- implement me!");
+function onButtonerencanozkayaClick() {
+  window.location.href = "joke.html";
 }
 
 function onButton3Click() {
@@ -18,11 +18,23 @@ function onButton3Click() {
 }
 
 function onButton4Click() {
-  console.log("Button 4 clicked -- implement me!");
+  window.location.href = "daglar-weather.html";
 }
 
 function onButton5Click() {
-  console.log("Button 5 clicked -- implement me!");
+  window.location.href = "button-uygar.html";
+}
+
+function onButton6Click() {
+  window.location.href = "ufuk.html";
+}
+
+function onButton7Click() {
+  window.location.href = "ahmet-akdag-fun-fact.html";
+}
+
+function onButton8Click() {
+  window.location.href = "cagan.html";
 }
 
 function onButton_MustafaOcakClick() {

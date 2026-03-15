@@ -1,3 +1,4 @@
+
 # Use a lightweight web server image
 FROM nginx:alpine
 

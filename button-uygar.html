@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ButtonUygar - Dog API Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      padding: 24px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 720px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      padding: 32px 28px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+      color: #1e293b;
+      text-align: center;
+    }
+
+    p {
+      color: #475569;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .dog-image {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .code-block {
+      width: 100%;
+      background-color: #0f172a;
+      color: #e5e7eb;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a class="back-link" href="index.html">Back to main page</a>
+    <h1>ButtonUygar - Dog API Example</h1>
+    <p>
+      This page calls the public Dog CEO API at
+      <code>https://dog.ceo/api/breeds/image/random</code>. The API returns JSON
+      with a <code>status</code> field and a <code>message</code> field. The
+      <code>message</code> field contains the URL of a random dog image.
+    </p>
+    <p>
+      Below you can see the random dog image loaded from the URL in
+      <code>message</code>, and the raw JSON response from the API.
+    </p>
+
+    <div class="content">
+      <img id="dog-image" class="dog-image" alt="Random dog from Dog API" />
+      <pre id="api-response" class="code-block"></pre>
+    </div>
+  </div>
+
+  <script src="button-uygar.js"></script>
+</body>
+</html>

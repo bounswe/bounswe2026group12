@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ufuk Altunbulak – ISS Tracker</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a, #1e3a5f);
+            padding: 24px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 640px;
+            background: #0f172a;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
+            padding: 48px 40px;
+            border: 1px solid #1e3a5f;
+        }
+
+        .card h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .card .subtitle {
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+
+        .api-info {
+            background: #1e293b;
+            border-left: 4px solid #38bdf8;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+        }
+
+        .api-info h2 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #38bdf8;
+            margin-bottom: 6px;
+        }
+
+        .api-info p {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .api-info a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .api-info a:hover {
+            text-decoration: underline;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .data-item {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+
+        .data-item .label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .data-item .value {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            word-break: break-all;
+        }
+
+        .data-item .value.loading {
+            color: #475569;
+            font-style: italic;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .data-item .value.error {
+            color: #f87171;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        .data-item.wide {
+            grid-column: span 2;
+        }
+
+        .timestamp {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #475569;
+            margin-bottom: 24px;
+            min-height: 1.2em;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 150ms, box-shadow 150ms;
+        }
+
+        #btn-refresh {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        #btn-refresh:hover {
+            background: linear-gradient(135deg, #0284c7, #4f46e5);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+
+        #btn-refresh:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #btn-back {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+        }
+
+        #btn-back:hover {
+            background: #334155;
+            color: #f1f5f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>🛸 ISS Tracker</h1>
+        <p class="subtitle">Ufuk Altunbulak's Page</p>
+
+        <div class="api-info">
+            <h2>About this API</h2>
+            <p>
+                This page uses the
+                <a href="https://wheretheiss.at" target="_blank">Where the ISS at?</a>
+                API (<code>GET https://api.wheretheiss.at/v1/satellites/25544</code>).
+                It returns the real-time position, altitude, velocity, and visibility
+                status of the International Space Station.
+            </p>
+        </div>
+
+        <div class="data-grid">
+            <div class="data-item">
+                <div class="label">Latitude</div>
+                <div class="value loading" id="val-latitude">Loading…</div>
+            </div>
+            <div class="data-item">
+                <div class="label">Longitude</div>
+                <div class="value loading" id="val-longitude">Loading…</div>
+            </div>
+            <div class="data-item">
+                <div class="label">Altitude (km)</div>
+                <div class="value loading" id="val-altitude">Loading…</div>
+            </div>
+            <div class="data-item">
+                <div class="label">Velocity (km/h)</div>
+                <div class="value loading" id="val-velocity">Loading…</div>
+            </div>
+            <div class="data-item">
+                <div class="label">Visibility</div>
+                <div class="value loading" id="val-visibility">Loading…</div>
+            </div>
+            <div class="data-item">
+                <div class="label">Footprint (km)</div>
+                <div class="value loading" id="val-footprint">Loading…</div>
+            </div>
+            <div class="data-item wide">
+                <div class="label">Name</div>
+                <div class="value loading" id="val-name">Loading…</div>
+            </div>
+        </div>
+
+        <div class="timestamp" id="timestamp"></div>
+
+        <div class="actions">
+            <button id="btn-back" onclick="window.location.href='index.html'">← Back</button>
+            <button id="btn-refresh" onclick="fetchISS()">Refresh</button>
+        </div>
+    </div>
+
+    <script>
+        var fields = [
+            { id: "val-latitude", key: "latitude", format: function (v) { return v.toFixed(4) + "°"; } },
+            { id: "val-longitude", key: "longitude", format: function (v) { return v.toFixed(4) + "°"; } },
+            { id: "val-altitude", key: "altitude", format: function (v) { return v.toFixed(2); } },
+            { id: "val-velocity", key: "velocity", format: function (v) { return v.toFixed(2); } },
+            { id: "val-visibility", key: "visibility", format: function (v) { return v; } },
+            { id: "val-footprint", key: "footprint", format: function (v) { return v.toFixed(2); } },
+            { id: "val-name", key: "name", format: function (v) { return v; } }
+        ];
+
+        function setLoading() {
+            fields.forEach(function (f) {
+                var el = document.getElementById(f.id);
+                el.className = "value loading";
+                el.textContent = "Loading…";
+            });
+            document.getElementById("timestamp").textContent = "";
+        }
+
+        function setError(msg) {
+            fields.forEach(function (f) {
+                var el = document.getElementById(f.id);
+                el.className = "value error";
+                el.textContent = "Error";
+            });
+            document.getElementById("timestamp").textContent = msg;
+        }
+
+        function fetchISS() {
+            var btn = document.getElementById("btn-refresh");
+            btn.disabled = true;
+            setLoading();
+
+            fetch("https://api.wheretheiss.at/v1/satellites/25544")
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Network error (" + response.status + ")");
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    fields.forEach(function (f) {
+                        var el = document.getElementById(f.id);
+                        el.className = "value";
+                        el.textContent = f.format(data[f.key]);
+                    });
+                    var now = new Date();
+                    document.getElementById("timestamp").textContent =
+                        "Last updated: " + now.toLocaleTimeString();
+                })
+                .catch(function (error) {
+                    setError("Failed to fetch data: " + error.message);
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                });
+        }
+
+        fetchISS();
+    </script>
+</body>
+
+</html>
