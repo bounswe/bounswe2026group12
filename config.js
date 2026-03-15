@@ -8,14 +8,9 @@
 const NUM_BUTTONS = 9;
 
 const BUTTON_LABELS = [
-<<<<<<< HEAD
-  "Button 1",
-  "erencanozkaya",
-=======
   "🌤️ Daglar - Weather",
-  "Button 2",
->>>>>>> b524e6a (feat(daglar): add weather button with Open-Meteo API and Dockerfile)
-  "Button 3",
+  "erencanozkaya",
+  "Emirhan",
   "Button 4",
   "ButtonUygar",
   "Live Location of ISS by Ufuk Altunbulak",
