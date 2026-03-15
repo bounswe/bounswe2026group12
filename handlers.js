@@ -13,8 +13,8 @@ function onButtonerencanozkayaClick() {
   window.location.href = "joke.html";
 }
 
-function onButton3Click() {
-  console.log("Button 3 clicked -- implement me!");
+function onButtonEmirhanClick() {
+  window.location.href = "emirhan-api-page.html";
 }
 
 function onButton4Click() {
