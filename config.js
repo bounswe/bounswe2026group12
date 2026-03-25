@@ -5,7 +5,7 @@
  * Update BUTTON_LABELS to set the text displayed on each button.
  */
 
-const NUM_BUTTONS = 9;
+const NUM_BUTTONS = 8;
 
 const BUTTON_LABELS = [
   "🌤️ Daglar - Weather",
@@ -16,5 +16,4 @@ const BUTTON_LABELS = [
   "Live Location of ISS by Ufuk Altunbulak",
   "akdag fun fact",
   "Cagan",
-  "Button 9",
 ];

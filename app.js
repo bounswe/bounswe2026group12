@@ -9,11 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ? BUTTON_HANDLERS[i]
       : "onButton" + (i + 1) + "Click";
     var handler =
-      typeof window[labelName] === "function"
-        ? window[labelName]
-        : typeof window[indexName] === "function"
-          ? window[indexName]
-          : createFallbackHandler(i + 1);
+      typeof window[handlerName] === "function"
+        ? window[handlerName]
+        : createFallbackHandler(i + 1);
 
     var btn = document.createElement("button");
     btn.textContent = label;
