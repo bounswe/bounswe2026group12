@@ -6,7 +6,7 @@
  */
 
 function onButton1Click() {
-  window.location.href = "daglar-weather.html";
+  window.location.href = "button1-api-page.html";
 }
 
 function onButtonerencanozkayaClick() {
@@ -18,7 +18,7 @@ function onButtonEmirhanClick() {
 }
 
 function onButton4Click() {
-  console.log("Button 4 clicked -- implement me!");
+  window.location.href = "daglar-weather.html";
 }
 
 function onButton5Click() {
