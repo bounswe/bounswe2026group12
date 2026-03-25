@@ -13,8 +13,8 @@ function onButtonerencanozkayaClick() {
   window.location.href = "joke.html";
 }
 
-function onButton3Click() {
-  console.log("Button 3 clicked -- implement me!");
+function onButtonEmirhanClick() {
+  window.location.href = "emirhan-api-page.html";
 }
 
 function onButton4Click() {
@@ -35,4 +35,9 @@ function onButton7Click() {
 
 function onButton8Click() {
   window.location.href = "cagan.html";
+}
+
+function onButton_MustafaOcakClick() {
+  // Navigate to Mustafa Ocak's API page
+  window.location.href = "mustafa-ocak-api-page.html";
 }

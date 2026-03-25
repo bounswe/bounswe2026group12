@@ -1,12 +1,9 @@
-
-# Use a lightweight web server image
 FROM nginx:alpine
 
-# Copy all application files to nginx html directory
-COPY . /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
 
-# Expose port 80
+COPY . .
+
 EXPOSE 80
 
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
