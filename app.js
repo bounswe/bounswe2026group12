@@ -5,12 +5,20 @@ document.addEventListener("DOMContentLoaded", function () {
     var label = BUTTON_LABELS[i] || "Button " + (i + 1);
     var labelName = "onButton" + label.replace(/\s+/g, "") + "Click";
     var indexName = "onButton" + (i + 1) + "Click";
+    var explicitHandler =
+      typeof BUTTON_HANDLERS !== "undefined" &&
+      BUTTON_HANDLERS &&
+      BUTTON_HANDLERS[i] != null
+        ? BUTTON_HANDLERS[i]
+        : null;
     var handler =
-      typeof window[labelName] === "function"
-        ? window[labelName]
-        : typeof window[indexName] === "function"
-          ? window[indexName]
-          : createFallbackHandler(i + 1);
+      explicitHandler && typeof window[explicitHandler] === "function"
+        ? window[explicitHandler]
+        : typeof window[labelName] === "function"
+          ? window[labelName]
+          : typeof window[indexName] === "function"
+            ? window[indexName]
+            : createFallbackHandler(i + 1);
 
     var btn = document.createElement("button");
     btn.textContent = label;

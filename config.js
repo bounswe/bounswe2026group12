@@ -16,5 +16,18 @@ const BUTTON_LABELS = [
   "Live Location of ISS by Ufuk Altunbulak",
   "akdag fun fact",
   "Cagan",
-  "Button 9",
+  "Mustafa Ocak",
+];
+
+/** Optional per-index handler names (e.g. when label-based name does not match). */
+const BUTTON_HANDLERS = [
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  "onButton_MustafaOcakClick",
 ];
