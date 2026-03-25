@@ -36,8 +36,3 @@ function onButton7Click() {
 function onButton8Click() {
   window.location.href = "cagan.html";
 }
-
-function onButton_MustafaOcakClick() {
-  // Navigate to Mustafa Ocak's API page
-  window.location.href = "mustafa-ocak-api-page.html";
-}
