@@ -68,6 +68,8 @@ describe('RecipeCreatePage', () => {
       expect(screen.getByText(/recipe published/i)).toBeInTheDocument()
     );
     expect(recipeService.createRecipe).toHaveBeenCalled();
+    // Verify navigation happens after the delay
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/recipes/1'), { timeout: 2000 });
   });
 
   it('shows error toast when API call fails', async () => {
