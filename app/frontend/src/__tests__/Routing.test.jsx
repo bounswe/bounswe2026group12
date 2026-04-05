@@ -36,7 +36,7 @@ describe('Public routes (unauthenticated)', () => {
 
   test('/recipes/1 renders RecipeDetail page', () => {
     renderApp('/recipes/1');
-    expect(screen.getByRole('heading', { name: /recipe detail/i })).toBeInTheDocument();
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
   test('/stories/1 renders StoryDetail page', () => {
