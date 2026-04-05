@@ -11,10 +11,12 @@ export default function RecipeDetailPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let cancelled = false;
     fetchRecipe(id)
-      .then(setRecipe)
-      .catch(() => setError('Could not load recipe.'))
-      .finally(() => setLoading(false));
+      .then((data) => { if (!cancelled) setRecipe(data); })
+      .catch(() => { if (!cancelled) setError('Could not load recipe.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [id]);
 
   if (loading) return <p>Loading...</p>;
@@ -46,8 +48,8 @@ export default function RecipeDetailPage() {
       <section>
         <h2>Ingredients</h2>
         <ul>
-          {recipe.ingredients.map((ri, idx) => (
-            <li key={idx}>
+          {recipe.ingredients.map((ri) => (
+            <li key={ri.ingredient.id}>
               <span>{ri.ingredient.name}</span>
               {' — '}
               <span>{ri.amount}</span>
