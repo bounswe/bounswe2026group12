@@ -27,6 +27,11 @@ describe('fetchRecipe', () => {
     expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/1/');
     expect(result.title).toBe('Test');
   });
+
+  it('propagates API errors to the caller', async () => {
+    apiClient.get.mockRejectedValue(new Error('Network Error'));
+    await expect(fetchRecipe(1)).rejects.toThrow('Network Error');
+  });
 });
 
 describe('createRecipe', () => {
@@ -38,6 +43,11 @@ describe('createRecipe', () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     expect(result.id).toBe(2);
+  });
+
+  it('propagates API errors to the caller', async () => {
+    apiClient.post.mockRejectedValue(new Error('Server Error'));
+    await expect(createRecipe(new FormData())).rejects.toThrow('Server Error');
   });
 });
 
@@ -77,6 +87,11 @@ describe('submitIngredient', () => {
     const result = await submitIngredient('Turmeric');
     expect(apiClient.post).toHaveBeenCalledWith('/api/ingredients/', { name: 'Turmeric' });
     expect(result.name).toBe('Turmeric');
+  });
+
+  it('propagates API errors to the caller', async () => {
+    apiClient.post.mockRejectedValue(new Error('Bad Request'));
+    await expect(submitIngredient('test')).rejects.toThrow('Bad Request');
   });
 });
 
