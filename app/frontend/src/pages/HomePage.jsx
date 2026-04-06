@@ -7,7 +7,6 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [region, setRegion] = useState('');
-  const [language, setLanguage] = useState('');
   const [regions, setRegions] = useState([]);
 
   useEffect(() => {
@@ -16,7 +15,7 @@ export default function HomePage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    navigate(`/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(region)}&language=${encodeURIComponent(language)}`);
+    navigate(`/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(region)}`);
   }
 
   return (
@@ -53,19 +52,6 @@ export default function HomePage() {
               {regions.map((r) => (
                 <option key={r.regionId} value={r.name}>{r.name}</option>
               ))}
-            </select>
-          </div>
-
-          <div className="form-group home-filter-group">
-            <label htmlFor="language-select">Language</label>
-            <select
-              id="language-select"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              <option value="">All languages</option>
-              <option value="en">English</option>
-              <option value="tr">Turkish</option>
             </select>
           </div>
         </div>
