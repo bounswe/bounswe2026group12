@@ -5,6 +5,8 @@ export type RootStackParamList = {
   Search: undefined;
   RecipeDetail: { id: string };
   StoryDetail: { id: string };
+  /** Recipe authoring shell — ingredient/unit selection UI (full form later). */
+  RecipeCreate: undefined;
 };
 
 declare global {

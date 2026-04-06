@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
+import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
@@ -34,6 +35,11 @@ export function PublicStackNavigator() {
         name="Search"
         component={SearchScreen}
         options={{ title: 'Search' }}
+      />
+      <Stack.Screen
+        name="RecipeCreate"
+        component={RecipeCreateScreen}
+        options={{ title: 'New recipe' }}
       />
       <Stack.Screen
         name="RecipeDetail"
