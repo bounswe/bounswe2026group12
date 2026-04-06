@@ -46,6 +46,24 @@ export default function HomeScreen({ navigation }: Props) {
           >
             <Text style={styles.buttonText}>Sample story (id 1)</Text>
           </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryPressed]}
+            onPress={() => navigation.navigate('RecipeCreate')}
+            accessibilityRole="button"
+            accessibilityLabel="Create recipe"
+          >
+            <Text style={styles.secondaryButtonText}>Create recipe</Text>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryPressed]}
+            onPress={() => navigation.navigate('StoryCreate')}
+            accessibilityRole="button"
+            accessibilityLabel="Create story"
+          >
+            <Text style={styles.secondaryButtonText}>Create story</Text>
+          </Pressable>
         </View>
 
         <View style={styles.authFooter}>
@@ -118,6 +136,21 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    borderWidth: 2,
+    borderColor: '#2563eb',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  secondaryPressed: { opacity: 0.85 },
+  secondaryButtonText: {
+    color: '#2563eb',
     fontSize: 16,
     fontWeight: '600',
   },

@@ -30,3 +30,13 @@ Aligned with `app/frontend/src/pages/LoginPage.jsx` and `RegisterPage.jsx`:
 - **Mock failures:** login with password `wrong` or email containing `fail@` → error message like web API errors.
 
 Swap `mockLoginRequest` / `mockRegisterRequest` for HTTP calls matching `app/frontend/src/services/authService.js` when the backend is available.
+
+## Protected routes (create recipe / story)
+
+Aligned with web `ProtectedRoute` wrapping `/recipes/new` and `/stories/new` in `app/frontend/src/App.js`:
+
+- **`RecipeCreate`** and **`StoryCreate`** are registered on the stack; each screen wraps its content in `src/components/ProtectedRoute.tsx`.
+- If there is **no token** after `AuthContext` finishes hydrating from `AsyncStorage`, navigation **`replace`s to `Login`** (same effect as web `Navigate to="/login" replace`).
+- Screens are **placeholders** (mock “Save”) until real `recipeService` / `storyService` calls exist.
+
+From **Home**, use **Create recipe** / **Create story** to try the guard when logged out vs logged in.
