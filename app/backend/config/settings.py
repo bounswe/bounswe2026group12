@@ -96,8 +96,8 @@ DATABASES = {
     }
 }
 
-# Use SQLite for tests or if Postgres is not configured/reachable
-if 'test' in sys.argv or not os.environ.get('POSTGRES_HOST'):
+# Use SQLite for tests or local development (DEBUG=True) or if Postgres is not configured
+if 'test' in sys.argv or DEBUG or not os.environ.get('POSTGRES_HOST'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
