@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.recipes',
     'apps.stories',
     'apps.search',
+    'apps.common',
 ]
 
 # Custom user model
