@@ -99,7 +99,7 @@ class Command(BaseCommand):
         
         recipes_data = [
             {
-                'title': 'Stuffed Eggplant (Karn\u0131yar\u0131k)',
+                'title': 'Stuffed Eggplant (Karnıyarık)',
                 'description': 'A classic Ottoman dish consisting of eggplant stuffed with a mix of sautéed chopped onions, garlic, black pepper, tomatoes, green pepper and ground meat.',
                 'author': cook,
                 'region': med_region,
