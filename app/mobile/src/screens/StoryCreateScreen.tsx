@@ -4,14 +4,14 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { recipeFormStyles as form } from '../components/recipe/recipeFormStyles';
+import { RecipeLinkPicker, type RecipeLink } from '../components/story/RecipeLinkPicker';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
+import { fetchRecipesList } from '../services/recipeService';
 import { mockSubmitStoryCreate, type StoryLanguage } from '../services/mockStoryService';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'StoryCreate'>;
-
-type RegionRecipeLink = { id: string; title: string; region?: string };
 
 const LANGS: { label: string; value: StoryLanguage }[] = [
   { label: 'English', value: 'en' },
@@ -25,7 +25,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
-  const [linkedRecipe, setLinkedRecipe] = useState<RegionRecipeLink | null>(null);
+  const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -71,8 +71,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
           Create story
         </Text>
         <Text style={form.lead}>
-          Write a story and optionally link a recipe. Linking will be upgraded to a mini-search
-          in the next task; for now this is a placeholder.
+          Write a story and optionally link one of your recipes.
         </Text>
 
         <View style={form.section}>
@@ -127,41 +126,20 @@ export default function StoryCreateScreen({ navigation }: Props) {
         </View>
 
         <View style={form.section}>
-          <Text style={form.sectionTitle}>Link a recipe (optional)</Text>
-          {linkedRecipe ? (
-            <View style={styles.linkedBox}>
-              <Text style={styles.linkedText}>
-                Linked: {linkedRecipe.title}
-                {linkedRecipe.region ? ` — ${linkedRecipe.region}` : ''}
-              </Text>
-              <Pressable
-                onPress={() => setLinkedRecipe(null)}
-                accessibilityRole="button"
-                accessibilityLabel="Remove linked recipe"
-              >
-                <Text style={styles.removeLink}>Remove</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Text style={styles.muted}>
-              No recipe linked. You’ll be able to search and select one of your recipes in the next
-              step.
-            </Text>
-          )}
-
-          {/* Placeholder action so UX has an entry point without implementing #171 yet. */}
-          {!linkedRecipe ? (
-            <Pressable
-              onPress={() =>
-                setLinkedRecipe({ id: '1', title: 'Mock Anatolian stew', region: 'Anatolia' })
-              }
-              style={({ pressed }) => [form.secondaryButton, pressed && form.buttonPressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Link sample recipe"
-            >
-              <Text style={form.secondaryButtonText}>Link sample recipe</Text>
-            </Pressable>
-          ) : null}
+          <RecipeLinkPicker
+            value={linkedRecipe}
+            onChange={setLinkedRecipe}
+            currentUserId={user ? Number(user.id) : null}
+            fetchRecipes={async () => {
+              const list = await fetchRecipesList();
+              return list.map((r) => ({
+                id: r.id,
+                title: r.title,
+                region: r.region,
+                authorId: r.author?.id,
+              }));
+            }}
+          />
         </View>
 
         <Pressable
@@ -195,20 +173,5 @@ const styles = StyleSheet.create({
   langPillActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
   langText: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
   langTextActive: { color: '#fff' },
-  muted: { fontSize: 14, color: '#64748b', lineHeight: 20, marginBottom: 12 },
-  linkedBox: {
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 12,
-    padding: 12,
-    backgroundColor: '#f8fafc',
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  linkedText: { flex: 1, fontSize: 14, color: '#0f172a', fontWeight: '600' },
-  removeLink: { color: '#dc2626', fontWeight: '800', fontSize: 14 },
 });
 

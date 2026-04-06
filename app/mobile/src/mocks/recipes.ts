@@ -4,6 +4,13 @@ import type { RecipeDetail } from '../types/recipe';
 const SAMPLE_VIDEO =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
+export type MockRecipeListItem = {
+  id: string;
+  title: string;
+  region?: string;
+  author?: { id: number; username: string };
+};
+
 const DETAILS: Record<string, RecipeDetail> = {
   '1': {
     id: 1,
@@ -34,4 +41,14 @@ const DETAILS: Record<string, RecipeDetail> = {
 
 export function getMockRecipeDetailById(id: string): RecipeDetail | null {
   return DETAILS[id] ?? null;
+}
+
+/** Lightweight list for pickers/search when no API exists. */
+export function listMockRecipes(): MockRecipeListItem[] {
+  return Object.entries(DETAILS).map(([id, r]) => ({
+    id,
+    title: r.title,
+    region: r.region,
+    author: r.author,
+  }));
 }
