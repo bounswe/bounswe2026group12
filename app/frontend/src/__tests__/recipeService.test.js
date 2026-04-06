@@ -40,9 +40,7 @@ describe('createRecipe', () => {
     const formData = new FormData();
     apiClient.post.mockResolvedValue({ data: { id: 2 } });
     const result = await createRecipe(formData);
-    expect(apiClient.post).toHaveBeenCalledWith('/api/recipes/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    expect(apiClient.post).toHaveBeenCalledWith('/api/recipes/', formData);
     expect(result.id).toBe(2);
   });
 
@@ -57,9 +55,7 @@ describe('updateRecipe', () => {
     const formData = new FormData();
     apiClient.patch.mockResolvedValue({ data: { id: 1 } });
     const result = await updateRecipe(1, formData);
-    expect(apiClient.patch).toHaveBeenCalledWith('/api/recipes/1/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    expect(apiClient.patch).toHaveBeenCalledWith('/api/recipes/1/', formData);
     expect(result.id).toBe(1);
   });
 });

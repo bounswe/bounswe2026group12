@@ -6,16 +6,12 @@ export async function fetchRecipe(id) {
 }
 
 export async function createRecipe(formData) {
-  const response = await apiClient.post('/api/recipes/', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const response = await apiClient.post('/api/recipes/', formData);
   return response.data;
 }
 
 export async function updateRecipe(id, formData) {
-  const response = await apiClient.patch(`/api/recipes/${id}/`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const response = await apiClient.patch(`/api/recipes/${id}/`, formData);
   return response.data;
 }
 
