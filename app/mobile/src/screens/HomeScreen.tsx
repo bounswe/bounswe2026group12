@@ -95,6 +95,15 @@ export default function HomeScreen({ navigation }: Props) {
 
           <Pressable
             style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+            onPress={() => navigation.navigate('StoryCreate')}
+            accessibilityRole="button"
+            accessibilityLabel="Create a story"
+          >
+            <Text style={styles.buttonText}>Create story</Text>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
             onPress={() => navigation.navigate('RecipeDetail', { id: '1' })}
             accessibilityRole="button"
             accessibilityLabel="Open sample recipe"
