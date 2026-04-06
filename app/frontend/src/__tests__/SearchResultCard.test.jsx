@@ -48,4 +48,14 @@ describe('SearchResultCard', () => {
     renderCard(recipeResult);
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
+
+  it('renders an img when thumbnail is a URL', () => {
+    renderCard({ ...recipeResult, thumbnail: 'http://example.com/img.jpg' });
+    expect(screen.getByRole('img')).toHaveAttribute('src', 'http://example.com/img.jpg');
+  });
+
+  it('does not render region when region is absent', () => {
+    renderCard({ type: 'recipe', id: 3, title: 'Soup', region: null, thumbnail: null });
+    expect(screen.queryByText('Aegean')).not.toBeInTheDocument();
+  });
 });
