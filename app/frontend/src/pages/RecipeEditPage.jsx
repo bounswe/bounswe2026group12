@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
 import {
@@ -11,11 +12,9 @@ import {
   submitUnit,
 } from '../services/recipeService';
 
-let _rowCounter = 0;
-
 function makeRowFromIngredient(ri) {
   return {
-    id: `row-${++_rowCounter}`,
+    id: `row-${Math.random().toString(36).slice(2)}`,
     ingredientId: ri.ingredient.id,
     ingredientName: ri.ingredient.name,
     amount: ri.amount,
@@ -26,7 +25,7 @@ function makeRowFromIngredient(ri) {
 
 function makeEmptyRow() {
   return {
-    id: `row-${++_rowCounter}`,
+    id: `row-${Math.random().toString(36).slice(2)}`,
     ingredientId: null,
     ingredientName: '',
     amount: '',
@@ -38,7 +37,9 @@ function makeEmptyRow() {
 export default function RecipeEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
+  const [recipe, setRecipe] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [region, setRegion] = useState('');
@@ -55,15 +56,16 @@ export default function RecipeEditPage() {
   useEffect(() => {
     let cancelled = false;
     Promise.all([fetchRecipe(id), fetchIngredients(), fetchUnits()])
-      .then(([recipe, ings, uns]) => {
+      .then(([recipeData, ings, uns]) => {
         if (cancelled) return;
-        setTitle(recipe.title);
-        setDescription(recipe.description || '');
-        setRegion(recipe.region || '');
-        setQaEnabled(recipe.qa_enabled ?? true);
+        setRecipe(recipeData);
+        setTitle(recipeData.title);
+        setDescription(recipeData.description || '');
+        setRegion(recipeData.region || '');
+        setQaEnabled(recipeData.qa_enabled ?? true);
         setRows(
-          recipe.ingredients && recipe.ingredients.length > 0
-            ? recipe.ingredients.map(makeRowFromIngredient)
+          recipeData.ingredients && recipeData.ingredients.length > 0
+            ? recipeData.ingredients.map(makeRowFromIngredient)
             : [makeEmptyRow()]
         );
         setIngredients(ings);
@@ -151,6 +153,10 @@ export default function RecipeEditPage() {
   if (loading) return <p>Loading...</p>;
 
   if (loadError) return <p>{loadError}</p>;
+
+  if (recipe && user && recipe.author && user.id !== recipe.author.id) {
+    return <p>You are not authorized to edit this recipe.</p>;
+  }
 
   return (
     <main>

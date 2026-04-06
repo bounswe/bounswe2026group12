@@ -10,11 +10,9 @@ import {
   submitUnit,
 } from '../services/recipeService';
 
-let _rowCounter = 0;
 function makeRow() {
-  _rowCounter += 1;
   return {
-    id: `row-${_rowCounter}`,
+    id: `row-${Math.random().toString(36).slice(2)}`,
     ingredientId: null,
     ingredientName: '',
     amount: '',

@@ -32,9 +32,9 @@ beforeEach(() => {
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'g' }]);
 });
 
-function renderPage() {
+function renderPage(authUser = { id: 3, username: 'eren' }) {
   return render(
-    <AuthContext.Provider value={{ user: { id: 3 }, token: 'tok', login: jest.fn(), logout: jest.fn() }}>
+    <AuthContext.Provider value={{ user: authUser, token: 'tok', login: jest.fn(), logout: jest.fn() }}>
       <MemoryRouter initialEntries={['/recipes/1/edit']}>
         <Routes>
           <Route path="/recipes/:id/edit" element={<RecipeEditPage />} />
@@ -101,6 +101,13 @@ describe('RecipeEditPage', () => {
     renderPage();
     await waitFor(() =>
       expect(screen.getByText(/could not load recipe/i)).toBeInTheDocument()
+    );
+  });
+
+  it('shows unauthorized message when logged-in user is not the author', async () => {
+    renderPage({ id: 99, username: 'otherUser' });
+    await waitFor(() =>
+      expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
     );
   });
 });
