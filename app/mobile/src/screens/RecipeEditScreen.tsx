@@ -21,6 +21,7 @@ import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById, updateRecipeById } from '../services/recipeService';
 import type { RecipeDetail } from '../types/recipe';
+import { isRecipeAuthor } from '../utils/recipeAuthor';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeEdit'>;
 
@@ -67,7 +68,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     fetchRecipeById(id)
       .then((data) => {
         if (cancelled) return;
-        if (data.author && user && Number(user.id) !== Number(data.author.id)) {
+        if (data.author && user && !isRecipeAuthor(user, data)) {
           setLoadState('forbidden');
           return;
         }

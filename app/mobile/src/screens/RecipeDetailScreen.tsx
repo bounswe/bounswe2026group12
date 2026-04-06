@@ -9,12 +9,13 @@ import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
 import type { RecipeDetail } from '../types/recipe';
+import { isRecipeAuthor } from '../utils/recipeAuthor';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
 
 export default function RecipeDetailScreen({ route, navigation }: Props) {
   const { id } = route.params;
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isReady } = useAuth();
   const [recipe, setRecipe] = useState<RecipeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,11 +68,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 
   const ingredients = recipe.ingredients ?? [];
 
-  const canEdit =
-    isAuthenticated &&
-    recipe.author != null &&
-    user != null &&
-    Number(user.id) === Number(recipe.author.id);
+  /** Hide Edit until session is restored from storage (avoids flash for signed-in authors). */
+  const canEdit = isReady && isAuthenticated && isRecipeAuthor(user, recipe);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
