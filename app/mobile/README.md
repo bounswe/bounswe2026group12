@@ -16,7 +16,7 @@ These screens are reachable without signing in, aligned with public routes in `a
 |---------------|------------------|--------------------------------|
 | Home          | `/`              | Entry + shortcuts to other screens |
 | Search        | `/search`        | Mock list + filter (no API)    |
-| Recipe detail | `/recipes/:id`   | Fetches `GET /api/recipes/:id/` then falls back to `mocks/recipes`; video (`expo-av`), description, ingredients; **Edit** when signed in as author |
+| Recipe detail | `/recipes/:id`   | Fetches `GET /api/recipes/:id/` then falls back to `mocks/recipes`; video (`expo-av`), description, ingredients; **Edit** only after auth is ready and `isRecipeAuthor(user, recipe)` (`src/utils/recipeAuthor.ts`) |
 | Edit recipe   | `/recipes/:id/edit` | Pre-filled form reusing create pickers/sections; `PATCH /api/recipes/:id/` + `FormData`, mock fallback; success toast then back to detail |
 | Story detail  | `/stories/:id`   | Mock data; linked recipe → recipe screen |
 | New recipe    | (authoring)      | Full create form: description + dynamic ingredient list + video picker UI + client-side validation; ingredient/unit pickers try `/api/ingredients/` & `/api/units/` then fall back to mocks |
