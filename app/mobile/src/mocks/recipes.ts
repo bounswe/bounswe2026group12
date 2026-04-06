@@ -1,16 +1,35 @@
-/** Placeholder data until mobile calls DRF (see web `recipeService`). */
+import type { RecipeDetail } from '../types/recipe';
 
-export type MockRecipe = {
-  id: string;
-  title: string;
-  region: string;
+/** Public sample MP4 for mock / offline recipe video playback. */
+const SAMPLE_VIDEO =
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+const DETAILS: Record<string, RecipeDetail> = {
+  '1': {
+    id: 1,
+    title: 'Mock Anatolian stew',
+    region: 'Anatolia',
+    description:
+      'A hearty mock stew for development. When the API is available, this screen shows live data instead.',
+    video: SAMPLE_VIDEO,
+    author: { id: 1, username: 'demo_chef' },
+    ingredients: [
+      { ingredient: { id: 1, name: 'Tomato' }, amount: '400', unit: { id: 1, name: 'g' } },
+      { ingredient: { id: 2, name: 'Onion' }, amount: '1', unit: { id: 2, name: 'cup' } },
+    ],
+  },
+  '2': {
+    id: 2,
+    title: 'Mock Aegean salad',
+    region: 'Aegean',
+    description: 'Fresh mock salad with olive oil and herbs.',
+    video: SAMPLE_VIDEO,
+    ingredients: [
+      { ingredient: { id: 3, name: 'Olives' }, amount: '100', unit: { id: 1, name: 'g' } },
+    ],
+  },
 };
 
-const RECIPES: Record<string, MockRecipe> = {
-  '1': { id: '1', title: 'Mock Anatolian stew', region: 'Anatolia' },
-  '2': { id: '2', title: 'Mock Aegean salad', region: 'Aegean' },
-};
-
-export function getMockRecipeById(id: string): MockRecipe | null {
-  return RECIPES[id] ?? null;
+export function getMockRecipeDetailById(id: string): RecipeDetail | null {
+  return DETAILS[id] ?? null;
 }
