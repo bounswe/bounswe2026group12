@@ -31,6 +31,15 @@ export default function HomeScreen({ navigation }: Props) {
 
           <Pressable
             style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+            onPress={() => navigation.navigate('RecipeCreate')}
+            accessibilityRole="button"
+            accessibilityLabel="Open new recipe screen"
+          >
+            <Text style={styles.buttonText}>New recipe (selection UI)</Text>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
             onPress={() => navigation.navigate('RecipeDetail', { id: '1' })}
             accessibilityRole="button"
             accessibilityLabel="Open sample recipe"
