@@ -18,7 +18,7 @@ These screens are reachable without signing in, aligned with public routes in `a
 | Search        | `/search`        | Mock list + filter (no API)    |
 | Recipe detail | `/recipes/:id`   | Mock data + short loading state |
 | Story detail  | `/stories/:id`   | Mock data; linked recipe → recipe screen |
-| New recipe    | (authoring)      | Ingredient + unit searchable/creatable pickers; tries `/api/ingredients/` & `/api/units/` then falls back to mocks |
+| New recipe    | (authoring)      | Full create form: description + dynamic ingredient list + video picker UI + client-side validation; ingredient/unit pickers try `/api/ingredients/` & `/api/units/` then fall back to mocks |
 
 Mock data lives under `src/mocks/`. Catalog lists use `src/services/ingredientUnitService.ts` (same paths as web `recipeService.js`); if the server is down, in-memory mock catalogs are used.
 
