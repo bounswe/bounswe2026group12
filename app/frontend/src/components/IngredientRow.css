@@ -1,12 +1,26 @@
 .ingredient-row {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 0.625rem;
 }
 
 .ingredient-row input[type="number"] {
   width: 80px;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  padding: 0.65rem 0.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #FFFCF6;
+  color: var(--color-text);
+  transition: border-color 0.18s ease;
+}
+
+.ingredient-row input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
 }
 
 .ingredient-combobox {
@@ -15,7 +29,21 @@
 }
 
 .ingredient-combobox input {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  padding: 0.65rem 0.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #FFFCF6;
+  color: var(--color-text);
   width: 100%;
+  transition: border-color 0.18s ease;
+}
+
+.ingredient-combobox input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
 }
 
 .combobox-list {
@@ -23,37 +51,51 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
   list-style: none;
   margin: 0;
   padding: 0;
   max-height: 180px;
   overflow-y: auto;
   z-index: 100;
+  box-shadow: var(--shadow-md);
 }
 
 .combobox-list li {
-  padding: 8px 12px;
+  padding: 0.6rem 0.875rem;
   cursor: pointer;
+  font-size: 0.9375rem;
+  transition: background-color 0.12s ease;
 }
 
 .combobox-list li:hover {
-  background: #f3f4f6;
+  background: rgba(196, 82, 30, 0.06);
 }
 
 .combobox-list li.add-new {
-  color: #2563eb;
+  color: var(--color-primary);
   font-style: italic;
+  font-weight: 500;
 }
 
 .ingredient-row button {
-  background: none;
-  border: 1px solid #dc2626;
-  color: #dc2626;
-  border-radius: 4px;
-  padding: 6px 10px;
+  background: transparent;
+  border: 2px solid var(--color-error);
+  color: var(--color-error);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 0.875rem;
   cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
   white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ingredient-row button:hover {
+  background: var(--color-error);
+  color: var(--color-text-on-dark);
 }
