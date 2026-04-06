@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { EmptyState } from '../components/search/EmptyState';
 import { SearchResultCard } from '../components/search/SearchResultCard';
 import type { RootStackParamList } from '../navigation/types';
 import {
@@ -53,6 +54,8 @@ export default function SearchScreen({ navigation, route }: Props) {
 
   const selectedRegionLabel =
     REGIONS.find((r) => r.value === region)?.label ?? 'All regions';
+
+  const isPristine = query.trim() === '' && region.trim() === '';
 
   function onPressItem(item: MockSearchItem) {
     if (item.kind === 'recipe') {
@@ -112,10 +115,27 @@ export default function SearchScreen({ navigation, route }: Props) {
           contentContainerStyle={styles.grid}
           columnWrapperStyle={styles.gridRow}
           ListEmptyComponent={
-            <Text style={styles.empty}>
-              No matches for “{query.trim() || '…'}” in {selectedRegionLabel}. Try another
-              keyword or region.
-            </Text>
+            isPristine ? (
+              <EmptyState
+                title="Start searching"
+                message="Type a keyword or pick a region to discover recipes and stories."
+                glyph="S"
+                actions={[
+                  { label: 'Show all regions', onPress: () => setRegion('') },
+                ]}
+              />
+            ) : (
+              <EmptyState
+                title="No results found"
+                message={`No matches for “${query.trim() || '…'}” in ${selectedRegionLabel}. Try a different keyword or region.`}
+                glyph="0"
+                actions={[
+                  { label: 'Clear keyword', onPress: () => setQuery('') },
+                  { label: 'Clear region', onPress: () => setRegion('') },
+                  { label: 'Clear all', onPress: () => { setQuery(''); setRegion(''); } },
+                ]}
+              />
+            )
           }
           renderItem={({ item }) => (
             <View style={styles.gridItem}>
@@ -162,5 +182,4 @@ const styles = StyleSheet.create({
   grid: { paddingBottom: 24, gap: 12 },
   gridRow: { gap: 12 },
   gridItem: { flex: 1 },
-  empty: { fontSize: 15, opacity: 0.7, textAlign: 'center', marginTop: 24 },
 });
