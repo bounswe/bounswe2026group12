@@ -95,4 +95,12 @@ describe('RecipeEditPage', () => {
       expect(screen.getByText(/failed to save/i)).toBeInTheDocument()
     );
   });
+
+  it('shows error message when initial load fails', async () => {
+    recipeService.fetchRecipe.mockRejectedValue(new Error('Network Error'));
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/could not load recipe/i)).toBeInTheDocument()
+    );
+  });
 });

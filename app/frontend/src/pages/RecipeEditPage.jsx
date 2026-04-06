@@ -43,11 +43,12 @@ export default function RecipeEditPage() {
   const [description, setDescription] = useState('');
   const [region, setRegion] = useState('');
   const [video, setVideo] = useState(null);
-  const [qaEnabled, setQaEnabled] = useState(true);
+  const [qaEnabled, setQaEnabled] = useState(false);
   const [rows, setRows] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
@@ -68,7 +69,9 @@ export default function RecipeEditPage() {
         setIngredients(ings);
         setUnits(uns);
       })
-      .catch(() => {})
+      .catch(() => {
+        if (!cancelled) setLoadError('Could not load recipe.');
+      })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -146,6 +149,8 @@ export default function RecipeEditPage() {
   }
 
   if (loading) return <p>Loading...</p>;
+
+  if (loadError) return <p>{loadError}</p>;
 
   return (
     <main>
