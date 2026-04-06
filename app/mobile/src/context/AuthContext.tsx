@@ -15,6 +15,8 @@ const USER_KEY = 'user';
 export type AuthContextValue = {
   user: AuthUser | null;
   token: string | null;
+  /** Derived session state (mirrors web usage of token presence). */
+  isAuthenticated: boolean;
   isReady: boolean;
   login: (userData: AuthUser, accessToken: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -65,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, token, isReady, login, logout }),
+    () => ({ user, token, isAuthenticated: Boolean(token), isReady, login, logout }),
     [user, token, isReady, login, logout]
   );
 

@@ -7,7 +7,7 @@ import type { RootStackParamList } from '../navigation/types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
-  const { user, token, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -49,9 +49,11 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.authFooter}>
-          {token && user ? (
+          {isAuthenticated ? (
             <>
-              <Text style={styles.signedInText}>Signed in as {user.username}</Text>
+              <Text style={styles.signedInText}>
+                Signed in{user ? ` as ${user.username}` : ''}
+              </Text>
               <Pressable
                 onPress={() => void logout()}
                 accessibilityRole="button"
