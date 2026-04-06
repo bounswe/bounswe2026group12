@@ -26,8 +26,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(74, 140, 111, 0.1);
-  border: 1.5px solid rgba(74, 140, 111, 0.3);
+  background: var(--color-accent-green-tint);
+  border: 1.5px solid var(--color-accent-green-border);
   border-radius: var(--radius-md);
   padding: 0.6rem 1rem;
   margin-bottom: 0.75rem;
@@ -40,7 +40,7 @@
   padding: 0.65rem 1rem;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #FFFCF6;
+  background: var(--color-surface-input);
   color: var(--color-text);
   width: 100%;
   margin-bottom: 0.5rem;
@@ -57,9 +57,9 @@
   list-style: none;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
-  overflow: hidden;
-  max-height: 240px;
+  overflow-x: hidden;
   overflow-y: auto;
+  max-height: 240px;
 }
 
 .recipe-link-item {

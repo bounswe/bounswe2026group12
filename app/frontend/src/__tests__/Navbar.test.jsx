@@ -16,7 +16,7 @@ function renderNavbar(user = null, logout = jest.fn()) {
 describe('Navbar', () => {
   it('renders brand link pointing to /', () => {
     renderNavbar();
-    expect(screen.getByRole('link', { name: /sofralar/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /genipe/i })).toHaveAttribute('href', '/');
   });
 
   it('shows Log In and Sign Up links when logged out', () => {

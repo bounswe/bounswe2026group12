@@ -12,7 +12,7 @@
   padding: 0.65rem 0.75rem;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #FFFCF6;
+  background: var(--color-surface-input);
   color: var(--color-text);
   transition: border-color 0.18s ease;
 }
@@ -34,7 +34,7 @@
   padding: 0.65rem 0.75rem;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #FFFCF6;
+  background: var(--color-surface-input);
   color: var(--color-text);
   width: 100%;
   transition: border-color 0.18s ease;
@@ -72,7 +72,7 @@
 }
 
 .combobox-list li:hover {
-  background: rgba(196, 82, 30, 0.06);
+  background: var(--color-primary-subtle);
 }
 
 .combobox-list li.add-new {

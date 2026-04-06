@@ -23,7 +23,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-primary);
-  background: rgba(196, 82, 30, 0.1);
+  background: var(--color-primary-tint);
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-pill);
   margin-bottom: 0.5rem;

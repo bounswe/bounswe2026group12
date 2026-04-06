@@ -7,9 +7,18 @@
   border: 1.5px solid var(--color-border);
 }
 
-.result-card:hover {
+.result-card:hover,
+.result-card:focus-within {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
+}
+
+.result-card:focus-within {
+  box-shadow: 0 0 0 3px var(--color-primary), var(--shadow-md);
+}
+
+.result-card-link:focus-visible {
+  outline: none;
 }
 
 .result-card-link {

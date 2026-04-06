@@ -43,16 +43,21 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
-  background: rgba(196, 82, 30, 0.06);
-  border: 1.5px solid rgba(196, 82, 30, 0.2);
+  background: var(--color-primary-subtle);
+  border: 1.5px solid var(--color-primary-border);
   border-radius: var(--radius-lg);
   text-decoration: none;
   transition: background-color 0.15s ease;
 }
 
 .linked-recipe-card:hover {
-  background: rgba(196, 82, 30, 0.1);
+  background: var(--color-primary-tint);
   text-decoration: none;
+}
+
+.linked-recipe-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .linked-recipe-title {
