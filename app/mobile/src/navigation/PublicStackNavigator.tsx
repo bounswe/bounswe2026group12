@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
+import LoginScreen from '../screens/LoginScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import StoryDetailScreen from '../screens/StoryDetailScreen';
 import type { RootStackParamList } from './types';
@@ -8,8 +10,7 @@ import type { RootStackParamList } from './types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
- * Public routes only — mirrors web `App.js` routes that are not wrapped in `ProtectedRoute`.
- * Auth-gated screens are added in a later milestone.
+ * Public routes — mirrors web `App.js` routes outside `ProtectedRoute`, including `/login` and `/register`.
  */
 export function PublicStackNavigator() {
   return (
@@ -18,6 +19,16 @@ export function PublicStackNavigator() {
         name="Home"
         component={HomeScreen}
         options={{ title: 'Home' }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ title: 'Log In' }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ title: 'Register' }}
       />
       <Stack.Screen
         name="Search"
