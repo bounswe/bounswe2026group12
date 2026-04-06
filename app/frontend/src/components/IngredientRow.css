@@ -1,0 +1,59 @@
+.ingredient-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.ingredient-row input[type="number"] {
+  width: 80px;
+}
+
+.ingredient-combobox {
+  position: relative;
+  flex: 1;
+}
+
+.ingredient-combobox input {
+  width: 100%;
+}
+
+.combobox-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.combobox-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.combobox-list li:hover {
+  background: #f3f4f6;
+}
+
+.combobox-list li.add-new {
+  color: #2563eb;
+  font-style: italic;
+}
+
+.ingredient-row button {
+  background: none;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
