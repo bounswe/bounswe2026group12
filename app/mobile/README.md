@@ -24,6 +24,10 @@ Mock data lives under `src/mocks/`. Catalog lists use `src/services/ingredientUn
 
 Set **`EXPO_PUBLIC_API_URL`** (e.g. in `.env`) so a device or simulator can reach your API — same idea as web `REACT_APP_API_URL`. Default base URL is `http://localhost:8000`.
 
+## Success toasts (aligned with web `Toast.jsx`)
+
+`ToastProvider` + `useToast()` live in `src/context/ToastContext.tsx` (bottom-right banner, success/error colors, 3s auto-dismiss). Recipe create calls `showToast('Recipe published!', 'success')` after mock submit — reuse `useToast()` on future edit/save flows.
+
 ## Auth UI (login / register)
 
 Aligned with `app/frontend/src/pages/LoginPage.jsx` and `RegisterPage.jsx`:

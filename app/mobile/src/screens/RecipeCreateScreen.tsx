@@ -1,18 +1,12 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useMemo, useState } from 'react';
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IngredientPicker } from '../components/pickers/IngredientPicker';
 import { UnitPicker } from '../components/pickers/UnitPicker';
+import { useToast } from '../context/ToastContext';
+import { mockSubmitRecipeCreate } from '../services/mockRecipeCreate';
 import type { RootStackParamList } from '../navigation/types';
 import type { CatalogSelection } from '../types/catalog';
 
@@ -44,6 +38,7 @@ function InlineError({ message }: { message?: string }) {
 }
 
 export default function RecipeCreateScreen(_props: Props) {
+  const { showToast } = useToast();
   const [description, setDescription] = useState('');
   const [video, setVideo] = useState<VideoSelection | null>(null);
   const [rows, setRows] = useState<IngredientRow[]>([
@@ -96,7 +91,7 @@ export default function RecipeCreateScreen(_props: Props) {
   async function pickVideo() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission required', 'Media library permission is needed to pick a video.');
+      showToast('Media library permission is needed to pick a video.', 'error');
       return;
     }
 
@@ -151,13 +146,14 @@ export default function RecipeCreateScreen(_props: Props) {
       })),
     };
 
-    Alert.alert('Mock submit', 'Recipe upload payload is ready.', [
-      { text: 'OK' },
-      {
-        text: 'Show JSON',
-        onPress: () => Alert.alert('Payload', JSON.stringify(payload, null, 2)),
-      },
-    ]);
+    void (async () => {
+      try {
+        await mockSubmitRecipeCreate(payload);
+        showToast('Recipe published!', 'success');
+      } catch {
+        showToast('Failed to publish recipe. Please try again.', 'error');
+      }
+    })();
   }
 
   return (
