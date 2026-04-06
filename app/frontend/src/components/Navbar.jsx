@@ -9,7 +9,7 @@ export default function Navbar() {
   return (
     <nav className="navbar" aria-label="Site navigation">
       <div className="navbar-inner">
-        <Link to="/" className="navbar-brand">Sofralar</Link>
+        <Link to="/" className="navbar-brand">Genipe</Link>
         <div className="navbar-links">
           {user ? (
             <>
