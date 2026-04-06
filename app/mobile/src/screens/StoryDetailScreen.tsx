@@ -1,45 +1,50 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinkedRecipePreviewCard } from '../components/story/LinkedRecipePreviewCard';
+import { ErrorView } from '../components/ui/ErrorView';
+import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
-import { getMockStoryById } from '../mocks/stories';
+import { fetchStoryById } from '../services/storyService';
+import type { StoryDetail } from '../types/story';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'StoryDetail'>;
 
-const MOCK_LOAD_MS = 250;
-
 export default function StoryDetailScreen({ route, navigation }: Props) {
   const { id } = route.params;
+  const [story, setStory] = useState<StoryDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    const t = setTimeout(() => {
-      const story = getMockStoryById(id);
-      if (cancelled) return;
-      if (!story) {
-        setError('Could not load story.');
-      }
-      setLoading(false);
-    }, MOCK_LOAD_MS);
+    fetchStoryById(id)
+      .then((data) => {
+        if (!cancelled) setStory(data);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setStory(null);
+          setError('Could not load story.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => {
       cancelled = true;
-      clearTimeout(t);
     };
-  }, [id]);
-
-  const story = !loading && !error ? getMockStoryById(id) : null;
+  }, [id, reloadToken]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
         <View style={styles.centered}>
-          <ActivityIndicator accessibilityLabel="Loading" />
-          <Text style={styles.loadingText}>Loading...</Text>
+          <LoadingView message="Loading story…" />
         </View>
       </SafeAreaView>
     );
@@ -48,8 +53,11 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   if (error || !story) {
     return (
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-        <View style={styles.padded}>
-          <Text style={styles.error}>{error ?? 'Story not found.'}</Text>
+        <View style={styles.paddedCenter}>
+          <ErrorView
+            message={error ?? 'Story not found.'}
+            onRetry={() => setReloadToken((t) => t + 1)}
+          />
         </View>
       </SafeAreaView>
     );
@@ -57,7 +65,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <View style={styles.padded}>
+      <ScrollView contentContainerStyle={styles.padded}>
         <Text style={styles.title} accessibilityRole="header">
           {story.title}
         </Text>
@@ -72,44 +80,32 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
         {story.linked_recipe ? (
           <View style={styles.linked}>
             <Text style={styles.linkedHeading}>Linked recipe</Text>
-            <Pressable
+            <LinkedRecipePreviewCard
               onPress={() =>
                 navigation.navigate('RecipeDetail', { id: story.linked_recipe!.id })
               }
-              accessibilityRole="button"
-              accessibilityLabel={`Open linked recipe ${story.linked_recipe.title}`}
-            >
-              <View style={styles.linkedRow}>
-                <Text style={styles.link}>{story.linked_recipe.title}</Text>
-                {story.linked_recipe.region ? (
-                  <Text style={styles.linkedRegion}> — {story.linked_recipe.region}</Text>
-                ) : null}
-              </View>
-            </Pressable>
+              recipe={story.linked_recipe}
+            />
           </View>
         ) : null}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
-  padded: { flex: 1, padding: 20 },
+  padded: { padding: 20, paddingBottom: 32 },
+  paddedCenter: { flex: 1, padding: 20, justifyContent: 'center' },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  loadingText: { marginTop: 8, fontSize: 16 },
-  title: { fontSize: 26, fontWeight: '700' },
-  meta: { fontSize: 16, opacity: 0.75, marginTop: 8 },
-  body: { fontSize: 16, marginTop: 16, lineHeight: 24 },
+  title: { fontSize: 26, fontWeight: '800', color: '#0f172a' },
+  meta: { fontSize: 15, color: '#64748b', marginTop: 8 },
+  body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: '#334155' },
   linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#e2e8f0' },
-  linkedHeading: { fontSize: 18, fontWeight: '600', marginBottom: 8 },
-  linkedRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline' },
-  link: { fontSize: 16, color: '#2563eb', fontWeight: '600' },
-  linkedRegion: { fontSize: 16, opacity: 0.75 },
-  error: { fontSize: 16, color: '#b91c1c' },
+  linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: '#0f172a' },
 });
