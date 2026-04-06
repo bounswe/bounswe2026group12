@@ -16,7 +16,8 @@ These screens are reachable without signing in, aligned with public routes in `a
 |---------------|------------------|--------------------------------|
 | Home          | `/`              | Entry + shortcuts to other screens |
 | Search        | `/search`        | Mock list + filter (no API)    |
-| Recipe detail | `/recipes/:id`   | Fetches `GET /api/recipes/:id/` then falls back to `mocks/recipes`; video (`expo-av`), description, ingredients |
+| Recipe detail | `/recipes/:id`   | Fetches `GET /api/recipes/:id/` then falls back to `mocks/recipes`; video (`expo-av`), description, ingredients; **Edit** when signed in as author |
+| Edit recipe   | `/recipes/:id/edit` | Pre-filled form reusing create pickers/sections; `PATCH /api/recipes/:id/` + `FormData`, mock fallback; success toast then back to detail |
 | Story detail  | `/stories/:id`   | Mock data; linked recipe → recipe screen |
 | New recipe    | (authoring)      | Full create form: description + dynamic ingredient list + video picker UI + client-side validation; ingredient/unit pickers try `/api/ingredients/` & `/api/units/` then fall back to mocks |
 
@@ -26,7 +27,7 @@ Set **`EXPO_PUBLIC_API_URL`** (e.g. in `.env`) so a device or simulator can reac
 
 ## Success toasts (aligned with web `Toast.jsx`)
 
-`ToastProvider` + `useToast()` live in `src/context/ToastContext.tsx` (bottom-right banner, success/error colors, 3s auto-dismiss). Recipe create calls `showToast('Recipe published!', 'success')` after mock submit — reuse `useToast()` on future edit/save flows.
+`ToastProvider` + `useToast()` live in `src/context/ToastContext.tsx` (bottom-right banner, success/error colors, 3s auto-dismiss). Recipe **create** shows `Recipe published!` after mock submit; recipe **edit** shows `Recipe updated!` then navigates back to detail (same pattern as web).
 
 ## Auth UI (login / register)
 

@@ -15,4 +15,6 @@ export type RecipeDetail = {
   video?: string | null;
   author?: { id: number; username: string };
   ingredients?: RecipeIngredientRow[];
+  /** Matches web `RecipeEditPage` (`qa_enabled`). */
+  qa_enabled?: boolean;
 };
