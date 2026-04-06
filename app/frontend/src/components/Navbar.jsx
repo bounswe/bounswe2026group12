@@ -7,19 +7,19 @@ export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" aria-label="Site navigation">
       <div className="navbar-inner">
         <Link to="/" className="navbar-brand">Sofralar</Link>
         <div className="navbar-links">
           {user ? (
             <>
               <span className="navbar-username">@{user.username}</span>
-              <NavLink to="/recipes/new" className="btn btn-outline navbar-btn">
+              <Link to="/recipes/new" className="btn btn-outline navbar-btn">
                 New Recipe
-              </NavLink>
-              <NavLink to="/stories/new" className="btn btn-outline navbar-btn">
+              </Link>
+              <Link to="/stories/new" className="btn btn-outline navbar-btn">
                 New Story
-              </NavLink>
+              </Link>
               <button className="btn btn-primary navbar-btn" onClick={logout}>
                 Log Out
               </button>
