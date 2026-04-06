@@ -1,16 +1,29 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
 import {
-  createRecipe,
+  fetchRecipe,
+  updateRecipe,
   fetchIngredients,
   fetchUnits,
   submitIngredient,
   submitUnit,
 } from '../services/recipeService';
 
-function makeRow() {
+function makeRowFromIngredient(ri) {
+  return {
+    id: `row-${Math.random().toString(36).slice(2)}`,
+    ingredientId: ri.ingredient.id,
+    ingredientName: ri.ingredient.name,
+    amount: ri.amount,
+    unitId: ri.unit.id,
+    unitName: ri.unit.name,
+  };
+}
+
+function makeEmptyRow() {
   return {
     id: `row-${Math.random().toString(36).slice(2)}`,
     ingredientId: null,
@@ -21,26 +34,53 @@ function makeRow() {
   };
 }
 
-export default function RecipeCreatePage() {
+export default function RecipeEditPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
+  const [recipe, setRecipe] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [region, setRegion] = useState('');
   const [video, setVideo] = useState(null);
-  const [qaEnabled, setQaEnabled] = useState(true);
-  const [rows, setRows] = useState([makeRow()]);
-
+  const [qaEnabled, setQaEnabled] = useState(false);
+  const [rows, setRows] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   useEffect(() => {
-    fetchIngredients().then(setIngredients).catch(() => {});
-    fetchUnits().then(setUnits).catch(() => {});
-  }, []);
+    let cancelled = false;
+    Promise.all([fetchRecipe(id), fetchIngredients(), fetchUnits()])
+      .then(([recipeData, ings, uns]) => {
+        if (cancelled) return;
+        setRecipe(recipeData);
+        setTitle(recipeData.title);
+        setDescription(recipeData.description || '');
+        setRegion(recipeData.region || '');
+        setQaEnabled(recipeData.qa_enabled ?? true);
+        setRows(
+          recipeData.ingredients && recipeData.ingredients.length > 0
+            ? recipeData.ingredients.map(makeRowFromIngredient)
+            : [makeEmptyRow()]
+        );
+        setIngredients(ings);
+        setUnits(uns);
+      })
+      .catch(() => {
+        if (!cancelled) setLoadError('Could not load recipe.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   function showToast(message, type) {
     setToast({ message, type });
@@ -102,17 +142,25 @@ export default function RecipeCreatePage() {
     });
 
     try {
-      const created = await createRecipe(formData);
-      showToast('Recipe published!', 'success');
-      setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
+      await updateRecipe(id, formData);
+      showToast('Recipe updated!', 'success');
+      setTimeout(() => navigate(`/recipes/${id}`), 1500);
     } catch {
-      showToast('Failed to publish recipe. Please try again.', 'error');
+      showToast('Failed to save changes. Please try again.', 'error');
     }
+  }
+
+  if (loading) return <p>Loading...</p>;
+
+  if (loadError) return <p>{loadError}</p>;
+
+  if (recipe && user && recipe.author && user.id !== recipe.author.id) {
+    return <p>You are not authorized to edit this recipe.</p>;
   }
 
   return (
     <main>
-      <h1>Create Recipe</h1>
+      <h1>Edit Recipe</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">Title</label>
@@ -179,12 +227,12 @@ export default function RecipeCreatePage() {
             />
           ))}
           {errors.amount && <p className="field-error">{errors.amount}</p>}
-          <button type="button" onClick={() => setRows((prev) => [...prev, makeRow()])}>
+          <button type="button" onClick={() => setRows((prev) => [...prev, makeEmptyRow()])}>
             Add Ingredient
           </button>
         </section>
 
-        <button type="submit">Publish</button>
+        <button type="submit">Save Changes</button>
       </form>
 
       <Toast message={toast.message} type={toast.type} />
