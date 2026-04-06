@@ -8,6 +8,7 @@ For more information on this file, see
 """
 
 import os
+import sys
 
 from pathlib import Path
 
@@ -40,8 +41,12 @@ INSTALLED_APPS = [
     # Third-party
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     # Project apps
     'apps.users',
+    'apps.recipes',
+    'apps.stories',
+    'apps.search',
 ]
 
 # Custom user model
@@ -91,13 +96,20 @@ DATABASES = {
     }
 }
 
+# Use SQLite for tests or if Postgres is not configured/reachable
+if 'test' in sys.argv or not os.environ.get('POSTGRES_HOST'):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
 }
 
@@ -107,6 +119,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
