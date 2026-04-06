@@ -7,6 +7,7 @@ import {
   fetchUnits,
   submitIngredient,
   submitUnit,
+  fetchRecipes,
 } from '../services/recipeService';
 
 jest.mock('../services/api', () => ({
@@ -101,5 +102,14 @@ describe('submitUnit', () => {
     const result = await submitUnit('pinch');
     expect(apiClient.post).toHaveBeenCalledWith('/api/units/', { name: 'pinch' });
     expect(result.name).toBe('pinch');
+  });
+});
+
+describe('fetchRecipes', () => {
+  it('calls GET /api/recipes/ and returns data', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Baklava' }] });
+    const result = await fetchRecipes();
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/');
+    expect(result).toEqual([{ id: 1, title: 'Baklava' }]);
   });
 });

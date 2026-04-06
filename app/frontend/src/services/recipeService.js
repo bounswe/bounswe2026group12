@@ -38,3 +38,8 @@ export async function submitUnit(name) {
   const response = await apiClient.post('/api/units/', { name });
   return response.data;
 }
+
+export async function fetchRecipes() {
+  const response = await apiClient.get('/api/recipes/');
+  return response.data;
+}
