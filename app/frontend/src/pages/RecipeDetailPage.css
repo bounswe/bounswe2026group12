@@ -1,0 +1,83 @@
+.page-status {
+  color: var(--color-text-muted);
+  padding: 3rem;
+  text-align: center;
+}
+
+.page-error {
+  color: var(--color-error);
+}
+
+.recipe-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-region-tag {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary);
+  background: rgba(196, 82, 30, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 0.5rem;
+}
+
+.recipe-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: var(--color-text);
+}
+
+.recipe-video {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.5rem;
+}
+
+.recipe-description {
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.recipe-ingredients {
+  border-top: 1.5px solid var(--color-border);
+  padding-top: 1.5rem;
+}
+
+.recipe-ingredients h2 {
+  font-size: 1.375rem;
+  margin-bottom: 1rem;
+}
+
+.ingredients-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ingredient-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ingredient-name {
+  font-weight: 500;
+}
+
+.ingredient-amount {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}

@@ -9,6 +9,7 @@ import {
   submitIngredient,
   submitUnit,
 } from '../services/recipeService';
+import './RecipeCreatePage.css';
 
 function makeRow() {
   return {
@@ -111,10 +112,10 @@ export default function RecipeCreatePage() {
   }
 
   return (
-    <main>
-      <h1>Create Recipe</h1>
+    <main className="page-card recipe-form">
+      <h1 className="recipe-form-heading">Create Recipe</h1>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
             id="title"
@@ -124,7 +125,7 @@ export default function RecipeCreatePage() {
           {errors.title && <p className="field-error">{errors.title}</p>}
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
@@ -134,7 +135,7 @@ export default function RecipeCreatePage() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="region">Region</label>
           <input
             id="region"
@@ -143,7 +144,7 @@ export default function RecipeCreatePage() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="video">Video</label>
           <input
             id="video"
@@ -153,18 +154,18 @@ export default function RecipeCreatePage() {
           />
         </div>
 
-        <div>
-          <label>
+        <div className="form-group form-group-checkbox">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={qaEnabled}
               onChange={(e) => setQaEnabled(e.target.checked)}
             />
-            {' '}Enable Q&amp;A on this recipe
+            Enable Q&amp;A on this recipe
           </label>
         </div>
 
-        <section>
+        <section className="ingredients-section">
           <h2>Ingredients</h2>
           {rows.map((row) => (
             <IngredientRow
@@ -179,12 +180,18 @@ export default function RecipeCreatePage() {
             />
           ))}
           {errors.amount && <p className="field-error">{errors.amount}</p>}
-          <button type="button" onClick={() => setRows((prev) => [...prev, makeRow()])}>
-            Add Ingredient
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => setRows((prev) => [...prev, makeRow()])}
+          >
+            + Add Ingredient
           </button>
         </section>
 
-        <button type="submit">Publish</button>
+        <div className="recipe-form-actions">
+          <button type="submit" className="btn btn-primary">Publish Recipe</button>
+        </div>
       </form>
 
       <Toast message={toast.message} type={toast.type} />

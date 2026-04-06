@@ -11,6 +11,7 @@ import {
   submitIngredient,
   submitUnit,
 } from '../services/recipeService';
+import './RecipeEditPage.css';
 
 function makeRowFromIngredient(ri) {
   return {
@@ -77,9 +78,7 @@ export default function RecipeEditPage() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [id]);
 
   function showToast(message, type) {
@@ -150,19 +149,17 @@ export default function RecipeEditPage() {
     }
   }
 
-  if (loading) return <p>Loading...</p>;
-
-  if (loadError) return <p>{loadError}</p>;
-
+  if (loading) return <p className="page-status">Loading…</p>;
+  if (loadError) return <p className="page-status page-error">{loadError}</p>;
   if (recipe && user && recipe.author && user.id !== recipe.author.id) {
-    return <p>You are not authorized to edit this recipe.</p>;
+    return <p className="page-status page-error">You are not authorized to edit this recipe.</p>;
   }
 
   return (
-    <main>
-      <h1>Edit Recipe</h1>
+    <main className="page-card recipe-form">
+      <h1 className="recipe-form-heading">Edit Recipe</h1>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
             id="title"
@@ -172,7 +169,7 @@ export default function RecipeEditPage() {
           {errors.title && <p className="field-error">{errors.title}</p>}
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
@@ -182,7 +179,7 @@ export default function RecipeEditPage() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="region">Region</label>
           <input
             id="region"
@@ -191,7 +188,7 @@ export default function RecipeEditPage() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="video">Video</label>
           <input
             id="video"
@@ -201,18 +198,18 @@ export default function RecipeEditPage() {
           />
         </div>
 
-        <div>
-          <label>
+        <div className="form-group form-group-checkbox">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={qaEnabled}
               onChange={(e) => setQaEnabled(e.target.checked)}
             />
-            {' '}Enable Q&amp;A on this recipe
+            Enable Q&amp;A on this recipe
           </label>
         </div>
 
-        <section>
+        <section className="ingredients-section">
           <h2>Ingredients</h2>
           {rows.map((row) => (
             <IngredientRow
@@ -227,12 +224,18 @@ export default function RecipeEditPage() {
             />
           ))}
           {errors.amount && <p className="field-error">{errors.amount}</p>}
-          <button type="button" onClick={() => setRows((prev) => [...prev, makeEmptyRow()])}>
-            Add Ingredient
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => setRows((prev) => [...prev, makeEmptyRow()])}
+          >
+            + Add Ingredient
           </button>
         </section>
 
-        <button type="submit">Save Changes</button>
+        <div className="recipe-form-actions">
+          <button type="submit" className="btn btn-primary">Save Changes</button>
+        </div>
       </form>
 
       <Toast message={toast.message} type={toast.type} />
