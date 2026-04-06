@@ -11,10 +11,26 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = '__all__'
 
+    def validate(self, data):
+        request = self.context.get('request')
+        # If is_approved is being set/changed, ensure the user is an admin
+        if 'is_approved' in data:
+            if not request or not request.user or not request.user.is_staff:
+                # For non-admins, we ignore the is_approved field if it's sent
+                data.pop('is_approved')
+        return data
+
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unit
         fields = '__all__'
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if 'is_approved' in data:
+            if not request or not request.user or not request.user.is_staff:
+                data.pop('is_approved')
+        return data
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
