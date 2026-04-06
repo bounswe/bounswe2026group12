@@ -1,7 +1,10 @@
+import logging
 from django.utils.deprecation import MiddlewareMixin
 from django.http import JsonResponse
 from rest_framework import status, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
+logger = logging.getLogger(__name__)
 
 class JWTAuthenticationMiddleware(MiddlewareMixin):
     """
@@ -34,10 +37,10 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
                 if auth_result:
                     user, token = auth_result
                     request.user = user
-            except Exception:
+            except Exception as e:
                 # If authentication fails here (invalid token), we continue 
                 # (either it's a public endpoint or we'll block it below)
-                pass
+                logger.warning(f"Error during JWT authentication: {e}")
 
         # 3. Enforce endpoint protection for "write" operations under /api/
         if request.path.startswith('/api/') and request.method not in permissions.SAFE_METHODS:
