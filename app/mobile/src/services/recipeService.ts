@@ -1,5 +1,5 @@
 import type { RecipeDetail } from '../types/recipe';
-import { getMockRecipeDetailById } from '../mocks/recipes';
+import { getMockRecipeDetailById, listMockRecipes, type MockRecipeListItem } from '../mocks/recipes';
 import { apiGetJson, apiPatchFormData } from './httpClient';
 import { mockSubmitRecipeUpdate } from './mockRecipeCreate';
 
@@ -33,5 +33,21 @@ export async function updateRecipeById(id: string, formData: FormData): Promise<
     await apiPatchFormData(`/api/recipes/${id}/`, formData);
   } catch {
     await mockSubmitRecipeUpdate(id);
+  }
+}
+
+/** Minimal list for story linking / pickers (web: GET `/api/recipes/`). */
+export async function fetchRecipesList(): Promise<MockRecipeListItem[]> {
+  try {
+    // We only need id/title/region/author for UI; backend may return more fields.
+    const data = await apiGetJson<any[]>(`/api/recipes/`);
+    return (Array.isArray(data) ? data : []).map((r) => ({
+      id: String(r.id),
+      title: String(r.title ?? ''),
+      region: r.region ?? undefined,
+      author: r.author ?? undefined,
+    }));
+  } catch {
+    return listMockRecipes();
   }
 }
