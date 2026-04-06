@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ResizeMode, Video } from 'expo-av';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../context/AuthContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
@@ -11,8 +12,9 @@ import type { RecipeDetail } from '../types/recipe';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
 
-export default function RecipeDetailScreen({ route }: Props) {
+export default function RecipeDetailScreen({ route, navigation }: Props) {
   const { id } = route.params;
+  const { user, isAuthenticated } = useAuth();
   const [recipe, setRecipe] = useState<RecipeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +67,12 @@ export default function RecipeDetailScreen({ route }: Props) {
 
   const ingredients = recipe.ingredients ?? [];
 
+  const canEdit =
+    isAuthenticated &&
+    recipe.author != null &&
+    user != null &&
+    Number(user.id) === Number(recipe.author.id);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -74,6 +82,17 @@ export default function RecipeDetailScreen({ route }: Props) {
         {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
         {recipe.author?.username ? (
           <Text style={styles.author}>By {recipe.author.username}</Text>
+        ) : null}
+
+        {canEdit ? (
+          <Pressable
+            onPress={() => navigation.navigate('RecipeEdit', { id })}
+            style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Edit recipe"
+          >
+            <Text style={styles.editLinkText}>Edit recipe</Text>
+          </Pressable>
         ) : null}
 
         {recipe.video ? (
@@ -133,6 +152,13 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '700', color: '#0f172a' },
   meta: { fontSize: 16, color: '#64748b', marginTop: 8 },
   author: { fontSize: 15, color: '#64748b', marginTop: 4 },
+  editLink: {
+    alignSelf: 'flex-start',
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
+  editLinkText: { fontSize: 16, color: '#2563eb', fontWeight: '700' },
   videoWrap: {
     marginTop: 16,
     borderRadius: 12,

@@ -1,6 +1,7 @@
 import type { RecipeDetail } from '../types/recipe';
 import { getMockRecipeDetailById } from '../mocks/recipes';
-import { apiGetJson } from './httpClient';
+import { apiGetJson, apiPatchFormData } from './httpClient';
+import { mockSubmitRecipeUpdate } from './mockRecipeCreate';
 
 /**
  * Same endpoint as web `fetchRecipe` in `recipeService.js`.
@@ -22,4 +23,15 @@ function normalizeRecipeDetail(data: RecipeDetail): RecipeDetail {
     ...data,
     ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
   };
+}
+
+/**
+ * Same as web `updateRecipe` (`PATCH` + `FormData`). Falls back to mock when the request fails.
+ */
+export async function updateRecipeById(id: string, formData: FormData): Promise<void> {
+  try {
+    await apiPatchFormData(`/api/recipes/${id}/`, formData);
+  } catch {
+    await mockSubmitRecipeUpdate(id);
+  }
 }

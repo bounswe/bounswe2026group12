@@ -3,6 +3,7 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
+import RecipeEditScreen from '../screens/RecipeEditScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import StoryDetailScreen from '../screens/StoryDetailScreen';
@@ -45,6 +46,11 @@ export function PublicStackNavigator() {
         name="RecipeDetail"
         component={RecipeDetailScreen}
         options={{ title: 'Recipe' }}
+      />
+      <Stack.Screen
+        name="RecipeEdit"
+        component={RecipeEditScreen}
+        options={{ title: 'Edit recipe' }}
       />
       <Stack.Screen
         name="StoryDetail"
