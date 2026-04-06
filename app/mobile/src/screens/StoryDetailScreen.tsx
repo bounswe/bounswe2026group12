@@ -64,6 +64,9 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
         {story.author ? (
           <Text style={styles.meta}>By {story.author.username}</Text>
         ) : null}
+        {story.language ? (
+          <Text style={styles.meta}>Language: {story.language.toUpperCase()}</Text>
+        ) : null}
         <Text style={styles.body}>{story.body}</Text>
 
         {story.linked_recipe ? (

@@ -6,6 +6,7 @@ import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
+import StoryCreateScreen from '../screens/StoryCreateScreen';
 import StoryDetailScreen from '../screens/StoryDetailScreen';
 import type { RootStackParamList } from './types';
 
@@ -56,6 +57,11 @@ export function PublicStackNavigator() {
         name="StoryDetail"
         component={StoryDetailScreen}
         options={{ title: 'Story' }}
+      />
+      <Stack.Screen
+        name="StoryCreate"
+        component={StoryCreateScreen}
+        options={{ title: 'Create story' }}
       />
     </Stack.Navigator>
   );

@@ -6,6 +6,7 @@ export type RootStackParamList = {
   RecipeDetail: { id: string };
   /** Pre-filled edit form — same API as web `RecipeEditPage`. */
   RecipeEdit: { id: string };
+  StoryCreate: undefined;
   StoryDetail: { id: string };
   /** Recipe authoring shell — ingredient/unit selection UI (full form later). */
   RecipeCreate: undefined;
