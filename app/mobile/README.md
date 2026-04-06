@@ -15,7 +15,7 @@ These screens are reachable without signing in, aligned with public routes in `a
 | Screen        | Web equivalent   | Notes                          |
 |---------------|------------------|--------------------------------|
 | Home          | `/`              | Entry + shortcuts to other screens |
-| Search        | `/search`        | Search state shape: `{ query, region }`; Home has search bar + region picker; results still mock data for now |
+| Search        | `/search`        | Search state shape: `{ query, region }`; Home has search bar + region picker; results render as a 2-column grid of result cards (title + thumbnail placeholder + region tag) from mock data |
 | Recipe detail | `/recipes/:id`   | Fetches `GET /api/recipes/:id/` then falls back to `mocks/recipes`; video (`expo-av`), description, ingredients; **Edit** only after auth is ready and `isRecipeAuthor(user, recipe)` (`src/utils/recipeAuthor.ts`) |
 | Edit recipe   | `/recipes/:id/edit` | Pre-filled form reusing create pickers/sections; `PATCH /api/recipes/:id/` + `FormData`, mock fallback; success toast then back to detail |
 | Story detail  | `/stories/:id`   | Mock data; linked recipe → recipe screen |
