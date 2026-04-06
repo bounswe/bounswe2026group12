@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { RecipeIngredientRowsSection } from '../components/recipe/RecipeIngredientRowsSection';
@@ -21,6 +21,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
 export default function RecipeCreateScreen(_props: Props) {
   const { showToast } = useToast();
   const [description, setDescription] = useState('');
+  const [qaEnabled, setQaEnabled] = useState(true);
   const [localVideo, setLocalVideo] = useState<{
     uri: string;
     fileName?: string;
@@ -111,6 +112,7 @@ export default function RecipeCreateScreen(_props: Props) {
 
     const payload = {
       description: description.trim(),
+      qa_enabled: qaEnabled,
       video: localVideo,
       ingredients: rows.map((r) => ({
         amount: Number(r.amount),
@@ -159,6 +161,17 @@ export default function RecipeCreateScreen(_props: Props) {
             accessibilityLabel="Recipe description"
           />
           {attemptedSubmit ? <InlineFieldError message={errors.description} /> : null}
+        </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
+          <Switch
+            value={qaEnabled}
+            onValueChange={setQaEnabled}
+            accessibilityLabel="Enable Q and A on this recipe"
+          />
+          <Text style={{ flex: 1, fontSize: 15, color: '#334155', marginLeft: 12 }}>
+            Enable Q&amp;A on this recipe
+          </Text>
         </View>
 
         <RecipeIngredientRowsSection
