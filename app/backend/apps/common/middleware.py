@@ -5,9 +5,15 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class JWTAuthenticationMiddleware(MiddlewareMixin):
     """
-    Middleware to verify JWT tokens and attach the user to the request.
-    This ensures request.user is set reliably before DRF views are even executed,
-    and enforces endpoint protection for creation/editing APIs.
+    Defense-in-depth authentication middleware.
+
+    Verifies JWT tokens and attaches the authenticated user to the request
+    before DRF views are executed. Also enforces endpoint protection for
+    write operations under /api/ as a safety net.
+
+    Note: DRF's own permission system (permission_classes, DEFAULT_PERMISSION_CLASSES)
+    remains the primary enforcement layer. This middleware exists to catch cases
+    where a view might accidentally omit permission_classes.
     """
     
     EXEMPT_POST_PATHS = [
