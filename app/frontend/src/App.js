@@ -7,6 +7,7 @@ import SearchPage from './pages/SearchPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import StoryDetailPage from './pages/StoryDetailPage';
 import RecipeCreatePage from './pages/RecipeCreatePage';
+import RecipeEditPage from './pages/RecipeEditPage';
 import StoryCreatePage from './pages/StoryCreatePage';
 
 export default function App() {
@@ -24,6 +25,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <RecipeCreatePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recipes/:id/edit"
+        element={
+          <ProtectedRoute>
+            <RecipeEditPage />
           </ProtectedRoute>
         }
       />
