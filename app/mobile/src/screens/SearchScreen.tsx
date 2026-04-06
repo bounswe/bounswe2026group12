@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   Pressable,
@@ -17,20 +17,41 @@ import {
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Search'>;
 
-function filterItems(query: string): MockSearchItem[] {
+type RegionOption = { label: string; value: string };
+
+const REGIONS: RegionOption[] = [
+  { label: 'All regions', value: '' },
+  { label: 'Anatolia', value: 'Anatolia' },
+  { label: 'Aegean', value: 'Aegean' },
+];
+
+function filterItems(query: string, region: string): MockSearchItem[] {
   const q = query.trim().toLowerCase();
-  if (!q) return MOCK_SEARCH_RESULTS;
-  return MOCK_SEARCH_RESULTS.filter(
-    (item) =>
+  const r = region.trim().toLowerCase();
+  return MOCK_SEARCH_RESULTS.filter((item) => {
+    const matchesQuery =
+      !q ||
       item.title.toLowerCase().includes(q) ||
-      item.subtitle.toLowerCase().includes(q)
-  );
+      item.subtitle.toLowerCase().includes(q);
+    const matchesRegion = !r || item.subtitle.toLowerCase().includes(r);
+    return matchesQuery && matchesRegion;
+  });
 }
 
-export default function SearchScreen({ navigation }: Props) {
+export default function SearchScreen({ navigation, route }: Props) {
   const [query, setQuery] = useState('');
+  const [region, setRegion] = useState('');
 
-  const data = useMemo(() => filterItems(query), [query]);
+  useEffect(() => {
+    if (route.params?.query != null) setQuery(route.params.query);
+    if (route.params?.region != null) setRegion(route.params.region);
+    // only initialize on first mount / param change
+  }, [route.params?.query, route.params?.region]);
+
+  const data = useMemo(() => filterItems(query, region), [query, region]);
+
+  const selectedRegionLabel =
+    REGIONS.find((r) => r.value === region)?.label ?? 'All regions';
 
   function onPressItem(item: MockSearchItem) {
     if (item.kind === 'recipe') {
@@ -57,11 +78,40 @@ export default function SearchScreen({ navigation }: Props) {
           autoCorrect={false}
         />
 
+        <View style={styles.filtersRow}>
+          <Text style={styles.filterLabel}>Region</Text>
+          <View style={styles.pills}>
+            {REGIONS.map((opt) => {
+              const active = opt.value === region;
+              return (
+                <Pressable
+                  key={opt.value || 'all'}
+                  onPress={() => setRegion(opt.value)}
+                  style={({ pressed }) => [
+                    styles.pill,
+                    active && styles.pillActive,
+                    pressed && { opacity: 0.9 },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Set region filter: ${opt.label}`}
+                >
+                  <Text style={[styles.pillText, active && styles.pillTextActive]}>
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
         <FlatList
           data={data}
           keyExtractor={(item) => item.key}
           ListEmptyComponent={
-            <Text style={styles.empty}>No mock matches. Try another filter.</Text>
+            <Text style={styles.empty}>
+              No matches for “{query.trim() || '…'}” in {selectedRegionLabel}. Try another
+              keyword or region.
+            </Text>
           }
           renderItem={({ item }) => (
             <Pressable
@@ -97,6 +147,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 16,
   },
+  filtersRow: { marginBottom: 10 },
+  filterLabel: { fontSize: 14, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
+  pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  pill: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: '#fff',
+  },
+  pillActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
+  pillText: { fontSize: 14, fontWeight: '600', color: '#0f172a' },
+  pillTextActive: { color: '#fff' },
   card: {
     borderWidth: 1,
     borderColor: '#e2e8f0',

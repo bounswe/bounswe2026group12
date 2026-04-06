@@ -2,7 +2,7 @@ export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
   Register: undefined;
-  Search: undefined;
+  Search: { query?: string; region?: string } | undefined;
   RecipeDetail: { id: string };
   /** Pre-filled edit form — same API as web `RecipeEditPage`. */
   RecipeEdit: { id: string };
