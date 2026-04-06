@@ -82,6 +82,12 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           <Text style={styles.author}>By {recipe.author.username}</Text>
         ) : null}
 
+        {typeof recipe.qa_enabled === 'boolean' ? (
+          <Text style={styles.qaMeta}>
+            Q&amp;A: {recipe.qa_enabled ? 'enabled' : 'disabled'}
+          </Text>
+        ) : null}
+
         {canEdit ? (
           <Pressable
             onPress={() => navigation.navigate('RecipeEdit', { id })}
@@ -150,6 +156,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '700', color: '#0f172a' },
   meta: { fontSize: 16, color: '#64748b', marginTop: 8 },
   author: { fontSize: 15, color: '#64748b', marginTop: 4 },
+  qaMeta: { fontSize: 14, color: '#64748b', marginTop: 4 },
   editLink: {
     alignSelf: 'flex-start',
     marginTop: 12,
