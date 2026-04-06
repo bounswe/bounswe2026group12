@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SearchResultCard } from '../components/search/SearchResultCard';
 import type { RootStackParamList } from '../navigation/types';
 import {
   MOCK_SEARCH_RESULTS,
@@ -33,7 +34,7 @@ function filterItems(query: string, region: string): MockSearchItem[] {
       !q ||
       item.title.toLowerCase().includes(q) ||
       item.subtitle.toLowerCase().includes(q);
-    const matchesRegion = !r || item.subtitle.toLowerCase().includes(r);
+    const matchesRegion = !r || (item.region ?? '').toLowerCase().includes(r);
     return matchesQuery && matchesRegion;
   });
 }
@@ -107,6 +108,9 @@ export default function SearchScreen({ navigation, route }: Props) {
         <FlatList
           data={data}
           keyExtractor={(item) => item.key}
+          numColumns={2}
+          contentContainerStyle={styles.grid}
+          columnWrapperStyle={styles.gridRow}
           ListEmptyComponent={
             <Text style={styles.empty}>
               No matches for “{query.trim() || '…'}” in {selectedRegionLabel}. Try another
@@ -114,15 +118,9 @@ export default function SearchScreen({ navigation, route }: Props) {
             </Text>
           }
           renderItem={({ item }) => (
-            <Pressable
-              style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-              onPress={() => onPressItem(item)}
-              accessibilityRole="button"
-              accessibilityLabel={`Open ${item.kind} ${item.title}`}
-            >
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
-            </Pressable>
+            <View style={styles.gridItem}>
+              <SearchResultCard item={item} onPress={() => onPressItem(item)} />
+            </View>
           )}
         />
       </View>
@@ -161,16 +159,8 @@ const styles = StyleSheet.create({
   pillActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
   pillText: { fontSize: 14, fontWeight: '600', color: '#0f172a' },
   pillTextActive: { color: '#fff' },
-  card: {
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 8,
-    padding: 14,
-    marginBottom: 10,
-    backgroundColor: '#f8fafc',
-  },
-  cardPressed: { opacity: 0.9 },
-  cardTitle: { fontSize: 17, fontWeight: '600' },
-  cardSubtitle: { fontSize: 14, opacity: 0.7, marginTop: 4 },
+  grid: { paddingBottom: 24, gap: 12 },
+  gridRow: { gap: 12 },
+  gridItem: { flex: 1 },
   empty: { fontSize: 15, opacity: 0.7, textAlign: 'center', marginTop: 24 },
 });

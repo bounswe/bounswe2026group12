@@ -5,7 +5,12 @@ export type MockSearchItem = {
   kind: 'recipe' | 'story';
   id: string;
   title: string;
+  /** Subtitle line (kept for backwards compatibility / mock display). */
   subtitle: string;
+  /** Optional region tag (for recipes). */
+  region?: string;
+  /** Optional thumbnail URL (not used yet on mobile). */
+  thumbnail?: string | null;
 };
 
 export const MOCK_SEARCH_RESULTS: MockSearchItem[] = [
@@ -15,6 +20,7 @@ export const MOCK_SEARCH_RESULTS: MockSearchItem[] = [
     id: '1',
     title: 'Mock Anatolian stew',
     subtitle: 'Recipe · Anatolia',
+    region: 'Anatolia',
   },
   {
     key: 'story-1',
@@ -29,5 +35,6 @@ export const MOCK_SEARCH_RESULTS: MockSearchItem[] = [
     id: '2',
     title: 'Mock Aegean salad',
     subtitle: 'Recipe · Aegean',
+    region: 'Aegean',
   },
 ];
