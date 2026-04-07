@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinkedRecipePreviewCard } from '../components/story/LinkedRecipePreviewCard';
 import { ErrorView } from '../components/ui/ErrorView';
@@ -66,6 +66,11 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.padded}>
+        {story.thumbnail ? (
+          <View style={styles.thumbWrap} accessibilityLabel="Story thumbnail">
+            <Image source={{ uri: story.thumbnail }} style={styles.thumb} resizeMode="cover" />
+          </View>
+        ) : null}
         <Text style={styles.title} accessibilityRole="header">
           {story.title}
         </Text>
@@ -77,17 +82,19 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
         ) : null}
         <Text style={styles.body}>{story.body}</Text>
 
-        {story.linked_recipe ? (
-          <View style={styles.linked}>
-            <Text style={styles.linkedHeading}>Linked recipe</Text>
+        <View style={styles.linked}>
+          <Text style={styles.linkedHeading}>Linked Recipe</Text>
+          {story.linked_recipe ? (
             <LinkedRecipePreviewCard
               onPress={() =>
                 navigation.navigate('RecipeDetail', { id: story.linked_recipe!.id })
               }
               recipe={story.linked_recipe}
             />
-          </View>
-        ) : null}
+          ) : (
+            <Text style={styles.noLinked}>No recipe is linked to the story.</Text>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -103,9 +110,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  thumbWrap: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#f1f5f9',
+    marginBottom: 16,
+  },
+  thumb: { width: '100%', height: '100%' },
   title: { fontSize: 26, fontWeight: '800', color: '#0f172a' },
   meta: { fontSize: 15, color: '#64748b', marginTop: 8 },
   body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: '#334155' },
   linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#e2e8f0' },
   linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: '#0f172a' },
+  noLinked: { fontSize: 15, color: '#64748b', lineHeight: 22 },
 });

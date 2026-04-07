@@ -18,6 +18,7 @@ function normalizeStoryDetail(data: StoryDetail): StoryDetail {
   return {
     ...data,
     linked_recipe: data.linked_recipe ?? null,
+    thumbnail: data.thumbnail ?? null,
   };
 }
 
