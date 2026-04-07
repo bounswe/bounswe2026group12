@@ -2,6 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from apps.recipes.models import Recipe, Region
 from apps.stories.models import Story
 
@@ -156,3 +157,55 @@ class StoryPublishAPITest(APITestCase):
         url = reverse('story-publish', kwargs={'pk': self.story.id})
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class StoryImageAPITest(APITestCase):
+    """Tests for Story image upload (#307)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="imgauthor@example.com", username="imgauthor", password="Pass123!"
+        )
+        self.url = reverse('story-list')
+        # 1x1 red pixel GIF
+        self.test_image = SimpleUploadedFile(
+            name='test.gif',
+            content=b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xff\x00\x00\x00\x00\x00\x21\xf9\x04\x00\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b',
+            content_type='image/gif'
+        )
+
+    def test_create_story_with_image(self):
+        self.client.force_authenticate(user=self.user)
+        data = {
+            'title': 'Image Story',
+            'body': 'A story with a photo',
+            'image': self.test_image,
+        }
+        response = self.client.post(self.url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['image'])
+        self.assertIn('stories/images/', response.data['image'])
+
+    def test_create_story_without_image(self):
+        self.client.force_authenticate(user=self.user)
+        data = {'title': 'No Image Story', 'body': 'Text only'}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNone(response.data['image'])
+
+    def test_update_story_with_image(self):
+        self.client.force_authenticate(user=self.user)
+        # Create story without image first
+        story = Story.objects.create(
+            title='Patch Target', body='Will add image', author=self.user
+        )
+        url = reverse('story-detail', kwargs={'pk': story.id})
+        patch_image = SimpleUploadedFile(
+            name='patch.gif',
+            content=b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xff\x00\x00\x00\x00\x00\x21\xf9\x04\x00\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b',
+            content_type='image/gif'
+        )
+        response = self.client.patch(url, {'image': patch_image}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(response.data['image'])
+        self.assertIn('stories/images/', response.data['image'])
