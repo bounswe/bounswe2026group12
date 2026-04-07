@@ -18,6 +18,20 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function stableNumericId(input: string): string {
+  const s = input.trim().toLowerCase();
+  // Reserve a known author account for demos/tests.
+  if (s === 'demo_chef') return '101';
+
+  // Deterministic hash -> id range [200..999] to avoid colliding with reserved ids.
+  let hash = 5381;
+  for (let i = 0; i < s.length; i += 1) {
+    hash = ((hash << 5) + hash) ^ s.charCodeAt(i); // djb2-xor
+  }
+  const n = 200 + (Math.abs(hash) % 800);
+  return String(n === 101 ? 102 : n);
+}
+
 /** Use password `wrong` or email containing `fail@` to simulate API failure. */
 export async function mockLoginRequest(
   email: string,
@@ -32,7 +46,7 @@ export async function mockLoginRequest(
   return {
     access: `mock-jwt-${Date.now()}`,
     user: {
-      id: '1',
+      id: stableNumericId(local),
       username: local,
       email: email.trim(),
     },
@@ -49,11 +63,12 @@ export async function mockRegisterRequest(
   if (username.trim().toLowerCase() === 'taken') {
     throw new Error('Registration failed');
   }
+  const u = username.trim();
   return {
     access: `mock-jwt-${Date.now()}`,
     user: {
-      id: '2',
-      username: username.trim(),
+      id: stableNumericId(u),
+      username: u,
       email: email.trim(),
     },
   };
