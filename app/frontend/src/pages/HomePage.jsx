@@ -7,6 +7,8 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [region, setRegion] = useState('');
+  const [ingredient, setIngredient] = useState('');
+  const [mealType, setMealType] = useState('');
   const [regions, setRegions] = useState([]);
 
   useEffect(() => {
@@ -15,7 +17,9 @@ export default function HomePage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    navigate(`/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(region)}`);
+    navigate(
+      `/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(region)}&ingredient=${encodeURIComponent(ingredient)}&meal_type=${encodeURIComponent(mealType)}`
+    );
   }
 
   return (
@@ -41,6 +45,28 @@ export default function HomePage() {
         </div>
 
         <div className="home-filters">
+          <div className="form-group home-filter-group">
+            <label htmlFor="ingredient-input">Ingredient</label>
+            <input
+              id="ingredient-input"
+              type="text"
+              value={ingredient}
+              onChange={(e) => setIngredient(e.target.value)}
+              placeholder="e.g. yogurt"
+            />
+          </div>
+
+          <div className="form-group home-filter-group">
+            <label htmlFor="meal-type-input">Meal Type</label>
+            <input
+              id="meal-type-input"
+              type="text"
+              value={mealType}
+              onChange={(e) => setMealType(e.target.value)}
+              placeholder="e.g. soup"
+            />
+          </div>
+
           <div className="form-group home-filter-group">
             <label htmlFor="region-select">Region</label>
             <select

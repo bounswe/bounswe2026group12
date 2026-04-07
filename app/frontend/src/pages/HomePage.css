@@ -63,16 +63,21 @@
 }
 
 .home-filters {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   justify-content: center;
 }
 
 .home-filter-group {
-  flex: 1;
-  max-width: 220px;
   margin-bottom: 0;
   text-align: left;
+}
+
+@media (max-width: 540px) {
+  .home-filters {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sr-only {
