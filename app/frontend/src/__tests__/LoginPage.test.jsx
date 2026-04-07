@@ -55,7 +55,9 @@ describe('LoginPage', () => {
   });
 
   test('shows error message when loginRequest fails', async () => {
-    authService.loginRequest.mockRejectedValueOnce(new Error('Invalid credentials'));
+    const err = new Error();
+    err.response = { data: { non_field_errors: ['Invalid credentials'] } };
+    authService.loginRequest.mockRejectedValueOnce(err);
     renderLogin();
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrong' } });
