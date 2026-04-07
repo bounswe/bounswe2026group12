@@ -59,6 +59,20 @@ export async function apiPostJson<T>(path: string, body: object): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/** PATCH JSON — e.g. `PATCH /api/stories/:id/`. */
+export async function apiPatchJson<T>(path: string, body: object): Promise<T> {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'PATCH',
+    headers: await authHeaders(),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const message = (await readErrorMessage(res)).trim();
+    throw new Error(message || `PATCH ${path} failed (${res.status})`);
+  }
+  return res.json() as Promise<T>;
+}
+
 /**
  * PATCH multipart form (recipe update). Do not set `Content-Type`; RN sets boundary.
  * Same endpoint shape as web `updateRecipe` (`PATCH /api/recipes/:id/`).

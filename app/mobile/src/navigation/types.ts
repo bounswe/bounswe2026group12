@@ -8,6 +8,7 @@ export type RootStackParamList = {
   RecipeEdit: { id: string };
   StoryCreate: undefined;
   StoryDetail: { id: string };
+  StoryEdit: { id: string };
   /** Recipe authoring shell — ingredient/unit selection UI (full form later). */
   RecipeCreate: undefined;
 };

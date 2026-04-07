@@ -8,7 +8,7 @@ export type MockRecipeListItem = {
   id: string;
   title: string;
   region?: string;
-  author?: { id: number; username: string };
+  author?: RecipeDetail['author'];
 };
 
 const DETAILS: Record<string, RecipeDetail> = {

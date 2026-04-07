@@ -21,6 +21,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
 
 export default function RecipeCreateScreen(_props: Props) {
   const { showToast } = useToast();
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [qaEnabled, setQaEnabled] = useState(true);
   const [localVideo, setLocalVideo] = useState<{
@@ -37,12 +38,14 @@ export default function RecipeCreateScreen(_props: Props) {
 
   const errors = useMemo(() => {
     const next: {
+      title?: string;
       description?: string;
       video?: string;
       rows?: Record<string, { amount?: string; ingredient?: string; unit?: string }>;
       rowsTop?: string;
     } = {};
 
+    if (!title.trim()) next.title = 'Title is required.';
     if (!description.trim()) next.description = 'Description is required.';
     if (!localVideo) next.video = 'Please select a video.';
 
@@ -63,9 +66,10 @@ export default function RecipeCreateScreen(_props: Props) {
     }
 
     return next;
-  }, [description, rows, localVideo]);
+  }, [title, description, rows, localVideo]);
 
   const isValid =
+    !errors.title &&
     !errors.description &&
     !errors.video &&
     !errors.rowsTop &&
@@ -126,7 +130,7 @@ export default function RecipeCreateScreen(_props: Props) {
       try {
         // Same as web: JSON create, then multipart PATCH for video/thumbnail.
         const created = await apiPostJson<{ id: number }>('/api/recipes/', {
-          title: 'Untitled recipe',
+          title: title.trim(),
           description: payload.description,
           qa_enabled: payload.qa_enabled,
           is_published: true,
@@ -164,9 +168,25 @@ export default function RecipeCreateScreen(_props: Props) {
             Recipe upload
           </Text>
           <Text style={styles.lead}>
-            Create a recipe with a description, ingredients, and a video. Ingredient and unit
-            pickers load from the same API as the web app.
+            Add a title and description, ingredients, and a video. Ingredient and unit pickers load
+            from the same API as the web app.
           </Text>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Title</Text>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Recipe title"
+              placeholderTextColor="#94a3b8"
+              style={[
+                styles.input,
+                attemptedSubmit && !!errors.title && styles.inputError,
+              ]}
+              accessibilityLabel="Recipe title"
+            />
+            {attemptedSubmit ? <InlineFieldError message={errors.title} /> : null}
+          </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Description</Text>
@@ -226,6 +246,7 @@ export default function RecipeCreateScreen(_props: Props) {
 
           <View style={styles.summary}>
             <Text style={styles.summaryTitle}>Selection preview</Text>
+            <Text style={styles.summaryLine}>Title: {title.trim() || '—'}</Text>
             <Text style={styles.summaryLine}>Ingredients: {rows.length}</Text>
             <Text style={styles.summaryLine}>
               Video: {localVideo ? 'selected' : '—'}
