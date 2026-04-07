@@ -11,6 +11,7 @@ import {
   submitIngredient,
   submitUnit,
 } from '../services/recipeService';
+import { fetchRegions } from '../services/searchService';
 import './RecipeEditPage.css';
 
 function makeRowFromIngredient(ri) {
@@ -49,6 +50,7 @@ export default function RecipeEditPage() {
   const [rows, setRows] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
+  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [errors, setErrors] = useState({});
@@ -56,6 +58,7 @@ export default function RecipeEditPage() {
 
   useEffect(() => {
     let cancelled = false;
+    fetchRegions().then((regs) => { if (!cancelled) setRegions(regs); }).catch(() => {});
     Promise.all([fetchRecipe(id), fetchIngredients(), fetchUnits()])
       .then(([recipeData, ings, uns]) => {
         if (cancelled) return;
@@ -181,11 +184,16 @@ export default function RecipeEditPage() {
 
         <div className="form-group">
           <label htmlFor="region">Region</label>
-          <input
+          <select
             id="region"
             value={region}
             onChange={(e) => setRegion(e.target.value)}
-          />
+          >
+            <option value="">Select a region</option>
+            {regions.map((r) => (
+              <option key={r.regionId} value={r.name}>{r.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">

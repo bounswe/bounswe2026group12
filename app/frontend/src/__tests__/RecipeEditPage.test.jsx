@@ -3,8 +3,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import RecipeEditPage from '../pages/RecipeEditPage';
 import * as recipeService from '../services/recipeService';
+import * as searchService from '../services/searchService';
 
 jest.mock('../services/recipeService');
+jest.mock('../services/searchService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -30,6 +32,10 @@ beforeEach(() => {
   recipeService.fetchRecipe.mockResolvedValue(mockRecipe);
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Phyllo dough' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'g' }]);
+  searchService.fetchRegions.mockResolvedValue([
+    { regionId: 1, name: 'Aegean' },
+    { regionId: 2, name: 'Mediterranean' },
+  ]);
 });
 
 function renderPage(authUser = { id: 3, username: 'eren' }) {
@@ -109,5 +115,19 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
     );
+  });
+
+  it('renders region as a combobox (select element)', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: /region/i })).toBeInTheDocument();
+    });
+  });
+
+  it('pre-populates region dropdown with value from recipe', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: /region/i })).toHaveValue('Aegean');
+    });
   });
 });
