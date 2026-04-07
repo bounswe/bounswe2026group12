@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { shadows, tokens } from '../theme';
 
 /** Matches web `Toast.jsx` (`success` | `error`). */
 export type ToastType = 'success' | 'error';
@@ -98,7 +99,8 @@ function ToastOverlay({
 
   if (!toast) return null;
 
-  const backgroundColor = toast.type === 'success' ? '#16a34a' : '#dc2626';
+  const backgroundColor =
+    toast.type === 'success' ? tokens.colors.success : tokens.colors.error;
 
   return (
     <View
@@ -136,15 +138,13 @@ const styles = StyleSheet.create({
     maxWidth: '92%',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
+    borderRadius: tokens.radius.pill,
+    borderWidth: 2,
+    borderColor: tokens.colors.primaryBorder,
+    ...shadows.md,
   },
   text: {
-    color: '#fff',
+    color: tokens.colors.textOnDark,
     fontSize: 14,
     fontWeight: '500',
   },

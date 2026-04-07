@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { shadows, tokens } from '../../theme';
 
 type Action = { label: string; onPress: () => void; accessibilityLabel?: string };
 
@@ -49,25 +50,32 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 56,
-    backgroundColor: '#f1f5f9',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    backgroundColor: tokens.colors.surface,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.border,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadows.sm,
   },
-  glyph: { fontSize: 22, fontWeight: '900', color: '#475569' },
-  title: { fontSize: 18, fontWeight: '800', color: '#0f172a', textAlign: 'center' },
-  message: { fontSize: 14, color: '#64748b', textAlign: 'center', lineHeight: 20 },
+  glyph: { fontSize: 22, fontWeight: '900', color: tokens.colors.textMuted },
+  title: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    textAlign: 'center',
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  message: { fontSize: 14, color: tokens.colors.textMuted, textAlign: 'center', lineHeight: 20 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 6 },
   action: {
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    backgroundColor: '#fff',
+    borderRadius: tokens.radius.pill,
+    borderWidth: 2,
+    borderColor: tokens.colors.primary,
+    backgroundColor: 'transparent',
   },
   actionPressed: { opacity: 0.9 },
-  actionText: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
+  actionText: { fontSize: 14, fontWeight: '800', color: tokens.colors.primary },
 });
 
