@@ -1,5 +1,8 @@
 from django.db.models.functions import Lower
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
 from .models import Recipe, Ingredient, Unit, Region
 from .serializers import (
@@ -16,9 +19,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related('recipe_ingredients__ingredient', 'recipe_ingredients__unit').all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated, IsAuthorOrReadOnly])
+    def publish(self, request, pk=None):
+        recipe = self.get_object()
+        recipe.is_published = True
+        recipe.save(update_fields=['is_published'])
+        return Response(RecipeSerializer(recipe).data)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated, IsAuthorOrReadOnly])
+    def unpublish(self, request, pk=None):
+        recipe = self.get_object()
+        recipe.is_published = False
+        recipe.save(update_fields=['is_published'])
+        return Response(RecipeSerializer(recipe).data)
 
 class ModeratedLookupViewSet(viewsets.ModelViewSet):
     def get_permissions(self):

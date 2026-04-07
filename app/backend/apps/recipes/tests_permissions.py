@@ -31,8 +31,14 @@ class PermissionTests(APITestCase):
 
     def test_authenticated_can_create_recipe(self):
         self.client.force_authenticate(user=self.user1)
-        data = {"title": "New Recipe", "description": "Desc"}
-        response = self.client.post('/api/recipes/', data)
+        data = {
+            "title": "New Recipe",
+            "description": "Desc",
+            "ingredients_write": [
+                {"ingredient": self.ingredient.id, "amount": "1.00", "unit": self.unit.id}
+            ]
+        }
+        response = self.client.post('/api/recipes/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_author_can_edit_own_recipe(self):
@@ -63,6 +69,70 @@ class PermissionTests(APITestCase):
         data = {"name": "Illegal Rename"}
         response = self.client.patch(f'/api/ingredients/{self.ingredient.id}/', data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_author_can_update_recipe_ingredients(self):
+        self.client.force_authenticate(user=self.user1)
+        data = {
+            "title": "Updated Recipe",
+            "description": "Updated desc",
+            "ingredients_write": [
+                {"ingredient": self.ingredient.id, "amount": "2.50", "unit": self.unit.id}
+            ]
+        }
+        response = self.client.put(f'/api/recipes/{self.recipe.id}/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.recipe.refresh_from_db()
+        self.assertEqual(self.recipe.title, "Updated Recipe")
+        self.assertEqual(self.recipe.recipe_ingredients.count(), 1)
+
+    def test_author_can_patch_title_only(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.patch(f'/api/recipes/{self.recipe.id}/', {"title": "Patched"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.recipe.refresh_from_db()
+        self.assertEqual(self.recipe.title, "Patched")
+
+    def test_non_author_cannot_delete_recipe(self):
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.delete(f'/api/recipes/{self.recipe.id}/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_author_can_delete_own_recipe(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.delete(f'/api/recipes/{self.recipe.id}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_unauthenticated_cannot_edit_recipe(self):
+        response = self.client.patch(f'/api/recipes/{self.recipe.id}/', {"title": "Hacked"})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_qa_enabled_defaults_to_true(self):
+        self.assertTrue(self.recipe.qa_enabled)
+
+    def test_author_can_toggle_qa(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.patch(
+            f'/api/recipes/{self.recipe.id}/',
+            {"qa_enabled": False},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.recipe.refresh_from_db()
+        self.assertFalse(self.recipe.qa_enabled)
+
+    def test_non_author_cannot_toggle_qa(self):
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.patch(
+            f'/api/recipes/{self.recipe.id}/',
+            {"qa_enabled": False},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_qa_enabled_in_response(self):
+        response = self.client.get(f'/api/recipes/{self.recipe.id}/')
+        self.assertIn('qa_enabled', response.data)
+        self.assertTrue(response.data['qa_enabled'])
 
     def test_admin_can_edit_and_approve_ingredient(self):
         self.client.force_authenticate(user=self.admin)
