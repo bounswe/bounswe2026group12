@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 User = get_user_model()
 
@@ -42,3 +44,151 @@ class UserModelTest(TestCase):
         self.assertEqual(admin.role, User.Role.ADMIN)
         self.assertTrue(admin.is_superuser)
         self.assertTrue(admin.is_staff)
+
+
+class RegisterTest(APITestCase):
+    """Tests for POST /api/auth/register/ (#174)."""
+
+    def test_register_success(self):
+        data = {"email": "new@example.com", "username": "newuser", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+        self.assertEqual(response.data['user']['email'], 'new@example.com')
+
+    def test_register_missing_email(self):
+        data = {"username": "nouser", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+
+    def test_register_missing_username(self):
+        data = {"email": "no@example.com", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', response.data)
+
+    def test_register_missing_password(self):
+        data = {"email": "no@example.com", "username": "nopass"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', response.data)
+
+    def test_register_short_password(self):
+        data = {"email": "short@example.com", "username": "shortpw", "password": "abc"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', response.data)
+
+    def test_register_duplicate_email(self):
+        User.objects.create_user(email='dup@example.com', username='dup1', password='StrongPass123!')
+        data = {"email": "dup@example.com", "username": "dup2", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_register_duplicate_username(self):
+        User.objects.create_user(email='one@example.com', username='taken', password='StrongPass123!')
+        data = {"email": "two@example.com", "username": "taken", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_register_invalid_email(self):
+        data = {"email": "notanemail", "username": "badmail", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class LoginTest(APITestCase):
+    """Tests for POST /api/auth/login/ (#174)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='login@example.com', username='loginuser', password='StrongPass123!'
+        )
+
+    def test_login_success(self):
+        data = {"email": "login@example.com", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/login/', data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+
+    def test_login_wrong_password(self):
+        data = {"email": "login@example.com", "password": "WrongPass999!"}
+        response = self.client.post('/api/auth/login/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_nonexistent_email(self):
+        data = {"email": "ghost@example.com", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/login/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_missing_email(self):
+        data = {"password": "StrongPass123!"}
+        response = self.client.post('/api/auth/login/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_missing_password(self):
+        data = {"email": "login@example.com"}
+        response = self.client.post('/api/auth/login/', data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutTest(APITestCase):
+    """Tests for POST /api/auth/logout/ (#174)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='logout@example.com', username='logoutuser', password='StrongPass123!'
+        )
+        response = self.client.post('/api/auth/login/', {"email": "logout@example.com", "password": "StrongPass123!"})
+        self.access = response.data['access']
+        self.refresh = response.data['refresh']
+
+    def test_logout_success(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access}')
+        response = self.client.post('/api/auth/logout/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
+
+    def test_logout_unauthenticated(self):
+        response = self.client.post('/api/auth/logout/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_logout_invalid_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access}')
+        response = self.client.post('/api/auth/logout/', {"refresh": "invalidtoken"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class JWTValidationTest(APITestCase):
+    """Tests for JWT token validation (#174)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='jwt@example.com', username='jwtuser', password='StrongPass123!'
+        )
+        response = self.client.post('/api/auth/login/', {"email": "jwt@example.com", "password": "StrongPass123!"})
+        self.access = response.data['access']
+        self.refresh = response.data['refresh']
+
+    def test_valid_token_accesses_me(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access}')
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['email'], 'jwt@example.com')
+
+    def test_invalid_token_rejected(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken123')
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_no_token_rejected(self):
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_blacklisted_refresh_cannot_be_reused(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access}')
+        self.client.post('/api/auth/logout/', {"refresh": self.refresh})
+        response = self.client.post('/api/auth/logout/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
