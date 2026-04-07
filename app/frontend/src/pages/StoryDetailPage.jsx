@@ -29,7 +29,8 @@ export default function StoryDetailPage() {
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!story) return null;
 
-  const isAuthor = user && story.author && user.id === story.author.id;
+  const storyAuthorId = story.author && typeof story.author === 'object' ? story.author.id : story.author;
+  const isAuthor = user && storyAuthorId != null && user.id === storyAuthorId;
 
   function handleEditClick() {
     setOwnershipError('You can only edit your own stories.');
@@ -66,8 +67,8 @@ export default function StoryDetailPage() {
         <p className="story-ownership-error">{ownershipError}</p>
       )}
 
-      {story.author && (
-        <p className="story-author">By {story.author.username}</p>
+      {(story.author?.username || story.author_username) && (
+        <p className="story-author">By {story.author?.username || story.author_username}</p>
       )}
 
       {story.image && (

@@ -17,7 +17,7 @@ const mockRecipe = {
   id: 1,
   title: 'Baklava',
   description: 'A sweet pastry.',
-  region: 'Aegean',
+  region: 1,
   video: null,
   author: { id: 3, username: 'eren' },
   ingredients: [
@@ -32,7 +32,10 @@ beforeEach(() => {
   recipeService.fetchRecipe.mockResolvedValue(mockRecipe);
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Phyllo dough' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'g' }]);
-  searchService.fetchRegions.mockResolvedValue([{ id: 1, name: 'Aegean' }, { id: 2, name: 'Black Sea' }]);
+  searchService.fetchRegions.mockResolvedValue([
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
+  ]);
 });
 
 function renderPage(authUser = { id: 3, username: 'eren' }) {
@@ -94,7 +97,7 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/recipe updated/i)).toBeInTheDocument()
     );
-    expect(recipeService.updateRecipe).toHaveBeenCalledWith('1', expect.any(FormData));
+    expect(recipeService.updateRecipe).toHaveBeenCalledWith('1', expect.objectContaining({ title: 'Baklava' }));
   });
 
   it('shows error toast when API call fails', async () => {
@@ -135,5 +138,19 @@ describe('RecipeEditPage', () => {
     await waitFor(() => screen.getByRole('button', { name: /save changes/i }));
     fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
     expect(screen.getByText(/at least one ingredient/i)).toBeInTheDocument();
+  });
+
+  it('renders region as a combobox (select element)', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: /region/i })).toBeInTheDocument();
+    });
+  });
+
+  it('pre-populates region dropdown with value from recipe', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: /region/i })).toHaveValue('1');
+    });
   });
 });

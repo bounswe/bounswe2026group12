@@ -16,7 +16,10 @@ beforeEach(() => {
   jest.clearAllMocks();
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Salt' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'cup' }]);
-  searchService.fetchRegions.mockResolvedValue([{ id: 1, name: 'Aegean' }, { id: 2, name: 'Black Sea' }]);
+  searchService.fetchRegions.mockResolvedValue([
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
+  ]);
 });
 
 function renderPage() {
@@ -136,5 +139,20 @@ describe('RecipeCreatePage', () => {
     fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'Some description.' } });
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     expect(screen.getByText(/at least one ingredient/i)).toBeInTheDocument();
+  });
+
+  it('renders region as a combobox (select element)', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: /region/i })).toBeInTheDocument();
+    });
+  });
+
+  it('populates region dropdown from API', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: 'Aegean' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Mediterranean' })).toBeInTheDocument();
+    });
   });
 });

@@ -1,22 +1,35 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { search } from '../services/searchService';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { search, fetchRegions } from '../services/searchService';
 import SearchResultCard from '../components/SearchResultCard';
 import './SearchPage.css';
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const q = searchParams.get('q') || '';
   const region = searchParams.get('region') || '';
   const ingredient = searchParams.get('ingredient') || '';
   const mealType = searchParams.get('meal_type') || '';
   const language = searchParams.get('language') || '';
 
+  const [localQ, setLocalQ] = useState(q);
+  const [localRegion, setLocalRegion] = useState(region);
+  const [regions, setRegions] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const effectiveQ = [q, ingredient].filter(Boolean).join(' ');
+
+  useEffect(() => {
+    fetchRegions().then(setRegions).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    setLocalQ(q);
+    setLocalRegion(region);
+  }, [q, region]);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,11 +60,42 @@ export default function SearchPage() {
     region && { label: `Region: ${region}`, key: 'region' },
   ].filter(Boolean);
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    navigate(`/search?q=${encodeURIComponent(localQ)}&region=${encodeURIComponent(localRegion)}&language=${encodeURIComponent(language)}`);
+  }
+
   return (
     <main className="page-card search-page">
       <h1 className="search-heading">
         {q ? `Search results for "${q}"` : 'Search Results'}
       </h1>
+
+      <form className="search-filter-form" onSubmit={handleSubmit} aria-label="Refine search">
+        <div className="search-filter-row">
+          <label htmlFor="search-refine" className="sr-only">Search</label>
+          <input
+            id="search-refine"
+            type="search"
+            value={localQ}
+            onChange={(e) => setLocalQ(e.target.value)}
+            placeholder="Search recipes and stories…"
+            className="search-filter-input"
+          />
+          <select
+            id="region-filter"
+            value={localRegion}
+            onChange={(e) => setLocalRegion(e.target.value)}
+            className="search-filter-select"
+          >
+            <option value="">All regions</option>
+            {regions.map((r) => (
+              <option key={r.id} value={r.name}>{r.name}</option>
+            ))}
+          </select>
+          <button type="submit" className="btn btn-primary search-filter-btn">Search</button>
+        </div>
+      </form>
 
       {activeFilters.length > 0 && (
         <div className="filter-chips" aria-label="Active filters">

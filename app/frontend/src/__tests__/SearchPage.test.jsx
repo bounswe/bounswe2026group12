@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import SearchPage from '../pages/SearchPage';
 import * as searchService from '../services/searchService';
@@ -21,7 +21,13 @@ function renderPage(search = '?q=&region=&ingredient=&meal_type=') {
   );
 }
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => {
+  jest.clearAllMocks();
+  searchService.fetchRegions.mockResolvedValue([
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
+  ]);
+});
 
 describe('SearchPage', () => {
   it('shows loading state initially', () => {
@@ -76,6 +82,42 @@ describe('SearchPage', () => {
     renderPage();
     await waitFor(() => {
       expect(screen.getByText(/could not load/i)).toBeInTheDocument();
+    });
+  });
+
+  it('renders search input and region filter on the results page', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('searchbox')).toBeInTheDocument();
+      expect(screen.getByRole('combobox')).toBeInTheDocument();
+    });
+  });
+
+  it('populates region dropdown from API on results page', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: 'Aegean' })).toBeInTheDocument();
+    });
+  });
+
+  it('search input is pre-filled with current query', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=baklava&region=&language=');
+    await waitFor(() => {
+      expect(screen.getByRole('searchbox')).toHaveValue('baklava');
+    });
+  });
+
+  it('submitting filter form triggers new search with updated params', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=baklava&region=&language=');
+    await waitFor(() => screen.getByRole('searchbox'));
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'soup' } });
+    fireEvent.submit(screen.getByRole('form', { name: /refine search/i }));
+    await waitFor(() => {
+      expect(searchService.search).toHaveBeenCalledWith('soup', '', '');
     });
   });
 });

@@ -59,7 +59,7 @@ export default function RecipeEditPage() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchRegions().then((data) => { if (!cancelled) setRegions(data); }).catch(() => {});
+    fetchRegions().then((regs) => { if (!cancelled) setRegions(regs); }).catch(() => {});
     Promise.all([fetchRecipe(id), fetchIngredients(), fetchUnits()])
       .then(([recipeData, ings, uns]) => {
         if (cancelled) return;
@@ -132,24 +132,30 @@ export default function RecipeEditPage() {
     e.preventDefault();
     if (!validate()) return;
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('region', region);
-    formData.append('qa_enabled', qaEnabled);
-    formData.append('is_published', 'true');
-    if (video) formData.append('video', video);
-    if (thumbnail) formData.append('thumbnail', thumbnail);
-
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
-    validRows.forEach((r, i) => {
-      formData.append(`ingredients[${i}][ingredient]`, r.ingredientId);
-      formData.append(`ingredients[${i}][amount]`, r.amount);
-      formData.append(`ingredients[${i}][unit]`, r.unitId);
-    });
+    const payload = {
+      title,
+      description,
+      region: region ? Number(region) : null,
+      qa_enabled: qaEnabled,
+      is_published: true,
+      ingredients_write: validRows.map((r) => ({
+        ingredient: r.ingredientId,
+        amount: r.amount,
+        unit: r.unitId,
+      })),
+    };
 
     try {
-      await updateRecipe(id, formData);
+      await updateRecipe(id, payload);
+
+      if (video || thumbnail) {
+        const mediaData = new FormData();
+        if (video) mediaData.append('video', video);
+        if (thumbnail) mediaData.append('thumbnail', thumbnail);
+        await updateRecipe(id, mediaData);
+      }
+
       showToast('Recipe updated!', 'success');
       setTimeout(() => navigate(`/recipes/${id}`), 1500);
     } catch {
@@ -196,9 +202,9 @@ export default function RecipeEditPage() {
             value={region}
             onChange={(e) => setRegion(e.target.value)}
           >
-            <option value="">Select a region…</option>
+            <option value="">Select a region</option>
             {regions.map((r) => (
-              <option key={r.id} value={r.name}>{r.name}</option>
+              <option key={r.id} value={r.id}>{r.name}</option>
             ))}
           </select>
         </div>

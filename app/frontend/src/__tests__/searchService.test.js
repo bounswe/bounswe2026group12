@@ -24,11 +24,18 @@ describe('search', () => {
     });
   });
 
-  it('returns the data array from the response', async () => {
-    const results = [{ type: 'recipe', id: 1, title: 'Baklava' }];
-    apiClient.get.mockResolvedValue({ data: results });
+  it('normalizes and merges recipes and stories from the response', async () => {
+    const apiResponse = {
+      recipes: [{ result_type: 'recipe', id: 1, title: 'Baklava', region_tag: 'Aegean', image: '/img.jpg' }],
+      stories: [{ result_type: 'story', id: 2, title: 'Kitchen tales', region_tag: null }],
+      total_count: 2,
+    };
+    apiClient.get.mockResolvedValue({ data: apiResponse });
     const result = await search('baklava', '', '');
-    expect(result).toEqual(results);
+    expect(result).toEqual([
+      { type: 'recipe', id: 1, title: 'Baklava', region: 'Aegean', thumbnail: '/img.jpg' },
+      { type: 'story', id: 2, title: 'Kitchen tales', region: null, thumbnail: null },
+    ]);
   });
 
   it('propagates API errors', async () => {
@@ -39,10 +46,10 @@ describe('search', () => {
 
 describe('fetchRegions', () => {
   it('calls GET /api/regions/ and returns data', async () => {
-    apiClient.get.mockResolvedValue({ data: [{ regionId: 1, name: 'Aegean' }] });
+    apiClient.get.mockResolvedValue({ data: [{ id: 1, name: 'Aegean' }] });
     const result = await fetchRegions();
     expect(apiClient.get).toHaveBeenCalledWith('/api/regions/');
-    expect(result).toEqual([{ regionId: 1, name: 'Aegean' }]);
+    expect(result).toEqual([{ id: 1, name: 'Aegean' }]);
   });
 
   it('propagates API errors', async () => {
