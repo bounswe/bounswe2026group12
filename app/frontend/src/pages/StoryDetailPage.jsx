@@ -25,8 +25,8 @@ export default function StoryDetailPage() {
   return (
     <main className="page-card story-detail">
       <h1 className="story-title">{story.title}</h1>
-      {story.author && (
-        <p className="story-author">By {story.author.username}</p>
+      {story.author_username && (
+        <p className="story-author">By {story.author_username}</p>
       )}
       <p className="story-body">{story.body}</p>
 
