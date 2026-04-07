@@ -14,7 +14,24 @@ class IngredientLookupSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ['id', 'name']
+
+class NamedSubmissionSerializer(serializers.ModelSerializer):
+    duplicate_message = 'This name already exists.'
+
+    def validate_name(self, value):
+        cleaned_value = value.strip()
+        if not cleaned_value:
+            raise serializers.ValidationError('This field may not be blank.')
+
+        duplicate_queryset = self.Meta.model.objects.filter(name__iexact=cleaned_value)
+        if self.instance is not None:
+            duplicate_queryset = duplicate_queryset.exclude(pk=self.instance.pk)
+
+        if duplicate_queryset.exists():
+            raise serializers.ValidationError(self.duplicate_message)
+
+        return cleaned_value
 
     def validate(self, data):
         request = self.context.get('request')
@@ -22,6 +39,9 @@ class IngredientSerializer(serializers.ModelSerializer):
             if not request or not request.user or not request.user.is_staff:
                 data.pop('is_approved')
         return data
+
+class IngredientSerializer(NamedSubmissionSerializer):
+    duplicate_message = 'An ingredient with this name already exists.'
 
 class UnitLookupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,15 +50,20 @@ class UnitLookupSerializer(serializers.ModelSerializer):
 
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Unit
+        model = Ingredient
         fields = '__all__'
 
-    def validate(self, data):
-        request = self.context.get('request')
-        if 'is_approved' in data:
-            if not request or not request.user or not request.user.is_staff:
-                data.pop('is_approved')
-        return data
+class UnitLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ['id', 'name']
+
+class UnitSerializer(NamedSubmissionSerializer):
+    duplicate_message = 'A unit with this name already exists.'
+
+    class Meta:
+        model = Unit
+        fields = '__all__'
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
