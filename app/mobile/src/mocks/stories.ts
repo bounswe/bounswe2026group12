@@ -31,6 +31,10 @@ export function getMockStoryById(id: string): MockStory | null {
   return STORIES[id] ?? null;
 }
 
+export function listMockStories(): MockStory[] {
+  return Object.values(STORIES);
+}
+
 /** In-memory create for StoryCreate UI when API is unavailable. */
 export function mockCreateStory(input: {
   title: string;
