@@ -1,5 +1,6 @@
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from apps.common.permissions import IsAuthorOrReadOnly
 from .models import Story
@@ -10,6 +11,7 @@ class StoryViewSet(viewsets.ModelViewSet):
     queryset = Story.objects.select_related('author', 'linked_recipe').all()
     serializer_class = StorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
         qs = super().get_queryset()
