@@ -1,18 +1,18 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import type { MockSearchItem } from '../../mocks/searchResults';
+import type { SearchResultItem } from '../../services/searchService';
 import { shadows, tokens } from '../../theme';
 
 type Props = {
-  item: MockSearchItem;
+  item: SearchResultItem;
   onPress: () => void;
 };
 
-function kindLabel(kind: MockSearchItem['kind']) {
+function kindLabel(kind: SearchResultItem['kind']) {
   return kind === 'recipe' ? 'Recipe' : 'Story';
 }
 
-function thumbColor(kind: MockSearchItem['kind']) {
+function thumbColor(kind: SearchResultItem['kind']) {
   return kind === 'recipe' ? tokens.colors.surfaceDark : tokens.colors.accentGreen;
 }
 

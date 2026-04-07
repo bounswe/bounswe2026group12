@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { validateLoginForm } from '../lib/authValidation';
 import type { RootStackParamList } from '../navigation/types';
-import { mockLoginRequest } from '../services/mockAuthService';
+import { loginRequest } from '../services/authService';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }: Props) {
     setApiError('');
     setSubmitting(true);
     try {
-      const data = await mockLoginRequest(email, password);
+      const data = await loginRequest(email, password);
       await login(data.user, data.access);
       navigation.dispatch(
         CommonActions.reset({

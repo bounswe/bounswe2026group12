@@ -14,7 +14,7 @@ import {
 import { recipeFormStyles as styles } from '../components/recipe/recipeFormStyles';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
-import { mockSubmitRecipeCreate } from '../services/mockRecipeCreate';
+import { apiPatchFormData, apiPostJson } from '../services/httpClient';
 import { tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
@@ -124,7 +124,28 @@ export default function RecipeCreateScreen(_props: Props) {
 
     void (async () => {
       try {
-        await mockSubmitRecipeCreate(payload);
+        // Same as web: JSON create, then multipart PATCH for video/thumbnail.
+        const created = await apiPostJson<{ id: number }>('/api/recipes/', {
+          title: 'Untitled recipe',
+          description: payload.description,
+          qa_enabled: payload.qa_enabled,
+          is_published: true,
+          ingredients_write: payload.ingredients.map((x) => ({
+            amount: x.amount,
+            ingredient: x.ingredient?.id ?? x.ingredient,
+            unit: x.unit?.id ?? x.unit,
+          })),
+        });
+        if (payload.video) {
+          const fd = new FormData();
+          // React Native file upload shape (not a web Blob).
+          fd.append('video', {
+            uri: payload.video.uri,
+            name: payload.video.fileName ?? 'recipe-video.mp4',
+            type: payload.video.mimeType ?? 'video/mp4',
+          } as any);
+          await apiPatchFormData(`/api/recipes/${created.id}/`, fd);
+        }
         showToast('Recipe published!', 'success');
       } catch {
         showToast('Failed to publish recipe. Please try again.', 'error');
@@ -144,8 +165,7 @@ export default function RecipeCreateScreen(_props: Props) {
           </Text>
           <Text style={styles.lead}>
             Create a recipe with a description, ingredients, and a video. Ingredient and unit
-            pickers use the same API paths as the web app when available; otherwise mock data
-            is used.
+            pickers load from the same API as the web app.
           </Text>
 
           <View style={styles.section}>
@@ -201,7 +221,7 @@ export default function RecipeCreateScreen(_props: Props) {
             accessibilityRole="button"
             accessibilityLabel="Submit recipe"
           >
-            <Text style={styles.primaryButtonText}>Submit (mock)</Text>
+            <Text style={styles.primaryButtonText}>Submit</Text>
           </Pressable>
 
           <View style={styles.summary}>

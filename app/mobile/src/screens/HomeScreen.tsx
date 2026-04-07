@@ -1,10 +1,10 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { shadows, tokens } from '../theme';
-import { listMockRecipes } from '../mocks/recipes';
-import { listMockStories } from '../mocks/stories';
+import { fetchRecipesList } from '../services/recipeService';
+import { apiGetJson } from '../services/httpClient';
 import type { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -12,8 +12,31 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export default function HomeScreen({ navigation }: Props) {
   const [query, setQuery] = useState('');
 
-  const stories = useMemo(() => listMockStories(), []);
-  const recipes = useMemo(() => listMockRecipes(), []);
+  const [stories, setStories] = useState<any[]>([]);
+  const [recipes, setRecipes] = useState<any[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [storyData, recipeData] = await Promise.all([
+          apiGetJson<any[]>('/api/stories/'),
+          fetchRecipesList(),
+        ]);
+        if (cancelled) return;
+        setStories(Array.isArray(storyData) ? storyData : []);
+        setRecipes(Array.isArray(recipeData) ? recipeData : []);
+      } catch {
+        if (!cancelled) {
+          setStories([]);
+          setRecipes([]);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -42,17 +65,16 @@ export default function HomeScreen({ navigation }: Props) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Stories</Text>
-            <Text style={styles.sectionHint}>Mock feed</Text>
           </View>
           <FlatList
             data={stories}
             horizontal
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.hList}
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => navigation.navigate('StoryDetail', { id: item.id })}
+                onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
                 style={({ pressed }) => [styles.storyCard, pressed && styles.pressed]}
                 accessibilityRole="button"
                 accessibilityLabel={`Open story ${item.title}`}
@@ -80,17 +102,16 @@ export default function HomeScreen({ navigation }: Props) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Recipes</Text>
-            <Text style={styles.sectionHint}>Mock feed</Text>
           </View>
           <FlatList
             data={recipes}
             horizontal
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.hList}
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => navigation.navigate('RecipeDetail', { id: item.id })}
+                onPress={() => navigation.navigate('RecipeDetail', { id: String(item.id) })}
                 style={({ pressed }) => [styles.recipeCard, pressed && styles.pressed]}
                 accessibilityRole="button"
                 accessibilityLabel={`Open recipe ${item.title}`}
