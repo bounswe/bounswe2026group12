@@ -32,6 +32,7 @@ class Recipe(models.Model):
     video = models.FileField(upload_to='recipes/videos/', null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='recipes')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
+    qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

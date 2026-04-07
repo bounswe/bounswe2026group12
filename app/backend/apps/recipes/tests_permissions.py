@@ -106,6 +106,34 @@ class PermissionTests(APITestCase):
         response = self.client.patch(f'/api/recipes/{self.recipe.id}/', {"title": "Hacked"})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_qa_enabled_defaults_to_true(self):
+        self.assertTrue(self.recipe.qa_enabled)
+
+    def test_author_can_toggle_qa(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.patch(
+            f'/api/recipes/{self.recipe.id}/',
+            {"qa_enabled": False},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.recipe.refresh_from_db()
+        self.assertFalse(self.recipe.qa_enabled)
+
+    def test_non_author_cannot_toggle_qa(self):
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.patch(
+            f'/api/recipes/{self.recipe.id}/',
+            {"qa_enabled": False},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_qa_enabled_in_response(self):
+        response = self.client.get(f'/api/recipes/{self.recipe.id}/')
+        self.assertIn('qa_enabled', response.data)
+        self.assertTrue(response.data['qa_enabled'])
+
     def test_admin_can_edit_and_approve_ingredient(self):
         self.client.force_authenticate(user=self.admin)
         data = {"is_approved": True}
