@@ -36,9 +36,13 @@ beforeEach(() => {
 });
 
 describe('StoryDetailPage', () => {
-  it('shows loading state initially', () => {
+  it('shows loading state initially', async () => {
+    let resolve;
+    storyService.fetchStory.mockReturnValue(new Promise(r => { resolve = r; }));
     renderPage();
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    resolve(mockStory);
+    await waitFor(() => screen.getByText("Grandma's Sunday Kitchen"));
   });
 
   it('displays story title after load', async () => {

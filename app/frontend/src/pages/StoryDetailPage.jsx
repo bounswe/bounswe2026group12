@@ -21,6 +21,10 @@ export default function StoryDetailPage() {
     return () => { cancelled = true; };
   }, [id]);
 
+  useEffect(() => {
+    setOwnershipError('');
+  }, [story?.id]);
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!story) return null;
