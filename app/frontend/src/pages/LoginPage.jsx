@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { loginRequest } from '../services/authService';
+import './LoginPage.css';
 
 export default function LoginPage() {
   const { login } = useContext(AuthContext);
@@ -37,10 +38,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>Log In</h1>
+    <main className="page-card auth-page">
+      <h1 className="auth-heading">Log In</h1>
       <form onSubmit={handleSubmit} noValidate>
-        <div>
+        <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
             id="email"
@@ -48,9 +49,9 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {errors.email && <span>{errors.email}</span>}
+          {errors.email && <span className="field-error">{errors.email}</span>}
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
             id="password"
@@ -58,12 +59,12 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {errors.password && <span>{errors.password}</span>}
+          {errors.password && <span className="field-error">{errors.password}</span>}
         </div>
-        {apiError && <p>{apiError}</p>}
-        <button type="submit">Log In</button>
+        {apiError && <p className="api-error">{apiError}</p>}
+        <button type="submit" className="btn btn-primary auth-submit">Log In</button>
       </form>
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
+      <p className="auth-footer">Don't have an account? <Link to="/register">Register</Link></p>
     </main>
   );
 }

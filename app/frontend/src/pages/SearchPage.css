@@ -1,0 +1,30 @@
+.search-page {
+  min-height: 400px;
+}
+
+.search-heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--color-text);
+}
+
+.search-status {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  padding: 2rem 0;
+}
+
+.search-error {
+  color: var(--color-error);
+}
+
+.search-empty {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}

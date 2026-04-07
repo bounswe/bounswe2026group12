@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createStory } from '../services/storyService';
 import { fetchRecipes } from '../services/recipeService';
 import Toast from '../components/Toast';
+import './StoryCreatePage.css';
 
 export default function StoryCreatePage() {
   const navigate = useNavigate();
@@ -61,10 +62,10 @@ export default function StoryCreatePage() {
     : allRecipes;
 
   return (
-    <main>
-      <h1>Create Story</h1>
+    <main className="page-card story-form">
+      <h1 className="story-form-heading">Create Story</h1>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label htmlFor="story-title">Title</label>
           <input
             id="story-title"
@@ -74,7 +75,7 @@ export default function StoryCreatePage() {
           {errors.title && <p className="field-error">{errors.title}</p>}
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="story-body">Body</label>
           <textarea
             id="story-body"
@@ -85,7 +86,7 @@ export default function StoryCreatePage() {
           {errors.body && <p className="field-error">{errors.body}</p>}
         </div>
 
-        <div>
+        <div className="form-group">
           <label htmlFor="story-language">Language</label>
           <select
             id="story-language"
@@ -97,36 +98,51 @@ export default function StoryCreatePage() {
           </select>
         </div>
 
-        <section>
-          <h2>Link a Recipe (optional)</h2>
+        <section className="recipe-link-section">
+          <h2>Link a Recipe <span className="optional-tag">(optional)</span></h2>
           {linkedRecipe && (
-            <p>Linked: {linkedRecipe.title}</p>
+            <div className="linked-badge">
+              <span>Linked: {linkedRecipe.title}</span>
+              <button
+                type="button"
+                className="btn btn-sm btn-danger"
+                onClick={() => setLinkedRecipe(null)}
+              >
+                Remove
+              </button>
+            </div>
           )}
           <input
             type="text"
             placeholder="Search recipes…"
             value={recipeSearch}
             onChange={(e) => setRecipeSearch(e.target.value)}
+            className="recipe-search-input"
           />
-          <ul>
-            {filteredRecipes.map((r) => (
-              <li key={r.id}>
-                {r.title}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLinkedRecipe(r);
-                    setRecipeSearch('');
-                  }}
-                >
-                  Select
-                </button>
-              </li>
-            ))}
-          </ul>
+          {filteredRecipes.length > 0 && (
+            <ul className="recipe-link-list">
+              {filteredRecipes.map((r) => (
+                <li key={r.id} className="recipe-link-item">
+                  <span>{r.title}</span>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => {
+                      setLinkedRecipe(r);
+                      setRecipeSearch('');
+                    }}
+                  >
+                    Select
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
-        <button type="submit">Publish</button>
+        <div className="story-form-actions">
+          <button type="submit" className="btn btn-primary">Publish Story</button>
+        </div>
       </form>
 
       <Toast message={toast.message} type={toast.type} />

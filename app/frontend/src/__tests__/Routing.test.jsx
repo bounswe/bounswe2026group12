@@ -16,7 +16,7 @@ function renderApp(initialPath, token = null) {
 describe('Public routes (unauthenticated)', () => {
   test('/ renders Home page', () => {
     renderApp('/');
-    expect(screen.getByRole('heading', { name: /home/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /discover/i })).toBeInTheDocument();
   });
 
   test('/login renders Login page', () => {

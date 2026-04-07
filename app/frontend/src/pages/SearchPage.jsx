@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { search } from '../services/searchService';
 import SearchResultCard from '../components/SearchResultCard';
+import './SearchPage.css';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -25,15 +26,17 @@ export default function SearchPage() {
   }, [q, region, language]);
 
   return (
-    <main>
-      <h1>Search</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+    <main className="page-card search-page">
+      <h1 className="search-heading">
+        {q ? `Search results for "${q}"` : 'Search Results'}
+      </h1>
+      {loading && <p className="search-status">Loading…</p>}
+      {error && <p className="search-status search-error">{error}</p>}
       {!loading && !error && results.length === 0 && (
-        <p>No results found. Try a different keyword or region.</p>
+        <p className="search-status search-empty">No results found. Try a different keyword or region.</p>
       )}
       {!loading && !error && results.length > 0 && (
-        <section>
+        <section className="results-grid">
           {results.map((result) => (
             <SearchResultCard key={`${result.type}-${result.id}`} result={result} />
           ))}

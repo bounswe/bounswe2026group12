@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecipe } from '../services/recipeService';
+import './RecipeDetailPage.css';
 
 export default function RecipeDetailPage() {
   const { id } = useParams();
@@ -19,42 +20,46 @@ export default function RecipeDetailPage() {
     return () => { cancelled = true; };
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="page-status">Loading…</p>;
+  if (error) return <p className="page-status page-error">{error}</p>;
   if (!recipe) return null;
 
   const isAuthor = user && recipe.author && user.id === recipe.author.id;
 
   return (
-    <main>
-      <h1>{recipe.title}</h1>
-      <p>{recipe.region}</p>
-
-      {isAuthor && (
-        <Link to={`/recipes/${recipe.id}/edit`}>Edit</Link>
-      )}
+    <main className="page-card recipe-detail">
+      <div className="recipe-detail-header">
+        <div>
+          {recipe.region && <span className="recipe-region-tag">{recipe.region}</span>}
+          <h1 className="recipe-title">{recipe.title}</h1>
+        </div>
+        {isAuthor && (
+          <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">
+            Edit
+          </Link>
+        )}
+      </div>
 
       {recipe.video && (
         <video
           data-testid="recipe-video"
           controls
           src={recipe.video}
-          style={{ maxWidth: '100%', marginBottom: '16px' }}
+          className="recipe-video"
         />
       )}
 
-      <p>{recipe.description}</p>
+      {recipe.description && (
+        <p className="recipe-description">{recipe.description}</p>
+      )}
 
-      <section>
+      <section className="recipe-ingredients">
         <h2>Ingredients</h2>
-        <ul>
+        <ul className="ingredients-list">
           {recipe.ingredients.map((ri) => (
-            <li key={ri.ingredient.id}>
-              <span>{ri.ingredient.name}</span>
-              {' — '}
-              <span>{ri.amount}</span>
-              {' '}
-              <span>{ri.unit.name}</span>
+            <li key={ri.ingredient.id} className="ingredient-item">
+              <span className="ingredient-name">{ri.ingredient.name}</span>
+              <span className="ingredient-amount">{ri.amount} {ri.unit.name}</span>
             </li>
           ))}
         </ul>

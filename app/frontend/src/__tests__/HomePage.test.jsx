@@ -53,13 +53,13 @@ describe('HomePage', () => {
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/search?q=baklava&region=Aegean&language='
+      '/search?q=baklava&region=Aegean'
     );
   });
 
   it('navigates with empty params when no input is given', () => {
     renderPage();
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
-    expect(mockNavigate).toHaveBeenCalledWith('/search?q=&region=&language=');
+    expect(mockNavigate).toHaveBeenCalledWith('/search?q=&region=');
   });
 });

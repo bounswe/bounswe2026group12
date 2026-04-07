@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { registerRequest } from '../services/authService';
+import './RegisterPage.css';
 
 export default function RegisterPage() {
   const { login } = useContext(AuthContext);
@@ -39,10 +40,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <main>
-      <h1>Register</h1>
+    <main className="page-card auth-page">
+      <h1 className="auth-heading">Register</h1>
       <form onSubmit={handleSubmit} noValidate>
-        <div>
+        <div className="form-group">
           <label htmlFor="username">Username</label>
           <input
             id="username"
@@ -50,9 +51,9 @@ export default function RegisterPage() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          {errors.username && <span>{errors.username}</span>}
+          {errors.username && <span className="field-error">{errors.username}</span>}
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
             id="email"
@@ -60,9 +61,9 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {errors.email && <span>{errors.email}</span>}
+          {errors.email && <span className="field-error">{errors.email}</span>}
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
             id="password"
@@ -70,12 +71,12 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {errors.password && <span>{errors.password}</span>}
+          {errors.password && <span className="field-error">{errors.password}</span>}
         </div>
-        {apiError && <p>{apiError}</p>}
-        <button type="submit">Register</button>
+        {apiError && <p className="api-error">{apiError}</p>}
+        <button type="submit" className="btn btn-primary auth-submit">Register</button>
       </form>
-      <p>Already have an account? <Link to="/login">Log In</Link></p>
+      <p className="auth-footer">Already have an account? <Link to="/login">Log In</Link></p>
     </main>
   );
 }
