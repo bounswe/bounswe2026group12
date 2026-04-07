@@ -1,39 +1,94 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as ImagePicker from 'expo-image-picker';
-import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { recipeFormStyles as form } from '../components/recipe/recipeFormStyles';
 import { RecipeLinkPicker, type RecipeLink } from '../components/story/RecipeLinkPicker';
+import { ErrorView } from '../components/ui/ErrorView';
+import { LoadingView } from '../components/ui/LoadingView';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipesList } from '../services/recipeService';
-import { apiPostJson } from '../services/httpClient';
 import type { StoryLanguage } from '../services/mockStoryService';
+import { fetchStoryById, updateStoryById } from '../services/storyService';
 import { tokens } from '../theme';
 import { parseAuthorId } from '../utils/parseAuthorId';
+import { isStoryAuthor } from '../utils/storyAuthor';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'StoryCreate'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'StoryEdit'>;
 
 const LANGS: { label: string; value: StoryLanguage }[] = [
   { label: 'English', value: 'en' },
   { label: 'Turkish', value: 'tr' },
 ];
 
-export default function StoryCreateScreen({ navigation }: Props) {
-  const { user } = useAuth();
+export default function StoryEditScreen({ route, navigation }: Props) {
+  const { id } = route.params;
+  const { user, isAuthenticated, isReady } = useAuth();
   const { showToast } = useToast();
+
+  const [loadState, setLoadState] = useState<'loading' | 'error' | 'ready' | 'forbidden'>('loading');
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
 
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
-  const [thumbnailUri, setThumbnailUri] = useState<string | null>(null);
+  const [published, setPublished] = useState(true);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const applyStory = useCallback((story: Awaited<ReturnType<typeof fetchStoryById>>) => {
+    setTitle(story.title ?? '');
+    setBody(story.body ?? '');
+    setLanguage((story.language as StoryLanguage) || 'en');
+    if (story.linked_recipe?.id) {
+      setLinkedRecipe({
+        id: story.linked_recipe.id,
+        title: story.linked_recipe.title,
+        region: story.linked_recipe.region,
+      });
+    } else {
+      setLinkedRecipe(null);
+    }
+    setPublished(story.is_published !== false);
+  }, []);
+
+  useEffect(() => {
+    if (!isReady) return;
+    if (!isAuthenticated) {
+      setLoadState('forbidden');
+      setLoadError('Please sign in to edit stories.');
+      return;
+    }
+    let cancelled = false;
+    setLoadState('loading');
+    setLoadError(null);
+    fetchStoryById(id)
+      .then((data) => {
+        if (cancelled) return;
+        if (!isStoryAuthor(user, data)) {
+          setLoadState('forbidden');
+          setLoadError('You can only edit your own stories.');
+          return;
+        }
+        applyStory(data);
+        setLoadState('ready');
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadError('Could not load story.');
+          setLoadState('error');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, reloadToken, user, applyStory, isReady, isAuthenticated]);
 
   const errors = useMemo(() => {
     const e: { title?: string; body?: string } = {};
@@ -44,25 +99,6 @@ export default function StoryCreateScreen({ navigation }: Props) {
 
   const isValid = !errors.title && !errors.body;
 
-  async function pickThumbnail() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      showToast('Media library permission is needed to pick an image.', 'error');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (result.canceled) return;
-
-    const asset = result.assets?.[0];
-    if (!asset?.uri) return;
-    setThumbnailUri(asset.uri);
-  }
-
   function submit() {
     setAttemptedSubmit(true);
     if (!isValid || submitting) return;
@@ -70,22 +106,84 @@ export default function StoryCreateScreen({ navigation }: Props) {
     setSubmitting(true);
     void (async () => {
       try {
-        const created = await apiPostJson<{ id: string }>('/api/stories/', {
+        await updateStoryById(id, {
           title: title.trim(),
           body: body.trim(),
           language,
-          is_published: true,
-          linked_recipe: linkedRecipe ? linkedRecipe.id : null,
-          // thumbnail upload TODO (needs multipart)
+          linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
+          is_published: published,
         });
-        showToast('Story published!', 'success');
-        navigation.navigate('StoryDetail', { id: created.id });
+        showToast('Story updated!', 'success');
+        navigation.navigate('StoryDetail', { id });
       } catch {
-        showToast('Failed to publish story. Please try again.', 'error');
+        showToast('Failed to save changes. Please try again.', 'error');
       } finally {
         setSubmitting(false);
       }
     })();
+  }
+
+  if (!isReady || loadState === 'loading') {
+    return (
+      <SafeAreaView style={form.safe} edges={['top', 'left', 'right']}>
+        <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+          <LoadingView message="Loading story…" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (loadState === 'error') {
+    return (
+      <SafeAreaView style={form.safe} edges={['top', 'left', 'right']}>
+        <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+          <ErrorView
+            message={loadError ?? 'Could not load story.'}
+            onRetry={() => setReloadToken((t) => t + 1)}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (loadState === 'forbidden') {
+    return (
+      <SafeAreaView style={form.safe} edges={['top', 'left', 'right']}>
+        <View style={{ flex: 1, padding: 20, justifyContent: 'center' }}>
+          <Text style={{ fontSize: 16, color: '#b91c1c', textAlign: 'center' }}>
+            {loadError ?? 'You are not authorized to edit this story.'}
+          </Text>
+          {!isAuthenticated ? (
+            <View style={{ marginTop: 14, alignItems: 'center', gap: 10 }}>
+              <Pressable
+                onPress={() => navigation.navigate('Login')}
+                accessibilityRole="button"
+                accessibilityLabel="Go to Log In"
+                style={({ pressed }) => [
+                  form.primaryButton,
+                  pressed && form.buttonPressed,
+                  { width: '100%', maxWidth: 340 },
+                ]}
+              >
+                <Text style={form.primaryButtonText}>Log In</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => navigation.navigate('Register')}
+                accessibilityRole="button"
+                accessibilityLabel="Go to Register"
+                style={({ pressed }) => [
+                  form.secondaryButton,
+                  pressed && form.buttonPressed,
+                  { width: '100%', maxWidth: 340 },
+                ]}
+              >
+                <Text style={form.secondaryButtonText}>Register</Text>
+              </Pressable>
+            </View>
+          ) : null}
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -93,11 +191,9 @@ export default function StoryCreateScreen({ navigation }: Props) {
       <ScrollView contentContainerStyle={form.scroll} keyboardShouldPersistTaps="handled">
         <View style={form.card}>
           <Text style={form.heading} accessibilityRole="header">
-            Create story
+            Edit story
           </Text>
-          <Text style={form.lead}>
-            Write a story and optionally link one of your recipes.
-          </Text>
+          <Text style={form.lead}>Update your story and linked recipe. Changes are saved to the server.</Text>
 
           <View style={form.section}>
             <Text style={form.sectionTitle}>Title</Text>
@@ -150,28 +246,15 @@ export default function StoryCreateScreen({ navigation }: Props) {
             </View>
           </View>
 
-          <View style={form.section}>
-            <Text style={form.sectionTitle}>Thumbnail (optional)</Text>
-            <Pressable
-              onPress={() => void pickThumbnail()}
-              style={({ pressed }) => [styles.thumbButton, pressed && { opacity: 0.9 }]}
-              accessibilityRole="button"
-              accessibilityLabel="Pick story thumbnail"
-            >
-              <Text style={styles.thumbButtonText}>
-                {thumbnailUri ? 'Change thumbnail' : 'Upload thumbnail'}
-              </Text>
-            </Pressable>
-            {thumbnailUri ? (
-              <Pressable
-                onPress={() => setThumbnailUri(null)}
-                style={({ pressed }) => [styles.thumbClear, pressed && { opacity: 0.9 }]}
-                accessibilityRole="button"
-                accessibilityLabel="Remove thumbnail"
-              >
-                <Text style={styles.thumbClearText}>Remove thumbnail</Text>
-              </Pressable>
-            ) : null}
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
+            <Switch
+              value={published}
+              onValueChange={setPublished}
+              accessibilityLabel="Published visible to readers"
+            />
+            <Text style={{ flex: 1, fontSize: 15, color: tokens.colors.textMuted, marginLeft: 12 }}>
+              Published
+            </Text>
           </View>
 
           <View style={form.section}>
@@ -200,9 +283,9 @@ export default function StoryCreateScreen({ navigation }: Props) {
               submitting && { opacity: 0.7 },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Publish story"
+            accessibilityLabel="Save story"
           >
-            <Text style={form.primaryButtonText}>{submitting ? 'Publishing…' : 'Publish'}</Text>
+            <Text style={form.primaryButtonText}>{submitting ? 'Saving…' : 'Save changes'}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -223,17 +306,4 @@ const styles = StyleSheet.create({
   langPillActive: { backgroundColor: tokens.colors.primary, borderColor: tokens.colors.primary },
   langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.primary },
   langTextActive: { color: tokens.colors.surface },
-  thumbButton: {
-    borderWidth: 2,
-    borderColor: tokens.colors.primary,
-    borderRadius: 999,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    alignSelf: 'flex-start',
-    backgroundColor: 'transparent',
-  },
-  thumbButtonText: { fontSize: 15, fontWeight: '800', color: tokens.colors.primary },
-  thumbClear: { marginTop: 10, alignSelf: 'flex-start' },
-  thumbClearText: { fontSize: 14, fontWeight: '700', color: tokens.colors.error },
 });
-

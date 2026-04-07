@@ -79,8 +79,13 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           {recipe.title}
         </Text>
         {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
-        {recipe.author?.username ? (
-          <Text style={styles.author}>By {recipe.author.username}</Text>
+        {recipe.author ? (
+          <Text style={styles.author}>
+            By{' '}
+            {typeof recipe.author === 'object' && recipe.author.username
+              ? recipe.author.username
+              : 'Author'}
+          </Text>
         ) : null}
 
         {typeof recipe.qa_enabled === 'boolean' ? (

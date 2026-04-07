@@ -1,19 +1,22 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinkedRecipePreviewCard } from '../components/story/LinkedRecipePreviewCard';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
+import { useAuth } from '../context/AuthContext';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchStoryById } from '../services/storyService';
 import type { StoryDetail } from '../types/story';
 import { shadows, tokens } from '../theme';
+import { isStoryAuthor } from '../utils/storyAuthor';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'StoryDetail'>;
 
 export default function StoryDetailScreen({ route, navigation }: Props) {
   const { id } = route.params;
+  const { user, isAuthenticated, isReady } = useAuth();
   const [story, setStory] = useState<StoryDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +67,8 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
     );
   }
 
+  const canEdit = isReady && isAuthenticated && isStoryAuthor(user, story);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.padded}>
@@ -76,7 +81,22 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
           {story.title}
         </Text>
         {story.author ? (
-          <Text style={styles.meta}>By {story.author.username}</Text>
+          <Text style={styles.meta}>
+            By{' '}
+            {typeof story.author === 'object' && story.author.username
+              ? story.author.username
+              : 'Author'}
+          </Text>
+        ) : null}
+        {canEdit ? (
+          <Pressable
+            onPress={() => navigation.navigate('StoryEdit', { id })}
+            style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Edit story"
+          >
+            <Text style={styles.editLinkText}>Edit story</Text>
+          </Pressable>
         ) : null}
         {story.language ? (
           <Text style={styles.meta}>Language: {story.language.toUpperCase()}</Text>
@@ -127,4 +147,11 @@ const styles = StyleSheet.create({
   linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
   linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
   noLinked: { fontSize: 15, color: tokens.colors.surface, lineHeight: 22 },
+  editLink: {
+    alignSelf: 'flex-start',
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
+  editLinkText: { fontSize: 16, color: tokens.colors.surface, fontWeight: '800' },
 });

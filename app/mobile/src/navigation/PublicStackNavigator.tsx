@@ -8,6 +8,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import StoryCreateScreen from '../screens/StoryCreateScreen';
 import StoryDetailScreen from '../screens/StoryDetailScreen';
+import StoryEditScreen from '../screens/StoryEditScreen';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -62,6 +63,11 @@ export function PublicStackNavigator() {
         name="StoryCreate"
         component={StoryCreateScreen}
         options={{ title: 'Create story' }}
+      />
+      <Stack.Screen
+        name="StoryEdit"
+        component={StoryEditScreen}
+        options={{ title: 'Edit story' }}
       />
     </Stack.Navigator>
   );

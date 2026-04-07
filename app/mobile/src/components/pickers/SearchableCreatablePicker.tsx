@@ -54,11 +54,13 @@ export function SearchableCreatablePicker({
     }
   }, [fetchList]);
 
+  const valueName = value?.name ?? '';
+
   const openModal = useCallback(() => {
-    setQuery(value.name);
+    setQuery(valueName);
     setOpen(true);
     void load();
-  }, [load, value.name]);
+  }, [load, valueName]);
 
   const closeModal = useCallback(() => {
     setOpen(false);
@@ -106,8 +108,7 @@ export function SearchableCreatablePicker({
     }
   }, [createItem, pick, query]);
 
-  const displayText =
-    value.name.trim() || placeholder;
+  const displayText = valueName.trim() || placeholder;
 
   return (
     <View style={styles.field}>
@@ -119,7 +120,7 @@ export function SearchableCreatablePicker({
         accessibilityLabel={`${label} picker`}
       >
         <Text
-          style={[styles.inputText, !value.name.trim() && styles.placeholder]}
+          style={[styles.inputText, !valueName.trim() && styles.placeholder]}
           numberOfLines={1}
         >
           {displayText}

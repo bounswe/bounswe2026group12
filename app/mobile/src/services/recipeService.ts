@@ -1,18 +1,79 @@
-import type { RecipeDetail } from '../types/recipe';
+import type { RecipeDetail, RecipeIngredientRow } from '../types/recipe';
+import { parseAuthorId } from '../utils/parseAuthorId';
 import { apiGetJson, apiPatchFormData } from './httpClient';
 
 /**
  * Same endpoint as web `fetchRecipe` in `recipeService.js`.
  */
 export async function fetchRecipeById(id: string): Promise<RecipeDetail> {
-  const data = await apiGetJson<RecipeDetail>(`/api/recipes/${id}/`);
+  const data = await apiGetJson<RecipeDetail & Record<string, unknown>>(`/api/recipes/${id}/`);
   return normalizeRecipeDetail(data);
 }
 
-function normalizeRecipeDetail(data: RecipeDetail): RecipeDetail {
+/**
+ * DRF `RecipeIngredientSerializer` returns `ingredient` / `unit` as PKs plus
+ * `ingredient_name` / `unit_name`. The mobile form expects nested `{ id, name }`.
+ */
+function normalizeRecipeIngredients(raw: unknown): RecipeIngredientRow[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((row: Record<string, unknown>) => {
+    const ing = row.ingredient;
+    const unit = row.unit;
+    const ingredient: RecipeIngredientRow['ingredient'] =
+      typeof ing === 'object' && ing !== null && 'id' in ing
+        ? {
+            id: Number((ing as { id: unknown }).id),
+            name: String((ing as { name?: string }).name ?? ''),
+          }
+        : {
+            id: ing != null && ing !== '' ? Number(ing) : 0,
+            name: typeof row.ingredient_name === 'string' ? row.ingredient_name : '',
+          };
+
+    const unitObj: RecipeIngredientRow['unit'] =
+      typeof unit === 'object' && unit !== null && 'id' in unit
+        ? {
+            id: Number((unit as { id: unknown }).id),
+            name: String((unit as { name?: string }).name ?? ''),
+          }
+        : {
+            id: unit != null && unit !== '' ? Number(unit) : undefined,
+            name: typeof row.unit_name === 'string' ? row.unit_name : '',
+          };
+
+    const amt = row.amount;
+    const amount: string | number =
+      typeof amt === 'string' || typeof amt === 'number' ? amt : amt != null ? String(amt) : '';
+
+    return {
+      ingredient,
+      amount,
+      unit: unitObj,
+    };
+  });
+}
+
+function normalizeRecipeDetail(data: RecipeDetail & Record<string, unknown>): RecipeDetail {
+  const authorId = parseAuthorId(data.author);
+  const author =
+    authorId != null
+      ? {
+          id: authorId,
+          username:
+            typeof data.author_username === 'string'
+              ? data.author_username
+              : typeof data.author === 'object' &&
+                  data.author &&
+                  typeof (data.author as { username?: string }).username === 'string'
+                ? (data.author as { username: string }).username
+                : '',
+        }
+      : undefined;
+
   return {
     ...data,
-    ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
+    ingredients: normalizeRecipeIngredients(data.ingredients),
+    author,
   };
 }
 
