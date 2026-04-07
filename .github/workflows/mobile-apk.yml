@@ -1,0 +1,79 @@
+name: Mobile APK (EAS)
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: mobile-apk-main
+  cancel-in-progress: true
+
+jobs:
+  build-android-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/mobile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Expo (EAS)
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build APK (EAS preview)
+        id: eas_build
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --wait
+
+      # Best-effort: download the most recent finished Android build artifact and upload to GH.
+      - name: Download latest Android APK (best-effort)
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          node -e "console.log('Fetching latest finished Android build…')"
+          eas build:list --platform android --status finished --limit 1 --json > build.json
+          node -e "const fs=require('fs');const b=JSON.parse(fs.readFileSync('build.json','utf8'));const url=b?.[0]?.artifacts?.buildUrl; if(!url){console.log('No buildUrl found'); process.exit(0);} console.log('APK URL:', url); fs.writeFileSync('apk-url.txt', url);"
+          if [ -f apk-url.txt ]; then
+            curl -L "$(cat apk-url.txt)" -o app-release.apk
+          fi
+
+      - name: Upload APK artifact (if present)
+        if: ${{ hashFiles('app/mobile/app-release.apk') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: app/mobile/app-release.apk
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Mobile APK build" >> $GITHUB_STEP_SUMMARY
+          if [ -f apk-url.txt ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**APK URL:** $(cat apk-url.txt)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "APK URL not available (see logs)." >> $GITHUB_STEP_SUMMARY
+          fi
+
