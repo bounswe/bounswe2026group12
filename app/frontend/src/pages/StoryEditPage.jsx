@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchStory, updateStory } from '../services/storyService';
@@ -24,6 +24,9 @@ export default function StoryEditPage() {
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const toastTimerRef = useRef(null);
+  const navTimerRef = useRef(null);
+
   useEffect(() => {
     let cancelled = false;
     Promise.all([fetchStory(id), fetchRecipes()])
@@ -42,8 +45,9 @@ export default function StoryEditPage() {
   }, [id]);
 
   function showToast(message, type) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+    toastTimerRef.current = setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
   }
 
   function validate() {
@@ -68,15 +72,23 @@ export default function StoryEditPage() {
     try {
       await updateStory(id, formData);
       showToast('Story updated!', 'success');
-      setTimeout(() => navigate(`/stories/${id}`), 1500);
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+      navTimerRef.current = setTimeout(() => navigate(`/stories/${id}`), 1500);
     } catch {
       showToast('Failed to save changes. Please try again.', 'error');
     }
   }
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    };
+  }, []);
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
-  if (story && user && story.author && user.id !== story.author.id) {
+  if (!user || (story && story.author && user.id !== story.author.id)) {
     return <p className="page-status page-error">You are not authorized to edit this story.</p>;
   }
 
