@@ -11,6 +11,11 @@ class IngredientLookupSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = ['id', 'name']
 
+class IngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = ['id', 'name']
+
 class NamedSubmissionSerializer(serializers.ModelSerializer):
     duplicate_message = 'This name already exists.'
 
@@ -38,6 +43,12 @@ class NamedSubmissionSerializer(serializers.ModelSerializer):
 class IngredientSerializer(NamedSubmissionSerializer):
     duplicate_message = 'An ingredient with this name already exists.'
 
+class UnitLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ['id', 'name']
+
+class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -69,8 +80,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
-            'id', 'title', 'description', 'region', 'author', 
-            'author_username', 'is_published', 'created_at', 
-            'updated_at', 'ingredients'
+            'id', 'title', 'description', 'image', 'video',
+            'region', 'author', 'author_username', 'is_published',
+            'created_at', 'updated_at', 'ingredients'
         ]
         read_only_fields = ['author', 'is_published', 'created_at', 'updated_at']

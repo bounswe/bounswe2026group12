@@ -1,0 +1,81 @@
+.story-form-heading {
+  font-size: 2.25rem;
+  margin-bottom: 2rem;
+}
+
+.recipe-link-section {
+  border-top: 1.5px solid var(--color-border);
+  padding-top: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-link-section h2 {
+  font-size: 1.375rem;
+  margin-bottom: 1rem;
+}
+
+.optional-tag {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.linked-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-accent-green-tint);
+  border: 1.5px solid var(--color-accent-green-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.recipe-search-input {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.65rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-input);
+  color: var(--color-text);
+  width: 100%;
+  margin-bottom: 0.5rem;
+  transition: border-color 0.18s ease;
+}
+
+.recipe-search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.recipe-link-list {
+  list-style: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 240px;
+}
+
+.recipe-link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9375rem;
+}
+
+.recipe-link-item:last-child {
+  border-bottom: none;
+}
+
+.story-form-actions {
+  border-top: 1.5px solid var(--color-border);
+  padding-top: 1.5rem;
+}
