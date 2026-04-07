@@ -10,6 +10,10 @@ export default function Navbar() {
     <nav className="navbar" aria-label="Site navigation">
       <div className="navbar-inner">
         <Link to="/" className="navbar-brand">Genipe</Link>
+        <div className="navbar-browse-links">
+          <NavLink to="/recipes" className="navbar-link">Recipes</NavLink>
+          <NavLink to="/stories" className="navbar-link">Stories</NavLink>
+        </div>
         <div className="navbar-links">
           {user ? (
             <>

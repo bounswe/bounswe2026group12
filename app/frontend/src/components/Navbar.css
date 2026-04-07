@@ -84,3 +84,15 @@
     font-size: 0.8125rem;
   }
 }
+
+.navbar-browse-links {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .navbar-browse-links {
+    display: none;
+  }
+}

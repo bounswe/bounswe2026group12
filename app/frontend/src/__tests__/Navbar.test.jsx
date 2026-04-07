@@ -44,4 +44,14 @@ describe('Navbar', () => {
     fireEvent.click(screen.getByRole('button', { name: /log out/i }));
     expect(mockLogout).toHaveBeenCalledTimes(1);
   });
+
+  it('renders Recipes browse link', () => {
+    renderNavbar();
+    expect(screen.getByRole('link', { name: /^recipes$/i })).toBeInTheDocument();
+  });
+
+  it('renders Stories browse link', () => {
+    renderNavbar();
+    expect(screen.getByRole('link', { name: /^stories$/i })).toBeInTheDocument();
+  });
 });
