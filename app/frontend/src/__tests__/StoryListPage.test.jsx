@@ -23,10 +23,16 @@ function renderPage() {
 beforeEach(() => jest.clearAllMocks());
 
 describe('StoryListPage', () => {
-  it('shows loading state initially', () => {
-    storyService.fetchStories.mockResolvedValue(mockStories);
+  it('shows loading state initially', async () => {
+    let resolveStories;
+    storyService.fetchStories.mockReturnValue(
+      new Promise((resolve) => { resolveStories = resolve; })
+    );
     renderPage();
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    // drain pending state updates to avoid act() warnings
+    resolveStories([]);
+    await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
   });
 
   it('renders all story titles after load', async () => {

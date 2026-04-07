@@ -17,6 +17,7 @@
 }
 
 .story-card {
+  position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-surface-input);
@@ -30,9 +31,15 @@
 }
 
 .story-card-link {
-  display: block;
-  text-decoration: none;
   color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.story-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }
 
 .story-card-img-wrap {
@@ -80,4 +87,10 @@
   font-size: 0.8125rem;
   color: var(--color-text-muted);
   margin-top: 0.4rem;
+}
+
+@media (max-width: 480px) {
+  .story-list-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
 }

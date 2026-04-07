@@ -29,21 +29,21 @@ export default function StoryListPage() {
       <div className="story-list-grid">
         {stories.map((story) => (
           <article key={story.id} className="story-card">
-            <Link to={`/stories/${story.id}`} className="story-card-link">
-              <div className="story-card-img-wrap">
-                {story.thumbnail
-                  ? <img src={story.thumbnail} alt={story.title} className="story-card-img" />
-                  : <div className="story-card-placeholder" />
-                }
-              </div>
-              <div className="story-card-body">
-                <h2 className="story-card-title">{story.title}</h2>
-                {story.region && <span className="story-card-region">{story.region}</span>}
-                {story.author && (
-                  <p className="story-card-author">By {story.author.username}</p>
-                )}
-              </div>
-            </Link>
+            <div className="story-card-img-wrap">
+              {story.thumbnail
+                ? <img src={story.thumbnail} alt={story.title} className="story-card-img" />
+                : <div className="story-card-placeholder" />
+              }
+            </div>
+            <div className="story-card-body">
+              <h2 className="story-card-title">
+                <Link to={`/stories/${story.id}`} className="story-card-link">{story.title}</Link>
+              </h2>
+              {story.region && <span className="story-card-region">{story.region}</span>}
+              {story.author && (
+                <p className="story-card-author">By {story.author.username}</p>
+              )}
+            </div>
           </article>
         ))}
       </div>
