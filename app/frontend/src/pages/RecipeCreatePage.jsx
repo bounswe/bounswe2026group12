@@ -84,6 +84,8 @@ export default function RecipeCreatePage() {
         break;
       }
     }
+    const filledRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+    if (filledRows.length === 0) e.ingredients = 'At least one ingredient with amount is required.';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -152,7 +154,7 @@ export default function RecipeCreatePage() {
           >
             <option value="">Select a region…</option>
             {regions.map((r) => (
-              <option key={r.regionId} value={r.name}>{r.name}</option>
+              <option key={r.id} value={r.name}>{r.name}</option>
             ))}
           </select>
         </div>
@@ -203,6 +205,7 @@ export default function RecipeCreatePage() {
             />
           ))}
           {errors.amount && <p className="field-error">{errors.amount}</p>}
+          {errors.ingredients && <p className="field-error">{errors.ingredients}</p>}
           <button
             type="button"
             className="btn btn-outline btn-sm"

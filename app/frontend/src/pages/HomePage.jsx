@@ -76,7 +76,7 @@ export default function HomePage() {
             >
               <option value="">All regions</option>
               {regions.map((r) => (
-                <option key={r.regionId} value={r.name}>{r.name}</option>
+                <option key={r.id} value={r.name}>{r.name}</option>
               ))}
             </select>
           </div>

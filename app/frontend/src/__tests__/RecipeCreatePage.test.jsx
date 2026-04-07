@@ -16,7 +16,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Salt' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'cup' }]);
-  searchService.fetchRegions.mockResolvedValue([{ regionId: 1, name: 'Aegean' }, { regionId: 2, name: 'Black Sea' }]);
+  searchService.fetchRegions.mockResolvedValue([{ id: 1, name: 'Aegean' }, { id: 2, name: 'Black Sea' }]);
 });
 
 function renderPage() {
@@ -75,6 +75,19 @@ describe('RecipeCreatePage', () => {
     await waitFor(() => screen.getByLabelText(/title/i));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Baklava' } });
     fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A delicious dessert.' } });
+    // Select an ingredient
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    // Select a unit
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     await waitFor(() =>
       expect(screen.getByText(/recipe published/i)).toBeInTheDocument()
@@ -90,6 +103,19 @@ describe('RecipeCreatePage', () => {
     await waitFor(() => screen.getByLabelText(/title/i));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Baklava' } });
     fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A delicious dessert.' } });
+    // Select an ingredient
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    // Select a unit
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     await waitFor(() =>
       expect(screen.getByText(/failed to publish/i)).toBeInTheDocument()
@@ -101,5 +127,14 @@ describe('RecipeCreatePage', () => {
     await waitFor(() =>
       expect(screen.getByLabelText(/thumbnail/i)).toBeInTheDocument()
     );
+  });
+
+  it('shows error when no ingredients are filled in', async () => {
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /publish/i }));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Soup' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'Some description.' } });
+    fireEvent.click(screen.getByRole('button', { name: /publish/i }));
+    expect(screen.getByText(/at least one ingredient/i)).toBeInTheDocument();
   });
 });

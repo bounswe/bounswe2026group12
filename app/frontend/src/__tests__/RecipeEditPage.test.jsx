@@ -32,7 +32,7 @@ beforeEach(() => {
   recipeService.fetchRecipe.mockResolvedValue(mockRecipe);
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Phyllo dough' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'g' }]);
-  searchService.fetchRegions.mockResolvedValue([{ regionId: 1, name: 'Aegean' }, { regionId: 2, name: 'Black Sea' }]);
+  searchService.fetchRegions.mockResolvedValue([{ id: 1, name: 'Aegean' }, { id: 2, name: 'Black Sea' }]);
 });
 
 function renderPage(authUser = { id: 3, username: 'eren' }) {
@@ -127,5 +127,13 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByLabelText(/thumbnail/i)).toBeInTheDocument()
     );
+  });
+
+  it('shows error when no ingredients are filled in', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({ ...mockRecipe, ingredients: [] });
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /save changes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    expect(screen.getByText(/at least one ingredient/i)).toBeInTheDocument();
   });
 });
