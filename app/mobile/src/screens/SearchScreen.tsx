@@ -16,6 +16,7 @@ import {
   MOCK_SEARCH_RESULTS,
   type MockSearchItem,
 } from '../mocks/searchResults';
+import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Search'>;
 
@@ -149,36 +150,47 @@ export default function SearchScreen({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: tokens.colors.bg },
   container: { flex: 1, padding: 16 },
   heading: {
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 12,
+    color: tokens.colors.surface,
+    fontFamily: tokens.typography.display.fontFamily,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: tokens.colors.primaryBorder,
+    borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
     marginBottom: 16,
+    backgroundColor: tokens.colors.surfaceInput,
+    color: tokens.colors.text,
+    ...shadows.sm,
   },
   filtersRow: { marginBottom: 10 },
-  filterLabel: { fontSize: 14, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
+  filterLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: tokens.colors.surface,
+    marginBottom: 8,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
   pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   pill: {
     paddingVertical: 8,
     paddingHorizontal: 10,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    backgroundColor: '#fff',
+    borderRadius: tokens.radius.pill,
+    borderWidth: 2,
+    borderColor: tokens.colors.primary,
+    backgroundColor: 'transparent',
   },
-  pillActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  pillText: { fontSize: 14, fontWeight: '600', color: '#0f172a' },
-  pillTextActive: { color: '#fff' },
+  pillActive: { backgroundColor: tokens.colors.primary, borderColor: tokens.colors.primary },
+  pillText: { fontSize: 14, fontWeight: '700', color: tokens.colors.surface },
+  pillTextActive: { color: tokens.colors.surface },
   grid: { paddingBottom: 24, gap: 12 },
   gridRow: { gap: 12 },
   gridItem: { flex: 1 },

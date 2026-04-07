@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { LoadingView } from '../../components/ui/LoadingView';
+import { shadows, tokens } from '../../theme';
 
 export default function ShareTabScreen() {
   const navigation = useNavigation<any>();
@@ -90,26 +91,35 @@ export default function ShareTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: tokens.colors.bg },
   container: { flex: 1, padding: 20, justifyContent: 'center' },
-  title: { fontSize: 28, fontWeight: '800', color: '#0f172a', marginBottom: 10 },
-  subtitle: { fontSize: 15, color: '#64748b', lineHeight: 20, textAlign: 'center' },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: tokens.colors.surface,
+    marginBottom: 10,
+    textAlign: 'center',
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  subtitle: { fontSize: 15, color: tokens.colors.surface, lineHeight: 20, textAlign: 'center' },
   grid: { marginTop: 14, gap: 12 },
   box: {
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 14,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.xl,
     padding: 16,
-    backgroundColor: '#f8fafc',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 2,
+    backgroundColor: tokens.colors.surface,
+    ...shadows.lg,
   },
   boxPressed: { opacity: 0.9 },
-  boxTitle: { fontSize: 18, fontWeight: '900', color: '#0f172a', marginBottom: 6 },
-  boxSubtitle: { fontSize: 15, color: '#64748b', lineHeight: 20 },
+  boxTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: tokens.colors.text,
+    marginBottom: 6,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  boxSubtitle: { fontSize: 15, color: tokens.colors.textMuted, lineHeight: 20 },
   centered: { flex: 1, justifyContent: 'center', padding: 20 },
 });
 

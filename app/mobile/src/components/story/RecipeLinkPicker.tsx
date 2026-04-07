@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { ErrorView } from '../ui/ErrorView';
 import { LoadingView } from '../ui/LoadingView';
+import { shadows, tokens } from '../../theme';
 
 export type RecipeLink = { id: string; title: string; region?: string };
 
@@ -134,7 +135,10 @@ export function RecipeLinkPicker({ value, onChange, fetchRecipes, currentUserId 
                       onChange({ id: item.id, title: item.title, region: item.region });
                       setOpen(false);
                     }}
-                    style={({ pressed }) => [styles.row, pressed && { backgroundColor: '#e2e8f0' }]}
+                    style={({ pressed }) => [
+                      styles.row,
+                      pressed && { backgroundColor: tokens.colors.primarySubtle },
+                    ]}
                     accessibilityRole="button"
                     accessibilityLabel={`Link recipe ${item.title}`}
                   >
@@ -153,52 +157,61 @@ export function RecipeLinkPicker({ value, onChange, fetchRecipes, currentUserId 
 
 const styles = StyleSheet.create({
   field: { marginTop: 4 },
-  label: { fontSize: 16, fontWeight: '700', color: '#0f172a', marginBottom: 10 },
+  label: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: tokens.colors.text,
+    marginBottom: 10,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
   shell: {
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.md,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colors.surfaceInput,
+    ...shadows.sm,
   },
-  shellText: { fontSize: 15, fontWeight: '600', color: '#0f172a' },
-  shellPlaceholder: { color: '#64748b', fontWeight: '600' },
+  shellText: { fontSize: 15, fontWeight: '600', color: tokens.colors.text },
+  shellPlaceholder: { color: tokens.colors.textMuted, fontWeight: '600' },
   clearBtn: { marginTop: 10, alignSelf: 'flex-start' },
-  clearText: { color: '#dc2626', fontWeight: '800', fontSize: 14 },
-  backdrop: { flex: 1, backgroundColor: 'rgba(15,23,42,0.45)', justifyContent: 'flex-end' },
+  clearText: { color: tokens.colors.error, fontWeight: '800', fontSize: 14 },
+  backdrop: { flex: 1, backgroundColor: tokens.colors.backdrop, justifyContent: 'flex-end' },
   card: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: tokens.colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 24,
     maxHeight: '88%',
+    ...shadows.lg,
   },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  title: { fontSize: 18, fontWeight: '800', color: '#0f172a' },
-  close: { fontSize: 16, color: '#2563eb', fontWeight: '700' },
+  title: { fontSize: 18, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
+  close: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
   search: {
     marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colors.surfaceInput,
     marginBottom: 8,
+    color: tokens.colors.text,
   },
   row: {
     paddingVertical: 12,
     paddingHorizontal: 6,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: tokens.colors.border,
     borderRadius: 10,
   },
-  rowTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a' },
-  rowMeta: { fontSize: 14, color: '#64748b', marginTop: 4 },
-  empty: { paddingVertical: 16, fontSize: 14, color: '#64748b', textAlign: 'center' },
+  rowTitle: { fontSize: 16, fontWeight: '700', color: tokens.colors.text },
+  rowMeta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 4 },
+  empty: { paddingVertical: 16, fontSize: 14, color: tokens.colors.textMuted, textAlign: 'center' },
 });
 

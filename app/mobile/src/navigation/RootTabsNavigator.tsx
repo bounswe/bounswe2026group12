@@ -4,6 +4,7 @@ import React from 'react';
 import { PublicStackNavigator } from './PublicStackNavigator';
 import ShareTabScreen from '../screens/tabs/ShareTabScreen';
 import ProfileTabScreen from '../screens/tabs/ProfileTabScreen';
+import { tokens } from '../theme';
 
 type TabParamList = {
   Feed: undefined;
@@ -19,9 +20,12 @@ export function RootTabsNavigator() {
       initialRouteName="Feed"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: '#2563eb',
-        tabBarInactiveTintColor: '#64748b',
-        tabBarStyle: { borderTopColor: '#e2e8f0' },
+        tabBarActiveTintColor: tokens.colors.primary,
+        tabBarInactiveTintColor: tokens.colors.textMuted,
+        tabBarStyle: {
+          borderTopColor: tokens.colors.border,
+          backgroundColor: tokens.colors.surface,
+        },
         tabBarIcon: ({ color, size }) => {
           const name =
             route.name === 'Feed'

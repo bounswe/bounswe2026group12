@@ -15,6 +15,7 @@ import { recipeFormStyles as styles } from '../components/recipe/recipeFormStyle
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { mockSubmitRecipeCreate } from '../services/mockRecipeCreate';
+import { tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
 
@@ -137,77 +138,79 @@ export default function RecipeCreateScreen(_props: Props) {
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.heading} accessibilityRole="header">
-          Recipe upload
-        </Text>
-        <Text style={styles.lead}>
-          Create a recipe with a description, ingredients, and a video. Ingredient and unit
-          pickers use the same API paths as the web app when available; otherwise mock data
-          is used.
-        </Text>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <TextInput
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Write a short description…"
-            placeholderTextColor="#94a3b8"
-            style={[
-              styles.textArea,
-              attemptedSubmit && !!errors.description && styles.inputError,
-            ]}
-            multiline
-            accessibilityLabel="Recipe description"
-          />
-          {attemptedSubmit ? <InlineFieldError message={errors.description} /> : null}
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
-          <Switch
-            value={qaEnabled}
-            onValueChange={setQaEnabled}
-            accessibilityLabel="Enable Q and A on this recipe"
-          />
-          <Text style={{ flex: 1, fontSize: 15, color: '#334155', marginLeft: 12 }}>
-            Enable Q&amp;A on this recipe
+        <View style={styles.card}>
+          <Text style={styles.heading} accessibilityRole="header">
+            Recipe upload
           </Text>
-        </View>
-
-        <RecipeIngredientRowsSection
-          rows={rows}
-          onAddRow={addRow}
-          onRemoveRow={removeRow}
-          onUpdateRow={updateRow}
-          attemptedSubmit={attemptedSubmit}
-          rowsTopError={errors.rowsTop}
-          rowErrors={errors.rows}
-        />
-
-        <RecipeVideoSection
-          onPickPress={() => void pickVideo()}
-          localVideo={localVideo}
-          onClearLocal={() => setLocalVideo(null)}
-          requireSelection
-          attemptedSubmit={attemptedSubmit}
-          errorMessage={errors.video}
-        />
-
-        <Pressable
-          onPress={submit}
-          style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
-          accessibilityRole="button"
-          accessibilityLabel="Submit recipe"
-        >
-          <Text style={styles.primaryButtonText}>Submit (mock)</Text>
-        </Pressable>
-
-        <View style={styles.summary}>
-          <Text style={styles.summaryTitle}>Selection preview</Text>
-          <Text style={styles.summaryLine}>Ingredients: {rows.length}</Text>
-          <Text style={styles.summaryLine}>
-            Video: {localVideo ? 'selected' : '—'}
+          <Text style={styles.lead}>
+            Create a recipe with a description, ingredients, and a video. Ingredient and unit
+            pickers use the same API paths as the web app when available; otherwise mock data
+            is used.
           </Text>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Description</Text>
+            <TextInput
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Write a short description…"
+              placeholderTextColor="#94a3b8"
+              style={[
+                styles.textArea,
+                attemptedSubmit && !!errors.description && styles.inputError,
+              ]}
+              multiline
+              accessibilityLabel="Recipe description"
+            />
+            {attemptedSubmit ? <InlineFieldError message={errors.description} /> : null}
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
+            <Switch
+              value={qaEnabled}
+              onValueChange={setQaEnabled}
+              accessibilityLabel="Enable Q and A on this recipe"
+            />
+            <Text style={{ flex: 1, fontSize: 15, color: tokens.colors.textMuted, marginLeft: 12 }}>
+              Enable Q&amp;A on this recipe
+            </Text>
+          </View>
+
+          <RecipeIngredientRowsSection
+            rows={rows}
+            onAddRow={addRow}
+            onRemoveRow={removeRow}
+            onUpdateRow={updateRow}
+            attemptedSubmit={attemptedSubmit}
+            rowsTopError={errors.rowsTop}
+            rowErrors={errors.rows}
+          />
+
+          <RecipeVideoSection
+            onPickPress={() => void pickVideo()}
+            localVideo={localVideo}
+            onClearLocal={() => setLocalVideo(null)}
+            requireSelection
+            attemptedSubmit={attemptedSubmit}
+            errorMessage={errors.video}
+          />
+
+          <Pressable
+            onPress={submit}
+            style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Submit recipe"
+          >
+            <Text style={styles.primaryButtonText}>Submit (mock)</Text>
+          </Pressable>
+
+          <View style={styles.summary}>
+            <Text style={styles.summaryTitle}>Selection preview</Text>
+            <Text style={styles.summaryLine}>Ingredients: {rows.length}</Text>
+            <Text style={styles.summaryLine}>
+              Video: {localVideo ? 'selected' : '—'}
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

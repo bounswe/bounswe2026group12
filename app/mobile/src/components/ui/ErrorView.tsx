@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { tokens } from '../../theme';
 
 type Props = {
   message: string;
@@ -33,14 +34,14 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 14,
-    color: '#b91c1c',
+    color: tokens.colors.error,
     textAlign: 'center',
   },
   button: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#2563eb',
+    backgroundColor: tokens.colors.primary,
   },
   buttonPressed: {
     opacity: 0.85,

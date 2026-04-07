@@ -17,6 +17,7 @@ import { useAuth } from '../context/AuthContext';
 import { validateLoginForm } from '../lib/authValidation';
 import type { RootStackParamList } from '../navigation/types';
 import { mockLoginRequest } from '../services/mockAuthService';
+import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -140,7 +141,7 @@ export default function LoginScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: tokens.colors.bg },
   flex: { flex: 1 },
   scrollContent: {
     padding: 20,
@@ -150,34 +151,42 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 24,
+    color: tokens.colors.surface,
+    fontFamily: tokens.typography.display.fontFamily,
   },
   field: { marginBottom: 16 },
-  label: { fontSize: 16, fontWeight: '600', marginBottom: 6 },
+  label: { fontSize: 16, fontWeight: '600', marginBottom: 6, color: tokens.colors.surface },
   input: {
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: tokens.colors.primaryBorder,
+    borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 16,
+    backgroundColor: tokens.colors.surfaceInput,
+    color: tokens.colors.text,
+    ...shadows.sm,
   },
-  fieldError: { color: '#b91c1c', marginTop: 6, fontSize: 14 },
-  apiError: { color: '#b91c1c', marginBottom: 12, fontSize: 15 },
+  fieldError: { color: tokens.colors.error, marginTop: 6, fontSize: 14 },
+  apiError: { color: tokens.colors.error, marginBottom: 12, fontSize: 15 },
   primaryButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: tokens.colors.primary,
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: tokens.radius.pill,
     alignItems: 'center',
     marginTop: 8,
+    borderWidth: 2,
+    borderColor: tokens.colors.primary,
+    ...shadows.md,
   },
   primaryButtonPressed: { opacity: 0.88 },
-  primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  primaryButtonText: { color: tokens.colors.surface, fontSize: 16, fontWeight: '700' },
   footer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
     marginTop: 24,
   },
-  footerText: { fontSize: 15, color: '#64748b' },
-  link: { fontSize: 15, color: '#2563eb', fontWeight: '600' },
+  footerText: { fontSize: 15, color: tokens.colors.surface },
+  link: { fontSize: 15, color: tokens.colors.surface, fontWeight: '800' },
 });
