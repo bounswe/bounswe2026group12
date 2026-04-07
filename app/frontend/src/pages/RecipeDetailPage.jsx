@@ -2,17 +2,20 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecipe } from '../services/recipeService';
+import { fetchRegions } from '../services/searchService';
 import './RecipeDetailPage.css';
 
 export default function RecipeDetailPage() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const [recipe, setRecipe] = useState(null);
+  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
+    fetchRegions().then((r) => { if (!cancelled) setRegions(r); }).catch(() => {});
     fetchRecipe(id)
       .then((data) => { if (!cancelled) setRecipe(data); })
       .catch(() => { if (!cancelled) setError('Could not load recipe.'); })
@@ -24,13 +27,14 @@ export default function RecipeDetailPage() {
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!recipe) return null;
 
-  const isAuthor = user && recipe.author && user.id === recipe.author.id;
+  const isAuthor = user && user.id === recipe.author;
+  const regionName = regions.find((r) => r.id === recipe.region)?.name;
 
   return (
     <main className="page-card recipe-detail">
       <div className="recipe-detail-header">
         <div>
-          {recipe.region && <span className="recipe-region-tag">{recipe.region}</span>}
+          {regionName && <span className="recipe-region-tag">{regionName}</span>}
           <h1 className="recipe-title">{recipe.title}</h1>
         </div>
         {isAuthor && (
@@ -57,9 +61,9 @@ export default function RecipeDetailPage() {
         <h2>Ingredients</h2>
         <ul className="ingredients-list">
           {recipe.ingredients.map((ri) => (
-            <li key={ri.ingredient.id} className="ingredient-item">
-              <span className="ingredient-name">{ri.ingredient.name}</span>
-              <span className="ingredient-amount">{ri.amount} {ri.unit.name}</span>
+            <li key={ri.ingredient} className="ingredient-item">
+              <span className="ingredient-name">{ri.ingredient_name}</span>
+              <span className="ingredient-amount">{ri.amount} {ri.unit_name}</span>
             </li>
           ))}
         </ul>

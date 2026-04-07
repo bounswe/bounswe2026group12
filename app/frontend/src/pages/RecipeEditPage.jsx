@@ -17,11 +17,11 @@ import './RecipeEditPage.css';
 function makeRowFromIngredient(ri) {
   return {
     id: `row-${Math.random().toString(36).slice(2)}`,
-    ingredientId: ri.ingredient.id,
-    ingredientName: ri.ingredient.name,
+    ingredientId: ri.ingredient,
+    ingredientName: ri.ingredient_name,
     amount: ri.amount,
-    unitId: ri.unit.id,
-    unitName: ri.unit.name,
+    unitId: ri.unit,
+    unitName: ri.unit_name,
   };
 }
 
@@ -160,7 +160,7 @@ export default function RecipeEditPage() {
 
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
-  if (recipe && user && recipe.author && user.id !== recipe.author.id) {
+  if (recipe && user && user.id !== recipe.author) {
     return <p className="page-status page-error">You are not authorized to edit this recipe.</p>;
   }
 

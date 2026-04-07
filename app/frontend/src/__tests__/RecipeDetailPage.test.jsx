@@ -3,18 +3,21 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import RecipeDetailPage from '../pages/RecipeDetailPage';
 import * as recipeService from '../services/recipeService';
+import * as searchService from '../services/searchService';
 
 jest.mock('../services/recipeService');
+jest.mock('../services/searchService');
 
 const mockRecipe = {
   id: 1,
   title: 'Baklava',
   description: 'A sweet pastry.',
-  region: 'Aegean',
+  region: 1,
   video: 'http://example.com/video.mp4',
-  author: { id: 3, username: 'eren' },
+  author: 3,
+  author_username: 'eren',
   ingredients: [
-    { ingredient: { id: 1, name: 'Phyllo dough' }, amount: '500', unit: { id: 1, name: 'g' } },
+    { ingredient: 1, ingredient_name: 'Phyllo dough', amount: '500', unit: 1, unit_name: 'g' },
   ],
   is_published: true,
   qa_enabled: true,
@@ -34,6 +37,10 @@ function renderPage(recipeId = '1', authUser = null) {
 
 beforeEach(() => {
   recipeService.fetchRecipe.mockResolvedValue(mockRecipe);
+  searchService.fetchRegions.mockResolvedValue([
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
+  ]);
 });
 
 describe('RecipeDetailPage', () => {

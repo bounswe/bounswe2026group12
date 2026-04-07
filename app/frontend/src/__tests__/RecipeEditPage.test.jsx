@@ -19,9 +19,10 @@ const mockRecipe = {
   description: 'A sweet pastry.',
   region: 1,
   video: null,
-  author: { id: 3, username: 'eren' },
+  author: 3,
+  author_username: 'eren',
   ingredients: [
-    { ingredient: { id: 1, name: 'Phyllo dough' }, amount: '500', unit: { id: 1, name: 'g' } },
+    { ingredient: 1, ingredient_name: 'Phyllo dough', amount: '500', unit: 1, unit_name: 'g' },
   ],
   is_published: true,
   qa_enabled: false,
