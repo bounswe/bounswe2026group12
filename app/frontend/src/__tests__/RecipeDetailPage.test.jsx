@@ -57,6 +57,13 @@ describe('RecipeDetailPage', () => {
     });
   });
 
+  it('displays author username', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/by eren/i)).toBeInTheDocument()
+    );
+  });
+
   it('renders a video element when video URL is present', async () => {
     renderPage();
     await waitFor(() =>
