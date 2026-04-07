@@ -13,6 +13,7 @@ const mockRecipe = {
   title: 'Baklava',
   description: 'A sweet pastry.',
   region: 1,
+  image: 'http://example.com/img.jpg',
   video: 'http://example.com/video.mp4',
   author: 3,
   author_username: 'eren',
@@ -55,6 +56,22 @@ describe('RecipeDetailPage', () => {
       expect(screen.getByText('Baklava')).toBeInTheDocument();
       expect(screen.getByText('A sweet pastry.')).toBeInTheDocument();
     });
+  });
+
+  it('renders image when image URL is present', async () => {
+    renderPage();
+    await waitFor(() => {
+      const img = screen.getByRole('img', { name: 'Baklava' });
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute('src', 'http://example.com/img.jpg');
+    });
+  });
+
+  it('does not render image element when image is null', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({ ...mockRecipe, image: null });
+    renderPage();
+    await waitFor(() => screen.getByText('Baklava'));
+    expect(screen.queryByRole('img', { name: 'Baklava' })).not.toBeInTheDocument();
   });
 
   it('renders a video element when video URL is present', async () => {

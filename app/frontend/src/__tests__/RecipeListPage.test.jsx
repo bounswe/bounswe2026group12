@@ -6,8 +6,8 @@ import * as recipeService from '../services/recipeService';
 jest.mock('../services/recipeService');
 
 const mockRecipes = [
-  { id: 1, title: 'Baklava', region: 'Aegean', thumbnail: null, author: { username: 'eren' } },
-  { id: 2, title: 'Manti', region: 'Central Anatolia', thumbnail: null, author: { username: 'ahmet' } },
+  { id: 1, title: 'Baklava', region: 'Aegean', image: null, author_username: 'eren' },
+  { id: 2, title: 'Manti', region: 'Central Anatolia', image: null, author_username: 'ahmet' },
 ];
 
 function renderPage() {
@@ -59,6 +59,18 @@ describe('RecipeListPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/no recipes yet/i)).toBeInTheDocument()
     );
+  });
+
+  it('renders recipe image when image is present', async () => {
+    recipeService.fetchRecipes.mockResolvedValue([
+      { id: 1, title: 'Baklava', region: 'Aegean', image: 'http://example.com/img.jpg', author_username: 'eren' },
+    ]);
+    renderPage();
+    await waitFor(() => {
+      const img = screen.getByRole('img', { name: 'Baklava' });
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute('src', 'http://example.com/img.jpg');
+    });
   });
 
   it('shows error message when API fails', async () => {
