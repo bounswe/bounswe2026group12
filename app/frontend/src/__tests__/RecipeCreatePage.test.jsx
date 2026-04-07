@@ -82,4 +82,11 @@ describe('RecipeCreatePage', () => {
       expect(screen.getByText(/failed to publish/i)).toBeInTheDocument()
     );
   });
+
+  it('renders a thumbnail upload field', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByLabelText(/thumbnail/i)).toBeInTheDocument()
+    );
+  });
 });

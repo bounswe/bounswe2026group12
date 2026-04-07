@@ -110,4 +110,11 @@ describe('RecipeEditPage', () => {
       expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
     );
   });
+
+  it('renders a thumbnail upload field', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByLabelText(/thumbnail/i)).toBeInTheDocument()
+    );
+  });
 });

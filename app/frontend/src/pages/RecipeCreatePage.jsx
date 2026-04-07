@@ -29,6 +29,7 @@ export default function RecipeCreatePage() {
   const [description, setDescription] = useState('');
   const [region, setRegion] = useState('');
   const [video, setVideo] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState([makeRow()]);
 
@@ -94,6 +95,7 @@ export default function RecipeCreatePage() {
     formData.append('qa_enabled', qaEnabled);
     formData.append('is_published', 'true');
     if (video) formData.append('video', video);
+    if (thumbnail) formData.append('thumbnail', thumbnail);
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
     validRows.forEach((r, i) => {
@@ -151,6 +153,16 @@ export default function RecipeCreatePage() {
             type="file"
             accept="video/*"
             onChange={(e) => setVideo(e.target.files[0] || null)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="thumbnail">Thumbnail Image (optional)</label>
+          <input
+            id="thumbnail"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setThumbnail(e.target.files[0] || null)}
           />
         </div>
 

@@ -11,6 +11,7 @@ export default function StoryCreatePage() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState('en');
+  const [image, setImage] = useState(null);
   const [linkedRecipe, setLinkedRecipe] = useState(null);
   const [recipeSearch, setRecipeSearch] = useState('');
   const [allRecipes, setAllRecipes] = useState([]);
@@ -38,16 +39,16 @@ export default function StoryCreatePage() {
     e.preventDefault();
     if (!validate()) return;
 
-    const payload = {
-      title,
-      body,
-      language,
-      is_published: true,
-      linked_recipe: linkedRecipe ? linkedRecipe.id : null,
-    };
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('body', body);
+    formData.append('language', language);
+    formData.append('is_published', 'true');
+    if (linkedRecipe) formData.append('linked_recipe', linkedRecipe.id);
+    if (image) formData.append('image', image);
 
     try {
-      const created = await createStory(payload);
+      const created = await createStory(formData);
       showToast('Story published!', 'success');
       navigate(`/stories/${created.id}`);
     } catch {
@@ -96,6 +97,16 @@ export default function StoryCreatePage() {
             <option value="en">English</option>
             <option value="tr">Turkish</option>
           </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="story-photo">Photo (optional)</label>
+          <input
+            id="story-photo"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0] || null)}
+          />
         </div>
 
         <section className="recipe-link-section">
