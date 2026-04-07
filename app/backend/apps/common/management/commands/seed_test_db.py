@@ -94,7 +94,10 @@ class Command(BaseCommand):
 
     def seed_units(self):
         self.stdout.write('Creating units...')
-        units = ['grams', 'kg', 'liters', 'ml', 'cups', 'tablespoons', 'teaspoons', 'units', 'cloves']
+        units = [
+            'grams', 'kg', 'liters', 'ml', 'cups', 'tablespoons', 'teaspoons',
+            'pieces', 'cloves', 'pinch', 'bunch', 'slices',
+        ]
         for name in units:
             unit, created = Unit.objects.get_or_create(name=name, defaults={'is_approved': True})
             if created:
@@ -102,7 +105,16 @@ class Command(BaseCommand):
 
     def seed_ingredients(self):
         self.stdout.write('Creating ingredients...')
-        ingredients = ['Tomato', 'Olive Oil', 'Flour', 'Honey', 'Walnuts', 'Garlic', 'Onion', 'Lentils', 'Rice']
+        ingredients = [
+            'Butter', 'Chicken', 'Cinnamon', 'Cream', 'Cumin', 'Eggplant',
+            'Eggs', 'Feta Cheese', 'Flour', 'Garlic', 'Ginger', 'Green Pepper',
+            'Ground Beef', 'Ground Lamb', 'Honey', 'Lamb', 'Lemon', 'Lentils',
+            'Mint', 'Mozzarella', 'Olive Oil', 'Onion', 'Oregano', 'Paprika',
+            'Parsley', 'Pasta', 'Pepper', 'Phyllo Dough', 'Pine Nuts', 'Pistachios',
+            'Potato', 'Red Pepper Flakes', 'Rice', 'Salt', 'Sesame Seeds',
+            'Sugar', 'Sumac', 'Tahini', 'Thyme', 'Tomato', 'Tomato Paste',
+            'Turmeric', 'Walnuts', 'Yogurt', 'Zucchini',
+        ]
         for name in ingredients:
             ing, created = Ingredient.objects.get_or_create(name=name, defaults={'is_approved': True})
             if created:
