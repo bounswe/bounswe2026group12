@@ -44,22 +44,32 @@ describe('HomePage', () => {
     });
   });
 
-  it('navigates to /search with query params on submit', async () => {
+  it('renders ingredient and meal type filter inputs', () => {
+    renderPage();
+    expect(screen.getByLabelText(/ingredient/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/meal type/i)).toBeInTheDocument();
+  });
+
+  it('navigates to /search with all params on submit', async () => {
     renderPage();
     await waitFor(() => screen.getByRole('option', { name: 'Aegean' }));
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'baklava' } });
     fireEvent.change(screen.getByLabelText(/region/i), { target: { value: 'Aegean' } });
+    fireEvent.change(screen.getByLabelText(/ingredient/i), { target: { value: 'yogurt' } });
+    fireEvent.change(screen.getByLabelText(/meal type/i), { target: { value: 'soup' } });
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/search?q=baklava&region=Aegean'
+      '/search?q=baklava&region=Aegean&ingredient=yogurt&meal_type=soup'
     );
   });
 
   it('navigates with empty params when no input is given', () => {
     renderPage();
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
-    expect(mockNavigate).toHaveBeenCalledWith('/search?q=&region=');
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/search?q=&region=&ingredient=&meal_type='
+    );
   });
 });

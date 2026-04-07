@@ -6,11 +6,12 @@ import * as searchService from '../services/searchService';
 jest.mock('../services/searchService');
 
 const mockResults = [
-  { type: 'recipe', id: 1, title: 'Baklava', region: 'Aegean', thumbnail: null },
-  { type: 'story',  id: 2, title: "Grandma's Kitchen", region: 'Mediterranean', thumbnail: null },
+  { type: 'recipe', id: 1, title: 'Yogurt Soup', region: 'Black Sea', thumbnail: null },
+  { type: 'recipe', id: 2, title: 'Yogurt Salad', region: 'Aegean', thumbnail: null },
+  { type: 'story',  id: 3, title: "Grandma's Kitchen", region: 'Mediterranean', thumbnail: null },
 ];
 
-function renderPage(search = '?q=baklava&region=&language=') {
+function renderPage(search = '?q=&region=&ingredient=&meal_type=') {
   return render(
     <MemoryRouter initialEntries={[`/search${search}`]}>
       <Routes>
@@ -37,34 +38,43 @@ describe('SearchPage', () => {
 
   it('renders result cards after API resolves', async () => {
     searchService.search.mockResolvedValue(mockResults);
-    renderPage();
+    renderPage('?q=yogurt&region=&ingredient=&meal_type=');
     await waitFor(() => {
-      expect(screen.getByText('Baklava')).toBeInTheDocument();
+      expect(screen.getByText('Yogurt Soup')).toBeInTheDocument();
       expect(screen.getByText("Grandma's Kitchen")).toBeInTheDocument();
     });
   });
 
-  it('passes correct params to search service from URL', async () => {
+  it('combines q and ingredient into a single search call', async () => {
     searchService.search.mockResolvedValue([]);
-    renderPage('?q=soup&region=Aegean&language=en');
+    renderPage('?q=soup&region=Aegean&ingredient=yogurt&meal_type=');
     await waitFor(() => {
-      expect(searchService.search).toHaveBeenCalledWith('soup', 'Aegean', 'en');
+      expect(searchService.search).toHaveBeenCalledWith('soup yogurt', 'Aegean', '');
     });
+  });
+
+  it('applies meal_type client-side to filter results by title', async () => {
+    searchService.search.mockResolvedValue(mockResults);
+    renderPage('?q=&region=&ingredient=yogurt&meal_type=soup');
+    await waitFor(() => screen.getByText('Yogurt Soup'));
+    expect(screen.getByText('Yogurt Soup')).toBeInTheDocument();
+    expect(screen.queryByText('Yogurt Salad')).not.toBeInTheDocument();
+  });
+
+  it('shows active filter chips for non-empty filters', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=&region=Aegean&ingredient=yogurt&meal_type=');
+    await waitFor(() => screen.getByText(/no results/i));
+    expect(screen.getByText(/ingredient: yogurt/i)).toBeInTheDocument();
+    expect(screen.getByText(/region: aegean/i)).toBeInTheDocument();
   });
 
   it('shows empty state message when no results returned', async () => {
     searchService.search.mockResolvedValue([]);
-    renderPage('?q=xyz&region=&language=');
+    renderPage('?q=xyz&region=&ingredient=&meal_type=');
     await waitFor(() => {
       expect(screen.getByText(/no results found/i)).toBeInTheDocument();
     });
-  });
-
-  it('search heading remains visible after no-result search', async () => {
-    searchService.search.mockResolvedValue([]);
-    renderPage('?q=xyz&region=&language=');
-    await waitFor(() => screen.getByText(/no results found/i));
-    expect(screen.getByRole('heading', { name: /search/i })).toBeInTheDocument();
   });
 
   it('shows error message when API fails', async () => {

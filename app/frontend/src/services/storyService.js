@@ -9,8 +9,18 @@ export async function fetchStory(id) {
   return response.data;
 }
 
+export async function fetchStories() {
+  const response = await apiClient.get('/api/stories/');
+  return response.data;
+}
+
 export async function createStory(data) {
   if (USE_MOCK) return mockCreateStory(data);
   const response = await apiClient.post('/api/stories/', data);
+  return response.data;
+}
+
+export async function updateStory(id, data) {
+  const response = await apiClient.patch(`/api/stories/${id}/`, data);
   return response.data;
 }

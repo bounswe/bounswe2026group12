@@ -90,3 +90,31 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.5rem;
 }
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-primary-tint);
+  border: 1.5px solid var(--color-primary-border);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.filter-chip:hover {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}

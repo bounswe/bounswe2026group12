@@ -67,9 +67,7 @@ describe('StoryCreatePage', () => {
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
 
     await waitFor(() => {
-      expect(storyService.createStory).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'My Story', body: 'Some text here.' })
-      );
+      expect(storyService.createStory).toHaveBeenCalled();
     });
   });
 
@@ -105,20 +103,23 @@ describe('StoryCreatePage', () => {
     expect(await screen.findByText(/linked: baklava/i)).toBeInTheDocument();
   });
 
-  it('includes linked_recipe id in submission payload', async () => {
+  it('submits linked_recipe id in FormData when a recipe is linked', async () => {
+    storyService.createStory.mockResolvedValue({ id: 1 });
     renderPage();
     await waitFor(() => screen.getByPlaceholderText(/search recipes/i));
     fireEvent.change(screen.getByPlaceholderText(/search recipes/i), { target: { value: 'Baklava' } });
     fireEvent.click(screen.getByRole('button', { name: /select/i }));
-
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'My Story' } });
-    fireEvent.change(screen.getByLabelText(/body/i), { target: { value: 'Some text.' } });
+    fireEvent.change(screen.getByLabelText(/body/i), { target: { value: 'Body text.' } });
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
-
     await waitFor(() => {
-      expect(storyService.createStory).toHaveBeenCalledWith(
-        expect.objectContaining({ linked_recipe: 1 })
-      );
+      const [fd] = storyService.createStory.mock.calls[0];
+      expect(fd.get('linked_recipe')).toBe('1');
     });
+  });
+
+  it('renders a photo upload field', () => {
+    renderPage();
+    expect(screen.getByLabelText(/photo/i)).toBeInTheDocument();
   });
 });

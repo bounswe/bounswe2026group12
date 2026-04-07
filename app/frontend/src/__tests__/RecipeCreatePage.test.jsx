@@ -31,7 +31,7 @@ function renderPage() {
 }
 
 describe('RecipeCreatePage', () => {
-  it('renders title, description, region, and video fields', async () => {
+  it('renders title, description, region select, and video fields', async () => {
     renderPage();
     await waitFor(() => {
       expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
@@ -39,6 +39,14 @@ describe('RecipeCreatePage', () => {
       expect(screen.getByLabelText(/region/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/video/i)).toBeInTheDocument();
     });
+  });
+
+  it('shows error when both description and video are absent on submit', async () => {
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /publish/i }));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Soup' } });
+    fireEvent.click(screen.getByRole('button', { name: /publish/i }));
+    expect(screen.getByText(/description or video is required/i)).toBeInTheDocument();
   });
 
   it('renders Q&A toggle checkbox', async () => {
@@ -69,6 +77,20 @@ describe('RecipeCreatePage', () => {
     renderPage();
     await waitFor(() => screen.getByLabelText(/title/i));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Baklava' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A delicious dessert.' } });
+    // Select an ingredient
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    // Select a unit
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     await waitFor(() =>
       expect(screen.getByText(/recipe published/i)).toBeInTheDocument()
@@ -83,10 +105,40 @@ describe('RecipeCreatePage', () => {
     renderPage();
     await waitFor(() => screen.getByLabelText(/title/i));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Baklava' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A delicious dessert.' } });
+    // Select an ingredient
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    // Select a unit
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     await waitFor(() =>
       expect(screen.getByText(/failed to publish/i)).toBeInTheDocument()
     );
+  });
+
+  it('renders a thumbnail upload field', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByLabelText(/thumbnail/i)).toBeInTheDocument()
+    );
+  });
+
+  it('shows error when no ingredients are filled in', async () => {
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /publish/i }));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Soup' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'Some description.' } });
+    fireEvent.click(screen.getByRole('button', { name: /publish/i }));
+    expect(screen.getByText(/at least one ingredient/i)).toBeInTheDocument();
   });
 
   it('renders region as a combobox (select element)', async () => {

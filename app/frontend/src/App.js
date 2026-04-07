@@ -5,11 +5,15 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SearchPage from './pages/SearchPage';
+import RecipeListPage from './pages/RecipeListPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
-import StoryDetailPage from './pages/StoryDetailPage';
 import RecipeCreatePage from './pages/RecipeCreatePage';
 import RecipeEditPage from './pages/RecipeEditPage';
+import StoryListPage from './pages/StoryListPage';
+import StoryDetailPage from './pages/StoryDetailPage';
 import StoryCreatePage from './pages/StoryCreatePage';
+import StoryEditPage from './pages/StoryEditPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   return (
@@ -17,41 +21,33 @@ export default function App() {
       <Navbar />
       <div className="page-wrapper">
         <Routes>
-          {/* Public routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/recipes" element={<RecipeListPage />} />
+          <Route path="/stories" element={<StoryListPage />} />
 
-          {/* Protected routes — must be before dynamic :id routes */}
           <Route
             path="/recipes/new"
-            element={
-              <ProtectedRoute>
-                <RecipeCreatePage />
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute><RecipeCreatePage /></ProtectedRoute>}
           />
           <Route
             path="/recipes/:id/edit"
-            element={
-              <ProtectedRoute>
-                <RecipeEditPage />
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute><RecipeEditPage /></ProtectedRoute>}
           />
           <Route
             path="/stories/new"
-            element={
-              <ProtectedRoute>
-                <StoryCreatePage />
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute><StoryCreatePage /></ProtectedRoute>}
+          />
+          <Route
+            path="/stories/:id/edit"
+            element={<ProtectedRoute><StoryEditPage /></ProtectedRoute>}
           />
 
-          {/* Dynamic public routes */}
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
           <Route path="/stories/:id" element={<StoryDetailPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </>

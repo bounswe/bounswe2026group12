@@ -82,6 +82,14 @@ describe('RecipeEditPage', () => {
     expect(screen.getByText(/title is required/i)).toBeInTheDocument();
   });
 
+  it('shows error when both description and video are absent on submit', async () => {
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    expect(screen.getByText(/description or video is required/i)).toBeInTheDocument();
+  });
+
   it('calls updateRecipe and shows success toast on valid submit', async () => {
     recipeService.updateRecipe.mockResolvedValue({ id: 1 });
     renderPage();
@@ -116,6 +124,21 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
     );
+  });
+
+  it('renders a thumbnail upload field', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByLabelText(/thumbnail/i)).toBeInTheDocument()
+    );
+  });
+
+  it('shows error when no ingredients are filled in', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({ ...mockRecipe, ingredients: [] });
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /save changes/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    expect(screen.getByText(/at least one ingredient/i)).toBeInTheDocument();
   });
 
   it('renders region as a combobox (select element)', async () => {

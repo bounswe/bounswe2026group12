@@ -1,0 +1,18 @@
+.not-found-page {
+  text-align: center;
+  padding: 4rem 3rem;
+}
+
+.not-found-heading {
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 900;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.not-found-message {
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}

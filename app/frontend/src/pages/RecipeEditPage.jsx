@@ -46,6 +46,7 @@ export default function RecipeEditPage() {
   const [description, setDescription] = useState('');
   const [region, setRegion] = useState('');
   const [video, setVideo] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(false);
   const [rows, setRows] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -114,12 +115,15 @@ export default function RecipeEditPage() {
   function validate() {
     const e = {};
     if (!title.trim()) e.title = 'Title is required.';
+    if (!description.trim() && !video) e.content = 'A description or video is required.';
     for (const row of rows) {
       if (row.amount !== '' && (isNaN(Number(row.amount)) || Number(row.amount) <= 0)) {
         e.amount = 'Amount must be a positive number.';
         break;
       }
     }
+    const filledRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+    if (filledRows.length === 0) e.ingredients = 'At least one ingredient with amount is required.';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -145,10 +149,11 @@ export default function RecipeEditPage() {
     try {
       await updateRecipe(id, payload);
 
-      if (video) {
-        const videoData = new FormData();
-        videoData.append('video', video);
-        await updateRecipe(id, videoData);
+      if (video || thumbnail) {
+        const mediaData = new FormData();
+        if (video) mediaData.append('video', video);
+        if (thumbnail) mediaData.append('thumbnail', thumbnail);
+        await updateRecipe(id, mediaData);
       }
 
       showToast('Recipe updated!', 'success');
@@ -188,6 +193,8 @@ export default function RecipeEditPage() {
           />
         </div>
 
+        {errors.content && <p className="field-error">{errors.content}</p>}
+
         <div className="form-group">
           <label htmlFor="region">Region</label>
           <select
@@ -209,6 +216,16 @@ export default function RecipeEditPage() {
             type="file"
             accept="video/*"
             onChange={(e) => setVideo(e.target.files[0] || null)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="thumbnail">Thumbnail Image (optional)</label>
+          <input
+            id="thumbnail"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setThumbnail(e.target.files[0] || null)}
           />
         </div>
 
@@ -238,6 +255,7 @@ export default function RecipeEditPage() {
             />
           ))}
           {errors.amount && <p className="field-error">{errors.amount}</p>}
+          {errors.ingredients && <p className="field-error">{errors.ingredients}</p>}
           <button
             type="button"
             className="btn btn-outline btn-sm"

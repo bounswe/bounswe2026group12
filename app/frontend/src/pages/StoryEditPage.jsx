@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createStory } from '../services/storyService';
+import { useState, useEffect, useContext, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { fetchStory, updateStory } from '../services/storyService';
 import { fetchRecipes } from '../services/recipeService';
 import Toast from '../components/Toast';
-import './StoryCreatePage.css';
+import './StoryEditPage.css';
 
-export default function StoryCreatePage() {
+export default function StoryEditPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
+  const [story, setStory] = useState(null);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState('en');
@@ -15,16 +19,35 @@ export default function StoryCreatePage() {
   const [linkedRecipe, setLinkedRecipe] = useState(null);
   const [recipeSearch, setRecipeSearch] = useState('');
   const [allRecipes, setAllRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const toastTimerRef = useRef(null);
+  const navTimerRef = useRef(null);
+
   useEffect(() => {
-    fetchRecipes().then(setAllRecipes).catch(() => {});
-  }, []);
+    let cancelled = false;
+    Promise.all([fetchStory(id), fetchRecipes()])
+      .then(([storyData, recipes]) => {
+        if (cancelled) return;
+        setStory(storyData);
+        setTitle(storyData.title);
+        setBody(storyData.body || '');
+        setLanguage(storyData.language || 'en');
+        setLinkedRecipe(storyData.linked_recipe || null);
+        setAllRecipes(recipes);
+      })
+      .catch(() => { if (!cancelled) setLoadError('Could not load story.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [id]);
 
   function showToast(message, type) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+    toastTimerRef.current = setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
   }
 
   function validate() {
@@ -43,17 +66,30 @@ export default function StoryCreatePage() {
     formData.append('title', title);
     formData.append('body', body);
     formData.append('language', language);
-    formData.append('is_published', 'true');
     if (linkedRecipe) formData.append('linked_recipe', linkedRecipe.id);
     if (image) formData.append('image', image);
 
     try {
-      const created = await createStory(formData);
-      showToast('Story published!', 'success');
-      navigate(`/stories/${created.id}`);
+      await updateStory(id, formData);
+      showToast('Story updated!', 'success');
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+      navTimerRef.current = setTimeout(() => navigate(`/stories/${id}`), 1500);
     } catch {
-      showToast('Failed to publish story. Please try again.', 'error');
+      showToast('Failed to save changes. Please try again.', 'error');
     }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    };
+  }, []);
+
+  if (loading) return <p className="page-status">Loading…</p>;
+  if (loadError) return <p className="page-status page-error">{loadError}</p>;
+  if (!user || (story && story.author && user.id !== story.author.id)) {
+    return <p className="page-status page-error">You are not authorized to edit this story.</p>;
   }
 
   const filteredRecipes = recipeSearch.trim()
@@ -64,7 +100,7 @@ export default function StoryCreatePage() {
 
   return (
     <main className="page-card story-form">
-      <h1 className="story-form-heading">Create Story</h1>
+      <h1 className="story-form-heading">Edit Story</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="story-title">Title</label>
@@ -152,10 +188,9 @@ export default function StoryCreatePage() {
         </section>
 
         <div className="story-form-actions">
-          <button type="submit" className="btn btn-primary">Publish Story</button>
+          <button type="submit" className="btn btn-primary">Save Changes</button>
         </div>
       </form>
-
       <Toast message={toast.message} type={toast.type} />
     </main>
   );
