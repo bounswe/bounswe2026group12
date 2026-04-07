@@ -6,6 +6,11 @@ class RegionSerializer(serializers.ModelSerializer):
         model = Region
         fields = '__all__'
 
+class IngredientLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = ['id', 'name']
+
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
@@ -17,6 +22,11 @@ class IngredientSerializer(serializers.ModelSerializer):
             if not request or not request.user or not request.user.is_staff:
                 data.pop('is_approved')
         return data
+
+class UnitLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ['id', 'name']
 
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
