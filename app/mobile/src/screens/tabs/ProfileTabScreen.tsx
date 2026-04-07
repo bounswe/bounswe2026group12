@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
+import { shadows, tokens } from '../../theme';
 
 export default function ProfileTabScreen() {
   const navigation = useNavigation<any>();
@@ -11,80 +12,101 @@ export default function ProfileTabScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <View style={styles.container}>
-        <Text style={styles.title} accessibilityRole="header">
-          Profile
-        </Text>
+        <View style={styles.card}>
+          <Text style={styles.title} accessibilityRole="header">
+            Profile
+          </Text>
 
-        {isAuthenticated ? (
-          <>
-            <Text style={styles.subtitle}>
-              Signed in{user ? ` as ${user.username}` : ''}.
-            </Text>
-            <Pressable
-              onPress={() => void logout()}
-              style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Log out"
-            >
-              <Text style={styles.primaryText}>Log out</Text>
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <Text style={styles.subtitle}>
-              No profile yet. Log in or register to continue.
-            </Text>
-            <View style={styles.row}>
+          {isAuthenticated ? (
+            <>
+              <Text style={styles.subtitle}>
+                Signed in{user ? ` as ${user.username}` : ''}.
+              </Text>
               <Pressable
-                onPress={() => navigation.navigate('Feed', { screen: 'Login' })}
+                onPress={() => void logout()}
                 style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
                 accessibilityRole="button"
-                accessibilityLabel="Go to Log In"
+                accessibilityLabel="Log out"
               >
-                <Text style={styles.primaryText}>Log In</Text>
+                <Text style={styles.primaryText}>Log out</Text>
               </Pressable>
-              <Pressable
-                onPress={() => navigation.navigate('Feed', { screen: 'Register' })}
-                style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
-                accessibilityRole="button"
-                accessibilityLabel="Go to Register"
-              >
-                <Text style={styles.secondaryText}>Register</Text>
-              </Pressable>
-            </View>
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              <Text style={styles.subtitle}>
+                No profile yet. Log in or register to continue.
+              </Text>
+              <View style={styles.row}>
+                <Pressable
+                  onPress={() => navigation.navigate('Feed', { screen: 'Login' })}
+                  style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Go to Log In"
+                >
+                  <Text style={styles.primaryText}>Log In</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => navigation.navigate('Feed', { screen: 'Register' })}
+                  style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Go to Register"
+                >
+                  <Text style={styles.secondaryText}>Register</Text>
+                </Pressable>
+              </View>
+            </>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: tokens.colors.bg },
   container: { flex: 1, padding: 20, justifyContent: 'center' },
-  title: { fontSize: 28, fontWeight: '800', color: '#0f172a', marginBottom: 10 },
-  subtitle: { fontSize: 16, color: '#64748b', lineHeight: 22, marginBottom: 16 },
+  card: {
+    backgroundColor: tokens.colors.surface,
+    borderRadius: tokens.radius.xl,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    ...shadows.lg,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    marginBottom: 10,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  subtitle: { fontSize: 16, color: tokens.colors.textMuted, lineHeight: 22, marginBottom: 16 },
   row: { flexDirection: 'row', gap: 12 },
   primary: {
     flex: 1,
-    backgroundColor: '#2563eb',
+    backgroundColor: tokens.colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    borderRadius: 10,
+    borderRadius: tokens.radius.pill,
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: tokens.colors.primary,
+    ...shadows.md,
+    maxWidth: 340,
+    alignSelf: 'center',
   },
   primaryText: { color: '#fff', fontSize: 16, fontWeight: '800' },
   secondary: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: tokens.colors.primary,
+    backgroundColor: 'transparent',
     paddingVertical: 12,
     paddingHorizontal: 14,
-    borderRadius: 10,
+    borderRadius: tokens.radius.pill,
     alignItems: 'center',
   },
-  secondaryText: { color: '#0f172a', fontSize: 16, fontWeight: '800' },
+  secondaryText: { color: tokens.colors.primary, fontSize: 16, fontWeight: '800' },
   pressed: { opacity: 0.9 },
 });
 

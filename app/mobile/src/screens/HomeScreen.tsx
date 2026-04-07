@@ -2,7 +2,6 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { shadows, tokens } from '../theme';
 import { listMockRecipes } from '../mocks/recipes';
 import { listMockStories } from '../mocks/stories';
@@ -11,7 +10,6 @@ import type { RootStackParamList } from '../navigation/types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
-  const { user, isAuthenticated, logout } = useAuth();
   const [query, setQuery] = useState('');
 
   const stories = useMemo(() => listMockStories(), []);
@@ -22,22 +20,8 @@ export default function HomeScreen({ navigation }: Props) {
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <Text style={styles.heading} accessibilityRole="header">
-            Feed
+            Search
           </Text>
-          {isAuthenticated ? (
-            <View style={styles.headerRight}>
-              <Text style={styles.signedInText} numberOfLines={1}>
-                {user ? user.username : 'Signed in'}
-              </Text>
-              <Pressable
-                onPress={() => void logout()}
-                accessibilityRole="button"
-                accessibilityLabel="Log out"
-              >
-                <Text style={styles.link}>Log out</Text>
-              </Pressable>
-            </View>
-          ) : null}
         </View>
 
         <View style={styles.searchWrap}>
@@ -126,31 +110,6 @@ export default function HomeScreen({ navigation }: Props) {
             )}
           />
         </View>
-
-        {!isAuthenticated ? (
-          <View style={styles.authInline}>
-            <Text style={styles.authInlineText}>
-              Sign in to access author actions like editing.
-            </Text>
-            <View style={styles.authInlineRow}>
-              <Pressable
-                onPress={() => navigation.navigate('Login')}
-                accessibilityRole="button"
-                accessibilityLabel="Go to Log In"
-              >
-                <Text style={styles.link}>Log In</Text>
-              </Pressable>
-              <Text style={styles.authSep}> · </Text>
-              <Pressable
-                onPress={() => navigation.navigate('Register')}
-                accessibilityRole="button"
-                accessibilityLabel="Go to Register"
-              >
-                <Text style={styles.link}>Register</Text>
-              </Pressable>
-            </View>
-          </View>
-        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -166,7 +125,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     gap: 12,
   },
-  headerRight: { alignItems: 'flex-end', gap: 6, maxWidth: '55%' },
   heading: {
     fontSize: 28,
     fontWeight: '800',
@@ -240,21 +198,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   tagText: { fontSize: 12, fontWeight: '800', color: tokens.colors.text },
-  authInline: {
-    marginTop: 6,
-    paddingTop: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: tokens.colors.primaryTint,
-    alignItems: 'center',
-    gap: 8,
-  },
-  authInlineText: { fontSize: 14, color: tokens.colors.surface, textAlign: 'center' },
-  authInlineRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
-  authSep: { fontSize: 15, color: tokens.colors.surface },
   link: { fontSize: 15, color: tokens.colors.surface, fontWeight: '800' },
-  signedInText: {
-    fontSize: 16,
-    color: tokens.colors.surface,
-    fontWeight: '700',
-  },
 });

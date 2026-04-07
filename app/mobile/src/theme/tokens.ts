@@ -29,9 +29,8 @@ export const tokens = {
     pill: 999,
   },
   typography: {
-    // Avoid custom font dependencies; approximate the web look using system fonts.
-    display: { fontFamily: 'Georgia' as const, fontWeight: '700' as const },
-    body: { fontFamily: 'System' as const },
+    display: { fontFamily: 'Fraunces_700Bold' as const, fontWeight: '700' as const },
+    body: { fontFamily: 'DMSans_400Regular' as const },
   },
 } as const;
 

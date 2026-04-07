@@ -10,6 +10,7 @@ import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
+import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
 
@@ -144,7 +145,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: tokens.colors.bg },
   scroll: { padding: 20, paddingBottom: 32 },
   padded: { flex: 1, padding: 20, justifyContent: 'center' },
   centered: {
@@ -153,22 +154,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  title: { fontSize: 26, fontWeight: '700', color: '#0f172a' },
-  meta: { fontSize: 16, color: '#64748b', marginTop: 8 },
-  author: { fontSize: 15, color: '#64748b', marginTop: 4 },
-  qaMeta: { fontSize: 14, color: '#64748b', marginTop: 4 },
+  title: { fontSize: 26, fontWeight: '700', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
+  meta: { fontSize: 16, color: tokens.colors.surface, marginTop: 8 },
+  author: { fontSize: 15, color: tokens.colors.surface, marginTop: 4 },
+  qaMeta: { fontSize: 14, color: tokens.colors.surface, marginTop: 4 },
   editLink: {
     alignSelf: 'flex-start',
     marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-  editLinkText: { fontSize: 16, color: '#2563eb', fontWeight: '700' },
+  editLinkText: { fontSize: 16, color: tokens.colors.surface, fontWeight: '800' },
   videoWrap: {
     marginTop: 16,
-    borderRadius: 12,
+    borderRadius: tokens.radius.xl,
     overflow: 'hidden',
-    backgroundColor: '#0f172a',
+    backgroundColor: tokens.colors.surfaceDark,
+    ...shadows.lg,
   },
   video: {
     width: '100%',
@@ -177,22 +179,23 @@ const styles = StyleSheet.create({
   noVideo: {
     marginTop: 16,
     fontSize: 14,
-    color: '#94a3b8',
+    color: tokens.colors.surface,
     fontStyle: 'italic',
   },
   description: {
     marginTop: 18,
     fontSize: 16,
-    color: '#334155',
+    color: tokens.colors.surface,
     lineHeight: 24,
   },
-  muted: { marginTop: 12, fontSize: 15, color: '#94a3b8' },
+  muted: { marginTop: 12, fontSize: 15, color: tokens.colors.surface },
   sectionTitle: {
     marginTop: 24,
     fontSize: 18,
     fontWeight: '700',
-    color: '#0f172a',
+    color: tokens.colors.surface,
     marginBottom: 10,
+    fontFamily: tokens.typography.display.fontFamily,
   },
   list: { gap: 0 },
   ingredientRow: {
@@ -201,8 +204,8 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: tokens.colors.primaryTint,
   },
-  ingredientName: { fontSize: 16, color: '#0f172a', fontWeight: '600' },
-  ingredientAmount: { fontSize: 16, color: '#475569' },
+  ingredientName: { fontSize: 16, color: tokens.colors.surface, fontWeight: '700' },
+  ingredientAmount: { fontSize: 16, color: tokens.colors.surface },
 });

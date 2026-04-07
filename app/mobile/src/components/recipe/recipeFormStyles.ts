@@ -4,6 +4,14 @@ import { shadows, tokens } from '../../theme';
 export const recipeFormStyles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: tokens.colors.bg },
   scroll: { padding: 20, paddingBottom: 32 },
+  card: {
+    backgroundColor: tokens.colors.surface,
+    borderRadius: tokens.radius.xl,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    ...shadows.lg,
+  },
   heading: {
     fontSize: 28,
     fontWeight: '700',

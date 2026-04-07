@@ -8,6 +8,7 @@ import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchStoryById } from '../services/storyService';
 import type { StoryDetail } from '../types/story';
+import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'StoryDetail'>;
 
@@ -101,7 +102,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: tokens.colors.bg },
   padded: { padding: 20, paddingBottom: 32 },
   paddedCenter: { flex: 1, padding: 20, justifyContent: 'center' },
   centered: {
@@ -113,16 +114,17 @@ const styles = StyleSheet.create({
   thumbWrap: {
     width: '100%',
     aspectRatio: 16 / 9,
-    borderRadius: 12,
+    borderRadius: tokens.radius.xl,
     overflow: 'hidden',
-    backgroundColor: '#f1f5f9',
+    backgroundColor: tokens.colors.surface,
     marginBottom: 16,
+    ...shadows.lg,
   },
   thumb: { width: '100%', height: '100%' },
-  title: { fontSize: 26, fontWeight: '800', color: '#0f172a' },
-  meta: { fontSize: 15, color: '#64748b', marginTop: 8 },
-  body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: '#334155' },
-  linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#e2e8f0' },
-  linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: '#0f172a' },
-  noLinked: { fontSize: 15, color: '#64748b', lineHeight: 22 },
+  title: { fontSize: 26, fontWeight: '800', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
+  meta: { fontSize: 15, color: tokens.colors.surface, marginTop: 8 },
+  body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.surface },
+  linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
+  linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
+  noLinked: { fontSize: 15, color: tokens.colors.surface, lineHeight: 22 },
 });
