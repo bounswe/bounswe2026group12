@@ -1,8 +1,9 @@
 import { fetchStory, createStory } from '../services/storyService';
+import * as storyService from '../services/storyService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
-  apiClient: { get: jest.fn(), post: jest.fn() },
+  apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn() },
 }));
 
 beforeEach(() => jest.clearAllMocks());
@@ -36,5 +37,24 @@ describe('createStory', () => {
     expect(apiClient.post).toHaveBeenCalledWith('/api/stories/', {
       title: 'T', body: 'B', language: 'en', linked_recipe: 5,
     });
+  });
+});
+
+describe('storyService — new functions', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('fetchStories calls GET /api/stories/ and returns data', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Test' }] });
+    const result = await storyService.fetchStories();
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/');
+    expect(result).toEqual([{ id: 1, title: 'Test' }]);
+  });
+
+  it('updateStory calls PATCH /api/stories/:id/ and returns data', async () => {
+    apiClient.patch.mockResolvedValue({ data: { id: 2, title: 'Updated' } });
+    const payload = new FormData();
+    const result = await storyService.updateStory(2, payload);
+    expect(apiClient.patch).toHaveBeenCalledWith('/api/stories/2/', payload);
+    expect(result).toEqual({ id: 2, title: 'Updated' });
   });
 });
