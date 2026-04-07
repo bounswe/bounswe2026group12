@@ -3,6 +3,25 @@ import { API_BASE_URL } from '../config/apiBase';
 
 const TOKEN_KEY = 'token';
 
+async function readErrorMessage(res: Response): Promise<string> {
+  const contentType = res.headers.get('content-type') ?? '';
+  try {
+    if (contentType.includes('application/json')) {
+      const data = (await res.json()) as any;
+      const detail = typeof data?.detail === 'string' ? data.detail : null;
+      const nonField =
+        Array.isArray(data?.non_field_errors) && typeof data.non_field_errors[0] === 'string'
+          ? data.non_field_errors[0]
+          : null;
+      return detail || nonField || JSON.stringify(data);
+    }
+    const text = await res.text();
+    return text;
+  } catch {
+    return '';
+  }
+}
+
 async function authHeaders(): Promise<HeadersInit> {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
   const headers: Record<string, string> = {
@@ -20,8 +39,8 @@ export async function apiGetJson<T>(path: string): Promise<T> {
     headers: await authHeaders(),
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `GET ${path} failed (${res.status})`);
+    const message = (await readErrorMessage(res)).trim();
+    throw new Error(message || `GET ${path} failed (${res.status})`);
   }
   return res.json() as Promise<T>;
 }
@@ -34,8 +53,8 @@ export async function apiPostJson<T>(path: string, body: object): Promise<T> {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `POST ${path} failed (${res.status})`);
+    const message = (await readErrorMessage(res)).trim();
+    throw new Error(message || `POST ${path} failed (${res.status})`);
   }
   return res.json() as Promise<T>;
 }
@@ -54,7 +73,7 @@ export async function apiPatchFormData(path: string, formData: FormData): Promis
     body: formData,
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `PATCH ${path} failed (${res.status})`);
+    const message = (await readErrorMessage(res)).trim();
+    throw new Error(message || `PATCH ${path} failed (${res.status})`);
   }
 }

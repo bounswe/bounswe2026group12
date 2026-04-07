@@ -12,10 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { EmptyState } from '../components/search/EmptyState';
 import { SearchResultCard } from '../components/search/SearchResultCard';
 import type { RootStackParamList } from '../navigation/types';
-import {
-  MOCK_SEARCH_RESULTS,
-  type MockSearchItem,
-} from '../mocks/searchResults';
+import { search, type SearchResultItem } from '../services/searchService';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Search'>;
@@ -26,24 +23,17 @@ const REGIONS: RegionOption[] = [
   { label: 'All regions', value: '' },
   { label: 'Anatolia', value: 'Anatolia' },
   { label: 'Aegean', value: 'Aegean' },
+  { label: 'Black Sea', value: 'Black Sea' },
+  { label: 'Marmara', value: 'Marmara' },
+  { label: 'Mediterranean', value: 'Mediterranean' },
 ];
-
-function filterItems(query: string, region: string): MockSearchItem[] {
-  const q = query.trim().toLowerCase();
-  const r = region.trim().toLowerCase();
-  return MOCK_SEARCH_RESULTS.filter((item) => {
-    const matchesQuery =
-      !q ||
-      item.title.toLowerCase().includes(q) ||
-      item.subtitle.toLowerCase().includes(q);
-    const matchesRegion = !r || (item.region ?? '').toLowerCase().includes(r);
-    return matchesQuery && matchesRegion;
-  });
-}
 
 export default function SearchScreen({ navigation, route }: Props) {
   const [query, setQuery] = useState('');
   const [region, setRegion] = useState('');
+  const [results, setResults] = useState<SearchResultItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (route.params?.query != null) setQuery(route.params.query);
@@ -51,14 +41,39 @@ export default function SearchScreen({ navigation, route }: Props) {
     // only initialize on first mount / param change
   }, [route.params?.query, route.params?.region]);
 
-  const data = useMemo(() => filterItems(query, region), [query, region]);
+  useEffect(() => {
+    const q = query.trim();
+    // Keep pristine state empty without calling backend.
+    if (!q && !region.trim()) {
+      setResults([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    void (async () => {
+      try {
+        const data = await search(q, region.trim() || undefined);
+        if (!cancelled) setResults(data);
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Search failed');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [query, region]);
 
   const selectedRegionLabel =
     REGIONS.find((r) => r.value === region)?.label ?? 'All regions';
 
   const isPristine = query.trim() === '' && region.trim() === '';
 
-  function onPressItem(item: MockSearchItem) {
+  function onPressItem(item: SearchResultItem) {
     if (item.kind === 'recipe') {
       navigation.navigate('RecipeDetail', { id: item.id });
     } else {
@@ -76,7 +91,7 @@ export default function SearchScreen({ navigation, route }: Props) {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Filter mock results…"
+          placeholder="Search recipes and stories…"
           style={styles.input}
           accessibilityLabel="Search filter"
           autoCapitalize="none"
@@ -110,13 +125,26 @@ export default function SearchScreen({ navigation, route }: Props) {
         </View>
 
         <FlatList
-          data={data}
+          data={results}
           keyExtractor={(item) => item.key}
           numColumns={2}
           contentContainerStyle={styles.grid}
           columnWrapperStyle={styles.gridRow}
           ListEmptyComponent={
-            isPristine ? (
+            loading ? (
+              <EmptyState
+                title="Searching…"
+                message="Fetching results from the server."
+                glyph="…"
+              />
+            ) : error ? (
+              <EmptyState
+                title="Search failed"
+                message={error}
+                glyph="!"
+                actions={[{ label: 'Retry', onPress: () => setQuery((q) => q) }]}
+              />
+            ) : isPristine ? (
               <EmptyState
                 title="Start searching"
                 message="Type a keyword or pick a region to discover recipes and stories."

@@ -10,7 +10,8 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipesList } from '../services/recipeService';
-import { mockSubmitStoryCreate, type StoryLanguage } from '../services/mockStoryService';
+import { apiPostJson } from '../services/httpClient';
+import type { StoryLanguage } from '../services/mockStoryService';
 import { tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'StoryCreate'>;
@@ -68,14 +69,13 @@ export default function StoryCreateScreen({ navigation }: Props) {
     setSubmitting(true);
     void (async () => {
       try {
-        const created = await mockSubmitStoryCreate({
-          title,
-          body,
+        const created = await apiPostJson<{ id: string }>('/api/stories/', {
+          title: title.trim(),
+          body: body.trim(),
           language,
           is_published: true,
-          linked_recipe: linkedRecipe,
-          thumbnail: thumbnailUri,
-          author: user ? { username: user.username } : undefined,
+          linked_recipe: linkedRecipe ? linkedRecipe.id : null,
+          // thumbnail upload TODO (needs multipart)
         });
         showToast('Story published!', 'success');
         navigation.navigate('StoryDetail', { id: created.id });
@@ -201,7 +201,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
             accessibilityRole="button"
             accessibilityLabel="Publish story"
           >
-            <Text style={form.primaryButtonText}>{submitting ? 'Publishing…' : 'Publish (mock)'}</Text>
+            <Text style={form.primaryButtonText}>{submitting ? 'Publishing…' : 'Publish'}</Text>
           </Pressable>
         </View>
       </ScrollView>

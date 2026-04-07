@@ -1,21 +1,12 @@
 import type { RecipeDetail } from '../types/recipe';
-import { getMockRecipeDetailById, listMockRecipes, type MockRecipeListItem } from '../mocks/recipes';
 import { apiGetJson, apiPatchFormData } from './httpClient';
-import { mockSubmitRecipeUpdate } from './mockRecipeCreate';
 
 /**
  * Same endpoint as web `fetchRecipe` in `recipeService.js`.
- * Falls back to mock detail when the request fails (offline / no backend).
  */
 export async function fetchRecipeById(id: string): Promise<RecipeDetail> {
-  try {
-    const data = await apiGetJson<RecipeDetail>(`/api/recipes/${id}/`);
-    return normalizeRecipeDetail(data);
-  } catch {
-    const mock = getMockRecipeDetailById(id);
-    if (!mock) throw new Error('Could not load recipe.');
-    return mock;
-  }
+  const data = await apiGetJson<RecipeDetail>(`/api/recipes/${id}/`);
+  return normalizeRecipeDetail(data);
 }
 
 function normalizeRecipeDetail(data: RecipeDetail): RecipeDetail {
@@ -26,28 +17,33 @@ function normalizeRecipeDetail(data: RecipeDetail): RecipeDetail {
 }
 
 /**
- * Same as web `updateRecipe` (`PATCH` + `FormData`). Falls back to mock when the request fails.
+ * Same as web `updateRecipe` (`PATCH` + `FormData`).
  */
 export async function updateRecipeById(id: string, formData: FormData): Promise<void> {
-  try {
-    await apiPatchFormData(`/api/recipes/${id}/`, formData);
-  } catch {
-    await mockSubmitRecipeUpdate(id);
-  }
+  await apiPatchFormData(`/api/recipes/${id}/`, formData);
 }
 
 /** Minimal list for story linking / pickers (web: GET `/api/recipes/`). */
-export async function fetchRecipesList(): Promise<MockRecipeListItem[]> {
-  try {
-    // We only need id/title/region/author for UI; backend may return more fields.
-    const data = await apiGetJson<any[]>(`/api/recipes/`);
-    return (Array.isArray(data) ? data : []).map((r) => ({
+export async function fetchRecipesList(): Promise<
+  { id: string; title: string; region?: string; author?: any }[]
+> {
+  // We only need id/title/region/author for UI; backend may return more fields.
+  const data = await apiGetJson<any[]>(`/api/recipes/`);
+  return (Array.isArray(data) ? data : []).map((r) => {
+    const reg = r.region;
+    const regionLabel =
+      reg == null
+        ? undefined
+        : typeof reg === 'string'
+          ? reg
+          : typeof reg === 'object' && reg && 'name' in reg && typeof (reg as { name: unknown }).name === 'string'
+            ? (reg as { name: string }).name
+            : undefined;
+    return {
       id: String(r.id),
       title: String(r.title ?? ''),
-      region: r.region ?? undefined,
+      region: regionLabel,
       author: r.author ?? undefined,
-    }));
-  } catch {
-    return listMockRecipes();
-  }
+    };
+  });
 }

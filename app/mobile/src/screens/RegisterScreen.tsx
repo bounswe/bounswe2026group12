@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { validateRegisterForm } from '../lib/authValidation';
 import type { RootStackParamList } from '../navigation/types';
-import { mockRegisterRequest } from '../services/mockAuthService';
+import { registerRequest } from '../services/authService';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
@@ -40,7 +40,7 @@ export default function RegisterScreen({ navigation }: Props) {
     setApiError('');
     setSubmitting(true);
     try {
-      const data = await mockRegisterRequest(username, email, password);
+      const data = await registerRequest(username, email, password);
       await login(data.user, data.access);
       navigation.dispatch(
         CommonActions.reset({
