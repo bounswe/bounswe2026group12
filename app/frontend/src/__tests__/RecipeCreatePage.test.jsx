@@ -2,8 +2,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import RecipeCreatePage from '../pages/RecipeCreatePage';
 import * as recipeService from '../services/recipeService';
+import * as searchService from '../services/searchService';
 
 jest.mock('../services/recipeService');
+jest.mock('../services/searchService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -14,6 +16,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Salt' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'cup' }]);
+  searchService.fetchRegions.mockResolvedValue([{ regionId: 1, name: 'Aegean' }, { regionId: 2, name: 'Black Sea' }]);
 });
 
 function renderPage() {
@@ -25,7 +28,7 @@ function renderPage() {
 }
 
 describe('RecipeCreatePage', () => {
-  it('renders title, description, region, and video fields', async () => {
+  it('renders title, description, region select, and video fields', async () => {
     renderPage();
     await waitFor(() => {
       expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
@@ -33,6 +36,14 @@ describe('RecipeCreatePage', () => {
       expect(screen.getByLabelText(/region/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/video/i)).toBeInTheDocument();
     });
+  });
+
+  it('shows error when both description and video are absent on submit', async () => {
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /publish/i }));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Soup' } });
+    fireEvent.click(screen.getByRole('button', { name: /publish/i }));
+    expect(screen.getByText(/description or video is required/i)).toBeInTheDocument();
   });
 
   it('renders Q&A toggle checkbox', async () => {
@@ -63,6 +74,7 @@ describe('RecipeCreatePage', () => {
     renderPage();
     await waitFor(() => screen.getByLabelText(/title/i));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Baklava' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A delicious dessert.' } });
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     await waitFor(() =>
       expect(screen.getByText(/recipe published/i)).toBeInTheDocument()
@@ -77,6 +89,7 @@ describe('RecipeCreatePage', () => {
     renderPage();
     await waitFor(() => screen.getByLabelText(/title/i));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Baklava' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A delicious dessert.' } });
     fireEvent.click(screen.getByRole('button', { name: /publish/i }));
     await waitFor(() =>
       expect(screen.getByText(/failed to publish/i)).toBeInTheDocument()

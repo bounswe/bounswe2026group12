@@ -9,6 +9,7 @@ import {
   submitIngredient,
   submitUnit,
 } from '../services/recipeService';
+import { fetchRegions } from '../services/searchService';
 import './RecipeCreatePage.css';
 
 function makeRow() {
@@ -35,6 +36,7 @@ export default function RecipeCreatePage() {
 
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
+  const [regions, setRegions] = useState([]);
 
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
@@ -42,6 +44,7 @@ export default function RecipeCreatePage() {
   useEffect(() => {
     fetchIngredients().then(setIngredients).catch(() => {});
     fetchUnits().then(setUnits).catch(() => {});
+    fetchRegions().then(setRegions).catch(() => {});
   }, []);
 
   function showToast(message, type) {
@@ -74,6 +77,7 @@ export default function RecipeCreatePage() {
   function validate() {
     const e = {};
     if (!title.trim()) e.title = 'Title is required.';
+    if (!description.trim() && !video) e.content = 'A description or video is required.';
     for (const row of rows) {
       if (row.amount !== '' && (isNaN(Number(row.amount)) || Number(row.amount) <= 0)) {
         e.amount = 'Amount must be a positive number.';
@@ -137,13 +141,20 @@ export default function RecipeCreatePage() {
           />
         </div>
 
+        {errors.content && <p className="field-error">{errors.content}</p>}
+
         <div className="form-group">
           <label htmlFor="region">Region</label>
-          <input
+          <select
             id="region"
             value={region}
             onChange={(e) => setRegion(e.target.value)}
-          />
+          >
+            <option value="">Select a region…</option>
+            {regions.map((r) => (
+              <option key={r.regionId} value={r.name}>{r.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">

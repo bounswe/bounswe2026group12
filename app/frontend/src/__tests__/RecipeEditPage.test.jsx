@@ -3,8 +3,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import RecipeEditPage from '../pages/RecipeEditPage';
 import * as recipeService from '../services/recipeService';
+import * as searchService from '../services/searchService';
 
 jest.mock('../services/recipeService');
+jest.mock('../services/searchService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -30,6 +32,7 @@ beforeEach(() => {
   recipeService.fetchRecipe.mockResolvedValue(mockRecipe);
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Phyllo dough' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'g' }]);
+  searchService.fetchRegions.mockResolvedValue([{ regionId: 1, name: 'Aegean' }, { regionId: 2, name: 'Black Sea' }]);
 });
 
 function renderPage(authUser = { id: 3, username: 'eren' }) {
@@ -73,6 +76,14 @@ describe('RecipeEditPage', () => {
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: '' } });
     fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
     expect(screen.getByText(/title is required/i)).toBeInTheDocument();
+  });
+
+  it('shows error when both description and video are absent on submit', async () => {
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    expect(screen.getByText(/description or video is required/i)).toBeInTheDocument();
   });
 
   it('calls updateRecipe and shows success toast on valid submit', async () => {
