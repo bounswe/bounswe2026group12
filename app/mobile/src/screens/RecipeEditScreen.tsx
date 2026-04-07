@@ -3,7 +3,10 @@ import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { buildRecipeUpdateFormData } from '../components/recipe/buildRecipeUpdateFormData';
+import {
+  buildRecipePatchJsonBody,
+  buildRecipeVideoOnlyFormData,
+} from '../components/recipe/buildRecipeUpdateFormData';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { RecipeIngredientRowsSection } from '../components/recipe/RecipeIngredientRowsSection';
 import { RecipeVideoSection } from '../components/recipe/RecipeVideoSection';
@@ -19,7 +22,7 @@ import { LoadingView } from '../components/ui/LoadingView';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
-import { fetchRecipeById, updateRecipeById } from '../services/recipeService';
+import { fetchRecipeById, patchRecipeJson, updateRecipeById } from '../services/recipeService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
 
@@ -145,18 +148,20 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     setAttemptedSubmit(true);
     if (!isValid) return;
 
-    const fd = buildRecipeUpdateFormData({
+    const jsonBody = buildRecipePatchJsonBody({
       title,
       description,
       region,
       qaEnabled,
-      localVideo,
       rows,
     });
 
     void (async () => {
       try {
-        await updateRecipeById(id, fd);
+        await patchRecipeJson(id, jsonBody);
+        if (localVideo) {
+          await updateRecipeById(id, buildRecipeVideoOnlyFormData(localVideo));
+        }
         showToast('Recipe updated!', 'success');
         setTimeout(() => navigation.navigate('RecipeDetail', { id }), 1500);
       } catch {

@@ -1,38 +1,47 @@
 import type { AuthoringIngredientRow } from './recipeFormState';
 import type { LocalVideoSelection } from './RecipeVideoSection';
 
-/** Mirrors web `RecipeEditPage` `FormData` assembly (`PATCH /api/recipes/:id/`). */
-export function buildRecipeUpdateFormData(input: {
+/**
+ * JSON body for PATCH /api/recipes/:id/ — matches web `RecipeEditPage` payload shape.
+ * DRF does not reliably accept `ingredients_write` lists via multipart; use JSON for fields + rows.
+ */
+export function buildRecipePatchJsonBody(input: {
   title: string;
   description: string;
   region: string;
   qaEnabled: boolean;
-  localVideo: LocalVideoSelection | null;
   rows: AuthoringIngredientRow[];
-}): FormData {
-  const fd = new FormData();
-  fd.append('title', input.title.trim());
-  fd.append('description', input.description.trim());
-  fd.append('region', input.region.trim());
-  fd.append('qa_enabled', String(input.qaEnabled));
-  fd.append('is_published', 'true');
-
-  if (input.localVideo) {
-    fd.append('video', {
-      uri: input.localVideo.uri,
-      name: input.localVideo.fileName ?? 'video.mp4',
-      type: input.localVideo.mimeType ?? 'video/mp4',
-    } as unknown as Blob);
-  }
-
+}): Record<string, unknown> {
   const validRows = input.rows.filter(
     (r) => r.ingredient.id != null && r.amount.trim() !== '' && r.unit.id != null,
   );
-  validRows.forEach((r, i) => {
-    fd.append(`ingredients[${i}][ingredient]`, String(r.ingredient.id));
-    fd.append(`ingredients[${i}][amount]`, r.amount.trim());
-    fd.append(`ingredients[${i}][unit]`, String(r.unit.id));
-  });
+  const regionTrim = input.region.trim();
+  const regionNum = regionTrim ? Number(regionTrim) : NaN;
 
+  return {
+    title: input.title.trim(),
+    description: input.description.trim(),
+    region: regionTrim && Number.isFinite(regionNum) ? regionNum : null,
+    qa_enabled: input.qaEnabled,
+    is_published: true,
+    ingredients_write: validRows.map((r) => ({
+      ingredient: r.ingredient.id,
+      amount: r.amount.trim(),
+      unit: r.unit.id,
+    })),
+  };
+}
+
+/** Multipart PATCH with only a new video file (after JSON patch saved other fields). */
+export function buildRecipeVideoOnlyFormData(localVideo: LocalVideoSelection): FormData {
+  const fd = new FormData();
+  fd.append(
+    'video',
+    {
+      uri: localVideo.uri,
+      name: localVideo.fileName ?? 'video.mp4',
+      type: localVideo.mimeType ?? 'video/mp4',
+    } as unknown as Blob,
+  );
   return fd;
 }

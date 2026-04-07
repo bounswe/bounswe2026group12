@@ -1,6 +1,6 @@
 import type { RecipeDetail, RecipeIngredientRow } from '../types/recipe';
 import { parseAuthorId } from '../utils/parseAuthorId';
-import { apiGetJson, apiPatchFormData } from './httpClient';
+import { apiGetJson, apiPatchFormData, apiPatchJson } from './httpClient';
 
 /**
  * Same endpoint as web `fetchRecipe` in `recipeService.js`.
@@ -45,7 +45,18 @@ function normalizeRecipeIngredients(raw: unknown): RecipeIngredientRow[] {
     const amount: string | number =
       typeof amt === 'string' || typeof amt === 'number' ? amt : amt != null ? String(amt) : '';
 
+    const lid = row.id;
+    const lineIdParsed =
+      typeof lid === 'number'
+        ? lid
+        : typeof lid === 'string' && lid !== ''
+          ? Number(lid)
+          : undefined;
+    const lineId =
+      lineIdParsed != null && Number.isFinite(lineIdParsed) ? lineIdParsed : undefined;
+
     return {
+      lineId,
       ingredient,
       amount,
       unit: unitObj,
@@ -77,9 +88,12 @@ function normalizeRecipeDetail(data: RecipeDetail & Record<string, unknown>): Re
   };
 }
 
-/**
- * Same as web `updateRecipe` (`PATCH` + `FormData`).
- */
+/** PATCH recipe fields as JSON (e.g. `ingredients_write`) — same as web non-file update. */
+export async function patchRecipeJson(id: string, body: Record<string, unknown>): Promise<void> {
+  await apiPatchJson(`/api/recipes/${id}/`, body);
+}
+
+/** PATCH multipart only — use for file fields (e.g. new video) after JSON patch when needed. */
 export async function updateRecipeById(id: string, formData: FormData): Promise<void> {
   await apiPatchFormData(`/api/recipes/${id}/`, formData);
 }

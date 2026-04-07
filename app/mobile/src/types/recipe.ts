@@ -2,6 +2,8 @@
  * Single-recipe payload from GET `/api/recipes/:id/` (see web `RecipeDetailPage.jsx`).
  */
 export type RecipeIngredientRow = {
+  /** Join-table PK from GET /api/recipes/:id/ (`RecipeIngredient.id`) — stable list keys. */
+  lineId?: number;
   ingredient: { id: number; name: string };
   amount: string | number;
   unit: { id?: number; name: string };
