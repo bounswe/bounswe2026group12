@@ -74,6 +74,7 @@ class RecipeIngredientWriteSerializer(serializers.Serializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    region_name = serializers.ReadOnlyField(source='region.name')
     ingredients = RecipeIngredientSerializer(source='recipe_ingredients', many=True, read_only=True)
     ingredients_write = RecipeIngredientWriteSerializer(many=True, write_only=True, required=False)
 
@@ -81,7 +82,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = [
             'id', 'title', 'description', 'image', 'video',
-            'region', 'author', 'author_username', 'qa_enabled',
+            'region', 'region_name', 'author', 'author_username', 'qa_enabled',
             'is_published', 'created_at', 'updated_at',
             'ingredients', 'ingredients_write'
         ]
