@@ -68,7 +68,7 @@ export default function SearchPage() {
           >
             <option value="">All regions</option>
             {regions.map((r) => (
-              <option key={r.regionId} value={r.name}>{r.name}</option>
+              <option key={r.id} value={r.name}>{r.name}</option>
             ))}
           </select>
           <button type="submit" className="btn btn-primary search-filter-btn">Search</button>

@@ -5,11 +5,11 @@ export const MOCK_SEARCH_RESULTS = [
 ];
 
 export const MOCK_REGIONS = [
-  { regionId: 1, name: 'Anatolia' },
-  { regionId: 2, name: 'Aegean' },
-  { regionId: 3, name: 'Mediterranean' },
-  { regionId: 4, name: 'Black Sea' },
-  { regionId: 5, name: 'Marmara' },
+  { id: 1, name: 'Anatolia' },
+  { id: 2, name: 'Aegean' },
+  { id: 3, name: 'Mediterranean' },
+  { id: 4, name: 'Black Sea' },
+  { id: 5, name: 'Marmara' },
 ];
 
 export function filterMockResults(q, region) {

@@ -23,8 +23,8 @@ function renderPage(search = '?q=baklava&region=&language=') {
 beforeEach(() => {
   jest.clearAllMocks();
   searchService.fetchRegions.mockResolvedValue([
-    { regionId: 1, name: 'Aegean' },
-    { regionId: 2, name: 'Mediterranean' },
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
   ]);
 });
 

@@ -39,10 +39,10 @@ describe('search', () => {
 
 describe('fetchRegions', () => {
   it('calls GET /api/regions/ and returns data', async () => {
-    apiClient.get.mockResolvedValue({ data: [{ regionId: 1, name: 'Aegean' }] });
+    apiClient.get.mockResolvedValue({ data: [{ id: 1, name: 'Aegean' }] });
     const result = await fetchRegions();
     expect(apiClient.get).toHaveBeenCalledWith('/api/regions/');
-    expect(result).toEqual([{ regionId: 1, name: 'Aegean' }]);
+    expect(result).toEqual([{ id: 1, name: 'Aegean' }]);
   });
 
   it('propagates API errors', async () => {
