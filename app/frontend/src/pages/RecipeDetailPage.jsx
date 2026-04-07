@@ -36,6 +36,9 @@ export default function RecipeDetailPage() {
         <div>
           {regionName && <span className="recipe-region-tag">{regionName}</span>}
           <h1 className="recipe-title">{recipe.title}</h1>
+          {recipe.author_username && (
+            <p className="recipe-author">By {recipe.author_username}</p>
+          )}
         </div>
         {isAuthor && (
           <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">

@@ -93,6 +93,13 @@ describe('RecipeDetailPage', () => {
     expect(screen.queryByRole('link', { name: /edit/i })).not.toBeInTheDocument();
   });
 
+  it('displays author username', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/by eren/i)).toBeInTheDocument()
+    );
+  });
+
   it('shows Edit button when logged-in user is the author', async () => {
     renderPage('1', { id: 3, username: 'eren' });
     await waitFor(() => screen.getByText('Baklava'));
