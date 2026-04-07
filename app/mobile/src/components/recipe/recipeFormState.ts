@@ -25,7 +25,7 @@ export function authoringRowsFromRecipe(
 ): AuthoringIngredientRow[] {
   if (!ingredients?.length) return [makeEmptyIngredientRow()];
   return ingredients.map((ri, i) => ({
-    key: `row-loaded-${ri.ingredient.id}-${i}`,
+    key: `row-loaded-${ri.lineId ?? ri.ingredient.id}-${i}`,
     amount: String(ri.amount),
     ingredient: { id: ri.ingredient.id, name: ri.ingredient.name },
     unit: { id: ri.unit.id ?? null, name: ri.unit.name },

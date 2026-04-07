@@ -132,7 +132,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           <View style={styles.list}>
             {ingredients.map((ri, index) => (
               <View
-                key={`${ri.ingredient.id}-${index}`}
+                key={ri.lineId != null ? `ing-line-${ri.lineId}` : `ing-line-${index}-${ri.ingredient.id}`}
                 style={styles.ingredientRow}
               >
                 <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
