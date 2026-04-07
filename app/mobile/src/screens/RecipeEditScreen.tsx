@@ -27,7 +27,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'RecipeEdit'>;
 
 export default function RecipeEditScreen({ route, navigation }: Props) {
   const { id } = route.params;
-  const { user, isReady } = useAuth();
+  const { user, isAuthenticated, isReady } = useAuth();
   const { showToast } = useToast();
 
   const [loadState, setLoadState] = useState<'loading' | 'error' | 'ready' | 'forbidden'>(
@@ -62,13 +62,18 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     if (!isReady) return;
+    if (!isAuthenticated) {
+      setLoadState('forbidden');
+      setLoadError('Please sign in to edit recipes.');
+      return;
+    }
     let cancelled = false;
     setLoadState('loading');
     setLoadError(null);
     fetchRecipeById(id)
       .then((data) => {
         if (cancelled) return;
-        if (data.author && user && !isRecipeAuthor(user, data)) {
+        if (!isRecipeAuthor(user, data)) {
           setLoadState('forbidden');
           return;
         }
@@ -84,7 +89,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [id, reloadToken, user, applyRecipe, isReady]);
+  }, [id, reloadToken, user, applyRecipe, isReady, isAuthenticated]);
 
   const validation = useMemo(() => {
     const e: { title?: string; amount?: string } = {};
@@ -188,8 +193,36 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
         <View style={{ flex: 1, padding: 20, justifyContent: 'center' }}>
           <Text style={{ fontSize: 16, color: '#b91c1c', textAlign: 'center' }}>
-            You are not authorized to edit this recipe.
+            {loadError ?? 'You are not authorized to edit this recipe.'}
           </Text>
+          {!isAuthenticated ? (
+            <View style={{ marginTop: 14, alignItems: 'center', gap: 10 }}>
+              <Pressable
+                onPress={() => navigation.navigate('Login')}
+                accessibilityRole="button"
+                accessibilityLabel="Go to Log In"
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.buttonPressed,
+                  { width: '100%', maxWidth: 340 },
+                ]}
+              >
+                <Text style={styles.primaryButtonText}>Log In</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => navigation.navigate('Register')}
+                accessibilityRole="button"
+                accessibilityLabel="Go to Register"
+                style={({ pressed }) => [
+                  styles.secondaryButton,
+                  pressed && styles.buttonPressed,
+                  { width: '100%', maxWidth: 340 },
+                ]}
+              >
+                <Text style={styles.secondaryButtonText}>Register</Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
       </SafeAreaView>
     );
