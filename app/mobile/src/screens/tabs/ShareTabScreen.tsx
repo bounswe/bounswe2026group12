@@ -1,0 +1,63 @@
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function ShareTabScreen() {
+  const navigation = useNavigation<any>();
+
+  return (
+    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+      <View style={styles.container}>
+        <Text style={styles.title} accessibilityRole="header">
+          What do you want to share?
+        </Text>
+
+        <View style={styles.grid}>
+          <Pressable
+            onPress={() => navigation.navigate('Feed', { screen: 'StoryCreate' })}
+            style={({ pressed }) => [styles.box, pressed && styles.boxPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Share a story"
+          >
+            <Text style={styles.boxTitle}>Story</Text>
+            <Text style={styles.boxSubtitle}>Write and publish a story.</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => navigation.navigate('Feed', { screen: 'RecipeCreate' })}
+            style={({ pressed }) => [styles.box, pressed && styles.boxPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Share a recipe"
+          >
+            <Text style={styles.boxTitle}>Recipe</Text>
+            <Text style={styles.boxSubtitle}>Upload a recipe with video.</Text>
+          </Pressable>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 20, justifyContent: 'center' },
+  title: { fontSize: 28, fontWeight: '800', color: '#0f172a', marginBottom: 10 },
+  grid: { marginTop: 14, gap: 12 },
+  box: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 14,
+    padding: 16,
+    backgroundColor: '#f8fafc',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  boxPressed: { opacity: 0.9 },
+  boxTitle: { fontSize: 18, fontWeight: '900', color: '#0f172a', marginBottom: 6 },
+  boxSubtitle: { fontSize: 15, color: '#64748b', lineHeight: 20 },
+});
+

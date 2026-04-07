@@ -1,131 +1,32 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { listMockRecipes } from '../mocks/recipes';
+import { listMockStories } from '../mocks/stories';
 import type { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-type RegionOption = { label: string; value: string };
-const REGIONS: RegionOption[] = [
-  { label: 'All regions', value: '' },
-  { label: 'Anatolia', value: 'Anatolia' },
-  { label: 'Aegean', value: 'Aegean' },
-];
-
 export default function HomeScreen({ navigation }: Props) {
   const { user, isAuthenticated, logout } = useAuth();
   const [query, setQuery] = useState('');
-  const [region, setRegion] = useState('');
-  const [regionOpen, setRegionOpen] = useState(false);
 
-  const selectedRegionLabel = useMemo(
-    () => REGIONS.find((r) => r.value === region)?.label ?? 'All regions',
-    [region],
-  );
+  const stories = useMemo(() => listMockStories(), []);
+  const recipes = useMemo(() => listMockRecipes(), []);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <View style={styles.container}>
-        <View style={styles.main}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <View style={styles.header}>
           <Text style={styles.heading} accessibilityRole="header">
-            Home
+            Feed
           </Text>
-          <Text style={styles.lead}>
-            Public routes: Home, Search, Recipe detail, Story detail (no sign-in required).
-          </Text>
-
-          <View style={styles.searchCard}>
-            <Text style={styles.searchTitle}>Search &amp; discovery</Text>
-            <TextInput
-              value={query}
-              onChangeText={setQuery}
-              placeholder="Search recipes and stories…"
-              placeholderTextColor="#94a3b8"
-              style={styles.searchInput}
-              accessibilityLabel="Search query"
-              autoCapitalize="none"
-              autoCorrect={false}
-              returnKeyType="search"
-              onSubmitEditing={() =>
-                navigation.navigate('Search', { query: query.trim(), region })
-              }
-            />
-
-            <View style={styles.regionRow}>
-              <Text style={styles.regionLabel}>Region</Text>
-              <Pressable
-                onPress={() => setRegionOpen(true)}
-                style={({ pressed }) => [styles.regionButton, pressed && styles.buttonPressed]}
-                accessibilityRole="button"
-                accessibilityLabel="Pick region filter"
-              >
-                <Text style={styles.regionButtonText}>{selectedRegionLabel}</Text>
-              </Pressable>
-            </View>
-
-            <Pressable
-              style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-              onPress={() => navigation.navigate('Search', { query: query.trim(), region })}
-              accessibilityRole="button"
-              accessibilityLabel="Run search"
-            >
-              <Text style={styles.buttonText}>Search</Text>
-            </Pressable>
-          </View>
-
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-            onPress={() => navigation.navigate('Search')}
-            accessibilityRole="button"
-            accessibilityLabel="Go to Search"
-          >
-            <Text style={styles.buttonText}>Open Search (legacy)</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-            onPress={() => navigation.navigate('RecipeCreate')}
-            accessibilityRole="button"
-            accessibilityLabel="Open new recipe screen"
-          >
-            <Text style={styles.buttonText}>New recipe (selection UI)</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-            onPress={() => navigation.navigate('StoryCreate')}
-            accessibilityRole="button"
-            accessibilityLabel="Create a story"
-          >
-            <Text style={styles.buttonText}>Create story</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-            onPress={() => navigation.navigate('RecipeDetail', { id: '1' })}
-            accessibilityRole="button"
-            accessibilityLabel="Open sample recipe"
-          >
-            <Text style={styles.buttonText}>Sample recipe (id 1)</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-            onPress={() => navigation.navigate('StoryDetail', { id: '1' })}
-            accessibilityRole="button"
-            accessibilityLabel="Open sample story"
-          >
-            <Text style={styles.buttonText}>Sample story (id 1)</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.authFooter}>
           {isAuthenticated ? (
-            <>
-              <Text style={styles.signedInText}>
-                Signed in{user ? ` as ${user.username}` : ''}
+            <View style={styles.headerRight}>
+              <Text style={styles.signedInText} numberOfLines={1}>
+                {user ? user.username : 'Signed in'}
               </Text>
               <Pressable
                 onPress={() => void logout()}
@@ -134,9 +35,97 @@ export default function HomeScreen({ navigation }: Props) {
               >
                 <Text style={styles.link}>Log out</Text>
               </Pressable>
-            </>
-          ) : (
-            <View style={styles.authRow}>
+            </View>
+          ) : null}
+        </View>
+
+        <View style={styles.searchWrap}>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Search recipes and stories…"
+            placeholderTextColor="#94a3b8"
+            style={styles.searchInput}
+            accessibilityLabel="Search query"
+            autoCapitalize="none"
+            autoCorrect={false}
+            returnKeyType="search"
+            onSubmitEditing={() => navigation.navigate('Search', { query: query.trim() })}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Stories</Text>
+            <Text style={styles.sectionHint}>Mock feed</Text>
+          </View>
+          <FlatList
+            data={stories}
+            horizontal
+            keyExtractor={(item) => item.id}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.hList}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => navigation.navigate('StoryDetail', { id: item.id })}
+                style={({ pressed }) => [styles.storyCard, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel={`Open story ${item.title}`}
+              >
+                <View style={styles.storyThumb}>
+                  <Text style={styles.thumbText}>S</Text>
+                </View>
+                <Text style={styles.cardTitle} numberOfLines={2}>
+                  {item.title}
+                </Text>
+                <Text style={styles.cardMeta} numberOfLines={1}>
+                  {item.author?.username ? `By ${item.author.username}` : 'Story'}
+                </Text>
+              </Pressable>
+            )}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recipes</Text>
+            <Text style={styles.sectionHint}>Mock feed</Text>
+          </View>
+          <FlatList
+            data={recipes}
+            horizontal
+            keyExtractor={(item) => item.id}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.hList}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => navigation.navigate('RecipeDetail', { id: item.id })}
+                style={({ pressed }) => [styles.recipeCard, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel={`Open recipe ${item.title}`}
+              >
+                <View style={styles.recipeThumb}>
+                  <Text style={styles.thumbText}>R</Text>
+                </View>
+                <Text style={styles.cardTitle} numberOfLines={2}>
+                  {item.title}
+                </Text>
+                <View style={styles.tag}>
+                  <Text style={styles.tagText} numberOfLines={1}>
+                    {item.region ?? 'Recipe'}
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+          />
+        </View>
+
+        {!isAuthenticated ? (
+          <View style={styles.authInline}>
+            <Text style={styles.authInlineText}>
+              Sign in to access author actions like editing.
+            </Text>
+            <View style={styles.authInlineRow}>
               <Pressable
                 onPress={() => navigation.navigate('Login')}
                 accessibilityRole="button"
@@ -153,72 +142,30 @@ export default function HomeScreen({ navigation }: Props) {
                 <Text style={styles.link}>Register</Text>
               </Pressable>
             </View>
-          )}
-        </View>
-      </View>
-
-      <Modal visible={regionOpen} transparent animationType="fade">
-        <Pressable style={styles.modalBackdrop} onPress={() => setRegionOpen(false)}>
-          <Pressable style={styles.modalCard} onPress={() => {}}>
-            <Text style={styles.modalTitle}>Pick a region</Text>
-            {REGIONS.map((opt) => {
-              const active = opt.value === region;
-              return (
-                <Pressable
-                  key={opt.value || 'all'}
-                  onPress={() => {
-                    setRegion(opt.value);
-                    setRegionOpen(false);
-                  }}
-                  style={({ pressed }) => [
-                    styles.modalRow,
-                    pressed && { backgroundColor: '#e2e8f0' },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Select region ${opt.label}`}
-                >
-                  <Text style={[styles.modalRowText, active && styles.modalRowTextActive]}>
-                    {opt.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </Pressable>
-        </Pressable>
-      </Modal>
+          </View>
+        ) : null}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
-  container: {
-    flex: 1,
-    padding: 20,
+  container: { padding: 16, paddingBottom: 28 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    gap: 12,
   },
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+  headerRight: { alignItems: 'flex-end', gap: 6, maxWidth: '55%' },
   heading: {
     fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8,
+    fontWeight: '800',
+    color: '#0f172a',
   },
-  lead: {
-    fontSize: 16,
-    opacity: 0.75,
-    marginBottom: 24,
-  },
-  searchCard: {
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 12,
-    padding: 14,
-    backgroundColor: '#f8fafc',
-    marginBottom: 14,
-  },
-  searchTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a', marginBottom: 10 },
+  searchWrap: { marginBottom: 14 },
   searchInput: {
     borderWidth: 1,
     borderColor: '#cbd5e1',
@@ -227,66 +174,74 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 16,
     backgroundColor: '#fff',
-    marginBottom: 12,
   },
-  regionRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 10 },
-  regionLabel: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
-  regionButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    backgroundColor: '#fff',
-  },
-  regionButtonText: { fontSize: 15, fontWeight: '600', color: '#0f172a' },
-  button: {
-    backgroundColor: '#2563eb',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  buttonPressed: {
-    opacity: 0.85,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(15,23,42,0.45)',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  modalCard: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 14,
+  section: { marginTop: 10, marginBottom: 18 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 10 },
+  sectionTitle: { fontSize: 18, fontWeight: '800', color: '#0f172a' },
+  sectionHint: { fontSize: 13, color: '#94a3b8', fontWeight: '700' },
+  hList: { gap: 12, paddingRight: 16 },
+  storyCard: {
+    width: 180,
     borderWidth: 1,
     borderColor: '#e2e8f0',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
   },
-  modalTitle: { fontSize: 17, fontWeight: '800', color: '#0f172a', marginBottom: 10 },
-  modalRow: {
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderRadius: 10,
+  recipeCard: {
+    width: 200,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
   },
-  modalRowText: { fontSize: 16, color: '#0f172a', fontWeight: '600' },
-  modalRowTextActive: { color: '#2563eb' },
-  authFooter: {
+  pressed: { opacity: 0.9 },
+  storyThumb: {
+    width: '100%',
+    height: 86,
+    backgroundColor: '#a855f7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recipeThumb: {
+    width: '100%',
+    height: 86,
+    backgroundColor: '#0ea5e9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  thumbText: { color: '#fff', fontSize: 24, fontWeight: '900' },
+  cardTitle: { paddingHorizontal: 12, paddingTop: 10, fontSize: 15, fontWeight: '800', color: '#0f172a' },
+  cardMeta: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: 6, fontSize: 13, color: '#64748b' },
+  tag: {
+    alignSelf: 'flex-start',
+    marginLeft: 12,
+    marginTop: 8,
+    marginBottom: 12,
+    backgroundColor: '#f1f5f9',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 999,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  tagText: { fontSize: 12, fontWeight: '800', color: '#0f172a' },
+  authInline: {
+    marginTop: 6,
     paddingTop: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#e2e8f0',
     alignItems: 'center',
     gap: 8,
   },
-  authRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
+  authInlineText: { fontSize: 14, color: '#64748b', textAlign: 'center' },
+  authInlineRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
   authSep: { fontSize: 15, color: '#94a3b8' },
   link: { fontSize: 15, color: '#2563eb', fontWeight: '600' },
-  signedInText: { fontSize: 15, color: '#64748b' },
+  signedInText: {
+    fontSize: 16,
+    color: '#334155',
+    fontWeight: '700',
+  },
 });

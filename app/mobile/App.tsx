@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/AuthContext';
 import { ToastProvider } from './src/context/ToastContext';
-import { PublicStackNavigator } from './src/navigation/PublicStackNavigator';
+import { RootTabsNavigator } from './src/navigation/RootTabsNavigator';
 
 export default function App() {
   return (
@@ -12,7 +12,7 @@ export default function App() {
         <ToastProvider>
           <NavigationContainer>
             <StatusBar style="auto" />
-            <PublicStackNavigator />
+            <RootTabsNavigator />
           </NavigationContainer>
         </ToastProvider>
       </AuthProvider>
