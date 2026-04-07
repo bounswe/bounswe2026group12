@@ -7,6 +7,8 @@ export type MockStory = {
   language?: 'en' | 'tr';
   author?: { username: string };
   linked_recipe?: { id: string; title: string; region?: string };
+  /** Local uri (picked from gallery) or remote url in the future. */
+  thumbnail?: string | null;
 };
 
 const STORIES: Record<string, MockStory> = {
@@ -17,6 +19,8 @@ const STORIES: Record<string, MockStory> = {
     language: 'en',
     author: { username: 'demo_user' },
     linked_recipe: { id: '1', title: 'Mock Anatolian stew', region: 'Anatolia' },
+    thumbnail:
+      'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1200&q=80',
   },
   '2': {
     id: '2',
@@ -41,6 +45,7 @@ export function mockCreateStory(input: {
   body: string;
   language: 'en' | 'tr';
   linked_recipe: MockStory['linked_recipe'] | null;
+  thumbnail?: string | null;
   author?: MockStory['author'];
 }): MockStory {
   const id = String(Date.now());
@@ -51,6 +56,7 @@ export function mockCreateStory(input: {
     language: input.language,
     author: input.author,
     linked_recipe: input.linked_recipe ?? undefined,
+    thumbnail: input.thumbnail ?? null,
   };
   // mutate is OK for a mock store
   STORIES[id] = story;

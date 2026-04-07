@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -72,9 +72,15 @@ export default function HomeScreen({ navigation }: Props) {
                 accessibilityRole="button"
                 accessibilityLabel={`Open story ${item.title}`}
               >
-                <View style={styles.storyThumb}>
-                  <Text style={styles.thumbText}>S</Text>
-                </View>
+                {item.thumbnail ? (
+                  <View style={styles.storyThumb}>
+                    <Image source={{ uri: item.thumbnail }} style={styles.storyThumbImage} resizeMode="cover" />
+                  </View>
+                ) : (
+                  <View style={styles.storyThumb}>
+                    <Text style={styles.thumbText}>S</Text>
+                  </View>
+                )}
                 <Text style={styles.cardTitle} numberOfLines={2}>
                   {item.title}
                 </Text>
@@ -204,6 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  storyThumbImage: { width: '100%', height: '100%' },
   recipeThumb: {
     width: '100%',
     height: 86,

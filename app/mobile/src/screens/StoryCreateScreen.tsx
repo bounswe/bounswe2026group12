@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,6 +27,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
+  const [thumbnailUri, setThumbnailUri] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +40,25 @@ export default function StoryCreateScreen({ navigation }: Props) {
   }, [title, body]);
 
   const isValid = !errors.title && !errors.body;
+
+  async function pickThumbnail() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showToast('Media library permission is needed to pick an image.', 'error');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+
+    const asset = result.assets?.[0];
+    if (!asset?.uri) return;
+    setThumbnailUri(asset.uri);
+  }
 
   function submit() {
     setAttemptedSubmit(true);
@@ -52,6 +73,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
           language,
           is_published: true,
           linked_recipe: linkedRecipe,
+          thumbnail: thumbnailUri,
           author: user ? { username: user.username } : undefined,
         });
         showToast('Story published!', 'success');
@@ -126,6 +148,30 @@ export default function StoryCreateScreen({ navigation }: Props) {
         </View>
 
         <View style={form.section}>
+          <Text style={form.sectionTitle}>Thumbnail (optional)</Text>
+          <Pressable
+            onPress={() => void pickThumbnail()}
+            style={({ pressed }) => [styles.thumbButton, pressed && { opacity: 0.9 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Pick story thumbnail"
+          >
+            <Text style={styles.thumbButtonText}>
+              {thumbnailUri ? 'Change thumbnail' : 'Upload thumbnail'}
+            </Text>
+          </Pressable>
+          {thumbnailUri ? (
+            <Pressable
+              onPress={() => setThumbnailUri(null)}
+              style={({ pressed }) => [styles.thumbClear, pressed && { opacity: 0.9 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Remove thumbnail"
+            >
+              <Text style={styles.thumbClearText}>Remove thumbnail</Text>
+            </Pressable>
+          ) : null}
+        </View>
+
+        <View style={form.section}>
           <RecipeLinkPicker
             value={linkedRecipe}
             onChange={setLinkedRecipe}
@@ -173,5 +219,17 @@ const styles = StyleSheet.create({
   langPillActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
   langText: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
   langTextActive: { color: '#fff' },
+  thumbButton: {
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 999,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff',
+  },
+  thumbButtonText: { fontSize: 15, fontWeight: '800', color: '#0f172a' },
+  thumbClear: { marginTop: 10, alignSelf: 'flex-start' },
+  thumbClearText: { fontSize: 14, fontWeight: '700', color: '#b91c1c' },
 });
 
