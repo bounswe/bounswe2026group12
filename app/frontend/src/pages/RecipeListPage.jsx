@@ -36,8 +36,8 @@ export default function RecipeListPage() {
               }
             </div>
             <div className="recipe-browse-body">
-              {recipe.region && (
-                <span className="recipe-browse-region">{recipe.region}</span>
+              {recipe.region_name && (
+                <span className="recipe-browse-region">{recipe.region_name}</span>
               )}
               <h2 className="recipe-browse-title">
                 <Link to={`/recipes/${recipe.id}`} className="recipe-browse-link">{recipe.title}</Link>

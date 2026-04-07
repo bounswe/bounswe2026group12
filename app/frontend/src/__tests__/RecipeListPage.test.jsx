@@ -6,8 +6,8 @@ import * as recipeService from '../services/recipeService';
 jest.mock('../services/recipeService');
 
 const mockRecipes = [
-  { id: 1, title: 'Baklava', region: 'Aegean', image: null, author_username: 'eren' },
-  { id: 2, title: 'Manti', region: 'Central Anatolia', image: null, author_username: 'ahmet' },
+  { id: 1, title: 'Baklava', region: 1, region_name: 'Aegean', image: null, author_username: 'eren' },
+  { id: 2, title: 'Manti', region: 2, region_name: 'Central Anatolia', image: null, author_username: 'ahmet' },
 ];
 
 function renderPage() {
@@ -61,9 +61,27 @@ describe('RecipeListPage', () => {
     );
   });
 
+  it('displays region name (not ID) on recipe cards', async () => {
+    recipeService.fetchRecipes.mockResolvedValue(mockRecipes);
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByText('Aegean')).toBeInTheDocument();
+      expect(screen.queryByText('1')).not.toBeInTheDocument();
+    });
+  });
+
+  it('does not show region tag when region_name is absent', async () => {
+    recipeService.fetchRecipes.mockResolvedValue([
+      { id: 1, title: 'Baklava', region: null, region_name: null, image: null, author_username: 'eren' },
+    ]);
+    renderPage();
+    await waitFor(() => screen.getByText('Baklava'));
+    expect(screen.queryByRole('generic', { name: /region/i })).not.toBeInTheDocument();
+  });
+
   it('renders recipe image when image is present', async () => {
     recipeService.fetchRecipes.mockResolvedValue([
-      { id: 1, title: 'Baklava', region: 'Aegean', image: 'http://example.com/img.jpg', author_username: 'eren' },
+      { id: 1, title: 'Baklava', region: 1, region_name: 'Aegean', image: 'http://example.com/img.jpg', author_username: 'eren' },
     ]);
     renderPage();
     await waitFor(() => {
