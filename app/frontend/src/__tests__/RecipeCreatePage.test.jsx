@@ -2,8 +2,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import RecipeCreatePage from '../pages/RecipeCreatePage';
 import * as recipeService from '../services/recipeService';
+import * as searchService from '../services/searchService';
 
 jest.mock('../services/recipeService');
+jest.mock('../services/searchService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -14,6 +16,10 @@ beforeEach(() => {
   jest.clearAllMocks();
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Salt' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'cup' }]);
+  searchService.fetchRegions.mockResolvedValue([
+    { regionId: 1, name: 'Aegean' },
+    { regionId: 2, name: 'Mediterranean' },
+  ]);
 });
 
 function renderPage() {
@@ -81,5 +87,20 @@ describe('RecipeCreatePage', () => {
     await waitFor(() =>
       expect(screen.getByText(/failed to publish/i)).toBeInTheDocument()
     );
+  });
+
+  it('renders region as a combobox (select element)', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: /region/i })).toBeInTheDocument();
+    });
+  });
+
+  it('populates region dropdown from API', async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: 'Aegean' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Mediterranean' })).toBeInTheDocument();
+    });
   });
 });

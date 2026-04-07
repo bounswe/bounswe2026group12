@@ -9,6 +9,7 @@ import {
   submitIngredient,
   submitUnit,
 } from '../services/recipeService';
+import { fetchRegions } from '../services/searchService';
 import './RecipeCreatePage.css';
 
 function makeRow() {
@@ -34,6 +35,7 @@ export default function RecipeCreatePage() {
 
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
+  const [regions, setRegions] = useState([]);
 
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
@@ -41,6 +43,7 @@ export default function RecipeCreatePage() {
   useEffect(() => {
     fetchIngredients().then(setIngredients).catch(() => {});
     fetchUnits().then(setUnits).catch(() => {});
+    fetchRegions().then(setRegions).catch(() => {});
   }, []);
 
   function showToast(message, type) {
@@ -137,11 +140,16 @@ export default function RecipeCreatePage() {
 
         <div className="form-group">
           <label htmlFor="region">Region</label>
-          <input
+          <select
             id="region"
             value={region}
             onChange={(e) => setRegion(e.target.value)}
-          />
+          >
+            <option value="">Select a region</option>
+            {regions.map((r) => (
+              <option key={r.regionId} value={r.name}>{r.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">
