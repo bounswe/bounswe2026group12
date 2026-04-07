@@ -4,7 +4,10 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    try { return stored ? JSON.parse(stored) : null; } catch { return null; }
+  });
 
   useEffect(() => {
     if (token) {
@@ -13,6 +16,14 @@ export function AuthProvider({ children }) {
       localStorage.removeItem('token');
     }
   }, [token]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   function login(userData, accessToken) {
     setUser(userData);

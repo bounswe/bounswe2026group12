@@ -1,6 +1,7 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import StoryDetailPage from '../pages/StoryDetailPage';
+import { AuthContext } from '../context/AuthContext';
 import * as storyService from '../services/storyService';
 
 jest.mock('../services/storyService');
@@ -17,13 +18,16 @@ const mockStory = {
 
 const mockStoryNoRecipe = { ...mockStory, linked_recipe: null };
 
-function renderPage(storyId = '1') {
+function renderPage(storyId = '1', authUser = null) {
   return render(
-    <MemoryRouter initialEntries={[`/stories/${storyId}`]}>
-      <Routes>
-        <Route path="/stories/:id" element={<StoryDetailPage />} />
-      </Routes>
-    </MemoryRouter>
+    <AuthContext.Provider value={{ user: authUser, token: authUser ? 'tok' : null, login: jest.fn(), logout: jest.fn() }}>
+      <MemoryRouter initialEntries={[`/stories/${storyId}`]}>
+        <Routes>
+          <Route path="/stories/:id" element={<StoryDetailPage />} />
+          <Route path="/stories/:id/edit" element={<div>Edit Page</div>} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContext.Provider>
   );
 }
 
@@ -76,6 +80,32 @@ describe('StoryDetailPage', () => {
     renderPage();
     await waitFor(() => screen.getByText("Grandma's Sunday Kitchen"));
     expect(screen.queryByText('Baklava')).not.toBeInTheDocument();
+  });
+
+  it('does NOT show Edit Story button when user is not authenticated', async () => {
+    renderPage('1', null);
+    await waitFor(() => screen.getByText("Grandma's Sunday Kitchen"));
+    expect(screen.queryByRole('button', { name: /edit story/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /edit story/i })).not.toBeInTheDocument();
+  });
+
+  it('shows Edit Story button when user is authenticated (non-author)', async () => {
+    renderPage('1', { id: 99, username: 'other' });
+    await waitFor(() => screen.getByText("Grandma's Sunday Kitchen"));
+    expect(screen.getByRole('button', { name: /edit story/i })).toBeInTheDocument();
+  });
+
+  it('shows ownership error when non-author clicks Edit Story', async () => {
+    renderPage('1', { id: 99, username: 'other' });
+    await waitFor(() => screen.getByRole('button', { name: /edit story/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit story/i }));
+    expect(screen.getByText(/you can only edit your own stories/i)).toBeInTheDocument();
+  });
+
+  it('shows Edit Story as a link to /stories/:id/edit when user is the author', async () => {
+    renderPage('1', { id: 3, username: 'eren' });
+    await waitFor(() => screen.getByRole('link', { name: /edit story/i }));
+    expect(screen.getByRole('link', { name: /edit story/i })).toHaveAttribute('href', '/stories/1/edit');
   });
 
   it('shows error message when API fails', async () => {
