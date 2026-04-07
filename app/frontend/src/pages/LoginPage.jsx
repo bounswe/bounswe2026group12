@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { loginRequest } from '../services/authService';
+import { extractApiError } from '../services/api';
 import './LoginPage.css';
 
 export default function LoginPage() {
@@ -33,7 +34,7 @@ export default function LoginPage() {
       login(data.user, data.access);
       navigate('/');
     } catch (err) {
-      setApiError(err.message || 'Login failed');
+      setApiError(extractApiError(err, 'Invalid email or password.'));
     }
   }
 
