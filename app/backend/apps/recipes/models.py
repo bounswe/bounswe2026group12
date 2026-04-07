@@ -28,6 +28,8 @@ class Recipe(models.Model):
     """Core Recipe model."""
     title = models.CharField(max_length=255)
     description = models.TextField()
+    image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)
+    video = models.FileField(upload_to='recipes/videos/', null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='recipes')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     is_published = models.BooleanField(default=False)
