@@ -13,6 +13,7 @@ const mockRecipe = {
   title: 'Baklava',
   description: 'A sweet pastry.',
   region: 1,
+  image: 'http://example.com/img.jpg',
   video: 'http://example.com/video.mp4',
   author: 3,
   author_username: 'eren',
@@ -57,11 +58,20 @@ describe('RecipeDetailPage', () => {
     });
   });
 
-  it('displays author username', async () => {
+  it('renders image when image URL is present', async () => {
     renderPage();
-    await waitFor(() =>
-      expect(screen.getByText(/by eren/i)).toBeInTheDocument()
-    );
+    await waitFor(() => {
+      const img = screen.getByRole('img', { name: 'Baklava' });
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute('src', 'http://example.com/img.jpg');
+    });
+  });
+
+  it('does not render image element when image is null', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({ ...mockRecipe, image: null });
+    renderPage();
+    await waitFor(() => screen.getByText('Baklava'));
+    expect(screen.queryByRole('img', { name: 'Baklava' })).not.toBeInTheDocument();
   });
 
   it('renders a video element when video URL is present', async () => {
@@ -98,6 +108,13 @@ describe('RecipeDetailPage', () => {
     renderPage('1', { id: 99, username: 'other' });
     await waitFor(() => screen.getByText('Baklava'));
     expect(screen.queryByRole('link', { name: /edit/i })).not.toBeInTheDocument();
+  });
+
+  it('displays author username', async () => {
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/by eren/i)).toBeInTheDocument()
+    );
   });
 
   it('shows Edit button when logged-in user is the author', async () => {

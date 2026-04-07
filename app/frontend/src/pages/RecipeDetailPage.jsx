@@ -47,6 +47,14 @@ export default function RecipeDetailPage() {
         )}
       </div>
 
+      {recipe.image && (
+        <img
+          src={recipe.image}
+          alt={recipe.title}
+          className="recipe-detail-image"
+        />
+      )}
+
       {recipe.video && (
         <video
           data-testid="recipe-video"

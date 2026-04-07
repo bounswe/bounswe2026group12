@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { registerRequest } from '../services/authService';
+import { extractApiError } from '../services/api';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
@@ -35,7 +36,7 @@ export default function RegisterPage() {
       login(data.user, data.access);
       navigate('/');
     } catch (err) {
-      setApiError(err.message || 'Registration failed');
+      setApiError(extractApiError(err, 'Registration failed. Please try again.'));
     }
   }
 

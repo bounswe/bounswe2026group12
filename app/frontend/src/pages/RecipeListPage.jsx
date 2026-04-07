@@ -30,8 +30,8 @@ export default function RecipeListPage() {
         {recipes.map((recipe) => (
           <article key={recipe.id} className="recipe-browse-card">
             <div className="recipe-browse-img-wrap">
-              {recipe.thumbnail
-                ? <img src={recipe.thumbnail} alt={recipe.title} className="recipe-browse-img" />
+              {recipe.image
+                ? <img src={recipe.image} alt={recipe.title} className="recipe-browse-img" />
                 : <div className="recipe-browse-placeholder" />
               }
             </div>
@@ -42,8 +42,8 @@ export default function RecipeListPage() {
               <h2 className="recipe-browse-title">
                 <Link to={`/recipes/${recipe.id}`} className="recipe-browse-link">{recipe.title}</Link>
               </h2>
-              {recipe.author && (
-                <p className="recipe-browse-author">By {recipe.author.username}</p>
+              {recipe.author_username && (
+                <p className="recipe-browse-author">By {recipe.author_username}</p>
               )}
             </div>
           </article>

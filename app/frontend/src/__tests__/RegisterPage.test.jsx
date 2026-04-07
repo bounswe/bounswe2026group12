@@ -67,12 +67,14 @@ describe('RegisterPage', () => {
   });
 
   test('shows error message when registerRequest fails', async () => {
-    authService.registerRequest.mockRejectedValueOnce(new Error('Email already exists'));
+    const err = new Error();
+    err.response = { data: { email: ['A user with this email already exists.'] } };
+    authService.registerRequest.mockRejectedValueOnce(err);
     renderRegister();
     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'alice' } });
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'secret' } });
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
-    expect(await screen.findByText(/email already exists/i)).toBeInTheDocument();
+    expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
   });
 });
