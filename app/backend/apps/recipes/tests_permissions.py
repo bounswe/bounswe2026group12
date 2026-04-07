@@ -31,8 +31,14 @@ class PermissionTests(APITestCase):
 
     def test_authenticated_can_create_recipe(self):
         self.client.force_authenticate(user=self.user1)
-        data = {"title": "New Recipe", "description": "Desc"}
-        response = self.client.post('/api/recipes/', data)
+        data = {
+            "title": "New Recipe",
+            "description": "Desc",
+            "ingredients_write": [
+                {"ingredient": self.ingredient.id, "amount": "1.00", "unit": self.unit.id}
+            ]
+        }
+        response = self.client.post('/api/recipes/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_author_can_edit_own_recipe(self):
