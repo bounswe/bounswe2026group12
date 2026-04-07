@@ -68,7 +68,25 @@ class Command(BaseCommand):
 
     def seed_regions(self):
         self.stdout.write('Creating regions...')
-        regions = ['Mediterranean', 'Anatolian', 'Aegean', 'Black Sea', 'Marmara']
+        regions = [
+            # Turkey
+            'Aegean', 'Anatolian', 'Black Sea', 'Marmara', 'Mediterranean',
+            'Southeastern Anatolia',
+            # Middle East
+            'Levantine', 'Persian', 'Arabian',
+            # Europe
+            'Balkan', 'Central European', 'Eastern European', 'French',
+            'Iberian', 'Italian', 'Nordic', 'British Isles',
+            # Asia
+            'Central Asian', 'Chinese', 'Indian', 'Japanese', 'Korean',
+            'Southeast Asian',
+            # Africa
+            'East African', 'North African', 'West African',
+            # Americas
+            'Caribbean', 'Central American', 'North American', 'South American',
+            # Oceania
+            'Oceanian',
+        ]
         for name in regions:
             region, created = Region.objects.get_or_create(name=name)
             if created:
