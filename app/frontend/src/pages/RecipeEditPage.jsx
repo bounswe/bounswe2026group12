@@ -128,23 +128,29 @@ export default function RecipeEditPage() {
     e.preventDefault();
     if (!validate()) return;
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('region', region);
-    formData.append('qa_enabled', qaEnabled);
-    formData.append('is_published', 'true');
-    if (video) formData.append('video', video);
-
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
-    validRows.forEach((r, i) => {
-      formData.append(`ingredients[${i}][ingredient]`, r.ingredientId);
-      formData.append(`ingredients[${i}][amount]`, r.amount);
-      formData.append(`ingredients[${i}][unit]`, r.unitId);
-    });
+    const payload = {
+      title,
+      description,
+      region: region ? Number(region) : null,
+      qa_enabled: qaEnabled,
+      is_published: true,
+      ingredients_write: validRows.map((r) => ({
+        ingredient: r.ingredientId,
+        amount: r.amount,
+        unit: r.unitId,
+      })),
+    };
 
     try {
-      await updateRecipe(id, formData);
+      await updateRecipe(id, payload);
+
+      if (video) {
+        const videoData = new FormData();
+        videoData.append('video', video);
+        await updateRecipe(id, videoData);
+      }
+
       showToast('Recipe updated!', 'success');
       setTimeout(() => navigate(`/recipes/${id}`), 1500);
     } catch {
@@ -191,7 +197,7 @@ export default function RecipeEditPage() {
           >
             <option value="">Select a region</option>
             {regions.map((r) => (
-              <option key={r.regionId} value={r.name}>{r.name}</option>
+              <option key={r.id} value={r.id}>{r.name}</option>
             ))}
           </select>
         </div>

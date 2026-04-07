@@ -17,7 +17,7 @@ const mockRecipe = {
   id: 1,
   title: 'Baklava',
   description: 'A sweet pastry.',
-  region: 'Aegean',
+  region: 1,
   video: null,
   author: { id: 3, username: 'eren' },
   ingredients: [
@@ -33,8 +33,8 @@ beforeEach(() => {
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Phyllo dough' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'g' }]);
   searchService.fetchRegions.mockResolvedValue([
-    { regionId: 1, name: 'Aegean' },
-    { regionId: 2, name: 'Mediterranean' },
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
   ]);
 });
 
@@ -89,7 +89,7 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/recipe updated/i)).toBeInTheDocument()
     );
-    expect(recipeService.updateRecipe).toHaveBeenCalledWith('1', expect.any(FormData));
+    expect(recipeService.updateRecipe).toHaveBeenCalledWith('1', expect.objectContaining({ title: 'Baklava' }));
   });
 
   it('shows error toast when API call fails', async () => {
@@ -127,7 +127,7 @@ describe('RecipeEditPage', () => {
   it('pre-populates region dropdown with value from recipe', async () => {
     renderPage();
     await waitFor(() => {
-      expect(screen.getByRole('combobox', { name: /region/i })).toHaveValue('Aegean');
+      expect(screen.getByRole('combobox', { name: /region/i })).toHaveValue('1');
     });
   });
 });

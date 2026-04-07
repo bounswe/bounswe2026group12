@@ -17,8 +17,8 @@ beforeEach(() => {
   recipeService.fetchIngredients.mockResolvedValue([{ id: 1, name: 'Salt' }]);
   recipeService.fetchUnits.mockResolvedValue([{ id: 1, name: 'cup' }]);
   searchService.fetchRegions.mockResolvedValue([
-    { regionId: 1, name: 'Aegean' },
-    { regionId: 2, name: 'Mediterranean' },
+    { id: 1, name: 'Aegean' },
+    { id: 2, name: 'Mediterranean' },
   ]);
 });
 
