@@ -72,49 +72,51 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.padded}>
-        {story.image ? (
-          <View style={styles.thumbWrap} accessibilityLabel="Story image">
-            <Image source={{ uri: story.image }} style={styles.thumb} resizeMode="cover" />
-          </View>
-        ) : null}
-        <Text style={styles.title} accessibilityRole="header">
-          {story.title}
-        </Text>
-        {story.author ? (
-          <Text style={styles.meta}>
-            By{' '}
-            {typeof story.author === 'object' && story.author.username
-              ? story.author.username
-              : 'Author'}
+        <View style={styles.card}>
+          {story.image ? (
+            <View style={styles.thumbWrap} accessibilityLabel="Story image">
+              <Image source={{ uri: story.image }} style={styles.thumb} resizeMode="cover" />
+            </View>
+          ) : null}
+          <Text style={styles.title} accessibilityRole="header">
+            {story.title}
           </Text>
-        ) : null}
-        {canEdit ? (
-          <Pressable
-            onPress={() => navigation.navigate('StoryEdit', { id })}
-            style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
-            accessibilityRole="button"
-            accessibilityLabel="Edit story"
-          >
-            <Text style={styles.editLinkText}>Edit story</Text>
-          </Pressable>
-        ) : null}
-        {story.language ? (
-          <Text style={styles.meta}>Language: {story.language.toUpperCase()}</Text>
-        ) : null}
-        <Text style={styles.body}>{story.body}</Text>
+          {story.author ? (
+            <Text style={styles.meta}>
+              By{' '}
+              {typeof story.author === 'object' && story.author.username
+                ? story.author.username
+                : 'Author'}
+            </Text>
+          ) : null}
+          {canEdit ? (
+            <Pressable
+              onPress={() => navigation.navigate('StoryEdit', { id })}
+              style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Edit story"
+            >
+              <Text style={styles.editLinkText}>Edit story</Text>
+            </Pressable>
+          ) : null}
+          {story.language ? (
+            <Text style={styles.meta}>Language: {story.language.toUpperCase()}</Text>
+          ) : null}
+          <Text style={styles.body}>{story.body}</Text>
 
-        <View style={styles.linked}>
-          <Text style={styles.linkedHeading}>Linked Recipe</Text>
-          {story.linked_recipe ? (
-            <LinkedRecipePreviewCard
-              onPress={() =>
-                navigation.navigate('RecipeDetail', { id: story.linked_recipe!.id })
-              }
-              recipe={story.linked_recipe}
-            />
-          ) : (
-            <Text style={styles.noLinked}>No recipe is linked to the story.</Text>
-          )}
+          <View style={styles.linked}>
+            <Text style={styles.linkedHeading}>Linked Recipe</Text>
+            {story.linked_recipe ? (
+              <LinkedRecipePreviewCard
+                onPress={() =>
+                  navigation.navigate('RecipeDetail', { id: story.linked_recipe!.id })
+                }
+                recipe={story.linked_recipe}
+              />
+            ) : (
+              <Text style={styles.noLinked}>No recipe is linked to the story.</Text>
+            )}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -131,6 +133,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  card: {
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.surface,
+    padding: 16,
+    ...shadows.lg,
+  },
   thumbWrap: {
     width: '100%',
     aspectRatio: 16 / 9,
@@ -141,17 +151,17 @@ const styles = StyleSheet.create({
     ...shadows.lg,
   },
   thumb: { width: '100%', height: '100%' },
-  title: { fontSize: 26, fontWeight: '800', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
-  meta: { fontSize: 15, color: tokens.colors.surface, marginTop: 8 },
-  body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.surface },
+  title: { fontSize: 24, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
+  meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 8 },
+  body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.text },
   linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
-  linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
-  noLinked: { fontSize: 15, color: tokens.colors.surface, lineHeight: 22 },
+  linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
+  noLinked: { fontSize: 15, color: tokens.colors.textMuted, lineHeight: 22 },
   editLink: {
     alignSelf: 'flex-start',
     marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-  editLinkText: { fontSize: 16, color: tokens.colors.surface, fontWeight: '800' },
+  editLinkText: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
 });
