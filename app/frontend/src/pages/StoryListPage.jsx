@@ -30,8 +30,8 @@ export default function StoryListPage() {
         {stories.map((story) => (
           <article key={story.id} className="story-card">
             <div className="story-card-img-wrap">
-              {story.thumbnail
-                ? <img src={story.thumbnail} alt={story.title} className="story-card-img" />
+              {story.image
+                ? <img src={story.image} alt={story.title} className="story-card-img" />
                 : <div className="story-card-placeholder" />
               }
             </div>
@@ -40,8 +40,8 @@ export default function StoryListPage() {
                 <Link to={`/stories/${story.id}`} className="story-card-link">{story.title}</Link>
               </h2>
               {story.region && <span className="story-card-region">{story.region}</span>}
-              {story.author && (
-                <p className="story-card-author">By {story.author.username}</p>
+              {story.author_username && (
+                <p className="story-card-author">By {story.author_username}</p>
               )}
             </div>
           </article>
