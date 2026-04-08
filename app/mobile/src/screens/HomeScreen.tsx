@@ -124,9 +124,19 @@ export default function HomeScreen({ navigation }: Props) {
                 accessibilityRole="button"
                 accessibilityLabel={`Open recipe ${item.title}`}
               >
-                <View style={styles.recipeThumb}>
-                  <Text style={styles.thumbText}>R</Text>
-                </View>
+                {item.image ? (
+                  <View style={styles.recipeThumb}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={styles.recipeThumbImage}
+                      resizeMode="cover"
+                    />
+                  </View>
+                ) : (
+                  <View style={styles.recipeThumb}>
+                    <Text style={styles.thumbText}>R</Text>
+                  </View>
+                )}
                 <Text style={styles.cardTitle} numberOfLines={2}>
                   {item.title}
                 </Text>
@@ -221,6 +231,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  recipeThumbImage: { width: '100%', height: '100%' },
   thumbText: { color: tokens.colors.textOnDark, fontSize: 24, fontWeight: '900' },
   cardTitle: { paddingHorizontal: 12, paddingTop: 10, fontSize: 15, fontWeight: '800', color: tokens.colors.text },
   cardMeta: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: 6, fontSize: 13, color: tokens.colors.textMuted },

@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ResizeMode, Video } from 'expo-av';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { ErrorView } from '../components/ui/ErrorView';
@@ -106,6 +106,12 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             </Pressable>
           ) : null}
 
+          {recipe.image ? (
+            <View style={styles.imageWrap} accessibilityLabel="Recipe image">
+              <Image source={{ uri: recipe.image }} style={styles.image} resizeMode="cover" />
+            </View>
+          ) : null}
+
           {recipe.video ? (
             <View style={styles.videoWrap} accessibilityLabel="Recipe video">
               <Video
@@ -189,6 +195,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   editLinkText: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
+  imageWrap: {
+    marginTop: 14,
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: tokens.radius.xl,
+    overflow: 'hidden',
+    backgroundColor: tokens.colors.surfaceDark,
+    ...shadows.lg,
+  },
+  image: { width: '100%', height: '100%' },
   videoWrap: {
     marginTop: 16,
     borderRadius: tokens.radius.xl,

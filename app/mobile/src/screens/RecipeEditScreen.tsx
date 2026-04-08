@@ -5,6 +5,7 @@ import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   buildRecipePatchJsonBody,
+  buildRecipeImageOnlyFormData,
   buildRecipeVideoOnlyFormData,
 } from '../components/recipe/buildRecipeUpdateFormData';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
@@ -44,6 +45,11 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
   const [region, setRegion] = useState('');
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState<AuthoringIngredientRow[]>([makeEmptyIngredientRow()]);
+  const [localImage, setLocalImage] = useState<{
+    uri: string;
+    fileName?: string;
+    mimeType?: string;
+  } | null>(null);
   const [localVideo, setLocalVideo] = useState<{
     uri: string;
     fileName?: string;
@@ -59,6 +65,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     setRegion(recipe.region ?? '');
     setQaEnabled(recipe.qa_enabled ?? true);
     setRows(authoringRowsFromRecipe(recipe.ingredients));
+    setLocalImage(null);
     setLocalVideo(null);
     setRemoteVideoUrl(recipe.video ?? null);
   }, []);
@@ -132,6 +139,30 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     });
   }
 
+  async function pickImage() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showToast('Media library permission is needed to pick an image.', 'error');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+
+    const asset = result.assets?.[0];
+    if (!asset?.uri) return;
+
+    setLocalImage({
+      uri: asset.uri,
+      fileName: asset.fileName ?? undefined,
+      mimeType: asset.mimeType ?? undefined,
+    });
+  }
+
   function addRow() {
     setRows((prev) => [...prev, makeEmptyIngredientRow()]);
   }
@@ -159,6 +190,16 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     void (async () => {
       try {
         await patchRecipeJson(id, jsonBody);
+        if (localImage) {
+          await updateRecipeById(
+            id,
+            buildRecipeImageOnlyFormData({
+              uri: localImage.uri,
+              name: localImage.fileName,
+              type: localImage.mimeType,
+            }),
+          );
+        }
         if (localVideo) {
           await updateRecipeById(id, buildRecipeVideoOnlyFormData(localVideo));
         }
@@ -309,6 +350,30 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
         />
 
         {attemptedSubmit ? <InlineFieldError message={validation.amount} /> : null}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Thumbnail image (optional)</Text>
+          <Pressable
+            onPress={() => void pickImage()}
+            style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Pick recipe thumbnail image"
+          >
+            <Text style={styles.secondaryButtonText}>
+              {localImage ? 'Change image' : 'Upload image'}
+            </Text>
+          </Pressable>
+          {localImage ? (
+            <Pressable
+              onPress={() => setLocalImage(null)}
+              style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed, { marginTop: 10 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Remove recipe thumbnail image"
+            >
+              <Text style={styles.secondaryButtonText}>Remove image</Text>
+            </Pressable>
+          ) : null}
+        </View>
 
         <RecipeVideoSection
           onPickPress={() => void pickVideo()}

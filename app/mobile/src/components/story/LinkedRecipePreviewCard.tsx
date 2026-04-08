@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { shadows, tokens } from '../../theme';
 
-type LinkedRecipe = { id: string; title: string; region?: string };
+type LinkedRecipe = { id: string; title: string; region?: string; image?: string | null };
 
 type Props = {
   recipe: LinkedRecipe;
@@ -19,9 +19,15 @@ export function LinkedRecipePreviewCard({ recipe, onPress }: Props) {
       accessibilityRole="button"
       accessibilityLabel={`Open linked recipe ${recipe.title}`}
     >
-      <View style={styles.thumb}>
-        <Text style={styles.thumbText}>R</Text>
-      </View>
+      {recipe.image ? (
+        <View style={styles.thumb}>
+          <Image source={{ uri: recipe.image }} style={styles.thumbImage} resizeMode="cover" />
+        </View>
+      ) : (
+        <View style={styles.thumb}>
+          <Text style={styles.thumbText}>R</Text>
+        </View>
+      )}
       <View style={styles.body}>
         <Text style={styles.title} numberOfLines={2}>
           {recipe.title}
@@ -53,6 +59,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  thumbImage: { width: '100%', height: '100%' },
   thumbText: { color: tokens.colors.textOnDark, fontSize: 22, fontWeight: '900' },
   body: { flex: 1, padding: 12, gap: 10 },
   title: {

@@ -24,6 +24,11 @@ export default function RecipeCreateScreen(_props: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [qaEnabled, setQaEnabled] = useState(true);
+  const [localImage, setLocalImage] = useState<{
+    uri: string;
+    fileName?: string;
+    mimeType?: string;
+  } | null>(null);
   const [localVideo, setLocalVideo] = useState<{
     uri: string;
     fileName?: string;
@@ -99,6 +104,30 @@ export default function RecipeCreateScreen(_props: Props) {
     });
   }
 
+  async function pickImage() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showToast('Media library permission is needed to pick an image.', 'error');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+
+    const asset = result.assets?.[0];
+    if (!asset?.uri) return;
+
+    setLocalImage({
+      uri: asset.uri,
+      fileName: asset.fileName ?? undefined,
+      mimeType: asset.mimeType ?? undefined,
+    });
+  }
+
   function addRow() {
     setRows((prev) => [...prev, makeEmptyIngredientRow()]);
   }
@@ -118,6 +147,7 @@ export default function RecipeCreateScreen(_props: Props) {
     const payload = {
       description: description.trim(),
       qa_enabled: qaEnabled,
+      image: localImage,
       video: localVideo,
       ingredients: rows.map((r) => ({
         amount: Number(r.amount),
@@ -140,14 +170,23 @@ export default function RecipeCreateScreen(_props: Props) {
             unit: x.unit?.id ?? x.unit,
           })),
         });
-        if (payload.video) {
+        if (payload.video || payload.image) {
           const fd = new FormData();
-          // React Native file upload shape (not a web Blob).
-          fd.append('video', {
-            uri: payload.video.uri,
-            name: payload.video.fileName ?? 'recipe-video.mp4',
-            type: payload.video.mimeType ?? 'video/mp4',
-          } as any);
+          if (payload.video) {
+            // React Native file upload shape (not a web Blob).
+            fd.append('video', {
+              uri: payload.video.uri,
+              name: payload.video.fileName ?? 'recipe-video.mp4',
+              type: payload.video.mimeType ?? 'video/mp4',
+            } as any);
+          }
+          if (payload.image) {
+            fd.append('image', {
+              uri: payload.image.uri,
+              name: payload.image.fileName ?? 'recipe-image.jpg',
+              type: payload.image.mimeType ?? 'image/jpeg',
+            } as any);
+          }
           await apiPatchFormData(`/api/recipes/${created.id}/`, fd);
         }
         showToast('Recipe published!', 'success');
@@ -225,6 +264,30 @@ export default function RecipeCreateScreen(_props: Props) {
             rowsTopError={errors.rowsTop}
             rowErrors={errors.rows}
           />
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Thumbnail image (optional)</Text>
+            <Pressable
+              onPress={() => void pickImage()}
+              style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Pick recipe thumbnail image"
+            >
+              <Text style={styles.secondaryButtonText}>
+                {localImage ? 'Change image' : 'Upload image'}
+              </Text>
+            </Pressable>
+            {localImage ? (
+              <Pressable
+                onPress={() => setLocalImage(null)}
+                style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed, { marginTop: 10 }]}
+                accessibilityRole="button"
+                accessibilityLabel="Remove recipe thumbnail image"
+              >
+                <Text style={styles.secondaryButtonText}>Remove image</Text>
+              </Pressable>
+            ) : null}
+          </View>
 
           <RecipeVideoSection
             onPickPress={() => void pickVideo()}

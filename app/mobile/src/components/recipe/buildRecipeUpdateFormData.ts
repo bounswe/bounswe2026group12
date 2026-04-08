@@ -45,3 +45,20 @@ export function buildRecipeVideoOnlyFormData(localVideo: LocalVideoSelection): F
   );
   return fd;
 }
+
+export function buildRecipeImageOnlyFormData(input: {
+  uri: string;
+  name?: string;
+  type?: string;
+}): FormData {
+  const fd = new FormData();
+  fd.append(
+    'image',
+    {
+      uri: input.uri,
+      name: input.name ?? 'recipe-image.jpg',
+      type: input.type ?? 'image/jpeg',
+    } as unknown as Blob,
+  );
+  return fd;
+}
