@@ -1,6 +1,6 @@
 import type { StoryDetail } from '../types/story';
 import { parseAuthorId } from '../utils/parseAuthorId';
-import { apiGetJson, apiPatchJson } from './httpClient';
+import { apiGetJson, apiPatchFormData, apiPatchJson } from './httpClient';
 
 /** Same endpoint as web `fetchStory` (`GET /api/stories/:id/`). */
 export async function fetchStoryById(id: string): Promise<StoryDetail> {
@@ -54,7 +54,7 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
     ...data,
     author,
     linked_recipe,
-    thumbnail: data.thumbnail ?? null,
+    image: typeof data.image === 'string' ? data.image : null,
     is_published: typeof data.is_published === 'boolean' ? data.is_published : undefined,
   };
 }
@@ -70,5 +70,18 @@ export async function updateStoryById(
   },
 ): Promise<void> {
   await apiPatchJson(`/api/stories/${id}/`, body);
+}
+
+export async function updateStoryImageById(
+  id: string,
+  input: { uri: string; name?: string; type?: string },
+): Promise<void> {
+  const fd = new FormData();
+  fd.append('image', {
+    uri: input.uri,
+    name: input.name ?? 'story-image.jpg',
+    type: input.type ?? 'image/jpeg',
+  } as any);
+  await apiPatchFormData(`/api/stories/${id}/`, fd);
 }
 

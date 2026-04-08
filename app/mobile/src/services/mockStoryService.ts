@@ -9,7 +9,7 @@ export type StoryCreatePayload = {
   language: StoryLanguage;
   /** Store id only; detail view uses mock story shape for now. */
   linked_recipe: { id: string; title: string; region?: string } | null;
-  thumbnail?: string | null;
+  image?: string | null;
   is_published: boolean;
   author?: { username: string };
 };
@@ -22,7 +22,7 @@ export async function mockSubmitStoryCreate(payload: StoryCreatePayload): Promis
     body: payload.body.trim(),
     language: payload.language,
     linked_recipe: payload.linked_recipe,
-    thumbnail: payload.thumbnail ?? null,
+    image: payload.image ?? null,
     author: payload.author,
   });
 }

@@ -14,6 +14,7 @@ export default function HomeScreen({ navigation }: Props) {
 
   const [stories, setStories] = useState<any[]>([]);
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,10 +27,12 @@ export default function HomeScreen({ navigation }: Props) {
         if (cancelled) return;
         setStories(Array.isArray(storyData) ? storyData : []);
         setRecipes(Array.isArray(recipeData) ? recipeData : []);
-      } catch {
+        setLoadError(null);
+      } catch (e) {
         if (!cancelled) {
           setStories([]);
           setRecipes([]);
+          setLoadError(e instanceof Error ? e.message : 'Could not load feed.');
         }
       }
     })();
@@ -41,6 +44,11 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        {loadError ? (
+          <View style={styles.errorBanner} accessibilityLabel="Feed load error">
+            <Text style={styles.errorText}>{loadError}</Text>
+          </View>
+        ) : null}
         <View style={styles.header}>
           <Text style={styles.heading} accessibilityRole="header">
             Search
@@ -79,9 +87,9 @@ export default function HomeScreen({ navigation }: Props) {
                 accessibilityRole="button"
                 accessibilityLabel={`Open story ${item.title}`}
               >
-                {item.thumbnail ? (
+                {item.image ? (
                   <View style={styles.storyThumb}>
-                    <Image source={{ uri: item.thumbnail }} style={styles.storyThumbImage} resizeMode="cover" />
+                    <Image source={{ uri: item.image }} style={styles.storyThumbImage} resizeMode="cover" />
                   </View>
                 ) : (
                   <View style={styles.storyThumb}>
@@ -139,6 +147,16 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: tokens.colors.bg },
   container: { padding: 16, paddingBottom: 28 },
+  errorBanner: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.md,
+    backgroundColor: '#fee2e2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    marginBottom: 12,
+  },
+  errorText: { color: '#991b1b', fontSize: 13, fontWeight: '700' },
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',

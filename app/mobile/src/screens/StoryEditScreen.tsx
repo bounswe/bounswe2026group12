@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,7 +13,7 @@ import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipesList } from '../services/recipeService';
 import type { StoryLanguage } from '../services/mockStoryService';
-import { fetchStoryById, updateStoryById } from '../services/storyService';
+import { fetchStoryById, updateStoryById, updateStoryImageById } from '../services/storyService';
 import { tokens } from '../theme';
 import { parseAuthorId } from '../utils/parseAuthorId';
 import { isStoryAuthor } from '../utils/storyAuthor';
@@ -38,6 +39,7 @@ export default function StoryEditScreen({ route, navigation }: Props) {
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
   const [published, setPublished] = useState(true);
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -56,7 +58,24 @@ export default function StoryEditScreen({ route, navigation }: Props) {
       setLinkedRecipe(null);
     }
     setPublished(story.is_published !== false);
+    setImageUri(story.image ?? null);
   }, []);
+
+  async function pickImage() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showToast('Media library permission is needed to pick an image.', 'error');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+    if (result.canceled) return;
+    const asset = result.assets?.[0];
+    if (!asset?.uri) return;
+    setImageUri(asset.uri);
+  }
 
   useEffect(() => {
     if (!isReady) return;
@@ -113,6 +132,9 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
           is_published: published,
         });
+        if (imageUri) {
+          await updateStoryImageById(String(id), { uri: imageUri });
+        }
         showToast('Story updated!', 'success');
         navigation.navigate('StoryDetail', { id });
       } catch {
@@ -223,6 +245,30 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           </View>
 
           <View style={form.section}>
+            <Text style={form.sectionTitle}>Image (optional)</Text>
+            <Pressable
+              onPress={() => void pickImage()}
+              style={({ pressed }) => [styles.thumbButton, pressed && { opacity: 0.9 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Pick story image"
+            >
+              <Text style={styles.thumbButtonText}>
+                {imageUri ? 'Change image' : 'Upload image'}
+              </Text>
+            </Pressable>
+            {imageUri ? (
+              <Pressable
+                onPress={() => setImageUri(null)}
+                style={({ pressed }) => [styles.thumbClear, pressed && { opacity: 0.9 }]}
+                accessibilityRole="button"
+                accessibilityLabel="Remove image"
+              >
+                <Text style={styles.thumbClearText}>Remove image</Text>
+              </Pressable>
+            ) : null}
+          </View>
+
+          <View style={form.section}>
             <Text style={form.sectionTitle}>Language</Text>
             <View style={styles.langRow}>
               {LANGS.map((l) => {
@@ -306,4 +352,16 @@ const styles = StyleSheet.create({
   langPillActive: { backgroundColor: tokens.colors.primary, borderColor: tokens.colors.primary },
   langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.primary },
   langTextActive: { color: tokens.colors.surface },
+  thumbButton: {
+    borderWidth: 2,
+    borderColor: tokens.colors.primary,
+    borderRadius: 999,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    alignSelf: 'flex-start',
+    backgroundColor: 'transparent',
+  },
+  thumbButtonText: { fontSize: 15, fontWeight: '800', color: tokens.colors.primary },
+  thumbClear: { marginTop: 10, alignSelf: 'flex-start' },
+  thumbClearText: { fontSize: 14, fontWeight: '700', color: tokens.colors.error },
 });

@@ -7,7 +7,7 @@ export type StoryDetail = {
   author?: number | { id?: number; username: string };
   linked_recipe?: { id: string; title: string; region?: string } | null;
   is_published?: boolean;
-  /** Optional thumbnail URL/uri (mock uses local file uri). */
-  thumbnail?: string | null;
+  /** Optional image URL/uri (mock uses remote url). */
+  image?: string | null;
 };
 

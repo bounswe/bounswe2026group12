@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { SearchResultItem } from '../../services/searchService';
 import { shadows, tokens } from '../../theme';
 
@@ -27,9 +27,15 @@ export function SearchResultCard({ item, onPress }: Props) {
       accessibilityRole="button"
       accessibilityLabel={`Open ${item.kind} ${item.title}`}
     >
-      <View style={[styles.thumb, { backgroundColor: thumbColor(item.kind) }]}>
-        <Text style={styles.thumbText}>{initial}</Text>
-      </View>
+      {item.thumbnail ? (
+        <View style={styles.thumb}>
+          <Image source={{ uri: item.thumbnail }} style={styles.thumbImage} resizeMode="cover" />
+        </View>
+      ) : (
+        <View style={[styles.thumb, { backgroundColor: thumbColor(item.kind) }]}>
+          <Text style={styles.thumbText}>{initial}</Text>
+        </View>
+      )}
 
       <View style={styles.body}>
         <Text style={styles.title} numberOfLines={2}>
@@ -66,6 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  thumbImage: { width: '100%', height: '100%' },
   thumbText: { color: tokens.colors.textOnDark, fontSize: 26, fontWeight: '800' },
   body: { padding: 12, gap: 10 },
   title: {

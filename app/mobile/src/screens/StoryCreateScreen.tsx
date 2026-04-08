@@ -12,6 +12,7 @@ import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipesList } from '../services/recipeService';
 import { apiPostJson } from '../services/httpClient';
 import type { StoryLanguage } from '../services/mockStoryService';
+import { updateStoryImageById } from '../services/storyService';
 import { tokens } from '../theme';
 import { parseAuthorId } from '../utils/parseAuthorId';
 
@@ -30,7 +31,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
-  const [thumbnailUri, setThumbnailUri] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -44,7 +45,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
 
   const isValid = !errors.title && !errors.body;
 
-  async function pickThumbnail() {
+  async function pickImage() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       showToast('Media library permission is needed to pick an image.', 'error');
@@ -60,7 +61,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
 
     const asset = result.assets?.[0];
     if (!asset?.uri) return;
-    setThumbnailUri(asset.uri);
+    setImageUri(asset.uri);
   }
 
   function submit() {
@@ -75,13 +76,18 @@ export default function StoryCreateScreen({ navigation }: Props) {
           body: body.trim(),
           language,
           is_published: true,
-          linked_recipe: linkedRecipe ? linkedRecipe.id : null,
-          // thumbnail upload TODO (needs multipart)
+          linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
         });
+        if (imageUri) {
+          await updateStoryImageById(String(created.id), { uri: imageUri });
+        }
         showToast('Story published!', 'success');
         navigation.navigate('StoryDetail', { id: created.id });
-      } catch {
-        showToast('Failed to publish story. Please try again.', 'error');
+      } catch (e) {
+        showToast(
+          e instanceof Error ? e.message : 'Failed to publish story. Please try again.',
+          'error',
+        );
       } finally {
         setSubmitting(false);
       }
@@ -151,25 +157,25 @@ export default function StoryCreateScreen({ navigation }: Props) {
           </View>
 
           <View style={form.section}>
-            <Text style={form.sectionTitle}>Thumbnail (optional)</Text>
+            <Text style={form.sectionTitle}>Image (optional)</Text>
             <Pressable
-              onPress={() => void pickThumbnail()}
+              onPress={() => void pickImage()}
               style={({ pressed }) => [styles.thumbButton, pressed && { opacity: 0.9 }]}
               accessibilityRole="button"
-              accessibilityLabel="Pick story thumbnail"
+              accessibilityLabel="Pick story image"
             >
               <Text style={styles.thumbButtonText}>
-                {thumbnailUri ? 'Change thumbnail' : 'Upload thumbnail'}
+                {imageUri ? 'Change image' : 'Upload image'}
               </Text>
             </Pressable>
-            {thumbnailUri ? (
+            {imageUri ? (
               <Pressable
-                onPress={() => setThumbnailUri(null)}
+                onPress={() => setImageUri(null)}
                 style={({ pressed }) => [styles.thumbClear, pressed && { opacity: 0.9 }]}
                 accessibilityRole="button"
-                accessibilityLabel="Remove thumbnail"
+                accessibilityLabel="Remove image"
               >
-                <Text style={styles.thumbClearText}>Remove thumbnail</Text>
+                <Text style={styles.thumbClearText}>Remove image</Text>
               </Pressable>
             ) : null}
           </View>

@@ -30,10 +30,10 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
       .then((data) => {
         if (!cancelled) setStory(data);
       })
-      .catch(() => {
+      .catch((e) => {
         if (!cancelled) {
           setStory(null);
-          setError('Could not load story.');
+          setError(e instanceof Error ? e.message : 'Could not load story.');
         }
       })
       .finally(() => {
@@ -72,9 +72,9 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.padded}>
-        {story.thumbnail ? (
-          <View style={styles.thumbWrap} accessibilityLabel="Story thumbnail">
-            <Image source={{ uri: story.thumbnail }} style={styles.thumb} resizeMode="cover" />
+        {story.image ? (
+          <View style={styles.thumbWrap} accessibilityLabel="Story image">
+            <Image source={{ uri: story.image }} style={styles.thumb} resizeMode="cover" />
           </View>
         ) : null}
         <Text style={styles.title} accessibilityRole="header">
