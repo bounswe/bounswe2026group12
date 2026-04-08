@@ -88,7 +88,8 @@ export default function StoryEditPage() {
 
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
-  if (!user || (story && story.author && user.id !== story.author.id)) {
+  const storyAuthorId = story?.author && typeof story.author === 'object' ? story.author.id : story?.author;
+  if (!user || (story && storyAuthorId != null && user.id !== storyAuthorId)) {
     return <p className="page-status page-error">You are not authorized to edit this story.</p>;
   }
 
