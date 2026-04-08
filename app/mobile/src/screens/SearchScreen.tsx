@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
   Pressable,
@@ -13,6 +13,7 @@ import { EmptyState } from '../components/search/EmptyState';
 import { SearchResultCard } from '../components/search/SearchResultCard';
 import type { RootStackParamList } from '../navigation/types';
 import { search, type SearchResultItem } from '../services/searchService';
+import { fetchStoryById } from '../services/storyService';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Search'>;
@@ -34,6 +35,7 @@ export default function SearchScreen({ navigation, route }: Props) {
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const storyThumbCacheRef = useRef<Map<string, string | null>>(new Map());
 
   useEffect(() => {
     if (route.params?.query != null) setQuery(route.params.query);
@@ -56,7 +58,30 @@ export default function SearchScreen({ navigation, route }: Props) {
     void (async () => {
       try {
         const data = await search(q, region.trim() || undefined);
-        if (!cancelled) setResults(data);
+        if (cancelled) return;
+        setResults(data);
+
+        // Mobile-only enhancement: hydrate story thumbnails by fetching story details (cached).
+        const candidates = data
+          .filter((r) => r.kind === 'story' && !r.thumbnail)
+          .slice(0, 8);
+        const cache = storyThumbCacheRef.current;
+        await Promise.allSettled(
+          candidates.map(async (item) => {
+            if (cache.has(item.id)) return;
+            const story = await fetchStoryById(item.id);
+            const url = story.image ?? null;
+            cache.set(item.id, url);
+          }),
+        );
+        if (cancelled) return;
+        setResults((prev) =>
+          prev.map((r) => {
+            if (r.kind !== 'story' || r.thumbnail) return r;
+            const url = cache.get(r.id);
+            return url ? { ...r, thumbnail: url } : r;
+          }),
+        );
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Search failed');
       } finally {

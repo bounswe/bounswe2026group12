@@ -30,10 +30,10 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
       .then((data) => {
         if (!cancelled) setRecipe(data);
       })
-      .catch(() => {
+      .catch((e) => {
         if (!cancelled) {
           setRecipe(null);
-          setError('Could not load recipe.');
+          setError(e instanceof Error ? e.message : 'Could not load recipe.');
         }
       })
       .finally(() => {

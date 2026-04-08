@@ -26,10 +26,16 @@ async function authHeaders(): Promise<HeadersInit> {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
   const headers: Record<string, string> = {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
   };
   if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
+}
+
+async function authJsonHeaders(): Promise<HeadersInit> {
+  return {
+    ...(await authHeaders()),
+    'Content-Type': 'application/json',
+  };
 }
 
 /** GET JSON — mirrors axios `apiClient.get` usage on web. */
@@ -49,7 +55,7 @@ export async function apiGetJson<T>(path: string): Promise<T> {
 export async function apiPostJson<T>(path: string, body: object): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method: 'POST',
-    headers: await authHeaders(),
+    headers: await authJsonHeaders(),
     body: JSON.stringify(body),
   });
   if (!res.ok) {
@@ -63,7 +69,7 @@ export async function apiPostJson<T>(path: string, body: object): Promise<T> {
 export async function apiPatchJson<T>(path: string, body: object): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method: 'PATCH',
-    headers: await authHeaders(),
+    headers: await authJsonHeaders(),
     body: JSON.stringify(body),
   });
   if (!res.ok) {
