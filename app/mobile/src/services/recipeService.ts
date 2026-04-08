@@ -84,6 +84,7 @@ function normalizeRecipeDetail(data: RecipeDetail & Record<string, unknown>): Re
   return {
     ...data,
     ingredients: normalizeRecipeIngredients(data.ingredients),
+    image: typeof data.image === 'string' ? data.image : null,
     author,
   };
 }
@@ -100,7 +101,7 @@ export async function updateRecipeById(id: string, formData: FormData): Promise<
 
 /** Minimal list for story linking / pickers (web: GET `/api/recipes/`). */
 export async function fetchRecipesList(): Promise<
-  { id: string; title: string; region?: string; author?: any }[]
+  { id: string; title: string; region?: string; author?: any; image?: string | null }[]
 > {
   // We only need id/title/region/author for UI; backend may return more fields.
   const data = await apiGetJson<any[]>(`/api/recipes/`);
@@ -119,6 +120,7 @@ export async function fetchRecipesList(): Promise<
       title: String(r.title ?? ''),
       region: regionLabel,
       author: r.author ?? undefined,
+      image: typeof r.image === 'string' ? r.image : null,
     };
   });
 }

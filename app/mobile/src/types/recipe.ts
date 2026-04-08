@@ -14,6 +14,7 @@ export type RecipeDetail = {
   title: string;
   description?: string;
   region?: string;
+  image?: string | null;
   video?: string | null;
   /** Normalized to `{ id, username }`; raw API may send `author` as user pk only. */
   author?: number | { id: number; username?: string };
