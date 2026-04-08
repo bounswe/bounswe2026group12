@@ -84,11 +84,8 @@ export default function StoryDetailPage() {
       {story.linked_recipe && (
         <section className="story-linked-recipe">
           <h2>Linked Recipe</h2>
-          <Link to={`/recipes/${story.linked_recipe.id}`} className="linked-recipe-card">
-            <span className="linked-recipe-title">{story.linked_recipe.title}</span>
-            {story.linked_recipe.region && (
-              <span className="linked-recipe-region">{story.linked_recipe.region}</span>
-            )}
+          <Link to={`/recipes/${story.linked_recipe}`} className="linked-recipe-card">
+            <span className="linked-recipe-title">{story.recipe_title}</span>
           </Link>
         </section>
       )}
