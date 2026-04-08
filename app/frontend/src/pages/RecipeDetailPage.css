@@ -35,6 +35,14 @@
   color: var(--color-text);
 }
 
+.recipe-detail-image {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.5rem;
+}
+
 .recipe-video {
   width: 100%;
   border-radius: var(--radius-lg);
