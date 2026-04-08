@@ -75,75 +75,81 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title} accessibilityRole="header">
-          {recipe.title}
-        </Text>
-        {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
-        {recipe.author ? (
-          <Text style={styles.author}>
-            By{' '}
-            {typeof recipe.author === 'object' && recipe.author.username
-              ? recipe.author.username
-              : 'Author'}
+        <View style={styles.card}>
+          <Text style={styles.title} accessibilityRole="header">
+            {recipe.title}
           </Text>
-        ) : null}
+          {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
+          {recipe.author ? (
+            <Text style={styles.author}>
+              By{' '}
+              {typeof recipe.author === 'object' && recipe.author.username
+                ? recipe.author.username
+                : 'Author'}
+            </Text>
+          ) : null}
 
-        {typeof recipe.qa_enabled === 'boolean' ? (
-          <Text style={styles.qaMeta}>
-            Q&amp;A: {recipe.qa_enabled ? 'enabled' : 'disabled'}
-          </Text>
-        ) : null}
+          {typeof recipe.qa_enabled === 'boolean' ? (
+            <Text style={styles.qaMeta}>
+              Q&amp;A: {recipe.qa_enabled ? 'enabled' : 'disabled'}
+            </Text>
+          ) : null}
 
-        {canEdit ? (
-          <Pressable
-            onPress={() => navigation.navigate('RecipeEdit', { id })}
-            style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
-            accessibilityRole="button"
-            accessibilityLabel="Edit recipe"
-          >
-            <Text style={styles.editLinkText}>Edit recipe</Text>
-          </Pressable>
-        ) : null}
+          {canEdit ? (
+            <Pressable
+              onPress={() => navigation.navigate('RecipeEdit', { id })}
+              style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Edit recipe"
+            >
+              <Text style={styles.editLinkText}>Edit recipe</Text>
+            </Pressable>
+          ) : null}
 
-        {recipe.video ? (
-          <View style={styles.videoWrap} accessibilityLabel="Recipe video">
-            <Video
-              style={styles.video}
-              source={{ uri: recipe.video }}
-              useNativeControls
-              resizeMode={ResizeMode.CONTAIN}
-              isLooping={false}
-            />
-          </View>
-        ) : (
-          <Text style={styles.noVideo}>No video for this recipe.</Text>
-        )}
+          {recipe.video ? (
+            <View style={styles.videoWrap} accessibilityLabel="Recipe video">
+              <Video
+                style={styles.video}
+                source={{ uri: recipe.video }}
+                useNativeControls
+                resizeMode={ResizeMode.CONTAIN}
+                isLooping={false}
+              />
+            </View>
+          ) : (
+            <Text style={styles.noVideo}>No video for this recipe.</Text>
+          )}
 
-        {recipe.description ? (
-          <Text style={styles.description}>{recipe.description}</Text>
-        ) : (
-          <Text style={styles.muted}>No description.</Text>
-        )}
+          {recipe.description ? (
+            <Text style={styles.description}>{recipe.description}</Text>
+          ) : (
+            <Text style={styles.muted}>No description.</Text>
+          )}
 
-        <Text style={styles.sectionTitle}>Ingredients</Text>
-        {ingredients.length === 0 ? (
-          <Text style={styles.muted}>No ingredients listed.</Text>
-        ) : (
-          <View style={styles.list}>
-            {ingredients.map((ri, index) => (
-              <View
-                key={ri.lineId != null ? `ing-line-${ri.lineId}` : `ing-line-${index}-${ri.ingredient.id}`}
-                style={styles.ingredientRow}
-              >
-                <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
-                <Text style={styles.ingredientAmount}>
-                  {' — '}
-                  {String(ri.amount)} {ri.unit.name}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
+          <Text style={styles.sectionTitle}>Ingredients</Text>
+          {ingredients.length === 0 ? (
+            <Text style={styles.muted}>No ingredients listed.</Text>
+          ) : (
+            <View style={styles.list}>
+              {ingredients.map((ri, index) => (
+                <View
+                  key={
+                    ri.lineId != null
+                      ? `ing-line-${ri.lineId}`
+                      : `ing-line-${index}-${ri.ingredient.id}`
+                  }
+                  style={styles.ingredientRow}
+                >
+                  <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
+                  <Text style={styles.ingredientAmount}>
+                    {' — '}
+                    {String(ri.amount)} {ri.unit.name}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -152,6 +158,14 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: tokens.colors.bg },
   scroll: { padding: 20, paddingBottom: 32 },
+  card: {
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.surface,
+    padding: 16,
+    ...shadows.lg,
+  },
   padded: { flex: 1, padding: 20, justifyContent: 'center' },
   centered: {
     flex: 1,
@@ -159,17 +173,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  title: { fontSize: 26, fontWeight: '700', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
-  meta: { fontSize: 16, color: tokens.colors.surface, marginTop: 8 },
-  author: { fontSize: 15, color: tokens.colors.surface, marginTop: 4 },
-  qaMeta: { fontSize: 14, color: tokens.colors.surface, marginTop: 4 },
+  title: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 6 },
+  author: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 4 },
+  qaMeta: { fontSize: 13, color: tokens.colors.textMuted, marginTop: 6 },
   editLink: {
     alignSelf: 'flex-start',
     marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-  editLinkText: { fontSize: 16, color: tokens.colors.surface, fontWeight: '800' },
+  editLinkText: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
   videoWrap: {
     marginTop: 16,
     borderRadius: tokens.radius.xl,
@@ -184,21 +203,21 @@ const styles = StyleSheet.create({
   noVideo: {
     marginTop: 16,
     fontSize: 14,
-    color: tokens.colors.surface,
+    color: tokens.colors.textMuted,
     fontStyle: 'italic',
   },
   description: {
     marginTop: 18,
     fontSize: 16,
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     lineHeight: 24,
   },
-  muted: { marginTop: 12, fontSize: 15, color: tokens.colors.surface },
+  muted: { marginTop: 12, fontSize: 15, color: tokens.colors.textMuted },
   sectionTitle: {
     marginTop: 24,
     fontSize: 18,
     fontWeight: '700',
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     marginBottom: 10,
     fontFamily: tokens.typography.display.fontFamily,
   },
@@ -211,6 +230,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: tokens.colors.primaryTint,
   },
-  ingredientName: { fontSize: 16, color: tokens.colors.surface, fontWeight: '700' },
-  ingredientAmount: { fontSize: 16, color: tokens.colors.surface },
+  ingredientName: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
+  ingredientAmount: { fontSize: 16, color: tokens.colors.text },
 });
