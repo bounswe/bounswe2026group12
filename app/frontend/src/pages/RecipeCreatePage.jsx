@@ -115,7 +115,7 @@ export default function RecipeCreatePage() {
       if (video || thumbnail) {
         const mediaData = new FormData();
         if (video) mediaData.append('video', video);
-        if (thumbnail) mediaData.append('thumbnail', thumbnail);
+        if (thumbnail) mediaData.append('image', thumbnail);
         await updateRecipe(created.id, mediaData);
       }
 
