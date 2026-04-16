@@ -15,15 +15,12 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
       if (row) {
         const speed = 40 + index * 8;
         const direction = index % 2 === 0 ? -1 : 1;
-        gsap.to(row, {
+        const timeline = gsap.timeline({ repeat: -1 });
+        timeline.to(row, {
           x: direction * -800,
           duration: speed,
-          ease: 'none',
-          repeat: -1,
-          modifiers: {
-            x: gsap.unitize(x => (parseFloat(x) % 800))
-          }
-        });
+          ease: 'none'
+        }, 0);
       }
     });
   }, []);
