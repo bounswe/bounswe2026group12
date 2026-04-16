@@ -5,6 +5,7 @@ import './GridMotion.css';
 const GridMotion = ({ items = [], gradientColor = 'black' }) => {
   const gridRef = useRef(null);
   const rowRefs = useRef([]);
+  const ROW_OFFSETS = [0, 22, 12, 11];
 
   const totalItems = 28;
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
@@ -51,7 +52,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
           {[...Array(4)].map((_, rowIndex) => (
             <div key={rowIndex} className="row" ref={el => (rowRefs.current[rowIndex] = el)}>
               {[...Array(21)].map((_, itemIndex) => {
-                const content = combinedItems[(rowIndex * 7 + itemIndex) % combinedItems.length];
+                const content = combinedItems[(ROW_OFFSETS[rowIndex] + itemIndex) % combinedItems.length];
                 return (
                   <div key={itemIndex} className="row__item">
                     <div className="row__item-inner" style={{ backgroundColor: '#111' }}>
