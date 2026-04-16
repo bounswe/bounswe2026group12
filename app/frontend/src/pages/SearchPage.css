@@ -74,6 +74,30 @@
   flex-shrink: 0;
 }
 
+.search-filters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.search-filter-group {
+  text-align: left;
+}
+
+.search-filter-group label {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.search-filter-group input,
+.search-filter-group select {
+  width: 100%;
+}
+
 @media (max-width: 640px) {
   .search-filter-row {
     flex-direction: column;
@@ -82,6 +106,10 @@
 
   .search-filter-btn {
     width: 100%;
+  }
+
+  .search-filters {
+    grid-template-columns: 1fr;
   }
 }
 
