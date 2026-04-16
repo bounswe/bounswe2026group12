@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import './GridMotion.css';
 
@@ -10,24 +10,33 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
   const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
 
-  useEffect(() => {
-    rowRefs.current.forEach((row, index) => {
-      if (row) {
-        const speed = 40 + index * 8;
-        const direction = index % 2 === 0 ? -1 : 1;
-        const timeline = gsap.timeline({ repeat: -1 });
+  useLayoutEffect(() => {
+    const tweens = [];
 
-        // Animate 2/3 of row width (14 items), then reset invisibly
-        timeline.to(row, {
-          x: direction * -1200,
-          duration: speed,
-          ease: 'none',
-          onComplete: () => {
-            gsap.set(row, { x: 0 });
-          }
-        }, 0);
+    rowRefs.current.forEach((row, index) => {
+      if (!row) return;
+      const speed = 40 + index * 8;
+      // Each row has 3 identical sets of images; move exactly one set width
+      const oneSetWidth = row.scrollWidth / 3;
+
+      let tween;
+      if (index % 2 === 0) {
+        // Even rows: scroll left (0 → -oneSetWidth, repeat seamlessly)
+        tween = gsap.fromTo(row,
+          { x: 0 },
+          { x: -oneSetWidth, duration: speed, ease: 'none', repeat: -1 }
+        );
+      } else {
+        // Odd rows: scroll right (-oneSetWidth → 0, repeat seamlessly)
+        tween = gsap.fromTo(row,
+          { x: -oneSetWidth },
+          { x: 0, duration: speed, ease: 'none', repeat: -1 }
+        );
       }
+      tweens.push(tween);
     });
+
+    return () => tweens.forEach(t => t.kill());
   }, []);
 
   return (
