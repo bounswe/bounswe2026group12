@@ -43,7 +43,7 @@
 .row {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(14, 1fr);
+  grid-template-columns: repeat(21, 1fr);
   will-change: transform, filter;
 }
 
