@@ -13,12 +13,16 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
   useEffect(() => {
     rowRefs.current.forEach((row, index) => {
       if (row) {
-        const speed = 25 + index * 8;
+        const speed = 40 + index * 8;
+        const direction = index % 2 === 0 ? -1 : 1;
         gsap.to(row, {
-          x: -1000,
+          x: direction * -800,
           duration: speed,
           ease: 'none',
-          repeat: -1
+          repeat: -1,
+          modifiers: {
+            x: gsap.unitize(x => (parseFloat(x) % 800))
+          }
         });
       }
     });
@@ -35,8 +39,8 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
         <div className="gridMotion-container">
           {[...Array(4)].map((_, rowIndex) => (
             <div key={rowIndex} className="row" ref={el => (rowRefs.current[rowIndex] = el)}>
-              {[...Array(7)].map((_, itemIndex) => {
-                const content = combinedItems[rowIndex * 7 + itemIndex];
+              {[...Array(14)].map((_, itemIndex) => {
+                const content = combinedItems[(rowIndex * 7 + itemIndex) % combinedItems.length];
                 return (
                   <div key={itemIndex} className="row__item">
                     <div className="row__item-inner" style={{ backgroundColor: '#111' }}>
