@@ -15,6 +15,8 @@ export default function SearchPage() {
 
   const [localQ, setLocalQ] = useState(q);
   const [localRegion, setLocalRegion] = useState(region);
+  const [localIngredient, setLocalIngredient] = useState(ingredient);
+  const [localMealType, setLocalMealType] = useState(mealType);
   const [regions, setRegions] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,9 @@ export default function SearchPage() {
   useEffect(() => {
     setLocalQ(q);
     setLocalRegion(region);
-  }, [q, region]);
+    setLocalIngredient(ingredient);
+    setLocalMealType(mealType);
+  }, [q, region, ingredient, mealType]);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,7 +66,7 @@ export default function SearchPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    navigate(`/search?q=${encodeURIComponent(localQ)}&region=${encodeURIComponent(localRegion)}&language=${encodeURIComponent(language)}`);
+    navigate(`/search?q=${encodeURIComponent(localQ)}&region=${encodeURIComponent(localRegion)}&ingredient=${encodeURIComponent(localIngredient)}&meal_type=${encodeURIComponent(localMealType)}&language=${encodeURIComponent(language)}`);
   }
 
   return (
@@ -82,18 +86,48 @@ export default function SearchPage() {
             placeholder="Search recipes and stories…"
             className="search-filter-input"
           />
-          <select
-            id="region-filter"
-            value={localRegion}
-            onChange={(e) => setLocalRegion(e.target.value)}
-            className="search-filter-select"
-          >
-            <option value="">All regions</option>
-            {regions.map((r) => (
-              <option key={r.id} value={r.name}>{r.name}</option>
-            ))}
-          </select>
           <button type="submit" className="btn btn-primary search-filter-btn">Search</button>
+        </div>
+
+        <div className="search-filters">
+          <div className="search-filter-group">
+            <label htmlFor="ingredient-filter">Ingredient</label>
+            <input
+              id="ingredient-filter"
+              type="text"
+              value={localIngredient}
+              onChange={(e) => setLocalIngredient(e.target.value)}
+              placeholder="e.g. yogurt"
+              className="search-filter-input"
+            />
+          </div>
+
+          <div className="search-filter-group">
+            <label htmlFor="meal-type-filter">Meal Type</label>
+            <input
+              id="meal-type-filter"
+              type="text"
+              value={localMealType}
+              onChange={(e) => setLocalMealType(e.target.value)}
+              placeholder="e.g. soup"
+              className="search-filter-input"
+            />
+          </div>
+
+          <div className="search-filter-group">
+            <label htmlFor="region-filter">Region</label>
+            <select
+              id="region-filter"
+              value={localRegion}
+              onChange={(e) => setLocalRegion(e.target.value)}
+              className="search-filter-select"
+            >
+              <option value="">All regions</option>
+              {regions.map((r) => (
+                <option key={r.id} value={r.name}>{r.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </form>
 
