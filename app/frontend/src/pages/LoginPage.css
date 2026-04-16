@@ -1,6 +1,14 @@
+.login-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
 .auth-page {
   max-width: 440px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .auth-heading {
