@@ -49,6 +49,7 @@
 
 .row__item {
   position: relative;
+  aspect-ratio: 1;
 }
 
 .row__item-inner {
