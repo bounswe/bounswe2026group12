@@ -6,43 +6,84 @@ on:
     paths:
       - 'app/backend/**'
       - 'app/frontend/**'
+      - 'docker-compose.yml'
+      - 'docker-compose.prod.yml'
+      - 'ops/**'
+      - '.env.example'
+      - '.dockerignore'
+      - '.github/workflows/deploy-web.yml'
 
 concurrency:
   group: deploy-web-main
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to server via SSH
+      - name: Deploy to server via SSH (docker compose)
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
+          command_timeout: 30m
           script: |
             set -e
 
             cd /root/bounswe2026group12
-            git fetch origin && git reset --hard origin/main
+            git fetch origin
+            git reset --hard origin/main
 
-            # --- Backend ---
-            cd app/backend
-            source venv/bin/activate
-            pip install -r requirements.txt --quiet
-            python manage.py migrate --noinput
-            python manage.py collectstatic --noinput
-            cp -r staticfiles/* /var/www/genipe-static/
-            deactivate
-            systemctl restart genipe-backend
+            # Ensure root-level .env exists (one-time setup, idempotent).
+            # Reuses existing POSTGRES_* + SECRET_KEY + DEBUG from the legacy
+            # app/backend/.env and appends ALLOWED_HOSTS + REACT_APP_API_URL
+            # if missing.
+            if [ ! -f .env ]; then
+              cp app/backend/.env .env
+            fi
+            grep -q '^ALLOWED_HOSTS=' .env || \
+              echo 'ALLOWED_HOSTS=genipe.app,www.genipe.app,45.76.34.210,localhost,backend' >> .env
+            grep -q '^REACT_APP_API_URL=' .env || \
+              echo 'REACT_APP_API_URL=https://genipe.app' >> .env
 
-            # --- Frontend ---
-            cd ../frontend
-            npm ci
-            REACT_APP_API_URL=https://genipe.app npm run build
-            cp -r build/* /var/www/genipe/
-            chown -R www-data:www-data /var/www/genipe
+            # Build images first. If this fails, nothing on the running host
+            # is touched — legacy stack keeps serving.
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build
 
-            echo "Deploy complete!"
+            # First-run cutover: disable legacy systemd services if still
+            # enabled. Idempotent — on subsequent deploys this branch is skipped.
+            if systemctl is-enabled --quiet genipe-backend 2>/dev/null; then
+              echo "First-run cutover: disabling legacy systemd services"
+              systemctl stop genipe-backend || true
+              systemctl disable genipe-backend || true
+            fi
+            if systemctl is-enabled --quiet nginx 2>/dev/null; then
+              systemctl stop nginx || true
+              systemctl disable nginx || true
+            fi
+
+            # Stop the legacy standalone postgres container so host port 5432
+            # is free and its pgdata volume is quiescent. Container is
+            # preserved (not removed) as a rollback anchor for the first week.
+            if docker ps --format '{{.Names}}' | grep -qx genipe-db; then
+              docker stop genipe-db || true
+            fi
+
+            # Bring up the compose stack. The backend entrypoint runs migrate
+            # and collectstatic automatically before gunicorn starts.
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+            # Smoke test: give services 15s to settle then hit the domain.
+            # If this fails, dump last 100 lines of logs and exit non-zero so
+            # the workflow run is marked failed.
+            sleep 15
+            if ! curl -fsS --max-time 10 -o /dev/null https://genipe.app/ ; then
+              echo "::error::Smoke test failed — https://genipe.app/ did not return 2xx"
+              docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
+              docker compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100 backend web db
+              exit 1
+            fi
+
+            echo "Deploy complete — compose stack serving https://genipe.app/"
