@@ -9,16 +9,11 @@ import './LoginPage.css';
 const IMAGES = [
   'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=80', // Turkish
   'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80', // Japanese — sushi
-  'https://images.unsplash.com/photo-1576788369575-6d72f2a1e2e1?w=600&q=80', // Japanese — ramen
   'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&q=80', // Indian — curry
-  'https://images.unsplash.com/photo-1551183053-bf91798d047e?w=600&q=80', // Indian — spices
   'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80', // Mexican — tacos
-  'https://images.unsplash.com/photo-1504754276023-b72db8adf000?w=600&q=80', // Spanish — paella
   'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80', // Italian — pizza
   'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=80', // Italian — pasta
-  'https://images.unsplash.com/photo-1488477181643-eff2d23c94b7?w=600&q=80', // Middle Eastern — bread
   'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&q=80', // Chinese — dim sum
-  'https://images.unsplash.com/photo-1544025162-d76538a84e89?w=600&q=80', // Chinese — noodles
   'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80', // Korean — BBQ
   'https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80', // Thai — noodles
   'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&q=80', // Thai — curry
