@@ -1,45 +1,21 @@
 import { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { registerRequest } from '../services/authService';
 import { extractApiError } from '../services/api';
-import GridMotion from '../components/GridMotion';
 import './RegisterPage.css';
-
-const IMAGES = [
-  'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=80', // Turkish
-  'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80', // Japanese — sushi
-  'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&q=80', // Indian — curry
-  'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80', // Mexican — tacos
-  'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80', // Italian — pizza
-  'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=80', // Italian — pasta
-  'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&q=80', // Chinese — dim sum
-  'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80', // Korean — BBQ
-  'https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80', // Thai — noodles
-  'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&q=80', // Thai — curry
-  'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80', // South Asian — rice
-  'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80', // French — fine dining
-  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80', // American — burger
-  'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80', // American — steak
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80', // Mediterranean — fish
-  'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80', // Mediterranean — salad
-  'https://images.unsplash.com/photo-1536304447766-da0ed4ce1b73?w=600&q=80', // Mediterranean — mezze
-  'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=600&q=80', // European — bread
-  'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80', // Asian — soup
-  'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80', // Breakfast culture
-  'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&q=80', // Food platter
-  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80', // Bowl culture
-  'https://images.unsplash.com/photo-1555126634-323283e090fa?w=600&q=80', // Coffee culture
-];
 
 export default function RegisterPage() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
+
+  const animationClass = location.state?.from === 'login' ? 'auth-enter-right' : 'auth-enter-left';
 
   function validate() {
     const errs = {};
@@ -68,51 +44,43 @@ export default function RegisterPage() {
   }
 
   return (
-    <>
-      <div className="login-bg">
-        <GridMotion items={IMAGES} gradientColor="rgba(44,16,8,0.55)" />
-      </div>
-
-      <div className="login-filter"></div>
-
-      <main className="page-card auth-page">
-        <h1 className="auth-heading">Register</h1>
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            {errors.username && <span className="field-error">{errors.username}</span>}
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {errors.email && <span className="field-error">{errors.email}</span>}
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {errors.password && <span className="field-error">{errors.password}</span>}
-          </div>
-          {apiError && <p className="api-error">{apiError}</p>}
-          <button type="submit" className="btn btn-primary auth-submit">Register</button>
-        </form>
-        <p className="auth-footer">Already have an account? <Link to="/login">Log In</Link></p>
-      </main>
-    </>
+    <main className={`page-card auth-page ${animationClass}`}>
+      <h1 className="auth-heading">Register</h1>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          {errors.username && <span className="field-error">{errors.username}</span>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {errors.email && <span className="field-error">{errors.email}</span>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errors.password && <span className="field-error">{errors.password}</span>}
+        </div>
+        {apiError && <p className="api-error">{apiError}</p>}
+        <button type="submit" className="btn btn-primary auth-submit">Register</button>
+      </form>
+      <p className="auth-footer">Already have an account? <Link to="/login" state={{ from: 'register' }}>Log In</Link></p>
+    </main>
   );
 }

@@ -47,3 +47,33 @@
   font-weight: 600;
   color: var(--color-primary);
 }
+
+@keyframes authSlideFromRight {
+  from {
+    transform: translateX(60px) translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}
+
+@keyframes authSlideFromLeft {
+  from {
+    transform: translateX(-60px) translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}
+
+.auth-enter-right {
+  animation: authSlideFromRight 0.3s ease forwards;
+}
+
+.auth-enter-left {
+  animation: authSlideFromLeft 0.3s ease forwards;
+}
