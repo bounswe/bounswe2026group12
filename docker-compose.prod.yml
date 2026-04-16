@@ -1,0 +1,10 @@
+# Production override for Vultr.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+services:
+  web:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./ops/nginx-prod.conf:/etc/nginx/conf.d/default.conf:ro

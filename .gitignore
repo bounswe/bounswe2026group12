@@ -1,1 +1,16 @@
 .worktrees/
+
+# Secrets — NEVER commit
+.env
+.env.local
+.env.production
+.env.*.local
+app/backend/.env
+app/frontend/.env.local
+app/frontend/.env.production
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
