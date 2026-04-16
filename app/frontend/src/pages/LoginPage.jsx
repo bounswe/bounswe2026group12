@@ -19,10 +19,10 @@ const IMAGES = [
   'https://images.unsplash.com/photo-1488477181643-eff2d23c94b7?w=600&q=80', // Middle Eastern — bread
   'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&q=80', // Chinese — dim sum
   'https://images.unsplash.com/photo-1544025162-d76538a84e89?w=600&q=80', // Chinese — noodles
-  'https://images.unsplash.com/photo-1509482560494-4126c8f0dca5?w=600&q=80', // Korean — BBQ
+  'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80', // Korean — BBQ
   'https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80', // Thai — noodles
   'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&q=80', // Thai — curry
-  'https://images.unsplash.com/photo-1567171466753-b6f8f02f4dfb?w=600&q=80', // South Asian — rice
+  'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80', // South Asian — rice
   'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80', // French — fine dining
   'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80', // American — burger
   'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80', // American — steak
