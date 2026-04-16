@@ -76,6 +76,8 @@ export default function LoginPage() {
         <GridMotion items={IMAGES} gradientColor="rgba(44,16,8,0.55)" />
       </div>
 
+      <div className="login-filter"></div>
+
       <main className="page-card auth-page">
         <h1 className="auth-heading">Log In</h1>
         <form onSubmit={handleSubmit} noValidate>
