@@ -47,16 +47,16 @@ export default function RegisterPage() {
     <>
       <div className="auth-branding">
         <h1>Genipe</h1>
-      </div>
-      <main className={`page-card auth-page ${animationClass}`}>
         <button
           className="auth-close-btn"
           onClick={() => navigate('/')}
           aria-label="Close"
           type="button"
         >
-          ×
+          ←
         </button>
+      </div>
+      <main className={`page-card auth-page ${animationClass}`}>
       <h1 className="auth-heading">Register</h1>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
