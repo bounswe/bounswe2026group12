@@ -42,7 +42,19 @@ export default function LoginPage() {
   }
 
   return (
-    <main className={`page-card auth-page ${animationClass}`}>
+    <>
+      <div className="auth-branding">
+        <h1>Genipe</h1>
+      </div>
+      <main className={`page-card auth-page ${animationClass}`}>
+        <button
+          className="auth-close-btn"
+          onClick={() => navigate('/')}
+          aria-label="Close"
+          type="button"
+        >
+          ×
+        </button>
       <h1 className="auth-heading">Log In</h1>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
@@ -69,6 +81,7 @@ export default function LoginPage() {
         <button type="submit" className="btn btn-primary auth-submit">Log In</button>
       </form>
       <p className="auth-footer">Don't have an account? <Link to="/register" state={{ from: 'login' }}>Register</Link></p>
-    </main>
+      </main>
+    </>
   );
 }
