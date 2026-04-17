@@ -56,7 +56,7 @@ export default function App() {
           <div className="login-filter"></div>
         </>
       )}
-      {!isAuthPage && <Navbar /></}
+      {!isAuthPage && <Navbar />}
       <div className="page-wrapper">
         <Routes>
           <Route path="/" element={<HomePage />} />
