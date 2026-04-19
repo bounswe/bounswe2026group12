@@ -47,6 +47,10 @@ export default function RegisterPage() {
     <>
       <div className="auth-branding">
         <h1>Genipe</h1>
+      </div>
+      <main className={`page-card auth-page ${animationClass}`}>
+      <div className="auth-heading-row">
+        <h1 className="auth-heading">Register</h1>
         <button
           className="auth-close-btn"
           onClick={() => navigate('/')}
@@ -56,8 +60,6 @@ export default function RegisterPage() {
           ←
         </button>
       </div>
-      <main className={`page-card auth-page ${animationClass}`}>
-      <h1 className="auth-heading">Register</h1>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="username">Username</label>
