@@ -101,25 +101,36 @@ export async function updateRecipeById(id: string, formData: FormData): Promise<
 
 /** Minimal list for story linking / pickers (web: GET `/api/recipes/`). */
 export async function fetchRecipesList(): Promise<
-  { id: string; title: string; region?: string; author?: any; image?: string | null }[]
+  {
+    id: string;
+    title: string;
+    region?: string;
+    author?: any;
+    author_username?: string;
+    image?: string | null;
+  }[]
 > {
-  // We only need id/title/region/author for UI; backend may return more fields.
   const data = await apiGetJson<any[]>(`/api/recipes/`);
   return (Array.isArray(data) ? data : []).map((r) => {
     const reg = r.region;
     const regionLabel =
       reg == null
-        ? undefined
+        ? typeof r.region_name === 'string'
+          ? r.region_name
+          : undefined
         : typeof reg === 'string'
           ? reg
           : typeof reg === 'object' && reg && 'name' in reg && typeof (reg as { name: unknown }).name === 'string'
             ? (reg as { name: string }).name
-            : undefined;
+            : typeof r.region_name === 'string'
+              ? r.region_name
+              : undefined;
     return {
       id: String(r.id),
       title: String(r.title ?? ''),
       region: regionLabel,
       author: r.author ?? undefined,
+      author_username: typeof r.author_username === 'string' ? r.author_username : undefined,
       image: typeof r.image === 'string' ? r.image : null,
     };
   });
