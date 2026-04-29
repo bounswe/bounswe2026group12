@@ -71,6 +71,11 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 
   const ingredients = recipe.ingredients ?? [];
 
+  const authorObj =
+    recipe.author && typeof recipe.author === 'object' && recipe.author.username && recipe.author.id != null
+      ? recipe.author
+      : null;
+
   /** Hide Edit until session is restored from storage (avoids flash for signed-in authors). */
   const canEdit = isReady && isAuthenticated && isRecipeAuthor(user, recipe);
 
@@ -82,13 +87,23 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             {recipe.title}
           </Text>
           {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
-          {recipe.author ? (
-            <Text style={styles.author}>
-              By{' '}
-              {typeof recipe.author === 'object' && recipe.author.username
-                ? recipe.author.username
-                : 'Author'}
-            </Text>
+          {authorObj ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('UserProfile', {
+                  userId: authorObj.id,
+                  username: authorObj.username,
+                })
+              }
+              style={({ pressed }) => [styles.authorPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Open profile of ${authorObj.username}`}
+              hitSlop={6}
+            >
+              <Text style={styles.authorPillText}>By {authorObj.username}</Text>
+            </Pressable>
+          ) : recipe.author ? (
+            <Text style={styles.author}>By Author</Text>
           ) : null}
 
           {typeof recipe.qa_enabled === 'boolean' ? (
@@ -224,6 +239,17 @@ const styles = StyleSheet.create({
   },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 6 },
   author: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 4 },
+  authorPill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    backgroundColor: tokens.colors.primarySubtle,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.primaryBorder,
+    borderRadius: tokens.radius.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  authorPillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
   qaMeta: { fontSize: 13, color: tokens.colors.textMuted, marginTop: 6 },
   editLink: {
     alignSelf: 'flex-start',
