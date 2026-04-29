@@ -143,3 +143,10 @@ class CommentSerializer(serializers.ModelSerializer):
             # Fallback if not annotated
             return obj.votes.filter(user=request.user).exists()
         return False
+
+    def validate(self, attrs):
+        parent = attrs.get('parent_comment')
+        recipe = self.context.get('recipe')
+        if parent and recipe and parent.recipe_id != recipe.id:
+            raise serializers.ValidationError({'parent_comment': 'Must belong to the same recipe.'})
+        return attrs
