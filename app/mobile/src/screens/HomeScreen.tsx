@@ -5,6 +5,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { shadows, tokens } from '../theme';
 import { fetchRecipesList } from '../services/recipeService';
 import { apiGetJson } from '../services/httpClient';
+import { fetchDailyCultural } from '../services/dailyCulturalService';
+import { DailyCulturalSection } from '../components/home/DailyCulturalSection';
+import type { DailyCulturalCard } from '../mocks/dailyCultural';
 import type { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -14,24 +17,28 @@ export default function HomeScreen({ navigation }: Props) {
 
   const [stories, setStories] = useState<any[]>([]);
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [daily, setDaily] = useState<DailyCulturalCard[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const [storyData, recipeData] = await Promise.all([
+        const [storyData, recipeData, dailyData] = await Promise.all([
           apiGetJson<any[]>('/api/stories/'),
           fetchRecipesList(),
+          fetchDailyCultural(),
         ]);
         if (cancelled) return;
         setStories(Array.isArray(storyData) ? storyData : []);
         setRecipes(Array.isArray(recipeData) ? recipeData : []);
+        setDaily(Array.isArray(dailyData) ? dailyData : []);
         setLoadError(null);
       } catch (e) {
         if (!cancelled) {
           setStories([]);
           setRecipes([]);
+          setDaily([]);
           setLoadError(e instanceof Error ? e.message : 'Could not load feed.');
         }
       }
@@ -69,6 +76,8 @@ export default function HomeScreen({ navigation }: Props) {
             onSubmitEditing={() => navigation.navigate('Search', { query: query.trim() })}
           />
         </View>
+
+        <DailyCulturalSection items={daily} />
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
