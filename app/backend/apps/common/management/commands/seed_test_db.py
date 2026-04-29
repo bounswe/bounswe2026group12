@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from apps.recipes.models import Region, Ingredient, Unit, Recipe, RecipeIngredient
 from apps.stories.models import Story
+from apps.messaging.models import Thread, ThreadParticipant, Message
 from django.db import transaction
 
 User = get_user_model()
@@ -21,6 +22,7 @@ class Command(BaseCommand):
                 self.seed_ingredients()
                 self.seed_recipes()
                 self.seed_stories()
+                self.seed_messaging()
             
             self.stdout.write(self.style.SUCCESS('Successfully seeded database!'))
         except Exception as e:
@@ -201,3 +203,35 @@ class Command(BaseCommand):
                 self.stdout.write(f'Created story: {story.title}')
             else:
                 self.stdout.write(f'Story already exists: {story.title}')
+
+    def seed_messaging(self):
+        self.stdout.write('Creating messages...')
+        cook = User.objects.get(username='cook')
+        student = User.objects.get(username='student')
+
+        # Create thread
+        thread, created = Thread.objects.get_or_create(
+            participants__user=cook,
+            defaults={'last_message_preview': 'Hello student!'}
+        )
+        # Check if thread exists by looking at both participants
+        if not Thread.objects.filter(participants__user=cook).filter(participants__user=student).exists():
+            thread = Thread.objects.create()
+            ThreadParticipant.objects.create(thread=thread, user=cook)
+            ThreadParticipant.objects.create(thread=thread, user=student)
+            
+            # Create message
+            msg = Message.objects.create(
+                thread=thread,
+                sender=cook,
+                body='Hello student! Welcome to the platform.'
+            )
+            
+            # Update thread index
+            thread.last_message_at = msg.created_at
+            thread.last_message_preview = msg.body[:120]
+            thread.save()
+            
+            self.stdout.write('Created thread and message between cook and student.')
+        else:
+            self.stdout.write('Thread between cook and student already exists.')
