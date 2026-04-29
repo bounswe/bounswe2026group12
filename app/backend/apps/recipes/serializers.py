@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, Ingredient, Unit, RecipeIngredient, Region
+from .models import Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -121,3 +121,21 @@ class RecipeSerializer(serializers.ModelSerializer):
                     unit=item.get('unit'),
                 )
         return instance
+
+class CommentSerializer(serializers.ModelSerializer):
+    author_username = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Comment
+        fields = [
+            'id', 'recipe', 'author', 'author_username', 'parent_comment',
+            'body', 'type', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['recipe', 'author', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        parent = attrs.get('parent_comment')
+        recipe = self.context.get('recipe')
+        if parent and recipe and parent.recipe_id != recipe.id:
+            raise serializers.ValidationError({'parent_comment': 'Must belong to the same recipe.'})
+        return attrs

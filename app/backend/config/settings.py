@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.stories',
     'apps.search',
     'apps.common',
+    'apps.notifications',
 ]
 
 # Custom user model

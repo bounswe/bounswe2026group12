@@ -1,10 +1,10 @@
 from django.db.models.functions import Lower
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
-from .models import Recipe, Ingredient, Unit, Region
+from .models import Recipe, Ingredient, Unit, Region, Comment
 from .serializers import (
     IngredientLookupSerializer,
     IngredientSerializer,
@@ -12,7 +12,15 @@ from .serializers import (
     RegionSerializer,
     UnitLookupSerializer,
     UnitSerializer,
+    CommentSerializer,
 )
+
+from rest_framework.pagination import PageNumberPagination
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
@@ -20,6 +28,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+    pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -37,6 +46,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe.is_published = False
         recipe.save(update_fields=['is_published'])
         return Response(RecipeSerializer(recipe).data)
+
+    @action(detail=True, methods=['get', 'post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
+    def comments(self, request, pk=None):
+        recipe = self.get_object()
+        
+        if request.method == 'GET':
+            comments = recipe.comments.all().order_by('created_at')
+            page = self.paginate_queryset(comments)
+            if page is not None:
+                serializer = CommentSerializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data)
+            
+        elif request.method == 'POST':
+            if request.data.get('type') == 'QUESTION' and not recipe.qa_enabled:
+                return Response({'detail': 'Q&A disabled for this recipe.'}, status=status.HTTP_403_FORBIDDEN)
+                
+            serializer = CommentSerializer(data=request.data, context={'recipe': recipe, 'request': request})
+            if serializer.is_valid():
+                serializer.save(author=request.user, recipe=recipe)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ModeratedLookupViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
@@ -74,3 +106,9 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = [permissions.AllowAny]
+
+class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    """ViewSet for deleting comments."""
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]
