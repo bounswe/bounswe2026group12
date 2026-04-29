@@ -10,6 +10,7 @@ import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
+import { convertIngredient } from '../utils/unitConversion';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
@@ -21,6 +22,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const [showConverted, setShowConverted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -132,27 +134,62 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             <Text style={styles.muted}>No description.</Text>
           )}
 
-          <Text style={styles.sectionTitle}>Ingredients</Text>
+          <View style={styles.ingredientsHeader}>
+            <Text style={styles.sectionTitle}>Ingredients</Text>
+            {ingredients.length > 0 ? (
+              <View style={styles.unitToggle} accessibilityRole="tablist">
+                <Pressable
+                  onPress={() => setShowConverted(false)}
+                  style={[styles.unitToggleBtn, !showConverted && styles.unitToggleBtnActive]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: !showConverted }}
+                  accessibilityLabel="Show original units"
+                >
+                  <Text style={[styles.unitToggleText, !showConverted && styles.unitToggleTextActive]}>
+                    Original
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setShowConverted(true)}
+                  style={[styles.unitToggleBtn, showConverted && styles.unitToggleBtnActive]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: showConverted }}
+                  accessibilityLabel="Show converted units"
+                >
+                  <Text style={[styles.unitToggleText, showConverted && styles.unitToggleTextActive]}>
+                    Converted
+                  </Text>
+                </Pressable>
+              </View>
+            ) : null}
+          </View>
           {ingredients.length === 0 ? (
             <Text style={styles.muted}>No ingredients listed.</Text>
           ) : (
             <View style={styles.list}>
-              {ingredients.map((ri, index) => (
-                <View
-                  key={
-                    ri.lineId != null
-                      ? `ing-line-${ri.lineId}`
-                      : `ing-line-${index}-${ri.ingredient.id}`
-                  }
-                  style={styles.ingredientRow}
-                >
-                  <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
-                  <Text style={styles.ingredientAmount}>
-                    {' — '}
-                    {String(ri.amount)} {ri.unit.name}
-                  </Text>
-                </View>
-              ))}
+              {ingredients.map((ri, index) => {
+                const converted = showConverted
+                  ? convertIngredient(ri.amount, ri.unit.name)
+                  : null;
+                const displayAmount = converted ? converted.amount : String(ri.amount);
+                const displayUnit = converted ? converted.unit : ri.unit.name;
+                return (
+                  <View
+                    key={
+                      ri.lineId != null
+                        ? `ing-line-${ri.lineId}`
+                        : `ing-line-${index}-${ri.ingredient.id}`
+                    }
+                    style={styles.ingredientRow}
+                  >
+                    <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
+                    <Text style={styles.ingredientAmount}>
+                      {' — '}
+                      {displayAmount} {displayUnit}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           )}
         </View>
@@ -229,13 +266,42 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   muted: { marginTop: 12, fontSize: 15, color: tokens.colors.textMuted },
-  sectionTitle: {
+  ingredientsHeader: {
     marginTop: 24,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: tokens.colors.text,
-    marginBottom: 10,
     fontFamily: tokens.typography.display.fontFamily,
+  },
+  unitToggle: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.lg,
+    overflow: 'hidden',
+    backgroundColor: tokens.colors.surface,
+  },
+  unitToggleBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  unitToggleBtnActive: {
+    backgroundColor: tokens.colors.primary,
+  },
+  unitToggleText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: tokens.colors.textMuted,
+  },
+  unitToggleTextActive: {
+    color: tokens.colors.surface,
   },
   list: { gap: 0 },
   ingredientRow: {
