@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/', include('apps.recipes.urls')),
     path('api/', include('apps.stories.urls')),
     path('api/', include('apps.search.urls')),
+    path('api/', include('apps.notifications.urls')),
 ]
 
 if settings.DEBUG:
