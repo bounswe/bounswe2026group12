@@ -100,3 +100,53 @@ def notify_recipe_author_on_question(sender, instance, created, **kwargs):
             title="New question on your recipe",
             body=message,
         )
+
+
+@receiver(post_save, sender=Comment)
+def notify_asker_on_reply(sender, instance, created, **kwargs):
+    """
+    When a reply is posted to a QUESTION comment, notify the original asker with:
+      1. A persisted in-app Notification record.
+      2. An Expo push notification to all of the asker's registered devices.
+
+    The notification is skipped when the replier IS the original asker.
+    """
+    if not created:
+        return
+        
+    parent_comment = instance.parent_comment
+    if not parent_comment or parent_comment.type != 'QUESTION':
+        return
+
+    recipe = instance.recipe
+    recipient = parent_comment.author
+    actor = instance.author
+
+    # Don't notify askers of their own replies
+    if recipient == actor:
+        return
+
+    from .models import Notification, DeviceToken
+
+    message = (
+        f"{actor.username} replied to your question on \"{recipe.title}\"."
+    )
+
+    # 1. Persist in-app notification
+    Notification.objects.create(
+        recipient=recipient,
+        actor=actor,
+        recipe=recipe,
+        message=message,
+    )
+
+    # 2. Push notification (best-effort)
+    device_tokens = list(
+        DeviceToken.objects.filter(user=recipient).values_list('token', flat=True)
+    )
+    if device_tokens:
+        _send_expo_push(
+            tokens=device_tokens,
+            title="New reply to your question",
+            body=message,
+        )
