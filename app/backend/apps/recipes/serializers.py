@@ -132,3 +132,10 @@ class CommentSerializer(serializers.ModelSerializer):
             'body', 'type', 'created_at', 'updated_at'
         ]
         read_only_fields = ['recipe', 'author', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        parent = attrs.get('parent_comment')
+        recipe = self.context.get('recipe')
+        if parent and recipe and parent.recipe_id != recipe.id:
+            raise serializers.ValidationError({'parent_comment': 'Must belong to the same recipe.'})
+        return attrs

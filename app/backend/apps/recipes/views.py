@@ -15,12 +15,20 @@ from .serializers import (
     CommentSerializer,
 )
 
+from rest_framework.pagination import PageNumberPagination
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related('recipe_ingredients__ingredient', 'recipe_ingredients__unit').all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+    pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -53,7 +61,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
             
         elif request.method == 'POST':
-            serializer = CommentSerializer(data=request.data)
+            if request.data.get('type') == 'QUESTION' and not recipe.qa_enabled:
+                return Response({'detail': 'Q&A disabled for this recipe.'}, status=status.HTTP_403_FORBIDDEN)
+                
+            serializer = CommentSerializer(data=request.data, context={'recipe': recipe, 'request': request})
             if serializer.is_valid():
                 serializer.save(author=request.user, recipe=recipe)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
