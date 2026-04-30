@@ -1,10 +1,11 @@
+from django.db import models
 from django.db.models.functions import Lower
 from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
-from .models import Recipe, Ingredient, Unit, Region, Comment
+from .models import Recipe, Ingredient, Unit, Region, Comment, Vote
 from .serializers import (
     IngredientLookupSerializer,
     IngredientSerializer,
@@ -15,12 +16,20 @@ from .serializers import (
     CommentSerializer,
 )
 
+from rest_framework.pagination import PageNumberPagination
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related('recipe_ingredients__ingredient', 'recipe_ingredients__unit').all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+    pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -44,16 +53,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = self.get_object()
         
         if request.method == 'GET':
-            comments = recipe.comments.all().order_by('created_at')
+            comments = Comment.objects.filter(recipe=recipe).annotate(helpful_count=models.Count('votes')).order_by('created_at')
+            if request.user.is_authenticated:
+                comments = comments.annotate(
+                    user_has_voted=models.Exists(
+                        Vote.objects.filter(comment=models.OuterRef('pk'), user=request.user)
+                    )
+                )
             page = self.paginate_queryset(comments)
             if page is not None:
-                serializer = CommentSerializer(page, many=True)
+                serializer = CommentSerializer(page, many=True, context=self.get_serializer_context())
                 return self.get_paginated_response(serializer.data)
-            serializer = CommentSerializer(comments, many=True)
+            serializer = CommentSerializer(comments, many=True, context=self.get_serializer_context())
             return Response(serializer.data)
             
         elif request.method == 'POST':
-            serializer = CommentSerializer(data=request.data)
+            if request.data.get('type') == 'QUESTION' and not recipe.qa_enabled:
+                return Response({'detail': 'Q&A disabled for this recipe.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            context = self.get_serializer_context()
+            context['recipe'] = recipe
+            serializer = CommentSerializer(data=request.data, context=context)
             if serializer.is_valid():
                 serializer.save(author=request.user, recipe=recipe)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -97,7 +117,36 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    """ViewSet for deleting comments."""
+    """ViewSet for deleting and interacting with comments."""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.annotate(helpful_count=models.Count('votes'))
+        user = self.request.user
+        if user.is_authenticated:
+            qs = qs.annotate(
+                user_has_voted=models.Exists(
+                    Vote.objects.filter(comment=models.OuterRef('pk'), user=user)
+                )
+            )
+        return qs
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def vote(self, request, pk=None):
+        comment = self.get_object()
+        vote, created = Vote.objects.get_or_create(user=request.user, comment=comment)
+        if not created:
+            vote.delete()
+            return Response({'status': 'unvoted'}, status=status.HTTP_200_OK)
+        return Response({'status': 'voted'}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
+    def helpful_count(self, request, pk=None):
+        comment = self.get_object()
+        # Ensure we count the votes directly in case the queryset is not annotated
+        # or we can rely on the annotation if get_object() applies it.
+        count = getattr(comment, 'helpful_count', comment.votes.count())
+        return Response({'helpful_count': count})

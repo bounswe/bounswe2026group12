@@ -124,11 +124,29 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    helpful_count = serializers.IntegerField(read_only=True, default=0)
+    has_voted = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
         fields = [
             'id', 'recipe', 'author', 'author_username', 'parent_comment',
-            'body', 'type', 'created_at', 'updated_at'
+            'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted'
         ]
         read_only_fields = ['recipe', 'author', 'created_at', 'updated_at']
+
+    def get_has_voted(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if hasattr(obj, 'user_has_voted'):
+                return obj.user_has_voted
+            # Fallback if not annotated
+            return obj.votes.filter(user=request.user).exists()
+        return False
+
+    def validate(self, attrs):
+        parent = attrs.get('parent_comment')
+        recipe = self.context.get('recipe')
+        if parent and recipe and parent.recipe_id != recipe.id:
+            raise serializers.ValidationError({'parent_comment': 'Must belong to the same recipe.'})
+        return attrs
