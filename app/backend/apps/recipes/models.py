@@ -67,3 +67,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.get_type_display()} by {self.author.username} on {self.recipe.title}"
+
+class Vote(models.Model):
+    """Vote on a Comment/Question/Reply indicating it was helpful."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='votes')
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='votes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'comment')
+
+    def __str__(self):
+        return f"Vote by {self.user.username} on Comment {self.comment.id}"
