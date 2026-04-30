@@ -8,6 +8,47 @@ export async function fetchStoryById(id: string): Promise<StoryDetail> {
   return normalizeStoryDetail(data);
 }
 
+export type StoryListItem = {
+  id: string;
+  title: string;
+  body: string;
+  image: string | null;
+  authorUsername: string | null;
+  linkedRecipeId: string | null;
+};
+
+function pickListItem(raw: any): StoryListItem {
+  const linkedRaw = raw?.linked_recipe;
+  const linkedRecipeId =
+    linkedRaw == null
+      ? null
+      : typeof linkedRaw === 'object' && 'id' in linkedRaw
+        ? String(linkedRaw.id)
+        : String(linkedRaw);
+  const authorUsername =
+    typeof raw?.author_username === 'string'
+      ? raw.author_username
+      : typeof raw?.author === 'object' && raw?.author?.username
+        ? String(raw.author.username)
+        : null;
+  return {
+    id: String(raw?.id ?? ''),
+    title: typeof raw?.title === 'string' ? raw.title : '',
+    body: typeof raw?.body === 'string' ? raw.body : '',
+    image: typeof raw?.image === 'string' ? raw.image : null,
+    authorUsername,
+    linkedRecipeId,
+  };
+}
+
+/** Stories where `linked_recipe` matches the given recipe id. Filters client-side. */
+export async function fetchStoriesForRecipe(recipeId: string | number): Promise<StoryListItem[]> {
+  const list = await apiGetJson<any[]>(`/api/stories/`);
+  if (!Array.isArray(list)) return [];
+  const target = String(recipeId);
+  return list.map(pickListItem).filter((s) => s.linkedRecipeId === target);
+}
+
 function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): StoryDetail {
   const authorId = parseAuthorId(data.author);
   const author =
