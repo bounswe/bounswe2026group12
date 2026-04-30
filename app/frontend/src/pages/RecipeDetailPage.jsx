@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecipe } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
@@ -8,6 +8,7 @@ import './RecipeDetailPage.css';
 export default function RecipeDetailPage() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,11 +41,26 @@ export default function RecipeDetailPage() {
             <p className="recipe-author">By {recipe.author_username}</p>
           )}
         </div>
-        {isAuthor && (
-          <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">
-            Edit
-          </Link>
-        )}
+        <div className="recipe-detail-actions">
+          {isAuthor && (
+            <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">
+              Edit
+            </Link>
+          )}
+          {user && !isAuthor && recipe.author_username && (
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() =>
+                navigate(
+                  `/inbox?compose=true&to=${recipe.author}&toUsername=${recipe.author_username}` +
+                  `&recipeId=${recipe.id}&recipeTitle=${encodeURIComponent(recipe.title)}`
+                )
+              }
+            >
+              Message @{recipe.author_username}
+            </button>
+          )}
+        </div>
       </div>
 
       {recipe.image && (
