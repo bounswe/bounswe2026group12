@@ -30,5 +30,36 @@ class LoginSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'bio', 'region', 'preferred_language', 'role', 'created_at']
+        fields = [
+            'id', 'email', 'username', 'bio', 'region', 'preferred_language', 'role', 'created_at',
+            'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
+        ]
         read_only_fields = fields
+
+
+class StringTagListField(serializers.ListField):
+    """List of string tags; rejects non-string items instead of coercing."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault('child', serializers.CharField(max_length=100))
+        kwargs.setdefault('required', False)
+        kwargs.setdefault('allow_empty', True)
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        if isinstance(data, list):
+            for item in data:
+                if not isinstance(item, str):
+                    raise serializers.ValidationError(['All items must be strings.'])
+        return super().to_internal_value(data)
+
+
+class CulturalProfileUpdateSerializer(serializers.ModelSerializer):
+    cultural_interests = StringTagListField()
+    regional_ties = StringTagListField()
+    religious_preferences = StringTagListField()
+    event_interests = StringTagListField()
+
+    class Meta:
+        model = User
+        fields = ['cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests']
