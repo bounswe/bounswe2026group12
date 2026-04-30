@@ -79,6 +79,18 @@ export async function apiPatchJson<T>(path: string, body: object): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/** DELETE — succeeds on 204 with no body. */
+export async function apiDelete(path: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'DELETE',
+    headers: await authHeaders(),
+  });
+  if (!res.ok) {
+    const message = (await readErrorMessage(res)).trim();
+    throw new Error(message || `DELETE ${path} failed (${res.status})`);
+  }
+}
+
 /**
  * PATCH multipart form (recipe update). Do not set `Content-Type`; RN sets boundary.
  * Same endpoint shape as web `updateRecipe` (`PATCH /api/recipes/:id/`).
