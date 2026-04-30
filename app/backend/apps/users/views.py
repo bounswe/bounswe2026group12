@@ -3,6 +3,8 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView as BaseTokenRefreshView
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -44,6 +46,20 @@ class LoginView(APIView):
                 **tokens
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TokenRefreshView(BaseTokenRefreshView):
+    """
+    Wraps SimpleJWT's TokenRefreshView to guarantee a stable error shape:
+      { "code": "token_not_valid", "detail": "..." }
+    Mobile httpClient interceptor relies on the `code` field to detect 401s.
+    """
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except (TokenError, InvalidToken) as exc:
+            # Re-raise as InvalidToken to ensure DRF captures it and returns 401
+            # with the 'code' field set to 'token_not_valid'.
+            raise InvalidToken(exc.args[0]) from exc
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]

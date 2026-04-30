@@ -291,3 +291,52 @@ class CulturalOnboardingTest(APITestCase):
         self.assertEqual(self.user.email, 'cultural@example.com')
         self.assertEqual(self.user.role, User.Role.USER)
         self.assertEqual(self.user.cultural_interests, ['Vegan'])
+
+
+class TokenRefreshTest(APITestCase):
+    """Tests for POST /api/auth/token/refresh/ (Issue #405)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='refresh@example.com', username='refreshuser', password='StrongPass123!'
+        )
+        response = self.client.post('/api/auth/login/', {"email": "refresh@example.com", "password": "StrongPass123!"})
+        self.access = response.data['access']
+        self.refresh = response.data['refresh']
+
+    def test_refresh_success(self):
+        response = self.client.post('/api/auth/token/refresh/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+        self.assertNotEqual(response.data['refresh'], self.refresh)
+
+    def test_refresh_invalid_token(self):
+        response = self.client.post('/api/auth/token/refresh/', {"refresh": "invalidtoken"})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data['code'], 'token_not_valid')
+
+    def test_refresh_missing_token(self):
+        response = self.client.post('/api/auth/token/refresh/', {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_refresh_blacklisted_token(self):
+        # Use it once to rotate it and blacklist the old one
+        self.client.post('/api/auth/token/refresh/', {"refresh": self.refresh})
+        # Use the old one again
+        response = self.client.post('/api/auth/token/refresh/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data['code'], 'token_not_valid')
+
+    def test_refresh_wrong_secret_key(self):
+        # Manually create a token signed with a different secret
+        from rest_framework_simplejwt.tokens import RefreshToken
+        import jwt
+        
+        refresh = RefreshToken.for_user(self.user)
+        payload = refresh.payload
+        bad_token = jwt.encode(payload, 'wrong-secret-key', algorithm='HS256')
+        
+        response = self.client.post('/api/auth/token/refresh/', {"refresh": bad_token})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data['code'], 'token_not_valid')
