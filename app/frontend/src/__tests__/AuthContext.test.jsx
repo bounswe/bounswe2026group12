@@ -2,8 +2,10 @@ import { render, screen, act, waitFor } from '@testing-library/react';
 import { useContext } from 'react';
 import { AuthProvider, AuthContext } from '../context/AuthContext';
 import * as authService from '../services/authService';
+import * as deviceTokenService from '../services/deviceTokenService';
 
 jest.mock('../services/authService');
+jest.mock('../services/deviceTokenService');
 
 function TestConsumer() {
   const { user, token, login, logout, loading } = useContext(AuthContext);
@@ -22,6 +24,7 @@ describe('AuthContext', () => {
   beforeEach(() => {
     localStorage.clear();
     authService.fetchMe.mockResolvedValue({ id: 1, username: 'restored-user' });
+    deviceTokenService.registerWebDeviceToken.mockResolvedValue({});
   });
 
   afterEach(() => { jest.clearAllMocks(); });
@@ -37,6 +40,7 @@ describe('AuthContext', () => {
     act(() => screen.getByText('login').click());
     expect(screen.getByTestId('user').textContent).toBe('alice');
     expect(screen.getByTestId('token').textContent).toBe('tok123');
+    expect(deviceTokenService.registerWebDeviceToken).toHaveBeenCalledTimes(1);
   });
 
   test('login() persists token to localStorage', () => {
@@ -78,6 +82,7 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('user').textContent).toBe('restored-user')
     );
     expect(authService.fetchMe).toHaveBeenCalledTimes(1);
+    expect(deviceTokenService.registerWebDeviceToken).toHaveBeenCalledTimes(1);
   });
 
   test('loading is true while fetching and false after fetchMe resolves', async () => {
