@@ -47,6 +47,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     preferred_language = models.CharField(max_length=10, blank=True, default='en')
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
 
+    # Cultural onboarding fields (M4-12 / #343) — feed personalization (#345) and daily content (#348)
+    cultural_interests = models.JSONField(blank=True, default=list)
+    regional_ties = models.JSONField(blank=True, default=list)
+    religious_preferences = models.JSONField(blank=True, default=list)
+    event_interests = models.JSONField(blank=True, default=list)
+
     # Django required fields
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
