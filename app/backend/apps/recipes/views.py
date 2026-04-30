@@ -1,11 +1,15 @@
+from functools import reduce
+import operator
+
 from django.db import models
+from django.db.models import Q
 from django.db.models.functions import Lower
 from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
-from .models import Recipe, Ingredient, Unit, Region, Comment, Vote
+from .models import Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote
 from .serializers import (
     IngredientLookupSerializer,
     IngredientSerializer,
@@ -14,7 +18,44 @@ from .serializers import (
     UnitLookupSerializer,
     UnitSerializer,
     CommentSerializer,
+    DietaryTagLookupSerializer,
+    DietaryTagSerializer,
+    EventTagLookupSerializer,
+    EventTagSerializer,
 )
+
+
+def _csv_param(params, name):
+    raw = params.get(name, '')
+    return [v.strip() for v in raw.split(',') if v.strip()]
+
+
+def _iexact_or(field, values):
+    if not values:
+        return None
+    return reduce(operator.or_, (Q(**{f'{field}__iexact': v}) for v in values))
+
+
+def apply_recipe_filters(qs, params):
+    """Apply rich filters (M4-15 / #346) across culture, event, diet, ingredient axes.
+
+    Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
+    comma-separated values. Within an axis: OR. Between axes: AND.
+    """
+    filter_map = [
+        ('region', 'region__name'),
+        ('diet', 'dietary_tags__name'),
+        ('event', 'event_tags__name'),
+        ('ingredient', 'recipe_ingredients__ingredient__name'),
+    ]
+    for param_name, field in filter_map:
+        pos = _iexact_or(field, _csv_param(params, param_name))
+        if pos is not None:
+            qs = qs.filter(pos)
+        neg = _iexact_or(field, _csv_param(params, f'{param_name}_exclude'))
+        if neg is not None:
+            qs = qs.exclude(neg)
+    return qs.distinct()
 
 from rest_framework.pagination import PageNumberPagination
 
@@ -25,11 +66,20 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
-    queryset = Recipe.objects.select_related('region', 'author').prefetch_related('recipe_ingredients__ingredient', 'recipe_ingredients__unit').all()
+    queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
+        'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
+        'dietary_tags', 'event_tags',
+    ).all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_recipe_filters(qs, self.request.query_params)
+        return qs
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -53,7 +103,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = self.get_object()
         
         if request.method == 'GET':
-            comments = Comment.objects.filter(recipe=recipe).annotate(helpful_count=models.Count('votes')).order_by('created_at')
+            comments = recipe.comments.all().annotate(helpful_count=models.Count('votes')).order_by('created_at')
             if request.user.is_authenticated:
                 comments = comments.annotate(
                     user_has_voted=models.Exists(
@@ -115,6 +165,18 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = [permissions.AllowAny]
+
+class DietaryTagViewSet(ModeratedLookupViewSet):
+    """ViewSet for list/submission of dietary tags (M4-15)."""
+    queryset = DietaryTag.objects.all().order_by(Lower('name'), 'id')
+    serializer_class = DietaryTagSerializer
+    lookup_serializer_class = DietaryTagLookupSerializer
+
+class EventTagViewSet(ModeratedLookupViewSet):
+    """ViewSet for list/submission of event tags (M4-15)."""
+    queryset = EventTag.objects.all().order_by(Lower('name'), 'id')
+    serializer_class = EventTagSerializer
+    lookup_serializer_class = EventTagLookupSerializer
 
 class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """ViewSet for deleting and interacting with comments."""
