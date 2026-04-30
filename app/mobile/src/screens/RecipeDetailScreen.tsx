@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
+import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
@@ -224,6 +225,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               })}
             </View>
           )}
+
+          <RecipeCommentsSection recipeId={id} qaEnabled={recipe.qa_enabled !== false} />
 
           <View style={styles.storiesSection}>
             <Text style={styles.sectionTitle}>Stories about this recipe</Text>
