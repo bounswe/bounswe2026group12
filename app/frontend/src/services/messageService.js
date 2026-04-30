@@ -1,4 +1,4 @@
-import apiClient from './api';
+import { apiClient } from './api';
 import {
   MOCK_THREADS,
   MOCK_MESSAGES,
