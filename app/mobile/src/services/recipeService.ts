@@ -110,8 +110,13 @@ export async function fetchRecipesList(): Promise<
     image?: string | null;
   }[]
 > {
-  const data = await apiGetJson<any[]>(`/api/recipes/`);
-  return (Array.isArray(data) ? data : []).map((r) => {
+  const data = await apiGetJson<any>(`/api/recipes/`);
+  const list: any[] = Array.isArray(data)
+    ? data
+    : data && Array.isArray(data.results)
+      ? data.results
+      : [];
+  return list.map((r) => {
     const reg = r.region;
     const regionLabel =
       reg == null
