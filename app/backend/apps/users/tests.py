@@ -194,6 +194,60 @@ class JWTValidationTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+class TokenRefreshRaceConditionTest(APITestCase):
+    """Regression tests for Issue #394 – authentication race conditions."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='refresh@example.com', username='refreshuser', password='StrongPass123!'
+        )
+        response = self.client.post(
+            '/api/auth/login/', {"email": "refresh@example.com", "password": "StrongPass123!"}
+        )
+        self.access = response.data['access']
+        self.refresh = response.data['refresh']
+
+    def test_refresh_returns_new_tokens(self):
+        response = self.client.post('/api/auth/refresh/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+        self.assertNotEqual(response.data['access'], self.access)
+
+    def test_refresh_missing_token_returns_400(self):
+        response = self.client.post('/api/auth/refresh/', {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_refresh_invalid_token_returns_401(self):
+        response = self.client.post('/api/auth/refresh/', {"refresh": "notavalidtoken"})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_refresh_token_cannot_be_reused(self):
+        """Regression: same refresh token used twice must be rejected (simulates race condition outcome)."""
+        r1 = self.client.post('/api/auth/refresh/', {"refresh": self.refresh})
+        self.assertEqual(r1.status_code, status.HTTP_200_OK)
+        r2 = self.client.post('/api/auth/refresh/', {"refresh": self.refresh})
+        self.assertEqual(r2.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_new_refresh_token_is_usable(self):
+        r1 = self.client.post('/api/auth/refresh/', {"refresh": self.refresh})
+        self.assertEqual(r1.status_code, status.HTTP_200_OK)
+        r2 = self.client.post('/api/auth/refresh/', {"refresh": r1.data['refresh']})
+        self.assertEqual(r2.status_code, status.HTTP_200_OK)
+
+    def test_old_access_token_still_valid_after_refresh(self):
+        self.client.post('/api/auth/refresh/', {"refresh": self.refresh})
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access}')
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_logged_out_refresh_token_cannot_be_refreshed(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access}')
+        self.client.post('/api/auth/logout/', {"refresh": self.refresh})
+        response = self.client.post('/api/auth/refresh/', {"refresh": self.refresh})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 class CulturalOnboardingTest(APITestCase):
     """Tests for cultural onboarding profile fields (M4-12 / #343)."""
 

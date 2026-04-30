@@ -22,6 +22,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
     EXEMPT_POST_PATHS = [
         '/api/auth/register/',
         '/api/auth/login/',
+        '/api/auth/refresh/',
     ]
 
     def process_request(self, request):
