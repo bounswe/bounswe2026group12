@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment
+from .models import Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment, DietaryTag, EventTag
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,6 +54,34 @@ class UnitSerializer(NamedSubmissionSerializer):
         model = Unit
         fields = '__all__'
 
+
+class DietaryTagLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DietaryTag
+        fields = ['id', 'name']
+
+
+class DietaryTagSerializer(NamedSubmissionSerializer):
+    duplicate_message = 'A dietary tag with this name already exists.'
+
+    class Meta:
+        model = DietaryTag
+        fields = '__all__'
+
+
+class EventTagLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventTag
+        fields = ['id', 'name']
+
+
+class EventTagSerializer(NamedSubmissionSerializer):
+    duplicate_message = 'An event tag with this name already exists.'
+
+    class Meta:
+        model = EventTag
+        fields = '__all__'
+
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
     unit_name = serializers.ReadOnlyField(source='unit.name')
@@ -77,6 +105,16 @@ class RecipeSerializer(serializers.ModelSerializer):
     region_name = serializers.ReadOnlyField(source='region.name')
     ingredients = RecipeIngredientSerializer(source='recipe_ingredients', many=True, read_only=True)
     ingredients_write = RecipeIngredientWriteSerializer(many=True, write_only=True, required=False)
+    dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
+    event_tags = EventTagLookupSerializer(many=True, read_only=True)
+    dietary_tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=DietaryTag.objects.all(), source='dietary_tags',
+        many=True, write_only=True, required=False,
+    )
+    event_tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=EventTag.objects.all(), source='event_tags',
+        many=True, write_only=True, required=False,
+    )
 
     class Meta:
         model = Recipe
@@ -84,7 +122,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'title', 'description', 'image', 'video',
             'region', 'region_name', 'author', 'author_username', 'qa_enabled',
             'is_published', 'created_at', 'updated_at',
-            'ingredients', 'ingredients_write'
+            'ingredients', 'ingredients_write',
+            'dietary_tags', 'event_tags', 'dietary_tag_ids', 'event_tag_ids',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
 
@@ -96,6 +135,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients_write', [])
+        dietary_tags = validated_data.pop('dietary_tags', None)
+        event_tags = validated_data.pop('event_tags', None)
         recipe = Recipe.objects.create(**validated_data)
         for item in ingredients_data:
             RecipeIngredient.objects.create(
@@ -104,10 +145,16 @@ class RecipeSerializer(serializers.ModelSerializer):
                 amount=item['amount'],
                 unit=item.get('unit'),
             )
+        if dietary_tags is not None:
+            recipe.dietary_tags.set(dietary_tags)
+        if event_tags is not None:
+            recipe.event_tags.set(event_tags)
         return recipe
 
     def update(self, instance, validated_data):
         ingredients_data = validated_data.pop('ingredients_write', None)
+        dietary_tags = validated_data.pop('dietary_tags', None)
+        event_tags = validated_data.pop('event_tags', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -120,18 +167,33 @@ class RecipeSerializer(serializers.ModelSerializer):
                     amount=item['amount'],
                     unit=item.get('unit'),
                 )
+        if dietary_tags is not None:
+            instance.dietary_tags.set(dietary_tags)
+        if event_tags is not None:
+            instance.event_tags.set(event_tags)
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    helpful_count = serializers.IntegerField(read_only=True, default=0)
+    has_voted = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
         fields = [
             'id', 'recipe', 'author', 'author_username', 'parent_comment',
-            'body', 'type', 'created_at', 'updated_at'
+            'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted'
         ]
         read_only_fields = ['recipe', 'author', 'created_at', 'updated_at']
+
+    def get_has_voted(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if hasattr(obj, 'user_has_voted'):
+                return obj.user_has_voted
+            # Fallback if not annotated
+            return obj.votes.filter(user=request.user).exists()
+        return False
 
     def validate(self, attrs):
         parent = attrs.get('parent_comment')

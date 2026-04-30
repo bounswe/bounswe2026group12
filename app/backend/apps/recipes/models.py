@@ -24,6 +24,22 @@ class Unit(models.Model):
     def __str__(self):
         return self.name
 
+class DietaryTag(models.Model):
+    """Dietary tag (e.g., Vegan, Gluten-free, Halal). User-submittable, moderated."""
+    name = models.CharField(max_length=100, unique=True)
+    is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
+
+    def __str__(self):
+        return self.name
+
+class EventTag(models.Model):
+    """Event tag (e.g., Wedding, Ramadan, Birthday). User-submittable, moderated."""
+    name = models.CharField(max_length=100, unique=True)
+    is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
+
+    def __str__(self):
+        return self.name
+
 class Recipe(models.Model):
     """Core Recipe model."""
     title = models.CharField(max_length=255)
@@ -34,6 +50,8 @@ class Recipe(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
+    dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
+    event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -67,3 +85,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.get_type_display()} by {self.author.username} on {self.recipe.title}"
+
+class Vote(models.Model):
+    """Vote on a Comment/Question/Reply indicating it was helpful."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='votes')
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='votes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'comment')
+
+    def __str__(self):
+        return f"Vote by {self.user.username} on Comment {self.comment.id}"
