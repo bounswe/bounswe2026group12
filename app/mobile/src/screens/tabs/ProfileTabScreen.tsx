@@ -23,12 +23,21 @@ export default function ProfileTabScreen() {
                 Signed in{user ? ` as ${user.username}` : ''}.
               </Text>
               <Pressable
-                onPress={() => void logout()}
+                onPress={() => navigation.navigate('Feed', { screen: 'Inbox' })}
                 style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Open messages"
+              >
+                <Text style={styles.primaryText}>Messages</Text>
+              </Pressable>
+              <View style={{ height: 12 }} />
+              <Pressable
+                onPress={() => void logout()}
+                style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
                 accessibilityRole="button"
                 accessibilityLabel="Log out"
               >
-                <Text style={styles.primaryText}>Log out</Text>
+                <Text style={styles.secondaryText}>Log out</Text>
               </Pressable>
             </>
           ) : (
