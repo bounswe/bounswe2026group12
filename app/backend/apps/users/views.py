@@ -4,7 +4,7 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from .serializers import (
     RegisterSerializer,
@@ -48,7 +48,13 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class TokenRefreshView(APIView):
+    """
+    Race-condition-safe TokenRefreshView that guarantees a stable error shape:
+      { "code": "token_not_valid", "detail": "..." }
+    Mobile httpClient interceptor relies on the `code` field to detect 401s.
+    """
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -59,7 +65,7 @@ class TokenRefreshView(APIView):
         try:
             token = RefreshToken(raw_token)
         except TokenError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": str(e), "code": "token_not_valid"}, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
             with transaction.atomic():
@@ -67,11 +73,11 @@ class TokenRefreshView(APIView):
                 try:
                     outstanding = OutstandingToken.objects.select_for_update().get(jti=jti)
                 except OutstandingToken.DoesNotExist:
-                    return Response({"detail": "Token not found."}, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response({"detail": "Token not found.", "code": "token_not_valid"}, status=status.HTTP_401_UNAUTHORIZED)
 
                 if BlacklistedToken.objects.filter(token=outstanding).exists():
                     return Response(
-                        {"detail": "Token has already been used or revoked."},
+                        {"detail": "Token has already been used or revoked.", "code": "token_not_valid"},
                         status=status.HTTP_401_UNAUTHORIZED,
                     )
 
@@ -85,7 +91,6 @@ class TokenRefreshView(APIView):
             {"access": str(new_refresh.access_token), "refresh": str(new_refresh)},
             status=status.HTTP_200_OK,
         )
-
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
