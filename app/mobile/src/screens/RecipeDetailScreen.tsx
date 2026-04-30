@@ -6,8 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
+import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
+import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
 import { convertIngredient } from '../utils/unitConversion';
@@ -23,6 +25,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const [showConverted, setShowConverted] = useState(false);
+  const [linkedStories, setLinkedStories] = useState<StoryListItem[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,6 +43,20 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, reloadToken]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchStoriesForRecipe(id)
+      .then((items) => {
+        if (!cancelled) setLinkedStories(items);
+      })
+      .catch(() => {
+        if (!cancelled) setLinkedStories([]);
       });
     return () => {
       cancelled = true;
@@ -207,6 +224,26 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               })}
             </View>
           )}
+
+          <View style={styles.storiesSection}>
+            <Text style={styles.sectionTitle}>Stories about this recipe</Text>
+            {linkedStories.length === 0 ? (
+              <Text style={styles.muted}>No stories linked to this recipe yet.</Text>
+            ) : (
+              <View style={styles.storyList}>
+                {linkedStories.map((s) => (
+                  <LinkedStoryPreviewCard
+                    key={s.id}
+                    title={s.title}
+                    excerpt={s.body}
+                    image={s.image}
+                    authorUsername={s.authorUsername}
+                    onPress={() => navigation.navigate('StoryDetail', { id: s.id })}
+                  />
+                ))}
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -340,4 +377,6 @@ const styles = StyleSheet.create({
   },
   ingredientName: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
   ingredientAmount: { fontSize: 16, color: tokens.colors.text },
+  storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  storyList: { gap: 10 },
 });

@@ -7,6 +7,7 @@ import { fetchRecipesList } from '../services/recipeService';
 import { apiGetJson } from '../services/httpClient';
 import { fetchDailyCultural } from '../services/dailyCulturalService';
 import { DailyCulturalSection } from '../components/home/DailyCulturalSection';
+import { StoryFeatureCard } from '../components/home/StoryFeatureCard';
 import type { DailyCulturalCard } from '../mocks/dailyCultural';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -82,70 +83,67 @@ export default function HomeScreen({ navigation }: Props) {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Stories</Text>
+            <Text style={styles.sectionHint}>Voices from the kitchen</Text>
           </View>
-          <FlatList
-            data={stories}
-            horizontal
-            keyExtractor={(item) => String(item.id)}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.hList}
-            renderItem={({ item }) => {
-              const authorId =
-                typeof item.author === 'object' && item.author
-                  ? item.author.id
-                  : item.author;
-              const authorUsername =
-                typeof item.author === 'object' && item.author
-                  ? item.author.username
-                  : item.author_username;
-              return (
-                <Pressable
-                  onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
-                  style={({ pressed }) => [styles.storyCard, pressed && styles.pressed]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Open story ${item.title}`}
-                >
-                  {item.image ? (
-                    <View style={styles.storyThumb}>
-                      <Image source={{ uri: item.image }} style={styles.storyThumbImage} resizeMode="cover" />
-                    </View>
-                  ) : (
-                    <View style={styles.storyThumb}>
-                      <Text style={styles.thumbText}>S</Text>
-                    </View>
-                  )}
-                  <Text style={styles.cardTitle} numberOfLines={2}>
-                    {item.title}
-                  </Text>
-                  {authorId != null && authorUsername ? (
-                    <Pressable
-                      onPress={() =>
-                        navigation.navigate('UserProfile', {
-                          userId: authorId,
-                          username: authorUsername,
-                        })
-                      }
-                      style={({ pressed }) => [styles.authorPress, pressed && styles.pressed]}
-                      accessibilityRole="link"
-                      accessibilityLabel={`Open profile of ${authorUsername}`}
-                      hitSlop={6}
-                    >
-                      <Text style={styles.authorLink} numberOfLines={1}>
-                        By {authorUsername}
-                      </Text>
-                    </Pressable>
-                  ) : (
-                    <Text style={styles.cardMeta} numberOfLines={1}>Story</Text>
-                  )}
-                </Pressable>
-              );
-            }}
-          />
+          {stories.length === 0 ? (
+            <Text style={styles.emptyHint}>No stories yet. Be the first to share one.</Text>
+          ) : (
+            <View style={styles.storyList}>
+              {stories.map((item) => {
+                const authorId =
+                  typeof item.author === 'object' && item.author
+                    ? item.author.id
+                    : item.author;
+                const authorUsername =
+                  typeof item.author === 'object' && item.author
+                    ? item.author.username
+                    : item.author_username;
+                const linkedRecipeRaw = item.linked_recipe;
+                const linkedRecipeId =
+                  linkedRecipeRaw == null
+                    ? null
+                    : typeof linkedRecipeRaw === 'object' && 'id' in linkedRecipeRaw
+                      ? String(linkedRecipeRaw.id)
+                      : String(linkedRecipeRaw);
+                const linkedRecipeTitle =
+                  typeof item.recipe_title === 'string'
+                    ? item.recipe_title
+                    : typeof linkedRecipeRaw === 'object' && linkedRecipeRaw?.title
+                      ? String(linkedRecipeRaw.title)
+                      : null;
+                return (
+                  <StoryFeatureCard
+                    key={String(item.id)}
+                    title={item.title}
+                    body={item.body}
+                    image={item.image}
+                    authorUsername={authorUsername ?? null}
+                    recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
+                    onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
+                    onPressAuthor={
+                      authorId != null && authorUsername
+                        ? () =>
+                            navigation.navigate('UserProfile', {
+                              userId: authorId,
+                              username: authorUsername,
+                            })
+                        : undefined
+                    }
+                    onPressRecipe={
+                      linkedRecipeId
+                        ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
+                        : undefined
+                    }
+                  />
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recipes</Text>
+            <Text style={styles.sectionSubTitle}>More recipes</Text>
           </View>
           <FlatList
             data={recipes}
@@ -262,8 +260,11 @@ const styles = StyleSheet.create({
   },
   section: { marginTop: 10, marginBottom: 18 },
   sectionHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 10 },
-  sectionTitle: { fontSize: 18, fontWeight: '800', color: tokens.colors.surface },
+  sectionTitle: { fontSize: 22, fontWeight: '800', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
+  sectionSubTitle: { fontSize: 15, fontWeight: '800', color: tokens.colors.surface },
   sectionHint: { fontSize: 13, color: tokens.colors.primaryTint, fontWeight: '800' },
+  storyList: { gap: 14 },
+  emptyHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
   hList: { gap: 12, paddingRight: 16 },
   storyCard: {
     width: 180,
