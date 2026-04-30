@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   thumbFallback: { alignItems: 'center', justifyContent: 'center' },
   thumbImage: { width: '100%', height: '100%' },
-  thumbText: { color: tokens.colors.textOnDark, fontSize: 36, fontWeight: '900' },
+  thumbText: { color: tokens.colors.text, fontSize: 36, fontWeight: '900' },
   body: { padding: 14, gap: 8 },
   title: {
     fontSize: 18,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
-  pillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  pillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   recipePill: {
     backgroundColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
@@ -123,5 +123,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     maxWidth: '70%',
   },
-  recipePillText: { fontSize: 12, color: tokens.colors.textOnDark, fontWeight: '800' },
+  recipePillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
 });

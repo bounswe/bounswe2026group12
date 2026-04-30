@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { View } from 'react-native';
 import { PublicStackNavigator } from './PublicStackNavigator';
 import ShareTabScreen from '../screens/tabs/ShareTabScreen';
 import ProfileTabScreen from '../screens/tabs/ProfileTabScreen';
@@ -24,16 +25,29 @@ export function RootTabsNavigator() {
         tabBarInactiveTintColor: tokens.colors.textMuted,
         tabBarStyle: {
           borderTopColor: tokens.colors.border,
+          borderTopWidth: 1,
           backgroundColor: tokens.colors.surface,
         },
-        tabBarIcon: ({ color, size }) => {
-          const name =
+        tabBarLabelStyle: { fontWeight: '900' },
+        tabBarIcon: ({ color, size, focused }) => {
+          const baseName =
             route.name === 'Feed'
-              ? 'home-outline'
+              ? 'home'
               : route.name === 'Share'
-                ? 'add-circle-outline'
-                : 'person-outline';
-          return <Ionicons name={name} size={size} color={color} />;
+                ? 'add-circle'
+                : 'person';
+          const name = (focused ? baseName : `${baseName}-outline`) as React.ComponentProps<
+            typeof Ionicons
+          >['name'];
+          return (
+            <View
+              style={{
+                transform: focused ? [{ rotate: '-8deg' }, { translateY: -3 }] : [],
+              }}
+            >
+              <Ionicons name={name} size={focused ? size + 6 : size} color={color} />
+            </View>
+          );
         },
       })}
     >

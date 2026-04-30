@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
-  authorPillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  authorPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.text },
   linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
   linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
@@ -189,5 +189,5 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-  editLinkText: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
+  editLinkText: { fontSize: 16, color: tokens.colors.text, fontWeight: '800' },
 });

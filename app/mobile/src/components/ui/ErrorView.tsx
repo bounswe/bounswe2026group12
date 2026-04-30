@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
   },
   buttonPressed: {
     opacity: 0.85,

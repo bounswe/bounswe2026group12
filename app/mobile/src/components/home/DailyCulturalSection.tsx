@@ -104,11 +104,11 @@ const styles = StyleSheet.create({
   todayBadge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
     borderRadius: tokens.radius.pill,
   },
   todayText: {
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     fontSize: 11,
     fontWeight: '900',
     letterSpacing: 1,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   kindLabel: {
     fontSize: 11,
     fontWeight: '900',
-    color: tokens.colors.primary,
+    color: tokens.colors.text,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -162,5 +162,5 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
-  linkPillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  linkPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
 });

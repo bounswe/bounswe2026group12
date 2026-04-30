@@ -81,7 +81,7 @@ export const recipeFormStyles = StyleSheet.create({
   rowTitle: { fontSize: 15, fontWeight: '700', color: tokens.colors.text },
   removeText: { color: tokens.colors.error, fontWeight: '700', fontSize: 14 },
   primaryButton: {
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: tokens.radius.pill,
@@ -90,7 +90,7 @@ export const recipeFormStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: tokens.colors.primary,
   },
-  primaryButtonText: { color: tokens.colors.surface, fontSize: 16, fontWeight: '700' },
+  primaryButtonText: { color: tokens.colors.text, fontSize: 16, fontWeight: '700' },
   secondaryButton: {
     borderWidth: 2,
     borderColor: tokens.colors.primary,
@@ -100,7 +100,7 @@ export const recipeFormStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
   },
-  secondaryButtonText: { color: tokens.colors.primary, fontSize: 16, fontWeight: '700' },
+  secondaryButtonText: { color: tokens.colors.text, fontSize: 16, fontWeight: '700' },
   buttonPressed: { opacity: 0.9 },
   videoMeta: {
     marginTop: 10,

@@ -23,12 +23,21 @@ export default function ProfileTabScreen() {
                 Signed in{user ? ` as ${user.username}` : ''}.
               </Text>
               <Pressable
-                onPress={() => void logout()}
+                onPress={() => navigation.navigate('Feed', { screen: 'Inbox' })}
                 style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Open messages"
+              >
+                <Text style={styles.primaryText}>Messages</Text>
+              </Pressable>
+              <View style={{ height: 12 }} />
+              <Pressable
+                onPress={() => void logout()}
+                style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
                 accessibilityRole="button"
                 accessibilityLabel="Log out"
               >
-                <Text style={styles.primaryText}>Log out</Text>
+                <Text style={styles.secondaryText}>Log out</Text>
               </Pressable>
             </>
           ) : (
@@ -84,7 +93,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 12 },
   primary: {
     flex: 1,
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: tokens.radius.pill,
@@ -106,7 +115,7 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.pill,
     alignItems: 'center',
   },
-  secondaryText: { color: tokens.colors.primary, fontSize: 16, fontWeight: '800' },
+  secondaryText: { color: tokens.colors.text, fontSize: 16, fontWeight: '800' },
   pressed: { opacity: 0.9 },
 });
 

@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
+import { useAuth } from '../context/AuthContext';
 import type { RootStackParamList } from '../navigation/types';
 import { apiGetJson } from '../services/httpClient';
 import { fetchRecipesList } from '../services/recipeService';
@@ -28,6 +29,8 @@ function authorIdOf(item: ListItem): string | null {
 export default function UserProfileScreen({ route, navigation }: Props) {
   const { userId, username } = route.params;
   const userIdStr = String(userId);
+  const { user, isAuthenticated } = useAuth();
+  const canMessage = isAuthenticated && user != null && String(user.id) !== userIdStr;
 
   const [recipes, setRecipes] = useState<ListItem[]>([]);
   const [stories, setStories] = useState<ListItem[]>([]);
@@ -106,6 +109,24 @@ export default function UserProfileScreen({ route, navigation }: Props) {
           </Text>
         </View>
 
+        {canMessage ? (
+          <Pressable
+            onPress={() =>
+              navigation.navigate('MessageThread', {
+                otherUserId: userIdStr,
+                otherUsername: username,
+              })
+            }
+            style={({ pressed }) => [styles.messageBtn, pressed && styles.messageBtnPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={`Message ${username ?? 'this user'}`}
+          >
+            <Text style={styles.messageBtnText}>
+              ✉  Message {username ?? 'this user'}
+            </Text>
+          </Pressable>
+        ) : null}
+
         <Text style={styles.sectionTitle}>Recipes by {username ?? 'this user'}</Text>
         {myRecipes.length === 0 ? (
           <Text style={styles.muted}>No recipes yet.</Text>
@@ -183,7 +204,7 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 22,
     fontWeight: '900',
-    color: tokens.colors.primary,
+    color: tokens.colors.text,
   },
   username: {
     fontSize: 22,
@@ -192,12 +213,30 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
     flexShrink: 1,
   },
+  messageBtn: {
+    marginBottom: 22,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    alignItems: 'center',
+    ...shadows.md,
+  },
+  messageBtnPressed: { opacity: 0.85 },
+  messageBtnText: {
+    color: tokens.colors.textOnDark,
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+  },
   sectionTitle: {
     marginTop: 8,
     marginBottom: 10,
     fontSize: 18,
     fontWeight: '700',
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
   },
   muted: {

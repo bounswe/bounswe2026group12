@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   thumbImage: { width: '100%', height: '100%' },
-  thumbText: { color: tokens.colors.textOnDark, fontSize: 26, fontWeight: '800' },
+  thumbText: { color: tokens.colors.text, fontSize: 26, fontWeight: '800' },
   body: { padding: 12, gap: 10 },
   title: {
     fontSize: 16,
