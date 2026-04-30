@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import NotificationTray from './NotificationTray';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -18,6 +19,8 @@ export default function Navbar() {
           {user ? (
             <>
               <span className="navbar-username">@{user.username}</span>
+              <NotificationTray />
+              <NavLink to="/inbox" className="navbar-link">Inbox</NavLink>
               <Link to="/recipes/new" className="btn btn-outline navbar-btn">
                 New Recipe
               </Link>

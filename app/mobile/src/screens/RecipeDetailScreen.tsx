@@ -6,10 +6,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
+import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
+import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
+import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
+import { convertIngredient } from '../utils/unitConversion';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
@@ -21,6 +25,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const [showConverted, setShowConverted] = useState(false);
+  const [linkedStories, setLinkedStories] = useState<StoryListItem[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,6 +44,20 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, reloadToken]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchStoriesForRecipe(id)
+      .then((items) => {
+        if (!cancelled) setLinkedStories(items);
+      })
+      .catch(() => {
+        if (!cancelled) setLinkedStories([]);
       });
     return () => {
       cancelled = true;
@@ -69,6 +89,11 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 
   const ingredients = recipe.ingredients ?? [];
 
+  const authorObj =
+    recipe.author && typeof recipe.author === 'object' && recipe.author.username && recipe.author.id != null
+      ? recipe.author
+      : null;
+
   /** Hide Edit until session is restored from storage (avoids flash for signed-in authors). */
   const canEdit = isReady && isAuthenticated && isRecipeAuthor(user, recipe);
 
@@ -80,13 +105,23 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             {recipe.title}
           </Text>
           {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
-          {recipe.author ? (
-            <Text style={styles.author}>
-              By{' '}
-              {typeof recipe.author === 'object' && recipe.author.username
-                ? recipe.author.username
-                : 'Author'}
-            </Text>
+          {authorObj ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('UserProfile', {
+                  userId: authorObj.id,
+                  username: authorObj.username,
+                })
+              }
+              style={({ pressed }) => [styles.authorPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Open profile of ${authorObj.username}`}
+              hitSlop={6}
+            >
+              <Text style={styles.authorPillText}>By {authorObj.username}</Text>
+            </Pressable>
+          ) : recipe.author ? (
+            <Text style={styles.author}>By Author</Text>
           ) : null}
 
           {typeof recipe.qa_enabled === 'boolean' ? (
@@ -132,29 +167,86 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             <Text style={styles.muted}>No description.</Text>
           )}
 
-          <Text style={styles.sectionTitle}>Ingredients</Text>
+          <View style={styles.ingredientsHeader}>
+            <Text style={styles.sectionTitle}>Ingredients</Text>
+            {ingredients.length > 0 ? (
+              <View style={styles.unitToggle} accessibilityRole="tablist">
+                <Pressable
+                  onPress={() => setShowConverted(false)}
+                  style={[styles.unitToggleBtn, !showConverted && styles.unitToggleBtnActive]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: !showConverted }}
+                  accessibilityLabel="Show original units"
+                >
+                  <Text style={[styles.unitToggleText, !showConverted && styles.unitToggleTextActive]}>
+                    Original
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setShowConverted(true)}
+                  style={[styles.unitToggleBtn, showConverted && styles.unitToggleBtnActive]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: showConverted }}
+                  accessibilityLabel="Show converted units"
+                >
+                  <Text style={[styles.unitToggleText, showConverted && styles.unitToggleTextActive]}>
+                    Converted
+                  </Text>
+                </Pressable>
+              </View>
+            ) : null}
+          </View>
           {ingredients.length === 0 ? (
             <Text style={styles.muted}>No ingredients listed.</Text>
           ) : (
             <View style={styles.list}>
-              {ingredients.map((ri, index) => (
-                <View
-                  key={
-                    ri.lineId != null
-                      ? `ing-line-${ri.lineId}`
-                      : `ing-line-${index}-${ri.ingredient.id}`
-                  }
-                  style={styles.ingredientRow}
-                >
-                  <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
-                  <Text style={styles.ingredientAmount}>
-                    {' — '}
-                    {String(ri.amount)} {ri.unit.name}
-                  </Text>
-                </View>
-              ))}
+              {ingredients.map((ri, index) => {
+                const converted = showConverted
+                  ? convertIngredient(ri.amount, ri.unit.name)
+                  : null;
+                const displayAmount = converted ? converted.amount : String(ri.amount);
+                const displayUnit = converted ? converted.unit : ri.unit.name;
+                return (
+                  <View
+                    key={
+                      ri.lineId != null
+                        ? `ing-line-${ri.lineId}`
+                        : `ing-line-${index}-${ri.ingredient.id}`
+                    }
+                    style={styles.ingredientRow}
+                  >
+                    <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
+                    <Text style={styles.ingredientAmount}>
+                      {' — '}
+                      {displayAmount} {displayUnit}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           )}
+
+          <RecipeCommentsSection recipeId={id} qaEnabled={recipe.qa_enabled !== false} />
+
+          <View style={styles.storiesSection}>
+            <Text style={styles.sectionTitle}>Stories about this recipe</Text>
+            {linkedStories.length === 0 ? (
+              <Text style={styles.muted}>No stories linked to this recipe yet.</Text>
+            ) : (
+              <View style={styles.storyList}>
+                {linkedStories.map((s) => (
+                  <LinkedStoryPreviewCard
+                    key={s.id}
+                    title={s.title}
+                    excerpt={s.body}
+                    image={s.image}
+                    authorUsername={s.authorUsername}
+                    onPress={() => navigation.navigate('StoryDetail', { id: s.id })}
+                  />
+                ))}
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -187,6 +279,17 @@ const styles = StyleSheet.create({
   },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 6 },
   author: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 4 },
+  authorPill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    backgroundColor: tokens.colors.primarySubtle,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.primaryBorder,
+    borderRadius: tokens.radius.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  authorPillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
   qaMeta: { fontSize: 13, color: tokens.colors.textMuted, marginTop: 6 },
   editLink: {
     alignSelf: 'flex-start',
@@ -229,13 +332,42 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   muted: { marginTop: 12, fontSize: 15, color: tokens.colors.textMuted },
-  sectionTitle: {
+  ingredientsHeader: {
     marginTop: 24,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: tokens.colors.text,
-    marginBottom: 10,
     fontFamily: tokens.typography.display.fontFamily,
+  },
+  unitToggle: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.lg,
+    overflow: 'hidden',
+    backgroundColor: tokens.colors.surface,
+  },
+  unitToggleBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  unitToggleBtnActive: {
+    backgroundColor: tokens.colors.primary,
+  },
+  unitToggleText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: tokens.colors.textMuted,
+  },
+  unitToggleTextActive: {
+    color: tokens.colors.surface,
   },
   list: { gap: 0 },
   ingredientRow: {
@@ -248,4 +380,6 @@ const styles = StyleSheet.create({
   },
   ingredientName: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
   ingredientAmount: { fontSize: 16, color: tokens.colors.text },
+  storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  storyList: { gap: 10 },
 });

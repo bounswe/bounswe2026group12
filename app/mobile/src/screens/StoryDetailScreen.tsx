@@ -69,6 +69,11 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
 
   const canEdit = isReady && isAuthenticated && isStoryAuthor(user, story);
 
+  const authorObj =
+    story.author && typeof story.author === 'object' && story.author.username && story.author.id != null
+      ? story.author
+      : null;
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.padded}>
@@ -81,13 +86,23 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
           <Text style={styles.title} accessibilityRole="header">
             {story.title}
           </Text>
-          {story.author ? (
-            <Text style={styles.meta}>
-              By{' '}
-              {typeof story.author === 'object' && story.author.username
-                ? story.author.username
-                : 'Author'}
-            </Text>
+          {authorObj ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('UserProfile', {
+                  userId: authorObj.id as number,
+                  username: authorObj.username,
+                })
+              }
+              style={({ pressed }) => [styles.authorPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Open profile of ${authorObj.username}`}
+              hitSlop={6}
+            >
+              <Text style={styles.authorPillText}>By {authorObj.username}</Text>
+            </Pressable>
+          ) : story.author ? (
+            <Text style={styles.meta}>By Author</Text>
           ) : null}
           {canEdit ? (
             <Pressable
@@ -153,6 +168,17 @@ const styles = StyleSheet.create({
   thumb: { width: '100%', height: '100%' },
   title: { fontSize: 24, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 8 },
+  authorPill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    backgroundColor: tokens.colors.primarySubtle,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.primaryBorder,
+    borderRadius: tokens.radius.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  authorPillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
   body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.text },
   linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
   linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },

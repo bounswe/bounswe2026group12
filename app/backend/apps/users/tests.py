@@ -192,3 +192,102 @@ class JWTValidationTest(APITestCase):
         self.client.post('/api/auth/logout/', {"refresh": self.refresh})
         response = self.client.post('/api/auth/logout/', {"refresh": self.refresh})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class CulturalOnboardingTest(APITestCase):
+    """Tests for cultural onboarding profile fields (M4-12 / #343)."""
+
+    CULTURAL_FIELDS = ['cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests']
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='cultural@example.com', username='culturaluser', password='StrongPass123!'
+        )
+        response = self.client.post(
+            '/api/auth/login/', {"email": "cultural@example.com", "password": "StrongPass123!"}
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["access"]}')
+
+    def test_default_lists_are_empty(self):
+        for field in self.CULTURAL_FIELDS:
+            self.assertEqual(getattr(self.user, field), [])
+
+    def test_me_returns_cultural_fields(self):
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field in self.CULTURAL_FIELDS:
+            self.assertEqual(response.data[field], [])
+
+    def test_patch_updates_all_cultural_fields(self):
+        payload = {
+            'cultural_interests': ['Mediterranean cuisine', 'Fermentation'],
+            'regional_ties': ['Aegean', 'Black Sea'],
+            'religious_preferences': ['Halal'],
+            'event_interests': ['Ramadan', 'Wedding'],
+        }
+        response = self.client.patch('/api/users/me/', payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field, expected in payload.items():
+            self.assertEqual(response.data[field], expected)
+        self.user.refresh_from_db()
+        for field, expected in payload.items():
+            self.assertEqual(getattr(self.user, field), expected)
+
+    def test_patch_partial_does_not_clear_other_fields(self):
+        self.user.regional_ties = ['Aegean']
+        self.user.save()
+        response = self.client.patch(
+            '/api/users/me/', {'cultural_interests': ['Vegan']}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['cultural_interests'], ['Vegan'])
+        self.assertEqual(response.data['regional_ties'], ['Aegean'])
+
+    def test_patch_can_clear_field_with_empty_list(self):
+        self.user.cultural_interests = ['Vegan']
+        self.user.save()
+        response = self.client.patch(
+            '/api/users/me/', {'cultural_interests': []}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['cultural_interests'], [])
+
+    def test_patch_rejects_non_list(self):
+        response = self.client.patch(
+            '/api/users/me/', {'cultural_interests': 'Vegan'}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('cultural_interests', response.data)
+
+    def test_patch_rejects_non_string_items(self):
+        response = self.client.patch(
+            '/api/users/me/', {'event_interests': [123, 'Wedding']}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('event_interests', response.data)
+
+    def test_patch_rejects_overlong_item(self):
+        response = self.client.patch(
+            '/api/users/me/', {'cultural_interests': ['x' * 101]}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('cultural_interests', response.data)
+
+    def test_patch_unauthenticated_rejected(self):
+        self.client.credentials()
+        response = self.client.patch(
+            '/api/users/me/', {'cultural_interests': ['Vegan']}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_patch_ignores_non_cultural_fields(self):
+        response = self.client.patch(
+            '/api/users/me/',
+            {'email': 'hijack@example.com', 'role': 'admin', 'cultural_interests': ['Vegan']},
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'cultural@example.com')
+        self.assertEqual(self.user.role, User.Role.USER)
+        self.assertEqual(self.user.cultural_interests, ['Vegan'])

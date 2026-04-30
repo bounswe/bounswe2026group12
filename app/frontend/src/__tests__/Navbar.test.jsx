@@ -1,13 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { NotificationContext } from '../context/NotificationContext';
 import Navbar from '../components/Navbar';
 
 function renderNavbar(user = null, logout = jest.fn()) {
   return render(
     <MemoryRouter>
       <AuthContext.Provider value={{ user, logout }}>
-        <Navbar />
+        <NotificationContext.Provider
+          value={{
+            notifications: [{ id: 1, message: 'test', isRead: false, createdAt: new Date().toISOString() }],
+            unreadCount: 1,
+            loading: false,
+            error: '',
+            markRead: jest.fn(),
+          }}
+        >
+          <Navbar />
+        </NotificationContext.Provider>
       </AuthContext.Provider>
     </MemoryRouter>
   );
@@ -33,6 +44,7 @@ describe('Navbar', () => {
   it('shows username and nav links when logged in', () => {
     renderNavbar({ username: 'alice', id: 1 });
     expect(screen.getByText('@alice')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /notifications/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /new recipe/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /new story/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /log out/i })).toBeInTheDocument();

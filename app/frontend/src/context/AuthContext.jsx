@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { fetchMe } from '../services/authService';
+import { registerWebDeviceToken } from '../services/deviceTokenService';
 
 export const AuthContext = createContext(null);
 
@@ -22,7 +23,10 @@ export function AuthProvider({ children }) {
       return;
     }
     fetchMe()
-      .then((userData) => { setUser(userData); })
+      .then((userData) => {
+        setUser(userData);
+        registerWebDeviceToken().catch(() => {});
+      })
       .catch(() => { logout(); })
       .finally(() => { setLoading(false); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,6 +35,7 @@ export function AuthProvider({ children }) {
   function login(userData, accessToken) {
     setUser(userData);
     setToken(accessToken);
+    registerWebDeviceToken().catch(() => {});
   }
 
   function logout() {
