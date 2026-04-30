@@ -13,6 +13,8 @@ import StoryListPage from './pages/StoryListPage';
 import StoryDetailPage from './pages/StoryDetailPage';
 import StoryCreatePage from './pages/StoryCreatePage';
 import StoryEditPage from './pages/StoryEditPage';
+import InboxPage from './pages/InboxPage';
+import ThreadPage from './pages/ThreadPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -47,6 +49,16 @@ export default function App() {
 
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
           <Route path="/stories/:id" element={<StoryDetailPage />} />
+
+          <Route
+            path="/inbox"
+            element={<ProtectedRoute><InboxPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/inbox/:threadId"
+            element={<ProtectedRoute><ThreadPage /></ProtectedRoute>}
+          />
+
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
