@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.search',
     'apps.common',
     'apps.notifications',
+    'apps.cultural_content',
     'apps.messaging',
 ]
 
