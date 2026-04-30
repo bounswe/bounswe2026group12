@@ -37,9 +37,9 @@ class DailyCulturalContentView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        items = list(CulturalContent.objects.filter(is_active=True))
         user_tags = _user_tag_set(request.user)
-        if user_tags:
-            items.sort(key=lambda c: (-_score(c, user_tags), -c.created_at.timestamp()))
+        items = list(CulturalContent.objects.filter(is_active=True))
+        # Sort by personalization score (desc) then by creation order (ID desc)
+        items.sort(key=lambda c: (-_score(c, user_tags), -c.id))
         items = items[:DAILY_LIMIT]
         return Response(CulturalContentCardSerializer(items, many=True).data)
