@@ -76,6 +76,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   actionPressed: { opacity: 0.9 },
-  actionText: { fontSize: 14, fontWeight: '800', color: tokens.colors.primary },
+  actionText: { fontSize: 14, fontWeight: '800', color: tokens.colors.text },
 });
 

@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
+import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
+import MessageThreadScreen from '../screens/MessageThreadScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
@@ -74,6 +76,16 @@ export function PublicStackNavigator() {
         name="UserProfile"
         component={UserProfileScreen}
         options={{ title: 'Profile' }}
+      />
+      <Stack.Screen
+        name="Inbox"
+        component={InboxScreen}
+        options={{ title: 'Messages' }}
+      />
+      <Stack.Screen
+        name="MessageThread"
+        component={MessageThreadScreen}
+        options={{ title: 'Conversation' }}
       />
     </Stack.Navigator>
   );

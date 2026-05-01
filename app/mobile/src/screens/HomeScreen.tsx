@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 28,
     fontWeight: '800',
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
   },
   searchWrap: { marginBottom: 14 },
@@ -260,8 +260,8 @@ const styles = StyleSheet.create({
   },
   section: { marginTop: 10, marginBottom: 18 },
   sectionHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 10 },
-  sectionTitle: { fontSize: 22, fontWeight: '800', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
-  sectionSubTitle: { fontSize: 15, fontWeight: '800', color: tokens.colors.surface },
+  sectionTitle: { fontSize: 22, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
+  sectionSubTitle: { fontSize: 15, fontWeight: '800', color: tokens.colors.text },
   sectionHint: { fontSize: 13, color: tokens.colors.primaryTint, fontWeight: '800' },
   storyList: { gap: 14 },
   emptyHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   recipeThumbImage: { width: '100%', height: '100%' },
-  thumbText: { color: tokens.colors.textOnDark, fontSize: 24, fontWeight: '900' },
+  thumbText: { color: tokens.colors.text, fontSize: 24, fontWeight: '900' },
   cardTitle: { paddingHorizontal: 12, paddingTop: 10, fontSize: 15, fontWeight: '800', color: tokens.colors.text },
   cardMeta: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: 6, fontSize: 13, color: tokens.colors.textMuted },
   authorPress: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
-  authorLink: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  authorLink: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   tag: {
     alignSelf: 'flex-start',
     marginLeft: 12,
@@ -330,5 +330,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   tagText: { fontSize: 12, fontWeight: '800', color: tokens.colors.text },
-  link: { fontSize: 15, color: tokens.colors.surface, fontWeight: '800' },
+  link: { fontSize: 15, color: tokens.colors.text, fontWeight: '800' },
 });

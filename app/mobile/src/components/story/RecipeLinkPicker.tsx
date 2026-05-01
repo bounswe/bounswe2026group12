@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   title: { fontSize: 18, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
-  close: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
+  close: { fontSize: 16, color: tokens.colors.text, fontWeight: '800' },
   search: {
     marginTop: 10,
     borderWidth: 2,

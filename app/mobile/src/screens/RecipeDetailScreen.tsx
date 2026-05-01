@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
-  authorPillText: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  authorPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   qaMeta: { fontSize: 13, color: tokens.colors.textMuted, marginTop: 6 },
   editLink: {
     alignSelf: 'flex-start',
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-  editLinkText: { fontSize: 16, color: tokens.colors.primary, fontWeight: '800' },
+  editLinkText: { fontSize: 16, color: tokens.colors.text, fontWeight: '800' },
   imageWrap: {
     marginTop: 14,
     width: '100%',
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   unitToggleBtnActive: {
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
   },
   unitToggleText: {
     fontSize: 13,
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     color: tokens.colors.textMuted,
   },
   unitToggleTextActive: {
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
   },
   list: { gap: 0 },
   ingredientRow: {
