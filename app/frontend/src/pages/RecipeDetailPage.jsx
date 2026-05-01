@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecipe } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
+import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import './RecipeDetailPage.css';
 
 export default function RecipeDetailPage() {
@@ -95,6 +96,12 @@ export default function RecipeDetailPage() {
           ))}
         </ul>
       </section>
+
+      <RecipeCommentsSection
+        recipeId={recipe.id}
+        qaEnabled={Boolean(recipe.qa_enabled)}
+        currentUser={user}
+      />
     </main>
   );
 }
