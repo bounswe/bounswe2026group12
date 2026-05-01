@@ -132,4 +132,14 @@ describe('RecipeDetailPage', () => {
     await waitFor(() => screen.getByText('Baklava'));
     expect(screen.getByRole('heading', { name: /q&a and comments/i })).toBeInTheDocument();
   });
+
+  it('shows disabled messaging button when author is not contactable', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({
+      ...mockRecipe,
+      author_is_contactable: false,
+    });
+    renderPage('1', { id: 99, username: 'other' });
+    await waitFor(() => screen.getByText('Baklava'));
+    expect(screen.getByRole('button', { name: /messaging disabled by author/i })).toBeDisabled();
+  });
 });

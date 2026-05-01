@@ -38,13 +38,17 @@ export function AuthProvider({ children }) {
     registerWebDeviceToken().catch(() => {});
   }
 
+  function updateUser(nextUserData) {
+    setUser(nextUserData);
+  }
+
   function logout() {
     setUser(null);
     setToken(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

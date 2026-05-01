@@ -25,7 +25,21 @@ export async function registerRequest(username, email, password) {
 }
 
 export async function fetchMe() {
-  if (USE_MOCK) return { id: 1, username: 'demo_chef', email: 'demo@example.com' };
+  if (USE_MOCK) return { id: 1, username: 'demo_chef', email: 'demo@example.com', is_contactable: true };
   const response = await apiClient.get('/api/users/me/');
   return response.data;
+}
+
+export async function updateMe(payload) {
+  if (USE_MOCK) return { id: 1, username: 'demo_chef', email: 'demo@example.com', ...payload };
+  const response = await apiClient.patch('/api/users/me/', payload);
+  return response.data;
+}
+
+export function getContactabilityValue(user) {
+  if (!user) return true;
+  if (typeof user.is_contactable === 'boolean') return user.is_contactable;
+  if (typeof user.contactable === 'boolean') return user.contactable;
+  if (typeof user.allow_new_threads === 'boolean') return user.allow_new_threads;
+  return true;
 }
