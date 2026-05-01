@@ -205,12 +205,40 @@
 }
 
 .qa-helpful-count {
-  margin: 0.5rem 0 0 0;
+  margin: 0;
   font-size: 0.84rem;
   color: var(--color-text-muted);
+}
+
+.qa-feedback-row {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.qa-helpful-button {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qa-helpful-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.qa-helpful-button-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
 }
 
 .qa-replies {
   margin-left: 1rem;
 }
-

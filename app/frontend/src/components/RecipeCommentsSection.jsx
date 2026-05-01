@@ -117,11 +117,20 @@ function Composer({
 }
 
 function CommentNode({
-  node, depth, currentUser, onReply, onDelete, onToggleVote, openMenuId, setOpenMenuId,
+  node,
+  depth,
+  currentUser,
+  onReply,
+  onDelete,
+  onToggleVote,
+  openMenuId,
+  setOpenMenuId,
+  isVotePending,
 }) {
   const canDelete = currentUser && Number(currentUser.id) === Number(node.author);
   const menuOpen = openMenuId === node.id;
   const canReply = depth === 0 && !!currentUser;
+  const votePending = isVotePending(node.id);
 
   return (
     <article className={`qa-comment ${depth > 0 ? 'qa-comment-reply' : ''}`}>
@@ -149,9 +158,6 @@ function CommentNode({
                       Reply
                     </button>
                   )}
-                  <button type="button" role="menuitem" onClick={() => onToggleVote(node.id)}>
-                    {node.hasVoted ? 'Unmark Helpful' : 'Mark Helpful'}
-                  </button>
                   {canDelete && (
                     <button type="button" role="menuitem" className="qa-danger" onClick={() => onDelete(node.id)}>
                       Delete
@@ -165,7 +171,18 @@ function CommentNode({
       </header>
 
       <p className="qa-body">{node.body}</p>
-      <p className="qa-helpful-count">Helpful: {node.helpfulCount}</p>
+      <div className="qa-feedback-row">
+        <button
+          type="button"
+          className={`qa-helpful-button ${node.hasVoted ? 'qa-helpful-button-active' : ''}`}
+          onClick={() => onToggleVote(node.id)}
+          disabled={votePending}
+          aria-pressed={node.hasVoted}
+        >
+          {votePending ? 'Updating…' : node.hasVoted ? 'Helpful' : 'Mark Helpful'}
+        </button>
+        <p className="qa-helpful-count">Helpful: {node.helpfulCount}</p>
+      </div>
 
       {node.replies.length > 0 && (
         <div className="qa-replies">
@@ -180,6 +197,7 @@ function CommentNode({
               onToggleVote={onToggleVote}
               openMenuId={openMenuId}
               setOpenMenuId={setOpenMenuId}
+              isVotePending={isVotePending}
             />
           ))}
         </div>
@@ -195,6 +213,7 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
   const [submitting, setSubmitting] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [votePendingIds, setVotePendingIds] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -232,10 +251,12 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
   }
 
   async function handleToggleVote(commentId) {
+    if (votePendingIds.includes(commentId)) return;
     const target = comments.find((comment) => comment.id === commentId);
     if (!target) return;
     const nextHasVoted = !target.hasVoted;
     const nextCount = Math.max(0, target.helpfulCount + (nextHasVoted ? 1 : -1));
+    setVotePendingIds((prev) => [...prev, commentId]);
     setComments((prev) => prev.map((comment) => (
       comment.id === commentId ? { ...comment, hasVoted: nextHasVoted, helpfulCount: nextCount } : comment
     )));
@@ -248,6 +269,8 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
           ? { ...comment, hasVoted: target.hasVoted, helpfulCount: target.helpfulCount }
           : comment
       )));
+    } finally {
+      setVotePendingIds((prev) => prev.filter((id) => id !== commentId));
     }
   }
 
@@ -285,6 +308,7 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
               onToggleVote={handleToggleVote}
               openMenuId={openMenuId}
               setOpenMenuId={setOpenMenuId}
+              isVotePending={(id) => votePendingIds.includes(id)}
             />
           ))}
         </div>
@@ -292,4 +316,3 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
     </section>
   );
 }
-

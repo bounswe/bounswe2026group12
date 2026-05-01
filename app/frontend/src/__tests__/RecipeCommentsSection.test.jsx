@@ -99,8 +99,39 @@ describe('RecipeCommentsSection', () => {
   it('opens action menu and toggles helpful vote', async () => {
     renderSection();
     await waitFor(() => screen.getByText('How long should it rest?'));
-    fireEvent.click(screen.getAllByRole('button', { name: /comment actions/i })[0]);
-    fireEvent.click(screen.getByRole('menuitem', { name: /mark helpful/i }));
+    fireEvent.click(screen.getAllByRole('button', { name: /mark helpful/i })[0]);
     await waitFor(() => expect(commentService.toggleCommentVote).toHaveBeenCalledWith(1));
+  });
+
+  it('applies optimistic helpful count and disables button while request is in flight', async () => {
+    let resolveVote;
+    commentService.toggleCommentVote.mockReturnValueOnce(
+      new Promise((resolve) => { resolveVote = resolve; })
+    );
+    renderSection();
+    await waitFor(() => screen.getByText('How long should it rest?'));
+
+    const voteButton = screen.getAllByRole('button', { name: /mark helpful/i })[0];
+    fireEvent.click(voteButton);
+
+    expect(await screen.findByRole('button', { name: /updating/i })).toBeDisabled();
+    expect(screen.getByText('Helpful: 3')).toBeInTheDocument();
+
+    resolveVote({ status: 'voted' });
+    await waitFor(() => expect(screen.getByRole('button', { name: /^helpful$/i })).toBeInTheDocument());
+  });
+
+  it('rolls back optimistic helpful state on API error', async () => {
+    commentService.toggleCommentVote.mockRejectedValueOnce(new Error('fail'));
+    renderSection();
+    await waitFor(() => screen.getByText('How long should it rest?'));
+
+    fireEvent.click(screen.getAllByRole('button', { name: /mark helpful/i })[0]);
+
+    await waitFor(() => expect(commentService.toggleCommentVote).toHaveBeenCalledWith(1));
+    await waitFor(() => {
+      expect(screen.getByText('Helpful: 2')).toBeInTheDocument();
+      expect(screen.getAllByRole('button', { name: /mark helpful/i })[0]).toBeInTheDocument();
+    });
   });
 });
