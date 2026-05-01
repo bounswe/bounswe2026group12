@@ -1,9 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import HomePage from '../pages/HomePage';
 import * as searchService from '../services/searchService';
+import * as culturalContentService from '../services/culturalContentService';
 
 jest.mock('../services/searchService');
+jest.mock('../services/culturalContentService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -16,13 +19,18 @@ beforeEach(() => {
     { id: 1, name: 'Aegean' },
     { id: 2, name: 'Mediterranean' },
   ]);
+  culturalContentService.fetchDailyCulturalContent.mockResolvedValue([
+    { id: 10, title: 'Cultural Card', body: 'Body', tags: ['Aegean'] },
+  ]);
 });
 
-function renderPage() {
+function renderPage(user = null) {
   return render(
-    <MemoryRouter>
-      <HomePage />
-    </MemoryRouter>
+    <AuthContext.Provider value={{ user, token: user ? 'tok' : null, login: jest.fn(), logout: jest.fn(), updateUser: jest.fn() }}>
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    </AuthContext.Provider>
   );
 }
 
@@ -71,5 +79,17 @@ describe('HomePage', () => {
     expect(mockNavigate).toHaveBeenCalledWith(
       '/search?q=&region=&ingredient=&meal_type='
     );
+  });
+
+  it('shows onboarding nudge for logged-in users without onboarding data', () => {
+    renderPage({ id: 1, username: 'u1', cultural_interests: [], regional_ties: [], religious_preferences: [], event_interests: [] });
+    expect(screen.getByText(/personalize your feed/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /complete now/i })).toHaveAttribute('href', '/onboarding');
+  });
+
+  it('renders personalized daily cultural section for onboarded users', async () => {
+    renderPage({ id: 1, username: 'u1', cultural_interests: ['Aegean'], regional_ties: [], religious_preferences: [], event_interests: [] });
+    expect(await screen.findByRole('heading', { name: /for you: cultural highlights/i })).toBeInTheDocument();
+    expect(screen.getByText('Cultural Card')).toBeInTheDocument();
   });
 });

@@ -15,6 +15,7 @@ import StoryCreatePage from './pages/StoryCreatePage';
 import StoryEditPage from './pages/StoryEditPage';
 import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
+import OnboardingPage from './pages/OnboardingPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -57,6 +58,10 @@ export default function App() {
           <Route
             path="/inbox/:threadId"
             element={<ProtectedRoute><ThreadPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/onboarding"
+            element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>}
           />
 
           <Route path="*" element={<NotFoundPage />} />

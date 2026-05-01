@@ -4,9 +4,11 @@ import { AuthContext } from '../context/AuthContext';
 import RecipeDetailPage from '../pages/RecipeDetailPage';
 import * as recipeService from '../services/recipeService';
 import * as searchService from '../services/searchService';
+import * as commentService from '../services/commentService';
 
 jest.mock('../services/recipeService');
 jest.mock('../services/searchService');
+jest.mock('../services/commentService');
 
 const mockRecipe = {
   id: 1,
@@ -42,6 +44,7 @@ beforeEach(() => {
     { id: 1, name: 'Aegean' },
     { id: 2, name: 'Mediterranean' },
   ]);
+  commentService.fetchCommentsForRecipe.mockResolvedValue([]);
 });
 
 describe('RecipeDetailPage', () => {
@@ -122,5 +125,21 @@ describe('RecipeDetailPage', () => {
     await waitFor(() => screen.getByText('Baklava'));
     expect(screen.getByRole('link', { name: /edit/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /edit/i })).toHaveAttribute('href', '/recipes/1/edit');
+  });
+
+  it('renders Q&A section heading', async () => {
+    renderPage();
+    await waitFor(() => screen.getByText('Baklava'));
+    expect(screen.getByRole('heading', { name: /q&a and comments/i })).toBeInTheDocument();
+  });
+
+  it('shows disabled messaging button when author is not contactable', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({
+      ...mockRecipe,
+      author_is_contactable: false,
+    });
+    renderPage('1', { id: 99, username: 'other' });
+    await waitFor(() => screen.getByText('Baklava'));
+    expect(screen.getByRole('button', { name: /messaging disabled by author/i })).toBeDisabled();
   });
 });

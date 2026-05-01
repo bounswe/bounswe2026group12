@@ -1,9 +1,12 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import SearchPage from '../pages/SearchPage';
 import * as searchService from '../services/searchService';
+import * as recipeService from '../services/recipeService';
 
 jest.mock('../services/searchService');
+jest.mock('../services/recipeService');
 
 const mockResults = [
   { type: 'recipe', id: 1, title: 'Yogurt Soup', region: 'Black Sea', thumbnail: null },
@@ -11,13 +14,15 @@ const mockResults = [
   { type: 'story',  id: 3, title: "Grandma's Kitchen", region: 'Mediterranean', thumbnail: null },
 ];
 
-function renderPage(search = '?q=&region=&ingredient=&meal_type=') {
+function renderPage(search = '?q=&region=&ingredient=&meal_type=', user = null) {
   return render(
-    <MemoryRouter initialEntries={[`/search${search}`]}>
-      <Routes>
-        <Route path="/search" element={<SearchPage />} />
-      </Routes>
-    </MemoryRouter>
+    <AuthContext.Provider value={{ user, token: user ? 'tok' : null, login: jest.fn(), logout: jest.fn(), updateUser: jest.fn() }}>
+      <MemoryRouter initialEntries={[`/search${search}`]}>
+        <Routes>
+          <Route path="/search" element={<SearchPage />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContext.Provider>
   );
 }
 
@@ -26,6 +31,17 @@ beforeEach(() => {
   searchService.fetchRegions.mockResolvedValue([
     { id: 1, name: 'Aegean' },
     { id: 2, name: 'Mediterranean' },
+  ]);
+  recipeService.fetchDietaryTags.mockResolvedValue([
+    { id: 1, name: 'Vegan' },
+    { id: 2, name: 'Halal' },
+  ]);
+  recipeService.fetchEventTags.mockResolvedValue([
+    { id: 1, name: 'Wedding' },
+  ]);
+  recipeService.fetchIngredients.mockResolvedValue([
+    { id: 1, name: 'Tomato' },
+    { id: 2, name: 'Onion' },
   ]);
 });
 
@@ -47,9 +63,16 @@ describe('SearchPage', () => {
 
   it('combines q and ingredient into a single search call', async () => {
     searchService.search.mockResolvedValue([]);
-    renderPage('?q=soup&region=Aegean&ingredient=yogurt&meal_type=');
+    renderPage('?q=soup&region=Aegean&ingredient=Tomato&meal_type=');
     await waitFor(() => {
-      expect(searchService.search).toHaveBeenCalledWith('soup yogurt', 'Aegean', '');
+      expect(searchService.search).toHaveBeenCalledWith('soup', 'Aegean', '', {
+        ingredient: 'Tomato',
+        ingredient_exclude: '',
+        diet: '',
+        diet_exclude: '',
+        event: '',
+        event_exclude: '',
+      });
     });
   });
 
@@ -65,7 +88,7 @@ describe('SearchPage', () => {
     searchService.search.mockResolvedValue([]);
     renderPage('?q=&region=Aegean&ingredient=yogurt&meal_type=');
     await waitFor(() => screen.getByText(/no results/i));
-    expect(screen.getByText(/ingredient: yogurt/i)).toBeInTheDocument();
+    expect(screen.getByText(/ingredient\+: yogurt/i)).toBeInTheDocument();
     expect(screen.getByText(/region: aegean/i)).toBeInTheDocument();
   });
 
@@ -117,7 +140,41 @@ describe('SearchPage', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'soup' } });
     fireEvent.submit(screen.getByRole('form', { name: /refine search/i }));
     await waitFor(() => {
-      expect(searchService.search).toHaveBeenCalledWith('soup', '', '');
+      expect(searchService.search).toHaveBeenCalledWith('soup', '', '', {
+        ingredient: '',
+        ingredient_exclude: '',
+        diet: '',
+        diet_exclude: '',
+        event: '',
+        event_exclude: '',
+      });
     });
+  });
+
+  it('shows personalization note when user has onboarding data', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=baklava&region=&language=', { id: 1, cultural_interests: ['Aegean'] });
+    expect(await screen.findByText(/ranked using your cultural onboarding profile/i)).toBeInTheDocument();
+  });
+
+  it('applies include/exclude chips and region together in URL on submit', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=&region=Aegean&ingredient=&meal_type=');
+    await waitFor(() => screen.getByText('+ Vegan'));
+    fireEvent.click(screen.getByText('+ Vegan'));
+    fireEvent.click(screen.getByText('- Wedding'));
+    fireEvent.submit(screen.getByRole('form', { name: /refine search/i }));
+    await waitFor(() => {
+      expect(searchService.search).toHaveBeenLastCalledWith('', 'Aegean', '', {
+        ingredient: '',
+        ingredient_exclude: '',
+        diet: 'Vegan',
+        diet_exclude: '',
+        event: '',
+        event_exclude: 'Wedding',
+      });
+    });
+    expect(screen.getByText(/diet\+: vegan/i)).toBeInTheDocument();
+    expect(screen.getByText(/event-: wedding/i)).toBeInTheDocument();
   });
 });

@@ -5,7 +5,7 @@ import App from '../App';
 
 function renderApp(initialPath, token = null) {
   render(
-    <AuthContext.Provider value={{ token, login: jest.fn(), logout: jest.fn() }}>
+    <AuthContext.Provider value={{ token, user: token ? { id: 1, username: 'u1' } : null, login: jest.fn(), logout: jest.fn(), updateUser: jest.fn() }}>
       <MemoryRouter initialEntries={[initialPath]}>
         <App />
       </MemoryRouter>
@@ -55,6 +55,11 @@ describe('Protected routes (unauthenticated)', () => {
     renderApp('/stories/new', null);
     expect(screen.getByRole('heading', { name: /log in/i })).toBeInTheDocument();
   });
+
+  test('/onboarding redirects to /login', () => {
+    renderApp('/onboarding', null);
+    expect(screen.getByRole('heading', { name: /log in/i })).toBeInTheDocument();
+  });
 });
 
 describe('Protected routes (authenticated)', () => {
@@ -66,5 +71,10 @@ describe('Protected routes (authenticated)', () => {
   test('/stories/new renders StoryCreate page when authenticated', () => {
     renderApp('/stories/new', 'valid-token');
     expect(screen.getByRole('heading', { name: /create story/i })).toBeInTheDocument();
+  });
+
+  test('/onboarding renders Cultural Onboarding page when authenticated', () => {
+    renderApp('/onboarding', 'valid-token');
+    expect(screen.getByRole('heading', { name: /cultural onboarding/i })).toBeInTheDocument();
   });
 });

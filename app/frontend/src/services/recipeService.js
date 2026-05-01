@@ -56,3 +56,15 @@ export async function fetchRecipes() {
   const response = await apiClient.get('/api/recipes/');
   return response.data;
 }
+
+export async function fetchDietaryTags() {
+  if (USE_MOCK) return [];
+  const response = await apiClient.get('/api/dietary-tags/');
+  return response.data;
+}
+
+export async function fetchEventTags() {
+  if (USE_MOCK) return [];
+  const response = await apiClient.get('/api/event-tags/');
+  return response.data;
+}

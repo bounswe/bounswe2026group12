@@ -34,7 +34,7 @@ export default function RegisterPage() {
     try {
       const data = await registerRequest(username, email, password);
       login(data.user, data.access);
-      navigate('/');
+      navigate('/onboarding');
     } catch (err) {
       setApiError(extractApiError(err, 'Registration failed. Please try again.'));
     }

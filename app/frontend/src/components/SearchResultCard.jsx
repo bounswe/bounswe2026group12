@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import './SearchResultCard.css';
 
 export default function SearchResultCard({ result }) {
-  const { type, id, title, region, thumbnail } = result;
+  const { type, id, title, region, thumbnail, rankScore } = result;
   const href = type === 'recipe' ? `/recipes/${id}` : `/stories/${id}`;
   const accentClass = type === 'recipe' ? 'card-accent-green' : 'card-accent-mustard';
 
@@ -16,7 +16,10 @@ export default function SearchResultCard({ result }) {
           }
         </div>
         <div className="result-card-body">
-          <span className="result-type">{type}</span>
+          <div className="result-meta-row">
+            <span className="result-type">{type}</span>
+            {rankScore > 0 && <span className="result-personalized">For you</span>}
+          </div>
           <h3 className="result-card-title">{title}</h3>
           {region && <span className="result-region">{region}</span>}
         </div>
