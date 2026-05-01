@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import HomePage from '../pages/HomePage';
 import * as searchService from '../services/searchService';
 
@@ -18,11 +19,13 @@ beforeEach(() => {
   ]);
 });
 
-function renderPage() {
+function renderPage(user = null) {
   return render(
-    <MemoryRouter>
-      <HomePage />
-    </MemoryRouter>
+    <AuthContext.Provider value={{ user, token: user ? 'tok' : null, login: jest.fn(), logout: jest.fn(), updateUser: jest.fn() }}>
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    </AuthContext.Provider>
   );
 }
 
@@ -71,5 +74,11 @@ describe('HomePage', () => {
     expect(mockNavigate).toHaveBeenCalledWith(
       '/search?q=&region=&ingredient=&meal_type='
     );
+  });
+
+  it('shows onboarding nudge for logged-in users without onboarding data', () => {
+    renderPage({ id: 1, username: 'u1', cultural_interests: [], regional_ties: [], religious_preferences: [], event_interests: [] });
+    expect(screen.getByText(/personalize your feed/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /complete now/i })).toHaveAttribute('href', '/onboarding');
   });
 });
