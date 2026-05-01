@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { search, fetchRegions } from '../services/searchService';
 import SearchResultCard from '../components/SearchResultCard';
 import './SearchPage.css';
 
 export default function SearchPage() {
+  const auth = useContext(AuthContext) || {};
+  const user = auth.user;
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const q = searchParams.get('q') || '';
@@ -23,6 +26,7 @@ export default function SearchPage() {
   const [error, setError] = useState('');
 
   const effectiveQ = [q, ingredient].filter(Boolean).join(' ');
+  const effectiveLanguage = language || user?.preferred_language || '';
 
   useEffect(() => {
     fetchRegions().then(setRegions).catch(() => {});
@@ -39,12 +43,22 @@ export default function SearchPage() {
     let cancelled = false;
     setLoading(true);
     setError('');
-    search(effectiveQ, region, language)
+    search(effectiveQ, region, effectiveLanguage)
       .then((data) => { if (!cancelled) setResults(data); })
       .catch(() => { if (!cancelled) setError('Could not load results.'); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [effectiveQ, region, language]);
+  }, [effectiveQ, region, effectiveLanguage]);
+
+  const hasProfileSignals = useMemo(() => {
+    if (!user) return false;
+    return [
+      user.cultural_interests,
+      user.regional_ties,
+      user.religious_preferences,
+      user.event_interests,
+    ].some((list) => Array.isArray(list) && list.length > 0);
+  }, [user]);
 
   const displayResults = mealType.trim()
     ? results.filter((r) =>
@@ -74,6 +88,11 @@ export default function SearchPage() {
       <h1 className="search-heading">
         {q ? `Search results for "${q}"` : 'Search Results'}
       </h1>
+      {hasProfileSignals && (
+        <p className="search-personalized-note">
+          Results are ranked using your cultural onboarding profile.
+        </p>
+      )}
 
       <form className="search-filter-form" onSubmit={handleSubmit} aria-label="Refine search">
         <div className="search-filter-row">

@@ -58,4 +58,9 @@ describe('SearchResultCard', () => {
     renderCard({ type: 'recipe', id: 3, title: 'Soup', region: null, thumbnail: null });
     expect(screen.queryByText('Aegean')).not.toBeInTheDocument();
   });
+
+  it('shows "For you" badge when rankScore is positive', () => {
+    renderCard({ ...recipeResult, rankScore: 2 });
+    expect(screen.getByText(/for you/i)).toBeInTheDocument();
+  });
 });

@@ -2,20 +2,32 @@ import { useState, useEffect, useContext, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRegions } from '../services/searchService';
+import { fetchDailyCulturalContent } from '../services/culturalContentService';
+import DailyCulturalSection from '../components/DailyCulturalSection';
 import './HomePage.css';
 
 export default function HomePage() {
-  const { user } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+  const user = auth.user;
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [region, setRegion] = useState('');
   const [ingredient, setIngredient] = useState('');
   const [mealType, setMealType] = useState('');
   const [regions, setRegions] = useState([]);
+  const [dailyCards, setDailyCards] = useState([]);
   const [dismissedNudge, setDismissedNudge] = useState(() => localStorage.getItem('onboarding_nudge_dismissed') === 'true');
 
   useEffect(() => {
     fetchRegions().then(setRegions).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDailyCulturalContent()
+      .then((items) => { if (!cancelled) setDailyCards(items); })
+      .catch(() => { if (!cancelled) setDailyCards([]); });
+    return () => { cancelled = true; };
   }, []);
 
   const showOnboardingNudge = useMemo(() => {
@@ -28,6 +40,16 @@ export default function HomePage() {
     ].some((list) => Array.isArray(list) && list.length > 0);
     return !hasAnyProfileSignal;
   }, [user, dismissedNudge]);
+
+  const isPersonalized = useMemo(() => {
+    if (!user) return false;
+    return [
+      user.cultural_interests,
+      user.regional_ties,
+      user.religious_preferences,
+      user.event_interests,
+    ].some((list) => Array.isArray(list) && list.length > 0);
+  }, [user]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -115,6 +137,8 @@ export default function HomePage() {
           </div>
         </div>
       </form>
+
+      <DailyCulturalSection items={dailyCards} personalized={isPersonalized} />
     </main>
   );
 }

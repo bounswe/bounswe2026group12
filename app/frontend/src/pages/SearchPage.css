@@ -8,6 +8,12 @@
   color: var(--color-text);
 }
 
+.search-personalized-note {
+  margin: -1rem 0 1.4rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+
 .search-status {
   color: var(--color-text-muted);
   font-size: 1rem;

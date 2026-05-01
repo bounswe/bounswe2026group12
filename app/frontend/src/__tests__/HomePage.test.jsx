@@ -3,8 +3,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import HomePage from '../pages/HomePage';
 import * as searchService from '../services/searchService';
+import * as culturalContentService from '../services/culturalContentService';
 
 jest.mock('../services/searchService');
+jest.mock('../services/culturalContentService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -16,6 +18,9 @@ beforeEach(() => {
   searchService.fetchRegions.mockResolvedValue([
     { id: 1, name: 'Aegean' },
     { id: 2, name: 'Mediterranean' },
+  ]);
+  culturalContentService.fetchDailyCulturalContent.mockResolvedValue([
+    { id: 10, title: 'Cultural Card', body: 'Body', tags: ['Aegean'] },
   ]);
 });
 
@@ -80,5 +85,11 @@ describe('HomePage', () => {
     renderPage({ id: 1, username: 'u1', cultural_interests: [], regional_ties: [], religious_preferences: [], event_interests: [] });
     expect(screen.getByText(/personalize your feed/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /complete now/i })).toHaveAttribute('href', '/onboarding');
+  });
+
+  it('renders personalized daily cultural section for onboarded users', async () => {
+    renderPage({ id: 1, username: 'u1', cultural_interests: ['Aegean'], regional_ties: [], religious_preferences: [], event_interests: [] });
+    expect(await screen.findByRole('heading', { name: /for you: cultural highlights/i })).toBeInTheDocument();
+    expect(screen.getByText('Cultural Card')).toBeInTheDocument();
   });
 });

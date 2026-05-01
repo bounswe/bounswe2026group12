@@ -77,6 +77,23 @@
   margin-bottom: 0.35rem;
 }
 
+.result-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.result-personalized {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-tint);
+  border: 1px solid var(--color-primary-border);
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+}
+
 .result-card-title {
   font-family: var(--font-display);
   font-size: 1.125rem;

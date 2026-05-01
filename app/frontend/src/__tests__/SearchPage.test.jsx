@@ -1,5 +1,6 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import SearchPage from '../pages/SearchPage';
 import * as searchService from '../services/searchService';
 
@@ -11,13 +12,15 @@ const mockResults = [
   { type: 'story',  id: 3, title: "Grandma's Kitchen", region: 'Mediterranean', thumbnail: null },
 ];
 
-function renderPage(search = '?q=&region=&ingredient=&meal_type=') {
+function renderPage(search = '?q=&region=&ingredient=&meal_type=', user = null) {
   return render(
-    <MemoryRouter initialEntries={[`/search${search}`]}>
-      <Routes>
-        <Route path="/search" element={<SearchPage />} />
-      </Routes>
-    </MemoryRouter>
+    <AuthContext.Provider value={{ user, token: user ? 'tok' : null, login: jest.fn(), logout: jest.fn(), updateUser: jest.fn() }}>
+      <MemoryRouter initialEntries={[`/search${search}`]}>
+        <Routes>
+          <Route path="/search" element={<SearchPage />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContext.Provider>
   );
 }
 
@@ -119,5 +122,11 @@ describe('SearchPage', () => {
     await waitFor(() => {
       expect(searchService.search).toHaveBeenCalledWith('soup', '', '');
     });
+  });
+
+  it('shows personalization note when user has onboarding data', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=baklava&region=&language=', { id: 1, cultural_interests: ['Aegean'] });
+    expect(await screen.findByText(/ranked using your cultural onboarding profile/i)).toBeInTheDocument();
   });
 });
