@@ -10,9 +10,26 @@ beforeEach(() => jest.clearAllMocks());
 describe('search', () => {
   it('calls GET /api/search/ with all params', async () => {
     apiClient.get.mockResolvedValue({ data: [] });
-    await search('baklava', 'Aegean', 'en');
+    await search('baklava', 'Aegean', 'en', {
+      diet: 'Vegan',
+      diet_exclude: 'Halal',
+      event: 'Wedding',
+      event_exclude: 'Ramadan',
+      ingredient: 'Tomato',
+      ingredient_exclude: 'Onion',
+    });
     expect(apiClient.get).toHaveBeenCalledWith('/api/search/', {
-      params: { q: 'baklava', region: 'Aegean', language: 'en' },
+      params: {
+        q: 'baklava',
+        region: 'Aegean',
+        language: 'en',
+        diet: 'Vegan',
+        diet_exclude: 'Halal',
+        event: 'Wedding',
+        event_exclude: 'Ramadan',
+        ingredient: 'Tomato',
+        ingredient_exclude: 'Onion',
+      },
     });
   });
 

@@ -15,11 +15,22 @@ function normalizeResult(item) {
   };
 }
 
-export async function search(q, region, language) {
+export async function search(q, region, language, filters = {}) {
   if (USE_MOCK) return filterMockResults(q, region);
   const params = { q };
   if (region) params.region = region;
   if (language) params.language = language;
+  const filterKeys = [
+    'diet',
+    'diet_exclude',
+    'event',
+    'event_exclude',
+    'ingredient',
+    'ingredient_exclude',
+  ];
+  filterKeys.forEach((key) => {
+    if (filters[key]) params[key] = filters[key];
+  });
   const response = await apiClient.get('/api/search/', { params });
   if (Array.isArray(response.data?.results)) {
     return response.data.results.map(normalizeResult);

@@ -82,7 +82,7 @@
 
 .search-filters {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-top: 1.25rem;
 }
@@ -104,6 +104,62 @@
   width: 100%;
 }
 
+.rich-filter-panels {
+  margin-top: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.rich-filter-group {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.8rem;
+  background: var(--color-surface);
+}
+
+.rich-filter-group h3 {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.95rem;
+}
+
+.rich-chip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.rich-chip-wrap {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rich-chip {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-input);
+  color: var(--color-text);
+  font-size: 0.78rem;
+  padding: 0.22rem 0.6rem;
+  cursor: pointer;
+}
+
+.rich-chip-include {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+}
+
+.rich-chip-exclude {
+  border-color: #b45309;
+  color: #9a3412;
+  background: #fff7ed;
+}
+
+.rich-chip-exclude-active {
+  background: #fed7aa;
+}
+
 @media (max-width: 640px) {
   .search-filter-row {
     flex-direction: column;
@@ -115,6 +171,10 @@
   }
 
   .search-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .rich-filter-panels {
     grid-template-columns: 1fr;
   }
 }
