@@ -1,9 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Tooltip, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { fetchMapRegions } from '../services/mapService';
+import RegionPanel from '../components/RegionPanel';
 import './MapPage.css';
+
+function NearestRegionTracker({ regions, onRegionChange }) {
+  useMapEvents({
+    moveend(e) {
+      const center = e.target.getCenter();
+      let nearest = null;
+      let minDist = Infinity;
+      regions.forEach((r) => {
+        const d = Math.hypot(r.lat - center.lat, r.lng - center.lng);
+        if (d < minDist) { minDist = d; nearest = r; }
+      });
+      if (nearest) onRegionChange(nearest);
+    },
+  });
+  return null;
+}
 
 export default function MapPage() {
   const [regions, setRegions] = useState([]);
@@ -41,6 +57,7 @@ export default function MapPage() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               />
+              <NearestRegionTracker regions={regions} onRegionChange={setSelected} />
               {regions.map((region) => (
                 <CircleMarker
                   key={region.id}
@@ -64,55 +81,7 @@ export default function MapPage() {
           {loading && <div className="map-loading">Loading map…</div>}
         </div>
 
-        <aside className="map-panel">
-          {selected ? (
-            <>
-              <h2 className="map-panel-title">{selected.name}</h2>
-              <p className="map-panel-desc">{selected.description}</p>
-
-              {selected.featured_recipes?.length > 0 && (
-                <section className="map-panel-section">
-                  <h3>Recipes</h3>
-                  <ul className="map-content-list">
-                    {selected.featured_recipes.map((r) => (
-                      <li key={r.id}>
-                        <Link to={`/recipes/${r.id}`} className="map-content-item">
-                          <span className="map-content-title">{r.title}</span>
-                          <span className="map-content-author">@{r.author_username}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {selected.featured_stories?.length > 0 && (
-                <section className="map-panel-section">
-                  <h3>Stories</h3>
-                  <ul className="map-content-list">
-                    {selected.featured_stories.map((s) => (
-                      <li key={s.id}>
-                        <Link to={`/stories/${s.id}`} className="map-content-item">
-                          <span className="map-content-title">{s.title}</span>
-                          <span className="map-content-author">@{s.author_username}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              <Link
-                to={`/search?region=${selected.id}`}
-                className="btn btn-primary btn-sm map-panel-cta"
-              >
-                See all from {selected.name}
-              </Link>
-            </>
-          ) : (
-            <p className="map-panel-empty">Select a region on the map to explore its food culture.</p>
-          )}
-        </aside>
+        <RegionPanel region={selected} />
       </div>
 
       <div className="map-region-chips">
