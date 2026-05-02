@@ -14,6 +14,7 @@ export default function RecipeDetailPage() {
   const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [useConverted, setUseConverted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,14 +94,36 @@ export default function RecipeDetailPage() {
       )}
 
       <section className="recipe-ingredients">
-        <h2>Ingredients</h2>
+        <div className="ingredients-header">
+          <h2>Ingredients</h2>
+          {recipe.ingredients.some((ri) => ri.converted_amount) && (
+            <div className="unit-toggle" role="group" aria-label="Unit system">
+              <button
+                className={`unit-toggle-btn${!useConverted ? ' active' : ''}`}
+                onClick={() => setUseConverted(false)}
+              >
+                Original
+              </button>
+              <button
+                className={`unit-toggle-btn${useConverted ? ' active' : ''}`}
+                onClick={() => setUseConverted(true)}
+              >
+                Converted
+              </button>
+            </div>
+          )}
+        </div>
         <ul className="ingredients-list">
-          {recipe.ingredients.map((ri) => (
-            <li key={ri.ingredient} className="ingredient-item">
-              <span className="ingredient-name">{ri.ingredient_name}</span>
-              <span className="ingredient-amount">{ri.amount} {ri.unit_name}</span>
-            </li>
-          ))}
+          {recipe.ingredients.map((ri) => {
+            const amount = useConverted && ri.converted_amount ? ri.converted_amount : ri.amount;
+            const unit = useConverted && ri.converted_unit_name ? ri.converted_unit_name : ri.unit_name;
+            return (
+              <li key={ri.ingredient} className="ingredient-item">
+                <span className="ingredient-name">{ri.ingredient_name}</span>
+                <span className="ingredient-amount">{amount} {unit}</span>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
