@@ -1,0 +1,166 @@
+.map-page {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 3rem;
+}
+
+.map-page-header {
+  margin-bottom: 1.75rem;
+}
+
+.map-page-header h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  color: var(--color-text);
+}
+
+.map-page-subtitle {
+  margin-top: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
+/* ── Split layout ────────────────── */
+.map-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Map ─────────────────────────── */
+.map-container-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  height: 420px;
+}
+
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+}
+
+.map-loading {
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  background: var(--color-border);
+}
+
+/* ── Side panel ──────────────────── */
+.map-panel {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.map-panel-title {
+  font-size: 1.375rem;
+  color: var(--color-text);
+}
+
+.map-panel-desc {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.map-panel-section h3 {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.map-content-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.map-content-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-subtle);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.map-content-item:hover {
+  background: var(--color-primary-tint);
+  text-decoration: none;
+}
+
+.map-content-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.map-content-author {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.map-panel-cta {
+  margin-top: auto;
+  text-align: center;
+  text-decoration: none;
+}
+
+.map-panel-empty {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  margin: auto 0;
+  text-align: center;
+}
+
+/* ── Region chip row ─────────────── */
+.map-region-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.map-region-chip {
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.map-region-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.map-region-chip.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}

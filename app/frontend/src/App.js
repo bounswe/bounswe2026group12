@@ -16,6 +16,7 @@ import StoryEditPage from './pages/StoryEditPage';
 import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
+import MapPage from './pages/MapPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/recipes" element={<RecipeListPage />} />
           <Route path="/stories" element={<StoryListPage />} />
+          <Route path="/map" element={<MapPage />} />
 
           <Route
             path="/recipes/new"
