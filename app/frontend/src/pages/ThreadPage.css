@@ -20,7 +20,7 @@
 .thread-back {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   text-decoration: none;
   transition: opacity 0.15s;
 }
@@ -125,7 +125,7 @@
 }
 
 .bubble-time {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--color-text-muted);
   margin-top: 0.2rem;
   padding: 0 0.25rem;

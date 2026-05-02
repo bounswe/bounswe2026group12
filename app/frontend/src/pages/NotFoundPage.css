@@ -6,7 +6,7 @@
 .not-found-heading {
   font-size: clamp(4rem, 12vw, 8rem);
   font-weight: 900;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   line-height: 1;
   margin-bottom: 1rem;
 }

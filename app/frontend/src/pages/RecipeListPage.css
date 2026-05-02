@@ -55,7 +55,7 @@
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-accent-green);
+  color: var(--color-accent-green-text);
   background: var(--color-accent-green-tint);
   border-radius: var(--radius-pill);
   padding: 0.2rem 0.65rem;
