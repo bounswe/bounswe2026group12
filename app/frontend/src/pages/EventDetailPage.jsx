@@ -1,9 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchEventDetail } from '../services/exploreService';
 import './EventDetailPage.css';
 
 const TABS = ['all', 'recipe', 'story'];
+const RELIGIONS = ['Muslim', 'Christian', 'Jewish', 'Secular', 'Universal'];
+
+function FilterChip({ label, active, onClick }) {
+  return (
+    <button
+      className={`filter-chip${active ? ' active' : ''}`}
+      onClick={onClick}
+      aria-pressed={active}
+    >
+      {label}
+    </button>
+  );
+}
 
 export default function EventDetailPage() {
   const { eventId } = useParams();
@@ -11,10 +24,14 @@ export default function EventDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('all');
+  const [selectedReligion, setSelectedReligion] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setSelectedReligion(null);
+    setSelectedRegion(null);
     fetchEventDetail(eventId)
       .then((data) => { if (!cancelled) setEvent(data); })
       .catch(() => { if (!cancelled) setError('Could not load event content.'); })
@@ -22,13 +39,32 @@ export default function EventDetailPage() {
     return () => { cancelled = true; };
   }, [eventId]);
 
+  const availableRegions = useMemo(() => {
+    if (!event) return [];
+    return [...new Set(event.featured.map((i) => i.region).filter(Boolean))].sort();
+  }, [event]);
+
+  const availableReligions = useMemo(() => {
+    if (!event) return [];
+    const present = new Set(event.featured.map((i) => i.religion).filter(Boolean));
+    return RELIGIONS.filter((r) => present.has(r));
+  }, [event]);
+
+  const items = useMemo(() => {
+    if (!event) return [];
+    return event.featured.filter((item) => {
+      if (tab !== 'all' && item.type !== tab) return false;
+      if (selectedReligion && item.religion !== selectedReligion) return false;
+      if (selectedRegion && item.region !== selectedRegion) return false;
+      return true;
+    });
+  }, [event, tab, selectedReligion, selectedRegion]);
+
+  const hasActiveFilter = selectedReligion || selectedRegion;
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!event) return null;
-
-  const items = tab === 'all'
-    ? event.featured
-    : event.featured.filter((item) => item.type === tab);
 
   return (
     <main className="page-card event-detail-page">
@@ -42,6 +78,7 @@ export default function EventDetailPage() {
         </div>
       </div>
 
+      {/* Type tabs */}
       <div className="event-detail-tabs" role="tablist">
         {TABS.map((t) => (
           <button
@@ -53,16 +90,62 @@ export default function EventDetailPage() {
           >
             {t === 'all' ? 'All' : t === 'recipe' ? 'Recipes' : 'Stories'}
             <span className="event-tab-count">
-              {t === 'all'
-                ? event.featured.length
-                : event.featured.filter((i) => i.type === t).length}
+              {event.featured.filter((i) => t === 'all' || i.type === t).length}
             </span>
           </button>
         ))}
       </div>
 
+      {/* Cultural filters (#388) */}
+      {(availableReligions.length > 0 || availableRegions.length > 0) && (
+        <div className="cultural-filters">
+          <div className="cultural-filters-row">
+            {availableReligions.length > 0 && (
+              <div className="filter-group">
+                <span className="filter-group-label">Religion</span>
+                <div className="filter-chips">
+                  {availableReligions.map((r) => (
+                    <FilterChip
+                      key={r}
+                      label={r}
+                      active={selectedReligion === r}
+                      onClick={() => setSelectedReligion(selectedReligion === r ? null : r)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {availableRegions.length > 0 && (
+              <div className="filter-group">
+                <span className="filter-group-label">Region</span>
+                <div className="filter-chips">
+                  {availableRegions.map((r) => (
+                    <FilterChip
+                      key={r}
+                      label={r}
+                      active={selectedRegion === r}
+                      onClick={() => setSelectedRegion(selectedRegion === r ? null : r)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          {hasActiveFilter && (
+            <button
+              className="filter-clear"
+              onClick={() => { setSelectedReligion(null); setSelectedRegion(null); }}
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+
       {items.length === 0 ? (
-        <p className="page-status">No {tab}s for this event yet.</p>
+        <p className="page-status">
+          {hasActiveFilter ? 'No results for this combination.' : `No ${tab}s for this event yet.`}
+        </p>
       ) : (
         <div className="event-detail-grid">
           {items.map((item) => {
@@ -71,7 +154,12 @@ export default function EventDetailPage() {
               <Link to={href} key={`${item.type}-${item.id}`} className="event-detail-card">
                 <div className="event-detail-card-placeholder" />
                 <div className="event-detail-card-body">
-                  <span className={`explore-card-type ${item.type}`}>{item.type}</span>
+                  <div className="event-detail-card-badges">
+                    <span className={`explore-card-type ${item.type}`}>{item.type}</span>
+                    {item.religion && item.religion !== 'Universal' && (
+                      <span className="event-detail-card-religion">{item.religion}</span>
+                    )}
+                  </div>
                   <p className="event-detail-card-title">{item.title}</p>
                   {item.region && (
                     <span className="event-detail-card-region">{item.region}</span>
