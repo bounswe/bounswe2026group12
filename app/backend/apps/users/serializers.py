@@ -33,8 +33,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'email', 'username', 'bio', 'region', 'preferred_language', 'role', 'created_at',
             'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
+            'is_contactable',
         ]
-        read_only_fields = fields
+        read_only_fields = [
+            'id', 'email', 'username', 'role', 'created_at',
+        ]
 
 
 class StringTagListField(serializers.ListField):
@@ -62,4 +65,7 @@ class CulturalProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests']
+        fields = [
+            'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
+            'is_contactable',
+        ]

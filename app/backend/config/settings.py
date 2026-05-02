@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third-party
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -61,6 +62,7 @@ AUTH_USER_MODEL = 'users.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -131,6 +133,9 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,       # Old refresh token is immediately invalidated
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# CORS Settings
+CORS_ALLOW_ALL_ORIGINS = True  # Only for development
 
 
 # Password validation
