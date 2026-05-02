@@ -56,6 +56,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Django required fields
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_contactable = models.BooleanField(
+        default=True,
+        help_text='Whether other users can start new message threads with this user.'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
