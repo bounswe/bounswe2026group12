@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import SkipLink from './components/SkipLink';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -25,8 +26,9 @@ import NotFoundPage from './pages/NotFoundPage';
 export default function App() {
   return (
     <>
+      <SkipLink />
       <Navbar />
-      <div className="page-wrapper">
+      <div className="page-wrapper" id="main-content">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

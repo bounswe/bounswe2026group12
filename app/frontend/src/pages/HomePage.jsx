@@ -1,9 +1,10 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRegions } from '../services/searchService';
 import { fetchDailyCulturalContent } from '../services/culturalContentService';
 import DailyCulturalSection from '../components/DailyCulturalSection';
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import './HomePage.css';
 
 export default function HomePage() {
@@ -16,6 +17,10 @@ export default function HomePage() {
   const [mealType, setMealType] = useState('');
   const [regions, setRegions] = useState([]);
   const [dailyCards, setDailyCards] = useState([]);
+  const searchInputRef = useRef(null);
+
+  // Press "/" to focus the search box
+  useKeyboardShortcuts({ '/': () => searchInputRef.current?.focus() });
   const [dismissedNudge, setDismissedNudge] = useState(() => localStorage.getItem('onboarding_nudge_dismissed') === 'true');
 
   useEffect(() => {
@@ -89,12 +94,14 @@ export default function HomePage() {
           <label htmlFor="search-input" className="sr-only">Search</label>
           <input
             id="search-input"
+            ref={searchInputRef}
             role="searchbox"
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search recipes and stories…"
+            placeholder="Search recipes and stories… (press / to focus)"
             className="home-search-input"
+            aria-label="Search recipes and stories"
           />
           <button type="submit" className="btn btn-primary home-search-btn">Search</button>
         </div>
