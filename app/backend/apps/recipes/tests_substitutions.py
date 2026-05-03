@@ -73,7 +73,12 @@ class IngredientSubstitutionModelTests(TestCase):
             match_type=IngredientSubstitution.MatchType.TEXTURE,
             closeness=Decimal('0.6'),
         )
-        self.assertEqual(IngredientSubstitution.objects.count(), 2)
+        self.assertEqual(
+            IngredientSubstitution.objects.filter(
+                from_ingredient=self.butter, to_ingredient=self.olive_oil,
+            ).count(),
+            2,
+        )
 
     def test_reverse_direction_is_a_separate_row(self):
         IngredientSubstitution.objects.create(
@@ -88,4 +93,29 @@ class IngredientSubstitutionModelTests(TestCase):
             match_type=IngredientSubstitution.MatchType.FLAVOR,
             closeness=Decimal('0.65'),
         )
-        self.assertEqual(IngredientSubstitution.objects.count(), 2)
+        self.assertEqual(
+            IngredientSubstitution.objects.filter(
+                from_ingredient__in=[self.butter, self.olive_oil],
+                to_ingredient__in=[self.butter, self.olive_oil],
+            ).count(),
+            2,
+        )
+
+
+class SubstitutionSeedTests(TestCase):
+    """The seed migration must populate a known anchor pair."""
+
+    def test_butter_to_olive_oil_flavor_pair_seeded(self):
+        pair = IngredientSubstitution.objects.filter(
+            from_ingredient__name='Butter',
+            to_ingredient__name='Olive Oil',
+            match_type=IngredientSubstitution.MatchType.FLAVOR,
+        ).first()
+        self.assertIsNotNone(pair, 'Seed migration should populate Butter→Olive Oil (flavor)')
+        self.assertEqual(pair.closeness, Decimal('0.70'))
+        self.assertIn('75% volume', pair.notes)
+
+    def test_seed_count_is_in_expected_range(self):
+        count = IngredientSubstitution.objects.count()
+        self.assertGreaterEqual(count, 40, 'Expected at least 40 seeded substitutions')
+        self.assertLessEqual(count, 60, 'Seed should be focused, not exhaustive')
