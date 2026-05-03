@@ -4,15 +4,20 @@ import operator
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
-from .models import Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote
+from .models import (
+    Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote,
+    IngredientSubstitution,
+)
 from .serializers import (
     IngredientLookupSerializer,
     IngredientSerializer,
+    IngredientSubstituteSerializer,
     RecipeSerializer,
     RegionSerializer,
     UnitLookupSerializer,
@@ -153,6 +158,38 @@ class IngredientViewSet(ModeratedLookupViewSet):
     queryset = Ingredient.objects.all().order_by(Lower('name'), 'id')
     serializer_class = IngredientSerializer
     lookup_serializer_class = IngredientLookupSerializer
+
+    def get_permissions(self):
+        # The parent's get_permissions hardcodes IsAdminUser for any action
+        # outside list/retrieve/create. Honor the @action's permission_classes
+        # for the public `substitutes` action.
+        if self.action == 'substitutes':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+
+    @action(detail=True, methods=['get'], url_path='substitutes', permission_classes=[permissions.AllowAny])
+    def substitutes(self, request, pk=None):
+        """Return categorized, ranked substitution suggestions for an approved ingredient."""
+        # Cannot use self.get_object(): the parent's get_queryset() only filters
+        # is_approved=True for the list/retrieve actions, so a custom action
+        # would silently return unapproved ingredients.
+        source = get_object_or_404(Ingredient, pk=pk, is_approved=True)
+
+        rows = (
+            IngredientSubstitution.objects
+            .filter(from_ingredient_id=source.id, to_ingredient__is_approved=True)
+            .select_related('to_ingredient')
+            .order_by('-closeness', Lower('to_ingredient__name'))
+        )
+
+        grouped = {choice: [] for choice in IngredientSubstitution.MatchType.values}
+        for row in rows:
+            grouped[row.match_type].append(IngredientSubstituteSerializer(row).data)
+
+        return Response({
+            'ingredient': {'id': source.id, 'name': source.name},
+            **grouped,
+        })
 
 class UnitViewSet(ModeratedLookupViewSet):
     """ViewSet for list and management of Units."""
