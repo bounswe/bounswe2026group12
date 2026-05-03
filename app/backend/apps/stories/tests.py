@@ -120,6 +120,35 @@ class StoryRetrieveAPITest(APITestCase):
         titles = [s['title'] for s in response.data]
         self.assertIn("Draft Story", titles)
 
+    def test_authenticated_list_includes_rank_fields_and_orders_matches_first(self):
+        region, _ = Region.objects.get_or_create(name="Aegean")
+        recipe = Recipe.objects.create(
+            title="Aegean Dish",
+            description="Regional recipe",
+            region=region,
+            author=self.user,
+            is_published=True,
+        )
+        Story.objects.create(
+            title="Aegean Memory",
+            body="A regional memory",
+            author=self.user,
+            linked_recipe=recipe,
+            is_published=True,
+        )
+        reader = User.objects.create_user(
+            email="aegean-reader@example.com",
+            username="aegeanreader",
+            password="Pass123!",
+            regional_ties=["Aegean"],
+        )
+        self.client.force_authenticate(user=reader)
+        response = self.client.get(reverse('story-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['title'], "Aegean Memory")
+        self.assertEqual(response.data[0]['rank_reason'], "regional_match")
+        self.assertGreater(response.data[0]['rank_score'], 0)
+
 
 class StoryPublishAPITest(APITestCase):
     """Tests for publish/unpublish actions (#177)."""

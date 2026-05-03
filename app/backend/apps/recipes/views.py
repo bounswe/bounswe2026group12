@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
+from apps.common.personalization import rank_items, score_recipe
 from .models import Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote
 from .serializers import (
     IngredientLookupSerializer,
@@ -80,6 +81,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             qs = apply_recipe_filters(qs, self.request.query_params)
         return qs
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        items = rank_items(list(queryset), request.user, score_recipe)
+
+        page = self.paginate_queryset(items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(items, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
