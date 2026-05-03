@@ -167,7 +167,7 @@ class IngredientViewSet(ModeratedLookupViewSet):
             return [permissions.AllowAny()]
         return super().get_permissions()
 
-    @action(detail=True, methods=['get'], url_path='substitutes', permission_classes=[permissions.AllowAny])
+    @action(detail=True, methods=['get'], url_path='substitutes')
     def substitutes(self, request, pk=None):
         """Return categorized, ranked substitution suggestions for an approved ingredient."""
         # Cannot use self.get_object(): the parent's get_queryset() only filters
