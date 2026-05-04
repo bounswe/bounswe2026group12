@@ -5,6 +5,7 @@ import {
   deleteComment,
   fetchCommentsForRecipe,
   postComment,
+  voteOnComment,
   type Comment,
   type CommentType,
 } from '../../services/commentService';
@@ -239,6 +240,27 @@ function CommentNodeView({
   depth?: number;
 }) {
   const canDelete = myUserId != null && myUserId === node.author;
+  const [helpfulCount, setHelpfulCount] = useState(node.helpful_count ?? 0);
+  const [hasVoted, setHasVoted] = useState(node.has_voted ?? false);
+  const [voting, setVoting] = useState(false);
+
+  const onVote = async () => {
+    if (!isAuthenticated || voting) return;
+    const prevVoted = hasVoted;
+    const prevCount = helpfulCount;
+    setHasVoted(!prevVoted);
+    setHelpfulCount(prevVoted ? prevCount - 1 : prevCount + 1);
+    setVoting(true);
+    try {
+      await voteOnComment(node.id);
+    } catch {
+      setHasVoted(prevVoted);
+      setHelpfulCount(prevCount);
+    } finally {
+      setVoting(false);
+    }
+  };
+
   return (
     <View style={[styles.commentItem, depth > 0 && styles.commentItemReply]}>
       <View style={styles.commentHeader}>
@@ -252,6 +274,18 @@ function CommentNodeView({
       </View>
       <Text style={styles.body}>{node.body}</Text>
       <View style={styles.actions}>
+        <Pressable
+          onPress={() => void onVote()}
+          disabled={!isAuthenticated || voting}
+          hitSlop={6}
+          accessibilityRole="button"
+          accessibilityLabel={hasVoted ? 'Remove helpful vote' : 'Mark as helpful'}
+          style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+        >
+          <Text style={[styles.actionText, hasVoted && styles.votedText, (!isAuthenticated || voting) && styles.disabledText]}>
+            {hasVoted ? '▲ Helpful' : '△ Helpful'}{helpfulCount > 0 ? ` (${helpfulCount})` : ''}
+          </Text>
+        </Pressable>
         {isAuthenticated && depth === 0 ? (
           <Pressable
             onPress={() => onReply(node.id)}
@@ -382,6 +416,8 @@ const styles = StyleSheet.create({
   body: { fontSize: 15, color: tokens.colors.text, lineHeight: 22 },
   actions: { flexDirection: 'row', gap: 16, marginTop: 4 },
   actionText: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary },
+  votedText: { color: tokens.colors.accentGreen },
+  disabledText: { opacity: 0.4 },
   destructive: { color: '#991b1b' },
   repliesWrap: { marginTop: 10, marginLeft: 16, gap: 10 },
 });
