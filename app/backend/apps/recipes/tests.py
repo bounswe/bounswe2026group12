@@ -33,8 +33,8 @@ class PublicEndpointTest(APITestCase):
     def test_recipe_list_is_public(self):
         response = self.client.get(self.recipe_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['title'], "Hummus")
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['title'], "Hummus")
 
     def test_recipe_detail_is_public(self):
         response = self.client.get(self.recipe_detail_url)

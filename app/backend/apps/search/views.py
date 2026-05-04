@@ -7,9 +7,11 @@ from apps.common.personalization import (
     rank_payloads,
     score_recipe,
     score_story,
+    has_profile_terms,
+    WEIGHTS,
 )
 from apps.recipes.models import Recipe
-from apps.recipes.views import apply_recipe_filters
+from apps.recipes.filters import apply_recipe_filters
 from apps.stories.models import Story
 
 
@@ -74,8 +76,18 @@ class GlobalSearchView(APIView):
 
         recipes = apply_recipe_filters(recipes, request.query_params)
 
-        ranked_recipes = rank_items(list(recipes), request.user, score_recipe)
-        ranked_stories = rank_items(list(stories), request.user, score_story)
+        personalize = request.query_params.get('personalize') != '0'
+        use_ranking = personalize and has_profile_terms(request.user)
+
+        if use_ranking:
+            # Soft cap at 500 for each to avoid materialization cliff
+            ranked_recipes = rank_items(recipes[:500], request.user, score_recipe)
+            ranked_stories = rank_items(stories[:500], request.user, score_story)
+        else:
+            # Skip ranking, use standard ordering (id/recency)
+            ranked_recipes = recipes[:100]
+            ranked_stories = stories[:100]
+
         recipe_results = [self._serialize_recipe(r) for r in ranked_recipes]
         story_results = [self._serialize_story(s) for s in ranked_stories]
         unified_results = rank_payloads([
@@ -136,8 +148,32 @@ class RecommendationsView(APIView):
             'linked_recipe__dietary_tags', 'linked_recipe__event_tags',
         ).filter(is_published=True)
 
-        ranked_recipes = rank_items(list(recipes), request.user, score_recipe)
-        ranked_stories = rank_items(list(stories), request.user, score_story)
+        personalize = request.query_params.get('personalize') != '0'
+        use_ranking = personalize and has_profile_terms(request.user)
+
+        # Dynamic weights based on surface
+        current_weights = WEIGHTS.copy()
+        if surface == 'map':
+            current_weights['regional'] *= 1.5
+        elif surface == 'feed':
+            # Recency is already handled in rank_items via sort keys,
+            # but we could boost it further if needed.
+            pass
+
+        if use_ranking:
+            # Custom scorer with dynamic weights
+            ranked_recipes = rank_items(
+                recipes[:500], request.user, score_recipe, 
+                scorer_kwargs={'weights': current_weights}
+            )
+            ranked_stories = rank_items(
+                stories[:500], request.user, score_story,
+                scorer_kwargs={'weights': current_weights}
+            )
+        else:
+            ranked_recipes = recipes[:limit]
+            ranked_stories = stories[:limit]
+
         results = rank_payloads([
             self._serialize_recipe(recipe) for recipe in ranked_recipes
         ] + [

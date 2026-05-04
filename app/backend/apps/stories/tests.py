@@ -99,7 +99,7 @@ class StoryRetrieveAPITest(APITestCase):
     def test_public_list_shows_published_only(self):
         response = self.client.get(reverse('story-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        titles = [s['title'] for s in response.data]
+        titles = [s['title'] for s in response.data['results']]
         self.assertIn("Published Story", titles)
         self.assertNotIn("Draft Story", titles)
 
@@ -117,7 +117,7 @@ class StoryRetrieveAPITest(APITestCase):
     def test_author_can_see_own_drafts(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('story-list'))
-        titles = [s['title'] for s in response.data]
+        titles = [s['title'] for s in response.data['results']]
         self.assertIn("Draft Story", titles)
 
     def test_authenticated_list_includes_rank_fields_and_orders_matches_first(self):
@@ -145,9 +145,9 @@ class StoryRetrieveAPITest(APITestCase):
         self.client.force_authenticate(user=reader)
         response = self.client.get(reverse('story-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]['title'], "Aegean Memory")
-        self.assertEqual(response.data[0]['rank_reason'], "regional_match")
-        self.assertGreater(response.data[0]['rank_score'], 0)
+        self.assertEqual(response.data['results'][0]['title'], "Aegean Memory")
+        self.assertEqual(response.data['results'][0]['rank_reason'], "regional_match")
+        self.assertGreater(response.data['results'][0]['rank_score'], 0)
 
 
 class StoryPublishAPITest(APITestCase):

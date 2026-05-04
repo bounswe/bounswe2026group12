@@ -15,6 +15,8 @@ class StoryViewSet(viewsets.ModelViewSet):
     serializer_class = StorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+    from apps.common.pagination import StandardResultsSetPagination
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -24,8 +26,21 @@ class StoryViewSet(viewsets.ModelViewSet):
         return qs
 
     def list(self, request, *args, **kwargs):
+        personalize = request.query_params.get('personalize') != '0'
+        from apps.common.personalization import has_profile_terms
+        
+        if not personalize or not has_profile_terms(request.user):
+            return super().list(request, *args, **kwargs)
+
         queryset = self.filter_queryset(self.get_queryset())
-        items = rank_items(list(queryset), request.user, score_story)
+        # Soft cap at 500 items
+        items = rank_items(queryset[:500], request.user, score_story)
+        
+        page = self.paginate_queryset(items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(items, many=True)
         return Response(serializer.data)
 
