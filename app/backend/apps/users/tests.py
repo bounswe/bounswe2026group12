@@ -248,8 +248,8 @@ class TokenRefreshRaceConditionTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class CulturalOnboardingTest(APITestCase):
-    """Tests for cultural onboarding profile fields (M4-12 / #343)."""
+class UserPreferencesTest(APITestCase):
+    """Tests for user preference and cultural onboarding fields (M4-12 / #343, M4-11 / #342)."""
 
     CULTURAL_FIELDS = ['cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests']
 
@@ -334,16 +334,26 @@ class CulturalOnboardingTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_patch_ignores_non_cultural_fields(self):
+    def test_patch_ignores_sensitive_fields(self):
+        """
+        Regression test: PATCH /api/users/me/ should only update allowed preference fields.
+        It must ignore sensitive fields like email, role, or is_staff to prevent privilege escalation.
+        """
         response = self.client.patch(
             '/api/users/me/',
-            {'email': 'hijack@example.com', 'role': 'admin', 'cultural_interests': ['Vegan']},
+            {
+                'email': 'hijack@example.com',
+                'role': 'admin',
+                'is_staff': True,
+                'cultural_interests': ['Vegan']
+            },
             format='json',
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, 'cultural@example.com')
         self.assertEqual(self.user.role, User.Role.USER)
+        self.assertFalse(self.user.is_staff)
         self.assertEqual(self.user.cultural_interests, ['Vegan'])
 
 

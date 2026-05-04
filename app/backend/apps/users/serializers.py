@@ -57,7 +57,7 @@ class StringTagListField(serializers.ListField):
         return super().to_internal_value(data)
 
 
-class CulturalProfileUpdateSerializer(serializers.ModelSerializer):
+class UserPreferencesUpdateSerializer(serializers.ModelSerializer):
     cultural_interests = StringTagListField()
     regional_ties = StringTagListField()
     religious_preferences = StringTagListField()

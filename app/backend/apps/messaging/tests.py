@@ -116,7 +116,7 @@ class MessagingTests(APITestCase):
 
         res = self.client.post(url, data)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertIn('disabled', res.data['detail'])
+        self.assertEqual(res.data['detail'], 'This user has disabled new message threads.')
 
     def test_existing_thread_works_even_if_uncontactable(self):
         """
