@@ -5,6 +5,7 @@ import {
   deleteComment,
   fetchCommentsForRecipe,
   postComment,
+  toggleCommentVote,
   type Comment,
   type CommentType,
 } from '../../services/commentService';
@@ -49,6 +50,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
   const [replyTo, setReplyTo] = useState<number | null>(null);
+  const [votePendingIds, setVotePendingIds] = useState<number[]>([]);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -104,6 +106,29 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
         },
       },
     ]);
+  };
+
+  const onToggleVote = async (id: number) => {
+    if (votePendingIds.includes(id)) return;
+    const target = comments.find((c) => c.id === id);
+    if (!target) return;
+    const nextHasVoted = !target.has_voted;
+    const nextCount = Math.max(0, target.helpful_count + (nextHasVoted ? 1 : -1));
+    setVotePendingIds((prev) => [...prev, id]);
+    setComments((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, has_voted: nextHasVoted, helpful_count: nextCount } : c)),
+    );
+    try {
+      await toggleCommentVote(id);
+    } catch {
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, has_voted: target.has_voted, helpful_count: target.helpful_count } : c,
+        ),
+      );
+    } finally {
+      setVotePendingIds((prev) => prev.filter((x) => x !== id));
+    }
   };
 
   const myUserId = user?.id != null ? Number(user.id) : null;
@@ -214,6 +239,8 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
               myUserId={myUserId}
               onReply={(id) => setReplyTo(id)}
               onDelete={onDelete}
+              onToggleVote={onToggleVote}
+              isVotePending={(id) => votePendingIds.includes(id)}
               isAuthenticated={isAuthenticated}
             />
           ))}
@@ -228,6 +255,8 @@ function CommentNodeView({
   myUserId,
   onReply,
   onDelete,
+  onToggleVote,
+  isVotePending,
   isAuthenticated,
   depth = 0,
 }: {
@@ -235,10 +264,13 @@ function CommentNodeView({
   myUserId: number | null;
   onReply: (id: number) => void;
   onDelete: (id: number) => void;
+  onToggleVote: (id: number) => void;
+  isVotePending: (id: number) => boolean;
   isAuthenticated: boolean;
   depth?: number;
 }) {
   const canDelete = myUserId != null && myUserId === node.author;
+  const votePending = isVotePending(node.id);
   return (
     <View style={[styles.commentItem, depth > 0 && styles.commentItemReply]}>
       <View style={styles.commentHeader}>
@@ -251,6 +283,27 @@ function CommentNodeView({
         <Text style={styles.timestamp}>{formatTime(node.created_at)}</Text>
       </View>
       <Text style={styles.body}>{node.body}</Text>
+      <View style={styles.feedbackRow}>
+        <Pressable
+          onPress={() => onToggleVote(node.id)}
+          disabled={!isAuthenticated || votePending}
+          hitSlop={6}
+          accessibilityRole="button"
+          accessibilityState={{ selected: node.has_voted, disabled: !isAuthenticated || votePending }}
+          accessibilityLabel={node.has_voted ? 'Unmark helpful' : 'Mark helpful'}
+          style={({ pressed }) => [
+            styles.helpfulBtn,
+            node.has_voted && styles.helpfulBtnActive,
+            (!isAuthenticated || votePending) && styles.helpfulBtnDisabled,
+            pressed && { opacity: 0.85 },
+          ]}
+        >
+          <Text style={[styles.helpfulText, node.has_voted && styles.helpfulTextActive]}>
+            {votePending ? 'Updating…' : node.has_voted ? 'Helpful' : 'Mark Helpful'}
+          </Text>
+        </Pressable>
+        <Text style={styles.helpfulCount}>Helpful: {node.helpful_count}</Text>
+      </View>
       <View style={styles.actions}>
         {isAuthenticated && depth === 0 ? (
           <Pressable
@@ -282,6 +335,8 @@ function CommentNodeView({
               myUserId={myUserId}
               onReply={onReply}
               onDelete={onDelete}
+              onToggleVote={onToggleVote}
+              isVotePending={isVotePending}
               isAuthenticated={isAuthenticated}
               depth={depth + 1}
             />
@@ -380,6 +435,23 @@ const styles = StyleSheet.create({
   qBadgeText: { fontSize: 11, fontWeight: '800', color: tokens.colors.textOnDark },
   timestamp: { fontSize: 12, color: tokens.colors.textMuted, marginLeft: 'auto' },
   body: { fontSize: 15, color: tokens.colors.text, lineHeight: 22 },
+  feedbackRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6, flexWrap: 'wrap' },
+  helpfulBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    borderWidth: 1.5,
+    borderColor: '#000000',
+    backgroundColor: tokens.colors.accentMustard,
+  },
+  helpfulBtnActive: {
+    backgroundColor: tokens.colors.accentGreen,
+    borderColor: '#000000',
+  },
+  helpfulBtnDisabled: { opacity: 0.6 },
+  helpfulText: { fontSize: 13, fontWeight: '800', color: '#000000' },
+  helpfulTextActive: { color: '#FAF7EF' },
+  helpfulCount: { fontSize: 13, fontWeight: '700', color: tokens.colors.surfaceDark },
   actions: { flexDirection: 'row', gap: 16, marginTop: 4 },
   actionText: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary },
   destructive: { color: '#991b1b' },
