@@ -58,7 +58,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_contactable = models.BooleanField(
         default=True,
-        help_text='Whether other users can start new message threads with this user.'
+        help_text='Whether other users can start new message threads with this user. '
+                  'Note: A contact-disabled user can still initiate threads outbound.'
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
