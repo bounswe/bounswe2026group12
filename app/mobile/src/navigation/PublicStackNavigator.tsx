@@ -3,6 +3,7 @@ import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
 import MessageThreadScreen from '../screens/MessageThreadScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
@@ -86,6 +87,11 @@ export function PublicStackNavigator() {
         name="MessageThread"
         component={MessageThreadScreen}
         options={{ title: 'Conversation' }}
+      />
+      <Stack.Screen
+        name="Onboarding"
+        component={OnboardingScreen}
+        options={{ title: 'Cultural Onboarding' }}
       />
     </Stack.Navigator>
   );
