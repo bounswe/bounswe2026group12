@@ -7,6 +7,11 @@ export type AuthUser = {
   id: string;
   username: string;
   email: string;
+  cultural_interests?: string[];
+  regional_ties?: string[];
+  religious_preferences?: string[];
+  event_interests?: string[];
+  is_contactable?: boolean;
 };
 
 export type AuthSuccess = {
