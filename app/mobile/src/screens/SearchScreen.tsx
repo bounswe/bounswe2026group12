@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -10,10 +11,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { EmptyState } from '../components/search/EmptyState';
+import { FilterChipRail } from '../components/search/FilterChipRail';
 import { SearchResultCard } from '../components/search/SearchResultCard';
 import type { RootStackParamList } from '../navigation/types';
-import { search, type SearchResultItem } from '../services/searchService';
+import { search, type SearchFilters, type SearchResultItem } from '../services/searchService';
 import { fetchStoryById } from '../services/storyService';
+import { fetchDietaryTags, fetchEventTags } from '../services/tagsService';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Search'>;
@@ -37,6 +40,43 @@ export default function SearchScreen({ navigation, route }: Props) {
   const [error, setError] = useState<string | null>(null);
   const storyThumbCacheRef = useRef<Map<string, string | null>>(new Map());
 
+  const [dietOptions, setDietOptions] = useState<string[]>([]);
+  const [eventOptions, setEventOptions] = useState<string[]>([]);
+  const [tagsLoading, setTagsLoading] = useState(true);
+  const [dietInclude, setDietInclude] = useState<string[]>([]);
+  const [dietExclude, setDietExclude] = useState<string[]>([]);
+  const [eventInclude, setEventInclude] = useState<string[]>([]);
+  const [eventExclude, setEventExclude] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [diets, events] = await Promise.all([fetchDietaryTags(), fetchEventTags()]);
+        if (cancelled) return;
+        setDietOptions(diets.map((t) => t.name));
+        setEventOptions(events.map((t) => t.name));
+      } catch {
+        if (cancelled) return;
+        setDietOptions([]);
+        setEventOptions([]);
+      } finally {
+        if (!cancelled) setTagsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filtersKey = useMemo(
+    () => [...dietInclude, '|', ...dietExclude, '|', ...eventInclude, '|', ...eventExclude].join(','),
+    [dietInclude, dietExclude, eventInclude, eventExclude],
+  );
+
+  const hasActiveFilters =
+    dietInclude.length + dietExclude.length + eventInclude.length + eventExclude.length > 0;
+
   useEffect(() => {
     if (route.params?.query != null) setQuery(route.params.query);
     if (route.params?.region != null) setRegion(route.params.region);
@@ -46,7 +86,7 @@ export default function SearchScreen({ navigation, route }: Props) {
   useEffect(() => {
     const q = query.trim();
     // Keep pristine state empty without calling backend.
-    if (!q && !region.trim()) {
+    if (!q && !region.trim() && !hasActiveFilters) {
       setResults([]);
       setError(null);
       setLoading(false);
@@ -55,9 +95,15 @@ export default function SearchScreen({ navigation, route }: Props) {
     let cancelled = false;
     setLoading(true);
     setError(null);
+    const filters: SearchFilters = {
+      diet: dietInclude,
+      diet_exclude: dietExclude,
+      event: eventInclude,
+      event_exclude: eventExclude,
+    };
     void (async () => {
       try {
-        const data = await search(q, region.trim() || undefined);
+        const data = await search(q, region.trim() || undefined, filters);
         if (cancelled) return;
         setResults(data);
 
@@ -91,12 +137,12 @@ export default function SearchScreen({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [query, region]);
+  }, [query, region, filtersKey, hasActiveFilters]);
 
   const selectedRegionLabel =
     REGIONS.find((r) => r.value === region)?.label ?? 'All regions';
 
-  const isPristine = query.trim() === '' && region.trim() === '';
+  const isPristine = query.trim() === '' && region.trim() === '' && !hasActiveFilters;
 
   function onPressItem(item: SearchResultItem) {
     if (item.kind === 'recipe') {
@@ -125,7 +171,11 @@ export default function SearchScreen({ navigation, route }: Props) {
 
         <View style={styles.filtersRow}>
           <Text style={styles.filterLabel}>Region</Text>
-          <View style={styles.pills}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.regionRail}
+          >
             {REGIONS.map((opt) => {
               const active = opt.value === region;
               return (
@@ -146,7 +196,52 @@ export default function SearchScreen({ navigation, route }: Props) {
                 </Pressable>
               );
             })}
+          </ScrollView>
+        </View>
+
+        <View style={styles.tagFilters}>
+          <View style={styles.tagHeaderRow}>
+            <Text style={styles.filterLabel}>Tags (tap to include, again to exclude)</Text>
+            {hasActiveFilters ? (
+              <Pressable
+                onPress={() => {
+                  setDietInclude([]);
+                  setDietExclude([]);
+                  setEventInclude([]);
+                  setEventExclude([]);
+                  setRegion('');
+                }}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel="Clear all filters"
+                style={({ pressed }) => [styles.clearBtn, pressed && { opacity: 0.85 }]}
+              >
+                <Text style={styles.clearBtnText}>Clear filters</Text>
+              </Pressable>
+            ) : null}
           </View>
+          <FilterChipRail
+            label="Dietary"
+            options={dietOptions}
+            include={dietInclude}
+            exclude={dietExclude}
+            onChange={({ include, exclude }) => {
+              setDietInclude(include);
+              setDietExclude(exclude);
+            }}
+            loading={tagsLoading}
+          />
+          <FilterChipRail
+            label="Event"
+            options={eventOptions}
+            include={eventInclude}
+            exclude={eventExclude}
+            onChange={({ include, exclude }) => {
+              setEventInclude(include);
+              setEventExclude(exclude);
+            }}
+            loading={tagsLoading}
+          />
         </View>
 
         <FlatList
@@ -232,18 +327,29 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontFamily: tokens.typography.display.fontFamily,
   },
-  pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  regionRail: { gap: 8, paddingVertical: 4 },
   pill: {
     paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: tokens.radius.pill,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: '#000000',
     backgroundColor: 'transparent',
   },
-  pillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.primary },
-  pillText: { fontSize: 14, fontWeight: '700', color: tokens.colors.text },
-  pillTextActive: { color: tokens.colors.text },
+  pillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: '#000000' },
+  pillText: { fontSize: 13, fontWeight: '800', color: '#000000' },
+  pillTextActive: { color: '#FAF7EF' },
+  tagFilters: { gap: 10, marginBottom: 10 },
+  tagHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  clearBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    borderWidth: 1.5,
+    borderColor: '#000000',
+    backgroundColor: '#EFBF04',
+  },
+  clearBtnText: { fontSize: 12, fontWeight: '800', color: '#000000' },
   grid: { paddingBottom: 24, gap: 12 },
   gridRow: { gap: 12 },
   gridItem: { flex: 1 },
