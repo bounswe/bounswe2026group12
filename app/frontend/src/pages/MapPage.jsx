@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { fetchMapRegions } from '../services/mapService';
+import { getRegionTheme } from '../data/regionThemes';
 import './MapPage.css';
 
 export default function MapPage() {
@@ -19,9 +20,16 @@ export default function MapPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const theme = selected ? getRegionTheme(selected.name) : {};
+  // Extract only CSS variable entries (keys starting with --) for inline style
+  const themeVars = Object.fromEntries(
+    Object.entries(theme).filter(([k]) => k.startsWith('--'))
+  );
+
   return (
-    <div className="map-page">
+    <div className="map-page" style={themeVars}>
       <div className="map-page-header">
+        <div className="map-page-accent-bar" aria-hidden="true" />
         <h1>Discover by Region</h1>
         <p className="map-page-subtitle">
           Explore recipes and stories from culinary regions around Turkey and beyond.
@@ -41,15 +49,18 @@ export default function MapPage() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               />
-              {regions.map((region) => (
+              {regions.map((region) => {
+                const isActive = selected?.id === region.id;
+                const markerTheme = getRegionTheme(region.name);
+                return (
                 <CircleMarker
                   key={region.id}
                   center={[region.lat, region.lng]}
-                  radius={selected?.id === region.id ? 16 : 11}
+                  radius={isActive ? 16 : 11}
                   pathOptions={{
-                    color: selected?.id === region.id ? '#A3401A' : '#C4521E',
-                    fillColor: selected?.id === region.id ? '#C4521E' : '#FAF7EF',
-                    fillOpacity: selected?.id === region.id ? 0.9 : 0.7,
+                    color: markerTheme['--rt-primary-hover'] ?? '#A3401A',
+                    fillColor: isActive ? (markerTheme['--rt-marker-fill'] ?? '#C4521E') : '#FAF7EF',
+                    fillOpacity: isActive ? 0.9 : 0.7,
                     weight: 2,
                   }}
                   eventHandlers={{ click: () => setSelected(region) }}
@@ -58,7 +69,8 @@ export default function MapPage() {
                     {region.name}
                   </Tooltip>
                 </CircleMarker>
-              ))}
+                );
+              })}
             </MapContainer>
           )}
           {loading && <div className="map-loading">Loading map…</div>}
