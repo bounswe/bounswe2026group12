@@ -68,6 +68,40 @@ class RecipeIngredient(models.Model):
     def __str__(self):
         return f"{self.amount} {self.unit} of {self.ingredient} in {self.recipe}"
 
+class IngredientSubstitution(models.Model):
+    """Directed substitution edge between two ingredients, typed by match category."""
+    class MatchType(models.TextChoices):
+        FLAVOR = 'flavor', 'Flavor'
+        TEXTURE = 'texture', 'Texture'
+        CHEMICAL = 'chemical', 'Chemical'
+
+    from_ingredient = models.ForeignKey(
+        Ingredient, on_delete=models.CASCADE, related_name='outgoing_substitutions',
+    )
+    to_ingredient = models.ForeignKey(
+        Ingredient, on_delete=models.CASCADE, related_name='incoming_substitutions',
+    )
+    match_type = models.CharField(max_length=10, choices=MatchType.choices)
+    closeness = models.DecimalField(max_digits=3, decimal_places=2)
+    notes = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('from_ingredient', 'to_ingredient', 'match_type')
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(closeness__gte=0) & models.Q(closeness__lte=1),
+                name='substitution_closeness_range',
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(from_ingredient=models.F('to_ingredient')),
+                name='substitution_no_self_loop',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.from_ingredient} → {self.to_ingredient} ({self.match_type})"
+
 class Comment(models.Model):
     """Comment or Question on a Recipe."""
     COMMENT_TYPES = (
