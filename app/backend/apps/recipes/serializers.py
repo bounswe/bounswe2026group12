@@ -107,6 +107,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients_write = RecipeIngredientWriteSerializer(many=True, write_only=True, required=False)
     dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
     event_tags = EventTagLookupSerializer(many=True, read_only=True)
+    rank_score = serializers.SerializerMethodField()
+    rank_reason = serializers.SerializerMethodField()
     dietary_tag_ids = serializers.PrimaryKeyRelatedField(
         queryset=DietaryTag.objects.all(), source='dietary_tags',
         many=True, write_only=True, required=False,
@@ -124,8 +126,15 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_published', 'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'dietary_tag_ids', 'event_tag_ids',
+            'rank_score', 'rank_reason',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
+
+    def get_rank_score(self, obj):
+        return getattr(obj, 'rank_score', 0)
+
+    def get_rank_reason(self, obj):
+        return getattr(obj, 'rank_reason', None)
 
     def validate(self, data):
         if self.context['request'].method == 'POST':

@@ -180,6 +180,21 @@ class RecipeListFilterTest(RecipeFilterTestBase):
         response = self.client.get(self.URL, {'diet': ',  ,'})
         self.assertEqual(len(response.data['results']), 4)
 
+    def test_authenticated_list_includes_rank_fields_and_orders_matches_first(self):
+        user = User.objects.create_user(
+            email='ranked@example.com',
+            username='ranked',
+            password='Pass123!',
+            regional_ties=['Turkish'],
+        )
+        self.client.force_authenticate(user=user)
+        response = self.client.get(self.URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        first = response.data['results'][0]
+        self.assertEqual(first['title'], 'Lamb Pilaf')
+        self.assertEqual(first['rank_reason'], 'regional_match')
+        self.assertGreater(first['rank_score'], 0)
+
 
 class SearchFilterTest(RecipeFilterTestBase):
     """GET /api/search/ inherits the same filter axes."""

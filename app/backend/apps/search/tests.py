@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from apps.recipes.models import Recipe, Region
+from apps.recipes.models import DietaryTag, Recipe, Region
 from apps.stories.models import Story
 
 User = get_user_model()
@@ -13,8 +13,8 @@ class SearchAPITest(APITestCase):
 
     def setUp(self):
         self.url = reverse('global_search')
-        self.region_tr = Region.objects.create(name="Turkish")
-        self.region_it = Region.objects.create(name="Italian")
+        self.region_tr, _ = Region.objects.get_or_create(name="Turkish")
+        self.region_it, _ = Region.objects.get_or_create(name="Italian")
 
         self.user_tr = User.objects.create_user(
             email="tr@example.com", username="truser", password="Pass123!",
@@ -102,6 +102,30 @@ class SearchAPITest(APITestCase):
         self.assertEqual(recipe['result_type'], 'recipe')
         self.assertIn('region_tag', recipe)
         self.assertIn('author_username', recipe)
+        self.assertIn('rank_score', recipe)
+        self.assertIn('rank_reason', recipe)
+
+    def test_search_preserves_split_results_and_adds_unified_ranked_results(self):
+        response = self.client.get(self.url, {'q': 'Baklava'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('recipes', response.data)
+        self.assertIn('stories', response.data)
+        self.assertIn('results', response.data)
+        self.assertEqual(response.data['total_count'], 2)
+        self.assertEqual(len(response.data['results']), 2)
+
+    def test_authenticated_search_ranks_profile_matches_first(self):
+        user = User.objects.create_user(
+            email='italianfan@example.com',
+            username='italianfan',
+            password='Pass123!',
+            regional_ties=['Italian'],
+        )
+        self.client.force_authenticate(user=user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['results'][0]['title'], 'Pizza Margherita')
+        self.assertEqual(response.data['results'][0]['rank_reason'], 'regional_match')
 
     def test_search_total_count(self):
         response = self.client.get(self.url, {'q': 'Baklava'})
@@ -110,3 +134,77 @@ class SearchAPITest(APITestCase):
     def test_search_is_public(self):
         response = self.client.get(self.url, {'q': 'pizza'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class RecommendationsAPITest(APITestCase):
+    def setUp(self):
+        self.url = reverse('recommendations')
+        self.region_aegean, _ = Region.objects.get_or_create(name='Aegean')
+        self.region_italian, _ = Region.objects.get_or_create(name='Italian')
+        self.halal, _ = DietaryTag.objects.get_or_create(
+            name='Halal', defaults={'is_approved': True}
+        )
+        self.author = User.objects.create_user(
+            email='rec-author@example.com', username='recauthor', password='Pass123!'
+        )
+        self.aegean_recipe = Recipe.objects.create(
+            title='Aegean Salad',
+            description='Fresh regional plate',
+            region=self.region_aegean,
+            author=self.author,
+            is_published=True,
+        )
+        self.aegean_recipe.dietary_tags.set([self.halal])
+        self.italian_recipe = Recipe.objects.create(
+            title='Italian Pasta',
+            description='Classic pasta',
+            region=self.region_italian,
+            author=self.author,
+            is_published=True,
+        )
+        self.unpublished_recipe = Recipe.objects.create(
+            title='Private Recipe',
+            description='Hidden',
+            region=self.region_aegean,
+            author=self.author,
+            is_published=False,
+        )
+        self.story = Story.objects.create(
+            title='Aegean Story',
+            body='A story linked to the region',
+            author=self.author,
+            linked_recipe=self.aegean_recipe,
+            is_published=True,
+        )
+        self.unpublished_story = Story.objects.create(
+            title='Private Story',
+            body='Hidden',
+            author=self.author,
+            linked_recipe=self.aegean_recipe,
+            is_published=False,
+        )
+
+    def test_recommendations_is_public_and_respects_limit(self):
+        response = self.client.get(self.url, {'surface': 'map', 'limit': 2})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['surface'], 'map')
+        self.assertEqual(len(response.data['results']), 2)
+        titles = [item['title'] for item in response.data['results']]
+        self.assertNotIn('Private Recipe', titles)
+        self.assertNotIn('Private Story', titles)
+
+    def test_authenticated_recommendations_rank_matches_first(self):
+        user = User.objects.create_user(
+            email='rec-reader@example.com',
+            username='recreader',
+            password='Pass123!',
+            regional_ties=['Aegean'],
+            religious_preferences=['Halal'],
+        )
+        self.client.force_authenticate(user=user)
+        response = self.client.get(self.url, {'surface': 'recs'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        first = response.data['results'][0]
+        self.assertIn(first['title'], ['Aegean Salad', 'Aegean Story'])
+        self.assertGreater(first['rank_score'], 0)
+        self.assertEqual(first['rank_reason'], 'regional_match')

@@ -9,7 +9,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
+from apps.common.personalization import rank_items, score_recipe, has_profile_terms
 from .models import Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote
+from .filters import apply_recipe_filters
 from .serializers import (
     IngredientLookupSerializer,
     IngredientSerializer,
@@ -25,44 +27,8 @@ from .serializers import (
 )
 
 
-def _csv_param(params, name):
-    raw = params.get(name, '')
-    return [v.strip() for v in raw.split(',') if v.strip()]
 
-
-def _iexact_or(field, values):
-    if not values:
-        return None
-    return reduce(operator.or_, (Q(**{f'{field}__iexact': v}) for v in values))
-
-
-def apply_recipe_filters(qs, params):
-    """Apply rich filters (M4-15 / #346) across culture, event, diet, ingredient axes.
-
-    Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
-    comma-separated values. Within an axis: OR. Between axes: AND.
-    """
-    filter_map = [
-        ('region', 'region__name'),
-        ('diet', 'dietary_tags__name'),
-        ('event', 'event_tags__name'),
-        ('ingredient', 'recipe_ingredients__ingredient__name'),
-    ]
-    for param_name, field in filter_map:
-        pos = _iexact_or(field, _csv_param(params, param_name))
-        if pos is not None:
-            qs = qs.filter(pos)
-        neg = _iexact_or(field, _csv_param(params, f'{param_name}_exclude'))
-        if neg is not None:
-            qs = qs.exclude(neg)
-    return qs.distinct()
-
-from rest_framework.pagination import PageNumberPagination
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+from apps.common.pagination import StandardResultsSetPagination
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
@@ -80,6 +46,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             qs = apply_recipe_filters(qs, self.request.query_params)
         return qs
+
+    def list(self, request, *args, **kwargs):
+        personalize = request.query_params.get('personalize') != '0'
+        
+        # If no profile or opt-out, use standard lazy DB-paginated list
+        if not personalize or not has_profile_terms(request.user):
+            return super().list(request, *args, **kwargs)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        # Soft cap at 500 items for ranking to avoid materialization cliff
+        items = rank_items(queryset[:500], request.user, score_recipe)
+
+        page = self.paginate_queryset(items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(items, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
