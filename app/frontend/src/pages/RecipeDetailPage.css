@@ -63,6 +63,7 @@
   margin-bottom: 2rem;
 }
 
+/* ── Ingredients section ─────────── */
 .recipe-ingredients {
   border-top: 1.5px solid var(--color-border);
   padding-top: 1.5rem;
@@ -72,6 +73,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
@@ -80,6 +83,14 @@
   margin: 0;
 }
 
+.ingredients-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+/* ── Unit toggle (#377) ──────────── */
 .unit-toggle {
   display: flex;
   border: 1.5px solid var(--color-border);
@@ -98,35 +109,251 @@
   transition: background 0.15s, color 0.15s;
 }
 
-.unit-toggle-btn:hover {
-  color: var(--color-text);
-}
+.unit-toggle-btn:hover { color: var(--color-text); }
 
 .unit-toggle-btn.active {
   background: var(--color-primary);
   color: #fff;
 }
 
+/* ── Ingredient list ─────────────── */
 .ingredients-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .ingredient-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.6rem 0;
+  flex-direction: column;
   border-bottom: 1px solid var(--color-border);
+  transition: opacity 0.2s;
+}
+
+.ingredient-item.checked {
+  opacity: 0.45;
+}
+
+.ingredient-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+}
+
+/* ── Check-off (#372) ────────────── */
+.ingredient-checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .ingredient-name {
+  flex: 1;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
 }
+
+.ingredient-name-subbed {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.ingredient-sub-arrow {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.ingredient-sub-name {
+  color: var(--color-accent-green);
+  font-weight: 600;
+}
+
+.ingredient-clear-sub {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.1rem;
+  transition: color 0.15s;
+}
+
+.ingredient-clear-sub:hover { color: var(--color-error); }
 
 .ingredient-amount {
   color: var(--color-text-muted);
   font-size: 0.9375rem;
+  flex-shrink: 0;
+}
+
+/* ── Substitution button (#370) ──── */
+.ingredient-sub-btn {
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.ingredient-sub-btn:hover,
+.ingredient-sub-btn.active {
+  border-color: var(--color-accent-green);
+  color: var(--color-accent-green);
+  background: var(--color-accent-green-tint);
+}
+
+/* ── Substitution panel (#370) ───── */
+.sub-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.625rem 0 0.75rem 1.7rem;
+}
+
+.sub-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--color-primary-subtle);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.sub-option:hover { background: var(--color-accent-green-tint); }
+
+.sub-option-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.sub-match-chip {
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.chip-flavor {
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+}
+
+.chip-texture {
+  background: var(--color-accent-green-tint);
+  color: var(--color-accent-green);
+}
+
+.chip-default {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.sub-loading {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  padding: 0.25rem 0;
+}
+
+/* ── Shopping list (#373) ────────── */
+.shopping-list {
+  margin-top: 1.25rem;
+  background: var(--color-primary-subtle);
+  border: 1.5px solid var(--color-primary-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.shopping-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.875rem;
+}
+
+.shopping-list-header h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.shopping-list-copy {
+  background: none;
+  border: 1.5px solid var(--color-primary-border);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.shopping-list-copy:hover { background: var(--color-primary-tint); }
+
+.shopping-list-empty {
+  font-size: 0.9375rem;
+  color: var(--color-accent-green);
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+.shopping-list-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.shopping-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.25rem;
+  border-bottom: 1px solid var(--color-primary-border);
+}
+
+.shopping-list-item:last-child { border-bottom: none; }
+
+.shopping-item-name {
+  font-weight: 500;
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.shopping-sub-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: var(--color-accent-green-tint);
+  color: var(--color-accent-green);
+  border-radius: var(--radius-pill);
+  padding: 0.1rem 0.4rem;
+  text-transform: uppercase;
+}
+
+.shopping-item-qty {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
