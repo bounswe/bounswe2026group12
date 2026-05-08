@@ -204,6 +204,19 @@ a:hover {
   padding: 0.4rem 1rem;
 }
 
+/* ── Focus rings (#353) ─────────────────── */
+/* Single consistent ring used by all interactive elements */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Suppress default :focus when :focus-visible is supported */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .btn:focus-visible {
   outline: 3px solid var(--color-primary-text);
   outline-offset: 3px;
@@ -214,6 +227,29 @@ a:focus-visible {
   outline: 3px solid var(--color-primary-text);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Form inputs: keep border glow on :focus (visible even without keyboard) */
+.form-group input:focus-visible,
+.form-group textarea:focus-visible,
+.form-group select:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 0;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Minimum touch / click target size (WCAG 2.5.5) */
+.btn,
+input[type="checkbox"],
+input[type="radio"] {
+  min-height: 2.75rem;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  min-width: 1.25rem;
+  min-height: 1.25rem;
 }
 
 /* ── Responsive ──────────────────────────── */

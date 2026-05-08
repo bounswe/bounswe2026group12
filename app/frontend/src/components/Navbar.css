@@ -48,6 +48,12 @@
   text-decoration: none;
 }
 
+.navbar-link.active,
+.navbar-link[aria-current="page"] {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
 .navbar-username {
   font-size: 0.875rem;
   font-weight: 500;
@@ -61,7 +67,7 @@
 
 .navbar-brand:focus-visible,
 .navbar-link:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 3px solid var(--color-primary);
   outline-offset: 3px;
   border-radius: 3px;
 }
