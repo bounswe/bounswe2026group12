@@ -1,27 +1,112 @@
 from rest_framework import serializers
-from .models import Story
+from .models import Story, StoryRecipeLink
+
+
+class StoryRecipeLinkSerializer(serializers.ModelSerializer):
+    """Read-only serializer for a recipe within a story."""
+    recipe_id = serializers.IntegerField(source='recipe.id')
+    recipe_title = serializers.CharField(source='recipe.title')
+
+    class Meta:
+        model = StoryRecipeLink
+        fields = ['recipe_id', 'recipe_title', 'order']
 
 
 class StorySerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
-    recipe_title = serializers.ReadOnlyField(source='linked_recipe.title')
+    
+    # --- BACKWARD COMPAT: old single-value fields ---
+    linked_recipe = serializers.SerializerMethodField()    # read: first recipe ID or null
+    recipe_title = serializers.SerializerMethodField()     # read: first recipe title or null
+    
+    # --- NEW: full array ---
+    linked_recipes = StoryRecipeLinkSerializer(
+        source='recipe_links', many=True, read_only=True
+    )
+    
+    # --- WRITE fields ---
+    linked_recipe_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    linked_recipe_ids = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False
+    )
+
     # Expose region name for frontend display (string, not FK id)
     region_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Story
         fields = [
-            'id', 'title', 'body', 'image', 'author', 'author_username',
-            'linked_recipe', 'recipe_title', 'language',
-            'region', 'region_name',
-            'is_published', 'created_at'
+            'id', 'title', 'summary', 'body', 'image', 'author', 'author_username',
+            'linked_recipe', 'recipe_title',    # backward compat (read)
+            'linked_recipes',                   # new array (read)
+            'linked_recipe_id', 'linked_recipe_ids',  # write aliases
+            'language', 'region', 'region_name',
+            'is_published', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['author', 'created_at']
+        read_only_fields = ['author', 'created_at', 'updated_at']
+
+    def to_internal_value(self, data):
+        """Shim to handle legacy 'linked_recipe' as 'linked_recipe_id'."""
+        if 'linked_recipe' in data and 'linked_recipe_id' not in data:
+            if hasattr(data, 'copy'):
+                data = data.copy()
+            val = data.get('linked_recipe')
+            # Handle list-wrapped values from QueryDict or some frontend libs
+            if isinstance(val, list) and len(val) > 0:
+                data['linked_recipe_id'] = val[0]
+            else:
+                data['linked_recipe_id'] = val
+            # Use pop to remove the legacy key
+            if 'linked_recipe' in data:
+                if hasattr(data, 'pop'):
+                    data.pop('linked_recipe')
+        return super().to_internal_value(data)
+
+    def get_linked_recipe(self, obj):
+        """Return first recipe's ID for backward compat."""
+        first = obj.recipe_links.first()
+        return first.recipe_id if first else None
+
+    def get_recipe_title(self, obj):
+        """Return first recipe's title for backward compat."""
+        first = obj.recipe_links.select_related('recipe').first()
+        return first.recipe.title if first else None
 
     def get_region_name(self, obj):
-        """Return the effective region name: direct region > linked_recipe's region."""
+        """Return the effective region name: direct region > first linked_recipe's region."""
         if obj.region_id:
             return obj.region.name
-        if obj.linked_recipe and obj.linked_recipe.region:
-            return obj.linked_recipe.region.name
+        
+        first = obj.recipe_links.select_related('recipe__region').first()
+        if first and first.recipe.region:
+            return first.recipe.region.name
         return None
+
+    def create(self, validated_data):
+        single_id = validated_data.pop('linked_recipe_id', None)
+        multi_ids = validated_data.pop('linked_recipe_ids', None)
+        story = Story.objects.create(**validated_data)
+        self._set_recipes(story, single_id, multi_ids)
+        return story
+
+    def update(self, instance, validated_data):
+        single_id = validated_data.pop('linked_recipe_id', None)
+        multi_ids = validated_data.pop('linked_recipe_ids', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if single_id is not None or multi_ids is not None:
+            self._set_recipes(instance, single_id, multi_ids)
+        return instance
+
+    def _set_recipes(self, story, single_id, multi_ids):
+        recipe_ids = []
+        if multi_ids:
+            recipe_ids = multi_ids
+        elif single_id:
+            recipe_ids = [single_id]
+        
+        # Replace existing links
+        story.recipe_links.all().delete()
+        for i, rid in enumerate(recipe_ids):
+            StoryRecipeLink.objects.create(story=story, recipe_id=rid, order=i)

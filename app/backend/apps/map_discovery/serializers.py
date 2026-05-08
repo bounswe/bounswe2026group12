@@ -77,7 +77,7 @@ class MapStoryCardSerializer(serializers.Serializer):
     image           = serializers.SerializerMethodField()
     author_username = serializers.CharField(source='author.username')
     region_name     = serializers.SerializerMethodField()
-    linked_recipe_id = serializers.IntegerField(default=None)
+    linked_recipe_id = serializers.SerializerMethodField()
     created_at      = serializers.DateTimeField()
 
     def get_content_type(self, obj):
@@ -92,9 +92,16 @@ class MapStoryCardSerializer(serializers.Serializer):
     def get_region_name(self, obj):
         if obj.region_id:
             return obj.region.name
-        if obj.linked_recipe and obj.linked_recipe.region:
-            return obj.linked_recipe.region.name
+        
+        first_link = obj.recipe_links.all()[0] if obj.recipe_links.all().exists() else None
+        if first_link and first_link.recipe.region:
+            return first_link.recipe.region.name
         return None
+
+    def get_linked_recipe_id(self, obj):
+        """Return first recipe's ID for backward compat."""
+        first = obj.recipe_links.first()
+        return first.recipe_id if first else None
 
 
 class MapCulturalCardSerializer(serializers.Serializer):

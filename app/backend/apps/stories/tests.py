@@ -25,13 +25,15 @@ class StoryCreateAPITest(APITestCase):
 
     def test_create_story_success(self):
         self.client.force_authenticate(user=self.user)
-        data = {"title": "My Story", "body": "A great culinary journey"}
+        data = {"title": "My Story", "body": "A great culinary journey", "summary": "Short intro"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], "My Story")
+        self.assertEqual(response.data['summary'], "Short intro")
         self.assertEqual(response.data['author_username'], "author")
 
-    def test_create_story_with_linked_recipe(self):
+    def test_create_story_with_linked_recipe_legacy(self):
+        """Test backward compatibility: sending 'linked_recipe' as single ID."""
         self.client.force_authenticate(user=self.user)
         data = {
             "title": "Baklava Story",
@@ -42,6 +44,30 @@ class StoryCreateAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['linked_recipe'], self.recipe.id)
         self.assertEqual(response.data['recipe_title'], "Baklava")
+        self.assertEqual(len(response.data['linked_recipes']), 1)
+        self.assertEqual(response.data['linked_recipes'][0]['recipe_id'], self.recipe.id)
+
+    def test_create_story_with_multiple_recipes(self):
+        """Test new capability: sending 'linked_recipe_ids' as array."""
+        self.client.force_authenticate(user=self.user)
+        recipe2 = Recipe.objects.create(
+            title="Kunefe", description="Cheese pastry",
+            region=self.region, author=self.user, is_published=True
+        )
+        data = {
+            "title": "Sweet Journey",
+            "body": "Baklava and Kunefe",
+            "linked_recipe_ids": [self.recipe.id, recipe2.id]
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # linked_recipe (singular) should return the first one
+        self.assertEqual(response.data['linked_recipe'], self.recipe.id)
+        # linked_recipes (array) should return both
+        self.assertEqual(len(response.data['linked_recipes']), 2)
+        ids = [r['recipe_id'] for r in response.data['linked_recipes']]
+        self.assertIn(self.recipe.id, ids)
+        self.assertIn(recipe2.id, ids)
 
     def test_create_story_without_linked_recipe(self):
         self.client.force_authenticate(user=self.user)
@@ -49,6 +75,7 @@ class StoryCreateAPITest(APITestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNone(response.data['linked_recipe'])
+        self.assertEqual(len(response.data['linked_recipes']), 0)
 
     def test_create_story_missing_title(self):
         self.client.force_authenticate(user=self.user)
@@ -99,6 +126,9 @@ class StoryRetrieveAPITest(APITestCase):
     def test_public_list_shows_published_only(self):
         response = self.client.get(reverse('story-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # In a real DRF list, it might be in a 'results' key if paginated, 
+        # but the StoryViewSet doesn't specify pagination (defaults to none or global).
+        # Based on previous view_file, it returns a list directly.
         titles = [s['title'] for s in response.data]
         self.assertIn("Published Story", titles)
         self.assertNotIn("Draft Story", titles)
@@ -108,6 +138,7 @@ class StoryRetrieveAPITest(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], "Published Story")
+        self.assertIn('updated_at', response.data)
 
     def test_public_detail_draft_404(self):
         url = reverse('story-detail', kwargs={'pk': self.draft.id})

@@ -13,8 +13,8 @@ class SearchAPITest(APITestCase):
 
     def setUp(self):
         self.url = reverse('global_search')
-        self.region_tr = Region.objects.create(name="Turkish")
-        self.region_it = Region.objects.create(name="Italian")
+        self.region_tr, _ = Region.objects.get_or_create(name="Turkish")
+        self.region_it, _ = Region.objects.get_or_create(name="Italian")
 
         self.user_tr = User.objects.create_user(
             email="tr@example.com", username="truser", password="Pass123!",
@@ -40,8 +40,12 @@ class SearchAPITest(APITestCase):
 
         self.story_tr = Story.objects.create(
             title="Grandma's Baklava Story", body="My grandmother used to make baklava",
-            author=self.user_tr, linked_recipe=self.recipe_tr, is_published=True
+            author=self.user_tr, is_published=True
         )
+        # Use the new through-model relation for M2M
+        from apps.stories.models import StoryRecipeLink
+        StoryRecipeLink.objects.create(story=self.story_tr, recipe=self.recipe_tr, order=0)
+
         self.story_unpublished = Story.objects.create(
             title="Draft Story", body="Not ready yet",
             author=self.user_en, is_published=False

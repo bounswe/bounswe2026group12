@@ -2,6 +2,17 @@ from django.db import models
 from django.conf import settings
 from apps.recipes.models import Recipe, Region
 
+class StoryRecipeLink(models.Model):
+    """Through model linking a story to its recipes, with ordering."""
+    story = models.ForeignKey('Story', on_delete=models.CASCADE, related_name='recipe_links')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='story_links')
+    order = models.PositiveIntegerField(default=0)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('story', 'recipe')
+        ordering = ['order', 'added_at']
+
 class Story(models.Model):
     """Core Story model for sharing culinary narratives.
 
@@ -10,10 +21,16 @@ class Story(models.Model):
     `linked_recipe` exists, the map API will fall back to the recipe's region.
     """
     title = models.CharField(max_length=255)
+    summary = models.TextField(blank=True, default='')
     body = models.TextField()
     image = models.ImageField(upload_to='stories/images/', null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='stories')
-    linked_recipe = models.ForeignKey(Recipe, on_delete=models.SET_NULL, null=True, blank=True, related_name='linked_stories')
+    
+    linked_recipes = models.ManyToManyField(
+        Recipe, through='StoryRecipeLink',
+        blank=True, related_name='linked_stories',
+    )
+    
     # Direct region tag for map discovery — falls back to linked_recipe.region in the API layer
     region = models.ForeignKey(
         Region, on_delete=models.SET_NULL, null=True, blank=True,
@@ -23,6 +40,7 @@ class Story(models.Model):
     language = models.CharField(max_length=10, blank=True, default='en')
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title

@@ -68,11 +68,15 @@ def make_recipe(author, region, title='Test Recipe', published=True):
 
 
 def make_story(author, region=None, linked_recipe=None, published=True):
-    return Story.objects.create(
+    story = Story.objects.create(
         title='Test Story', body='body', author=author,
-        region=region, linked_recipe=linked_recipe,
+        region=region,
         is_published=published,
     )
+    if linked_recipe:
+        from apps.stories.models import StoryRecipeLink
+        StoryRecipeLink.objects.create(story=story, recipe=linked_recipe, order=0)
+    return story
 
 
 def make_cultural(region=None, slug='test-slug', is_active=True):
