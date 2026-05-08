@@ -13,8 +13,8 @@ export const MOCK_RECIPES = {
     is_published: true,
     author: { id: 1, username: 'demo_chef' },
     ingredients: [
-      { ingredient: 1, ingredient_name: 'Tomato', amount: '400', unit_name: 'g', converted_amount: '14.1', converted_unit_name: 'oz' },
-      { ingredient: 2, ingredient_name: 'Onion', amount: '1', unit_name: 'cup', converted_amount: '240', converted_unit_name: 'ml' },
+      { ingredient: { id: 1, name: 'Tomato' }, amount: '400', unit: { id: 1, name: 'g' } },
+      { ingredient: { id: 2, name: 'Onion' }, amount: '1', unit: { id: 2, name: 'cup' } },
     ],
   },
   2: {
@@ -27,8 +27,8 @@ export const MOCK_RECIPES = {
     is_published: true,
     author: { id: 1, username: 'demo_chef' },
     ingredients: [
-      { ingredient: 3, ingredient_name: 'Olives', amount: '100', unit_name: 'g', converted_amount: '3.5', converted_unit_name: 'oz' },
-      { ingredient: 4, ingredient_name: 'Olive oil', amount: '2', unit_name: 'tbsp', converted_amount: '30', converted_unit_name: 'ml' },
+      { ingredient: { id: 3, name: 'Olives' }, amount: '100', unit: { id: 1, name: 'g' } },
+      { ingredient: { id: 4, name: 'Olive oil' }, amount: '2', unit: { id: 6, name: 'tbsp' } },
     ],
   },
 };

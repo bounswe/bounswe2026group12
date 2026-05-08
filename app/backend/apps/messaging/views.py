@@ -88,12 +88,6 @@ class ThreadViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not other.is_contactable:
-            return Response(
-                {'detail': 'This user has disabled new message threads.'},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         # Find an existing 1-to-1 thread shared by both users
         existing = (
             Thread.objects

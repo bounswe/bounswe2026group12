@@ -28,26 +28,10 @@ type BackendSearchResponse = {
   total_count?: number;
 };
 
-export type SearchFilters = {
-  diet?: string[];
-  diet_exclude?: string[];
-  event?: string[];
-  event_exclude?: string[];
-};
-
-export async function search(
-  q: string,
-  region?: string,
-  filters?: SearchFilters,
-): Promise<SearchResultItem[]> {
+export async function search(q: string, region?: string): Promise<SearchResultItem[]> {
   const params = new URLSearchParams();
   params.set('q', q);
   if (region) params.set('region', region);
-  if (filters) {
-    for (const [key, values] of Object.entries(filters) as [keyof SearchFilters, string[] | undefined][]) {
-      if (values && values.length > 0) params.set(key, values.join(','));
-    }
-  }
   const data = await apiGetJson<BackendSearchResponse>(`/api/search/?${params.toString()}`);
 
   const recipes = (data.recipes ?? []).map((r) => ({

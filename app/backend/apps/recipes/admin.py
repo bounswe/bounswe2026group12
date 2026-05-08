@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution,
-)
+from .models import Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment, DietaryTag, EventTag
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
@@ -37,9 +34,3 @@ class DietaryTagAdmin(admin.ModelAdmin):
 @admin.register(EventTag)
 class EventTagAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_approved')
-
-@admin.register(IngredientSubstitution)
-class IngredientSubstitutionAdmin(admin.ModelAdmin):
-    list_display = ('from_ingredient', 'to_ingredient', 'match_type', 'closeness')
-    list_filter = ('match_type',)
-    search_fields = ('from_ingredient__name', 'to_ingredient__name')
