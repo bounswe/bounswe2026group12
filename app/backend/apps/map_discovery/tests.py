@@ -361,6 +361,22 @@ class BoundingBoxDiscoverViewTests(APITestCase):
         resp = self._discover(north=42, south=36, east=45, west=25)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
+    def test_crosses_antimeridian(self):
+        """Viewport crossing the Pacific antimeridian (east < west) should work."""
+        # Create a region in the Far East (e.g., Japan, lon=138)
+        # Create a region in the Far West (e.g., Hawaii, lon=-155)
+        make_region('Japan', lat=36.0, lon=138.0)
+        make_region('Hawaii', lat=20.0, lon=-155.0)
+
+        # Viewport: North=40, South=10, East=-150, West=130
+        # This box includes both Japan and Hawaii if it wraps around
+        resp = self._discover(north=40, south=10, east=-150, west=130)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        names = [r['name'] for r in resp.data['regions']]
+        self.assertIn('Japan', names)
+        self.assertIn('Hawaii', names)
+
 
 # ===========================================================================
 # Seed Command Tests

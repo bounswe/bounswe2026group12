@@ -67,7 +67,6 @@ class RegionIndexView(APIView):
             without coordinates (useful for admin validation).
     """
     permission_classes = [permissions.AllowAny]
-    authentication_classes = []
 
     def get(self, request):
         geo_only = request.query_params.get('geo_only', 'true').lower() != 'false'
@@ -85,7 +84,6 @@ class RegionDetailView(APIView):
     Returns a single region with geo data and content counts.
     """
     permission_classes = [permissions.AllowAny]
-    authentication_classes = []
 
     def get(self, request, pk):
         try:
@@ -110,7 +108,6 @@ class RegionContentView(APIView):
         page_size (int): items per page (default 20, max 100).
     """
     permission_classes = [permissions.AllowAny]
-    authentication_classes = []
 
     def get(self, request, pk):
         try:
@@ -130,7 +127,11 @@ class RegionContentView(APIView):
                 .select_related('region', 'author')
                 .order_by('-created_at')
             )
-            results += list(MapRecipeCardSerializer(recipes, many=True).data)
+            # Apply limit before evaluating to avoid loading thousands of objects
+            # page_size * current_page is the maximum index we would need
+            page_number = int(request.query_params.get('page', 1))
+            max_limit = page_number * paginator.page_size
+            results += list(MapRecipeCardSerializer(recipes[:max_limit], many=True).data)
 
         if not content_type or content_type == 'story':
             # Stories tagged directly to the region OR inheriting via linked recipe
@@ -144,7 +145,9 @@ class RegionContentView(APIView):
                 .distinct()
                 .order_by('-created_at')
             )
-            results += list(MapStoryCardSerializer(stories, many=True).data)
+            page_number = int(request.query_params.get('page', 1))
+            max_limit = page_number * paginator.page_size
+            results += list(MapStoryCardSerializer(stories[:max_limit], many=True).data)
 
         if not content_type or content_type == 'cultural':
             cultural = (
@@ -153,7 +156,9 @@ class RegionContentView(APIView):
                 .select_related('region')
                 .order_by('-created_at')
             )
-            results += list(MapCulturalCardSerializer(cultural, many=True).data)
+            page_number = int(request.query_params.get('page', 1))
+            max_limit = page_number * paginator.page_size
+            results += list(MapCulturalCardSerializer(cultural[:max_limit], many=True).data)
 
         # Sort unified results by created_at descending (cultural content has no
         # created_at if type is cultural-only, handled gracefully)
@@ -189,7 +194,6 @@ class BoundingBoxDiscoverView(APIView):
             piece of content matching the keyword.
     """
     permission_classes = [permissions.AllowAny]
-    authentication_classes = []
 
     PARAM_ERROR = (
         'Provide north, south, east, west as numeric latitude/longitude bounds.'
@@ -232,9 +236,15 @@ class BoundingBoxDiscoverView(APIView):
             longitude__isnull=False,
             latitude__lte=north,
             latitude__gte=south,
-            longitude__lte=east,
-            longitude__gte=west,
         ).select_related('parent')
+
+        # Longitudinal bounding box wrap-around logic (Pacific antimeridian)
+        if east < west:
+            # Viewport crosses the antimeridian (e.g., west=170, east=-170)
+            qs = qs.filter(Q(longitude__gte=west) | Q(longitude__lte=east))
+        else:
+            # Standard viewport
+            qs = qs.filter(longitude__lte=east, longitude__gte=west)
 
         # Optional keyword filter: only include regions with matching content
         if keyword:

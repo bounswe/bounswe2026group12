@@ -38,7 +38,7 @@ class DailyCulturalContentView(APIView):
 
     def get(self, request):
         user_tags = _user_tag_set(request.user)
-        items = list(CulturalContent.objects.filter(is_active=True))
+        items = list(CulturalContent.objects.filter(is_active=True).select_related('region'))
         # Sort by personalization score (desc) then by creation order (ID desc)
         items.sort(key=lambda c: (-_score(c, user_tags), -c.id))
         items = items[:DAILY_LIMIT]
