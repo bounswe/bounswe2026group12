@@ -73,7 +73,7 @@
 
 .compose-recipient {
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .compose-recipe {
@@ -182,7 +182,7 @@
 
 .thread-recipe-context {
   font-size: 0.8rem;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 500;
   display: block;
   margin-bottom: 0.2rem;

@@ -147,7 +147,7 @@
 .rich-chip-include {
   border-color: var(--color-primary);
   background: var(--color-primary-tint);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .rich-chip-exclude {
@@ -199,7 +199,7 @@
   font-family: var(--font-body);
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background: var(--color-primary-tint);
   border: 1.5px solid var(--color-primary-border);
   border-radius: var(--radius-pill);

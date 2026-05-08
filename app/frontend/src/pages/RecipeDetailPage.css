@@ -29,7 +29,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background: var(--color-primary-tint);
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-pill);
