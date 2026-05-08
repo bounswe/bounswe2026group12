@@ -15,8 +15,9 @@ def forwards(apps, schema_editor):
 
 def backwards(apps, schema_editor):
     Story = apps.get_model('stories', 'Story')
+    StoryRecipeLink = apps.get_model('stories', 'StoryRecipeLink')
     for story in Story.objects.all():
-        first_link = story.recipe_links.first()
+        first_link = StoryRecipeLink.objects.filter(story=story).order_by('order', 'added_at').first()
         if first_link:
             story.linked_recipe_id = first_link.recipe_id
             story.save()

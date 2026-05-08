@@ -63,10 +63,16 @@ class StoryCreateAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # linked_recipe (singular) should return the first one
         self.assertEqual(response.data['linked_recipe'], self.recipe.id)
-        # linked_recipes (array) should return both
-        self.assertEqual(len(response.data['linked_recipes']), 2)
-        ids = [r['recipe_id'] for r in response.data['linked_recipes']]
-        self.assertEqual(ids, [self.recipe.id, recipe2.id])
+        # 4. Verify that the response includes 'linked_recipes' array correctly ordered
+        self.assertIn('linked_recipes', response.data)
+        linked = response.data['linked_recipes']
+        
+        # We expect exactly these two recipes in this exact order
+        self.assertEqual(len(linked), 2)
+        self.assertEqual(linked[0]['recipe_id'], self.recipe.id)
+        self.assertEqual(linked[0]['order'], 0)
+        self.assertEqual(linked[1]['recipe_id'], recipe2.id)
+        self.assertEqual(linked[1]['order'], 1)
 
     def test_create_story_without_linked_recipe(self):
         self.client.force_authenticate(user=self.user)
