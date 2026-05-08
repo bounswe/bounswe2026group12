@@ -1,0 +1,158 @@
+.moderation-header {
+  margin-bottom: 1.75rem;
+}
+
+.moderation-header h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.moderation-subtitle {
+  margin-top: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ── Status tabs ─────────────────── */
+.moderation-tabs {
+  display: flex;
+  gap: 0.375rem;
+  border-bottom: 1.5px solid var(--color-border);
+  margin-bottom: 1.5rem;
+}
+
+.mod-tab-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s;
+}
+
+.mod-tab-btn:hover { color: var(--color-text); }
+
+.mod-tab-btn.active.mod-tab-pending  { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+.mod-tab-btn.active.mod-tab-approved { color: var(--color-success); border-bottom-color: var(--color-success); }
+.mod-tab-btn.active.mod-tab-rejected { color: var(--color-error);   border-bottom-color: var(--color-error); }
+
+.mod-tab-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  padding: 0.05rem 0.45rem;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+.moderation-empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* ── Queue list ──────────────────── */
+.moderation-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mod-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface-input);
+  flex-wrap: wrap;
+}
+
+.mod-item--approved { border-color: rgba(22, 163, 74, 0.3); background: rgba(22, 163, 74, 0.04); }
+.mod-item--rejected { border-color: rgba(220, 38, 38, 0.25); background: rgba(220, 38, 38, 0.03); opacity: 0.75; }
+
+.mod-item-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.mod-tag-type {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.6rem;
+  flex-shrink: 0;
+}
+
+.tag-region    { background: var(--color-primary-tint); color: var(--color-primary); }
+.tag-event     { background: var(--color-accent-green-tint); color: var(--color-accent-green); }
+.tag-tradition { background: rgba(212, 168, 48, 0.15); color: #8B6914; }
+.tag-default   { background: var(--color-border); color: var(--color-text-muted); }
+
+.mod-tag-value {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.mod-item-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.mod-item-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.mod-btn-approve {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.mod-btn-approve:hover:not(:disabled) {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.mod-btn-reject {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.mod-btn-reject:hover:not(:disabled) {
+  background: var(--color-error);
+  color: #fff;
+}
+
+.mod-status-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.65rem;
+  flex-shrink: 0;
+}
+
+.mod-status-approved { background: rgba(22, 163, 74, 0.12); color: var(--color-success); }
+.mod-status-rejected { background: rgba(220, 38, 38, 0.10); color: var(--color-error); }

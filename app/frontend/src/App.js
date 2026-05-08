@@ -19,6 +19,7 @@ import OnboardingPage from './pages/OnboardingPage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
 import EventDetailPage from './pages/EventDetailPage';
+import ModerationPage from './pages/ModerationPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -68,6 +69,10 @@ export default function App() {
           <Route
             path="/onboarding"
             element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin/moderation"
+            element={<ProtectedRoute><ModerationPage /></ProtectedRoute>}
           />
 
           <Route path="*" element={<NotFoundPage />} />
