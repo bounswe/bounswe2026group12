@@ -41,13 +41,13 @@ class RecipeFilterTestBase(APITestCase):
             name='grams', defaults={'is_approved': True}
         )
 
-        cls.diet_vegan = DietaryTag.objects.create(name='Vegan', is_approved=True)
-        cls.diet_vegetarian = DietaryTag.objects.create(name='Vegetarian', is_approved=True)
-        cls.diet_halal = DietaryTag.objects.create(name='Halal', is_approved=True)
+        cls.diet_vegan, _ = DietaryTag.objects.get_or_create(name='Vegan', defaults={'is_approved': True})
+        cls.diet_vegetarian, _ = DietaryTag.objects.get_or_create(name='Vegetarian', defaults={'is_approved': True})
+        cls.diet_halal, _ = DietaryTag.objects.get_or_create(name='Halal', defaults={'is_approved': True})
 
-        cls.event_wedding = EventTag.objects.create(name='Wedding', is_approved=True)
-        cls.event_ramadan = EventTag.objects.create(name='Ramadan', is_approved=True)
-        cls.event_birthday = EventTag.objects.create(name='Birthday', is_approved=True)
+        cls.event_wedding, _ = EventTag.objects.get_or_create(name='Wedding', defaults={'is_approved': True})
+        cls.event_ramadan, _ = EventTag.objects.get_or_create(name='Ramadan', defaults={'is_approved': True})
+        cls.event_birthday, _ = EventTag.objects.get_or_create(name='Birthday', defaults={'is_approved': True})
 
         cls.recipe_a = cls._make_recipe(
             title='Pasta Pomodoro',
@@ -211,10 +211,10 @@ class TagLookupApiTest(APITestCase):
         cls.user = User.objects.create_user(
             email='tagger@example.com', username='tagger', password='Pass123!'
         )
-        DietaryTag.objects.create(name='ApprovedDiet', is_approved=True)
-        DietaryTag.objects.create(name='PendingDiet', is_approved=False)
-        EventTag.objects.create(name='ApprovedEvent', is_approved=True)
-        EventTag.objects.create(name='PendingEvent', is_approved=False)
+        DietaryTag.objects.get_or_create(name='ApprovedDiet', defaults={'is_approved': True})
+        DietaryTag.objects.get_or_create(name='PendingDiet', defaults={'is_approved': False})
+        EventTag.objects.get_or_create(name='ApprovedEvent', defaults={'is_approved': True})
+        EventTag.objects.get_or_create(name='PendingEvent', defaults={'is_approved': False})
 
     def test_dietary_tags_list_returns_only_approved(self):
         response = self.client.get('/api/dietary-tags/')
@@ -262,8 +262,8 @@ class RecipeSerializerTagWriteTest(APITestCase):
         cls.unit, _ = Unit.objects.get_or_create(
             name='grams', defaults={'is_approved': True}
         )
-        cls.diet = DietaryTag.objects.create(name='Vegan', is_approved=True)
-        cls.event = EventTag.objects.create(name='Wedding', is_approved=True)
+        cls.diet, _ = DietaryTag.objects.get_or_create(name='Vegan', defaults={'is_approved': True})
+        cls.event, _ = EventTag.objects.get_or_create(name='Wedding', defaults={'is_approved': True})
 
     def test_create_recipe_with_tag_ids(self):
         self.client.force_authenticate(user=self.user)

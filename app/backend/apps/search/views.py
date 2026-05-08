@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from apps.recipes.models import Recipe
-from apps.recipes.views import apply_recipe_filters
+from apps.recipes.views import apply_content_filters
 from apps.stories.models import Story
 
 
@@ -57,10 +57,10 @@ class GlobalSearchView(APIView):
         language = request.query_params.get('language', '').strip()
 
         recipes = Recipe.objects.select_related('region', 'author').prefetch_related(
-            'dietary_tags', 'event_tags',
+            'dietary_tags', 'event_tags', 'religions',
         ).filter(is_published=True)
         stories = Story.objects.select_related('author', 'region').prefetch_related(
-            'recipe_links__recipe__region'
+            'recipe_links__recipe__region', 'dietary_tags', 'event_tags', 'religions',
         ).filter(is_published=True)
 
         if query:
@@ -78,7 +78,8 @@ class GlobalSearchView(APIView):
             recipes = recipes.filter(author__preferred_language__iexact=language)
             stories = stories.filter(author__preferred_language__iexact=language)
 
-        recipes = apply_recipe_filters(recipes, request.query_params)
+        recipes = apply_content_filters(recipes, request.query_params)
+        stories = apply_content_filters(stories, request.query_params)
 
         recipe_results = [self._serialize_recipe(r) for r in recipes]
         story_results = [self._serialize_story(s) for s in stories]

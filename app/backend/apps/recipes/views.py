@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
 from .models import (
-    Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote,
+    Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
     IngredientSubstitution,
 )
 from .serializers import (
@@ -27,6 +27,8 @@ from .serializers import (
     DietaryTagSerializer,
     EventTagLookupSerializer,
     EventTagSerializer,
+    ReligionLookupSerializer,
+    ReligionSerializer,
 )
 
 
@@ -41,18 +43,24 @@ def _iexact_or(field, values):
     return reduce(operator.or_, (Q(**{f'{field}__iexact': v}) for v in values))
 
 
-def apply_recipe_filters(qs, params):
-    """Apply rich filters (M4-15 / #346) across culture, event, diet, ingredient axes.
+def apply_content_filters(qs, params):
+    """Apply rich filters (M4-15 / #346 / M5-20 / #386) across culture, event, diet, ingredient axes.
 
     Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
     comma-separated values. Within an axis: OR. Between axes: AND.
     """
+    # common filters for both Story and Recipe
     filter_map = [
         ('region', 'region__name'),
         ('diet', 'dietary_tags__name'),
         ('event', 'event_tags__name'),
-        ('ingredient', 'recipe_ingredients__ingredient__name'),
+        ('religion', 'religions__name'),
     ]
+    
+    # Ingredient filter is Recipe-only
+    if hasattr(qs.model, 'recipe_ingredients'):
+        filter_map.append(('ingredient', 'recipe_ingredients__ingredient__name'))
+
     for param_name, field in filter_map:
         pos = _iexact_or(field, _csv_param(params, param_name))
         if pos is not None:
@@ -61,6 +69,10 @@ def apply_recipe_filters(qs, params):
         if neg is not None:
             qs = qs.exclude(neg)
     return qs.distinct()
+
+# Backward compat alias
+def apply_recipe_filters(qs, params):
+    return apply_content_filters(qs, params)
 
 from rest_framework.pagination import PageNumberPagination
 
@@ -216,6 +228,12 @@ class EventTagViewSet(ModeratedLookupViewSet):
     queryset = EventTag.objects.all().order_by(Lower('name'), 'id')
     serializer_class = EventTagSerializer
     lookup_serializer_class = EventTagLookupSerializer
+
+class ReligionViewSet(ModeratedLookupViewSet):
+    """ViewSet for list/submission of religions (M5-20)."""
+    queryset = Religion.objects.all().order_by(Lower('name'), 'id')
+    serializer_class = ReligionSerializer
+    lookup_serializer_class = ReligionLookupSerializer
 
 class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """ViewSet for deleting and interacting with comments."""

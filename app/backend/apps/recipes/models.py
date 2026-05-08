@@ -67,6 +67,14 @@ class EventTag(models.Model):
     def __str__(self):
         return self.name
 
+class Religion(models.Model):
+    """Religion model (e.g., Islam, Christianity, Judaism). User-submittable, moderated."""
+    name = models.CharField(max_length=100, unique=True)
+    is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
+
+    def __str__(self):
+        return self.name
+
 class Recipe(models.Model):
     """Core Recipe model."""
     title = models.CharField(max_length=255)
@@ -79,6 +87,7 @@ class Recipe(models.Model):
     is_published = models.BooleanField(default=False)
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
+    religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
