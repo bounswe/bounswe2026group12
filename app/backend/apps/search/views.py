@@ -30,7 +30,8 @@ class GlobalSearchView(APIView):
 
     def _serialize_story(self, story):
         # Prefer the story's direct region; fall back to its FIRST linked recipe's region
-        first_link = story.recipe_links.all()[0] if story.recipe_links.all().exists() else None
+        links = list(story.recipe_links.all())
+        first_link = links[0] if links else None
         
         if story.region_id:
             region_tag = story.region.name

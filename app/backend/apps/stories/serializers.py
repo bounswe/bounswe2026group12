@@ -62,14 +62,19 @@ class StorySerializer(serializers.ModelSerializer):
                     data.pop('linked_recipe')
         return super().to_internal_value(data)
 
+    def _first_link(self, obj):
+        """Helper to read the first link from the prefetch cache."""
+        links = list(obj.recipe_links.all())
+        return links[0] if links else None
+
     def get_linked_recipe(self, obj):
         """Return first recipe's ID for backward compat."""
-        first = obj.recipe_links.first()
+        first = self._first_link(obj)
         return first.recipe_id if first else None
 
     def get_recipe_title(self, obj):
         """Return first recipe's title for backward compat."""
-        first = obj.recipe_links.select_related('recipe').first()
+        first = self._first_link(obj)
         return first.recipe.title if first else None
 
     def get_region_name(self, obj):
@@ -77,7 +82,7 @@ class StorySerializer(serializers.ModelSerializer):
         if obj.region_id:
             return obj.region.name
         
-        first = obj.recipe_links.select_related('recipe__region').first()
+        first = self._first_link(obj)
         if first and first.recipe.region:
             return first.recipe.region.name
         return None
@@ -95,15 +100,16 @@ class StorySerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
+        
         if single_id is not None or multi_ids is not None:
             self._set_recipes(instance, single_id, multi_ids)
         return instance
 
     def _set_recipes(self, story, single_id, multi_ids):
         recipe_ids = []
-        if multi_ids:
+        if multi_ids is not None:
             recipe_ids = multi_ids
-        elif single_id:
+        elif single_id is not None:
             recipe_ids = [single_id]
         
         # Replace existing links
