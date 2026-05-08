@@ -17,6 +17,8 @@ import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
 import MapPage from './pages/MapPage';
+import ExplorePage from './pages/ExplorePage';
+import EventDetailPage from './pages/EventDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -32,6 +34,8 @@ export default function App() {
           <Route path="/recipes" element={<RecipeListPage />} />
           <Route path="/stories" element={<StoryListPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/explore/:eventId" element={<EventDetailPage />} />
 
           <Route
             path="/recipes/new"
