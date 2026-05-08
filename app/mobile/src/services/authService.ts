@@ -1,5 +1,5 @@
-import type { AuthSuccess, AuthUser } from './mockAuthService';
-import { apiPatchJson, apiPostJson } from './httpClient';
+import type { AuthSuccess } from './mockAuthService';
+import { apiPostJson } from './httpClient';
 
 /**
  * Real backend auth service.
@@ -20,10 +20,5 @@ export async function registerRequest(
   password: string
 ): Promise<AuthSuccess> {
   return apiPostJson<AuthSuccess>('/api/auth/register/', { username, email, password });
-}
-
-/** PATCH /api/users/me/ — same shape as web `updateMe` in `authService.js`. */
-export async function updateMe(payload: Partial<AuthUser>): Promise<AuthUser> {
-  return apiPatchJson<AuthUser>('/api/users/me/', payload);
 }
 

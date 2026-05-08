@@ -32,15 +32,6 @@ export default function ProfileTabScreen() {
               </Pressable>
               <View style={{ height: 12 }} />
               <Pressable
-                onPress={() => navigation.navigate('Feed', { screen: 'Onboarding' })}
-                style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
-                accessibilityRole="button"
-                accessibilityLabel="Update cultural preferences"
-              >
-                <Text style={styles.secondaryText}>Cultural preferences</Text>
-              </Pressable>
-              <View style={{ height: 12 }} />
-              <Pressable
                 onPress={() => void logout()}
                 style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
                 accessibilityRole="button"
@@ -65,11 +56,11 @@ export default function ProfileTabScreen() {
                 </Pressable>
                 <Pressable
                   onPress={() => navigation.navigate('Feed', { screen: 'Register' })}
-                  style={({ pressed }) => [styles.registerBtn, pressed && styles.pressed]}
+                  style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
                   accessibilityRole="button"
                   accessibilityLabel="Go to Register"
                 >
-                  <Text style={styles.registerBtnText}>Register</Text>
+                  <Text style={styles.secondaryText}>Register</Text>
                 </Pressable>
               </View>
             </>
@@ -108,7 +99,7 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.pill,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#000000',
+    borderColor: tokens.colors.primary,
     ...shadows.md,
     maxWidth: 340,
     alignSelf: 'center',
@@ -125,20 +116,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryText: { color: tokens.colors.text, fontSize: 16, fontWeight: '800' },
-  registerBtn: {
-    flex: 1,
-    backgroundColor: '#EFBF04',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: tokens.radius.pill,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#000000',
-    ...shadows.md,
-    maxWidth: 340,
-    alignSelf: 'center',
-  },
-  registerBtnText: { color: '#000000', fontSize: 16, fontWeight: '800' },
   pressed: { opacity: 0.9 },
 });
 

@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from .models import (
-    Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
-    DietaryTag, EventTag, IngredientSubstitution,
-)
+from .models import Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment, DietaryTag, EventTag
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -204,11 +201,3 @@ class CommentSerializer(serializers.ModelSerializer):
         if parent and recipe and parent.recipe_id != recipe.id:
             raise serializers.ValidationError({'parent_comment': 'Must belong to the same recipe.'})
         return attrs
-
-
-class IngredientSubstituteSerializer(serializers.Serializer):
-    """One row of substitution output: the target ingredient + ranking + notes."""
-    id = serializers.IntegerField(source='to_ingredient.id', read_only=True)
-    name = serializers.CharField(source='to_ingredient.name', read_only=True)
-    closeness = serializers.DecimalField(max_digits=3, decimal_places=2, read_only=True)
-    notes = serializers.CharField(read_only=True)

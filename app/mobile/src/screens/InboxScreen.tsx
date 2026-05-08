@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ContactabilityToggle } from '../components/ContactabilityToggle';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { useAuth } from '../context/AuthContext';
@@ -103,7 +102,6 @@ export default function InboxScreen({ navigation }: Props) {
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <FlatList
         data={threads}
-        ListHeaderComponent={<ContactabilityToggle />}
         keyExtractor={(t) => String(t.id)}
         contentContainerStyle={
           threads.length === 0 ? styles.emptyContainer : styles.listContent

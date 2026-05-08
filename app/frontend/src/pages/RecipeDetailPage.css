@@ -68,43 +68,9 @@
   padding-top: 1.5rem;
 }
 
-.ingredients-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.ingredients-header h2 {
+.recipe-ingredients h2 {
   font-size: 1.375rem;
-  margin: 0;
-}
-
-.unit-toggle {
-  display: flex;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-}
-
-.unit-toggle-btn {
-  background: none;
-  border: none;
-  padding: 0.3rem 0.9rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.unit-toggle-btn:hover {
-  color: var(--color-text);
-}
-
-.unit-toggle-btn.active {
-  background: var(--color-primary);
-  color: #fff;
+  margin-bottom: 1rem;
 }
 
 .ingredients-list {

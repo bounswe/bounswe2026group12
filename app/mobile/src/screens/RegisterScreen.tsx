@@ -44,8 +44,8 @@ export default function RegisterScreen({ navigation }: Props) {
       await login(data.user, data.access);
       navigation.dispatch(
         CommonActions.reset({
-          index: 1,
-          routes: [{ name: 'Home' }, { name: 'Onboarding' }],
+          index: 0,
+          routes: [{ name: 'Home' }],
         })
       );
     } catch (err) {
@@ -190,17 +190,17 @@ const styles = StyleSheet.create({
   fieldError: { color: tokens.colors.error, marginTop: 6, fontSize: 14 },
   apiError: { color: tokens.colors.error, marginBottom: 12, fontSize: 15 },
   primaryButton: {
-    backgroundColor: '#EFBF04',
+    backgroundColor: tokens.colors.accentGreen,
     paddingVertical: 14,
     borderRadius: tokens.radius.pill,
     alignItems: 'center',
     marginTop: 8,
     borderWidth: 2,
-    borderColor: '#000000',
+    borderColor: tokens.colors.primary,
     ...shadows.md,
   },
   primaryButtonPressed: { opacity: 0.88 },
-  primaryButtonText: { color: '#000000', fontSize: 16, fontWeight: '800' },
+  primaryButtonText: { color: tokens.colors.text, fontSize: 16, fontWeight: '700' },
   footer: {
     flexDirection: 'row',
     flexWrap: 'wrap',

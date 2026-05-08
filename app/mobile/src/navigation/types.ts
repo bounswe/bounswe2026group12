@@ -18,7 +18,6 @@ export type RootStackParamList = {
     otherUserId?: number | string;
     otherUsername?: string;
   };
-  Onboarding: undefined;
 };
 
 declare global {
