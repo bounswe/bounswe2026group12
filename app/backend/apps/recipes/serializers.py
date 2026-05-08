@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
-    DietaryTag, EventTag, IngredientSubstitution,
+    DietaryTag, EventTag, Religion, IngredientSubstitution,
 )
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -85,6 +85,18 @@ class EventTagSerializer(NamedSubmissionSerializer):
         model = EventTag
         fields = '__all__'
 
+class ReligionLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Religion
+        fields = ['id', 'name']
+
+class ReligionSerializer(NamedSubmissionSerializer):
+    duplicate_message = 'A religion with this name already exists.'
+
+    class Meta:
+        model = Religion
+        fields = '__all__'
+
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
     unit_name = serializers.ReadOnlyField(source='unit.name')
@@ -110,12 +122,17 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients_write = RecipeIngredientWriteSerializer(many=True, write_only=True, required=False)
     dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
     event_tags = EventTagLookupSerializer(many=True, read_only=True)
+    religions = ReligionLookupSerializer(many=True, read_only=True)
     dietary_tag_ids = serializers.PrimaryKeyRelatedField(
         queryset=DietaryTag.objects.all(), source='dietary_tags',
         many=True, write_only=True, required=False,
     )
     event_tag_ids = serializers.PrimaryKeyRelatedField(
         queryset=EventTag.objects.all(), source='event_tags',
+        many=True, write_only=True, required=False,
+    )
+    religion_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Religion.objects.all(), source='religions',
         many=True, write_only=True, required=False,
     )
     story_count = serializers.IntegerField(read_only=True, default=0)
@@ -127,7 +144,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             'region', 'region_name', 'author', 'author_username', 'qa_enabled',
             'is_published', 'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
-            'dietary_tags', 'event_tags', 'dietary_tag_ids', 'event_tag_ids',
+            'dietary_tags', 'event_tags', 'religions',
+            'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'story_count',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
@@ -142,6 +160,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop('ingredients_write', [])
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
+        religions = validated_data.pop('religions', None)
         recipe = Recipe.objects.create(**validated_data)
         for item in ingredients_data:
             RecipeIngredient.objects.create(
@@ -154,12 +173,15 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.dietary_tags.set(dietary_tags)
         if event_tags is not None:
             recipe.event_tags.set(event_tags)
+        if religions is not None:
+            recipe.religions.set(religions)
         return recipe
 
     def update(self, instance, validated_data):
         ingredients_data = validated_data.pop('ingredients_write', None)
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
+        religions = validated_data.pop('religions', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -176,6 +198,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.dietary_tags.set(dietary_tags)
         if event_tags is not None:
             instance.event_tags.set(event_tags)
+        if religions is not None:
+            instance.religions.set(religions)
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):

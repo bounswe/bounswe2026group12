@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from apps.recipes.models import Recipe, Region
+from apps.recipes.models import Recipe, Region, DietaryTag, EventTag, Religion
 
 class StoryRecipeLink(models.Model):
     """Through model linking a story to its recipes, with ordering."""
@@ -30,6 +30,11 @@ class Story(models.Model):
         Recipe, through='StoryRecipeLink',
         blank=True, related_name='linked_stories',
     )
+    
+    # Taxonomy tags (M5-20 / #386)
+    dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='stories')
+    event_tags = models.ManyToManyField(EventTag, blank=True, related_name='stories')
+    religions = models.ManyToManyField(Religion, blank=True, related_name='stories')
     
     # Direct region tag for map discovery — falls back to linked_recipe.region in the API layer
     region = models.ForeignKey(

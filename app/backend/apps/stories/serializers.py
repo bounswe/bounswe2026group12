@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from .models import Story, StoryRecipeLink
+from apps.recipes.models import DietaryTag, EventTag, Religion
+from apps.recipes.serializers import (
+    DietaryTagLookupSerializer, EventTagLookupSerializer, ReligionLookupSerializer
+)
 
 
 class StoryRecipeLinkSerializer(serializers.ModelSerializer):
@@ -29,6 +33,24 @@ class StorySerializer(serializers.ModelSerializer):
     linked_recipe_ids = serializers.ListField(
         child=serializers.IntegerField(), write_only=True, required=False
     )
+    
+    # --- TAXONOMY (M5-20 / #386) ---
+    dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
+    event_tags = EventTagLookupSerializer(many=True, read_only=True)
+    religions = ReligionLookupSerializer(many=True, read_only=True)
+    
+    dietary_tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=DietaryTag.objects.all(), source='dietary_tags',
+        many=True, write_only=True, required=False
+    )
+    event_tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=EventTag.objects.all(), source='event_tags',
+        many=True, write_only=True, required=False
+    )
+    religion_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Religion.objects.all(), source='religions',
+        many=True, write_only=True, required=False
+    )
 
     # Expose region name for frontend display (string, not FK id)
     region_name = serializers.SerializerMethodField()
@@ -40,6 +62,8 @@ class StorySerializer(serializers.ModelSerializer):
             'linked_recipe', 'recipe_title',    # backward compat (read)
             'linked_recipes',                   # new array (read)
             'linked_recipe_id', 'linked_recipe_ids',  # write aliases
+            'dietary_tags', 'event_tags', 'religions',
+            'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'language', 'region', 'region_name',
             'is_published', 'created_at', 'updated_at'
         ]
