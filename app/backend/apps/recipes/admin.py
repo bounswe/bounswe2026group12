@@ -18,7 +18,23 @@ class UnitAdmin(admin.ModelAdmin):
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'parent', 'latitude', 'longitude')
+    list_select_related = ('parent',)
+    search_fields = ('name',)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'parent'),
+        }),
+        ('Geographic Center', {
+            'description': 'Coordinates used for map pin placement.',
+            'fields': ('latitude', 'longitude'),
+        }),
+        ('Bounding Box (optional)', {
+            'description': 'Used for viewport-bounded discovery queries.',
+            'classes': ('collapse',),
+            'fields': ('bbox_north', 'bbox_south', 'bbox_east', 'bbox_west'),
+        }),
+    )
 
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
