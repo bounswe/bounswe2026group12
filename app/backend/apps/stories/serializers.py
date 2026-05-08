@@ -114,19 +114,45 @@ class StorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         single_id = validated_data.pop('linked_recipe_id', None)
         multi_ids = validated_data.pop('linked_recipe_ids', None)
+        
+        dietary_tags = validated_data.pop('dietary_tags', None)
+        event_tags = validated_data.pop('event_tags', None)
+        religions = validated_data.pop('religions', None)
+        
         story = Story.objects.create(**validated_data)
         self._set_recipes(story, single_id, multi_ids)
+        
+        if dietary_tags is not None:
+            story.dietary_tags.set(dietary_tags)
+        if event_tags is not None:
+            story.event_tags.set(event_tags)
+        if religions is not None:
+            story.religions.set(religions)
+            
         return story
 
     def update(self, instance, validated_data):
         single_id = validated_data.pop('linked_recipe_id', None)
         multi_ids = validated_data.pop('linked_recipe_ids', None)
+        
+        dietary_tags = validated_data.pop('dietary_tags', None)
+        event_tags = validated_data.pop('event_tags', None)
+        religions = validated_data.pop('religions', None)
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
         
         if single_id is not None or multi_ids is not None:
             self._set_recipes(instance, single_id, multi_ids)
+            
+        if dietary_tags is not None:
+            instance.dietary_tags.set(dietary_tags)
+        if event_tags is not None:
+            instance.event_tags.set(event_tags)
+        if religions is not None:
+            instance.religions.set(religions)
+            
         return instance
 
     def _set_recipes(self, story, single_id, multi_ids):
