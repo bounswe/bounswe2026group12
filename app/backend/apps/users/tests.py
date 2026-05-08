@@ -248,8 +248,8 @@ class TokenRefreshRaceConditionTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class CulturalOnboardingTest(APITestCase):
-    """Tests for cultural onboarding profile fields (M4-12 / #343)."""
+class UserPreferencesTest(APITestCase):
+    """Tests for user preference and cultural onboarding fields (M4-12 / #343, M4-11 / #342)."""
 
     CULTURAL_FIELDS = ['cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests']
 
@@ -334,17 +334,64 @@ class CulturalOnboardingTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_patch_ignores_non_cultural_fields(self):
+    def test_patch_ignores_sensitive_fields(self):
+        """
+        Regression test: PATCH /api/users/me/ should only update allowed preference fields.
+        It must ignore sensitive fields like email, role, or is_staff to prevent privilege escalation.
+        """
         response = self.client.patch(
             '/api/users/me/',
-            {'email': 'hijack@example.com', 'role': 'admin', 'cultural_interests': ['Vegan']},
+            {
+                'email': 'hijack@example.com',
+                'role': 'admin',
+                'is_staff': True,
+                'cultural_interests': ['Vegan']
+            },
             format='json',
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, 'cultural@example.com')
         self.assertEqual(self.user.role, User.Role.USER)
+        self.assertFalse(self.user.is_staff)
         self.assertEqual(self.user.cultural_interests, ['Vegan'])
+
+
+class ContactabilityProfileTest(APITestCase):
+    """Tests for messaging contactability preference (M4-11 / #342)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='contact@example.com', username='contactuser', password='StrongPass123!'
+        )
+        response = self.client.post(
+            '/api/auth/login/', {"email": "contact@example.com", "password": "StrongPass123!"}
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["access"]}')
+
+    def test_default_is_contactable_true(self):
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_contactable'])
+
+    def test_patch_can_disable_contactability(self):
+        response = self.client.patch('/api/users/me/', {'is_contactable': False}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['is_contactable'])
+        
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_contactable)
+
+    def test_patch_can_reenable_contactability(self):
+        self.user.is_contactable = False
+        self.user.save()
+        
+        response = self.client.patch('/api/users/me/', {'is_contactable': True}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_contactable'])
+        
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_contactable)
 
 
 class TokenRefreshTest(APITestCase):

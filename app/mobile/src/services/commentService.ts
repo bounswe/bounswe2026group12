@@ -12,6 +12,8 @@ export type Comment = {
   type: CommentType;
   created_at: string;
   updated_at: string;
+  helpful_count: number;
+  has_voted: boolean;
 };
 
 type Paginated<T> = { count: number; next: string | null; previous: string | null; results: T[] };
@@ -47,4 +49,8 @@ export async function postComment(
 
 export async function deleteComment(commentId: number): Promise<void> {
   await apiDelete(`/api/comments/${commentId}/`);
+}
+
+export async function toggleCommentVote(commentId: number): Promise<{ status: string }> {
+  return apiPostJson<{ status: string }>(`/api/comments/${commentId}/vote/`, {});
 }
