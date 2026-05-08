@@ -99,3 +99,29 @@ class ExploreBackendTest(APITestCase):
         rel_names = [r['name'] for r in response.data['religions']]
         self.assertIn('Vegan', diet_names)
         self.assertIn('Christianity', rel_names)
+
+    def test_filter_by_linked_recipe_region(self):
+        """Verify that a story with no direct region is found via its linked recipe's region."""
+        # story.region is null, but recipe has a region
+        recipe = Recipe.objects.create(
+            title='Mediterranean Salad',
+            description='Fresh salad',
+            author=self.author,
+            region=self.region_balkans,
+            is_published=True
+        )
+        story = Story.objects.create(
+            title='Salad Days',
+            body='Making salad without direct region',
+            author=self.author,
+            region=None,
+            is_published=True
+        )
+        from apps.stories.models import StoryRecipeLink
+        StoryRecipeLink.objects.create(story=story, recipe=recipe, order=0)
+        
+        # Searching by Balkans should find it
+        response = self.client.get('/api/search/', {'region': 'Balkans'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        story_titles = [s['title'] for s in response.data['stories']]
+        self.assertIn('Salad Days', story_titles)

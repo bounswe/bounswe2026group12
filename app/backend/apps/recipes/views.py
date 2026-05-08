@@ -37,10 +37,15 @@ def _csv_param(params, name):
     return [v.strip() for v in raw.split(',') if v.strip()]
 
 
-def _iexact_or(field, values):
+def _iexact_or(field_or_fields, values):
     if not values:
         return None
-    return reduce(operator.or_, (Q(**{f'{field}__iexact': v}) for v in values))
+    fields = field_or_fields if isinstance(field_or_fields, list) else [field_or_fields]
+    queries = []
+    for v in values:
+        for f in fields:
+            queries.append(Q(**{f'{f}__iexact': v}))
+    return reduce(operator.or_, queries)
 
 
 def apply_content_filters(qs, params):
@@ -49,17 +54,19 @@ def apply_content_filters(qs, params):
     Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
     comma-separated values. Within an axis: OR. Between axes: AND.
     """
-    # common filters for both Story and Recipe
     filter_map = [
-        ('region', 'region__name'),
         ('diet', 'dietary_tags__name'),
         ('event', 'event_tags__name'),
         ('religion', 'religions__name'),
     ]
     
-    # Ingredient filter is Recipe-only
+    # Region and Ingredient filters are model-specific
     if hasattr(qs.model, 'recipe_ingredients'):
+        filter_map.append(('region', 'region__name'))
         filter_map.append(('ingredient', 'recipe_ingredients__ingredient__name'))
+    else:
+        # For stories, allow matching region via linked recipes
+        filter_map.append(('region', ['region__name', 'recipe_links__recipe__region__name']))
 
     for param_name, field in filter_map:
         pos = _iexact_or(field, _csv_param(params, param_name))
@@ -85,7 +92,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
-        'dietary_tags', 'event_tags',
+        'dietary_tags', 'event_tags', 'religions',
     ).annotate(
         story_count=models.Count('story_links', filter=models.Q(story_links__story__is_published=True))
     ).all()

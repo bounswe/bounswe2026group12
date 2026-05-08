@@ -67,13 +67,6 @@ class GlobalSearchView(APIView):
             recipes = recipes.filter(Q(title__icontains=query) | Q(description__icontains=query))
             stories = stories.filter(Q(title__icontains=query) | Q(body__icontains=query))
 
-        if region_name:
-            # Filter stories by direct region tag OR their linked recipes' regions.
-            stories = stories.filter(
-                Q(region__name__icontains=region_name) |
-                Q(recipe_links__recipe__region__name__icontains=region_name)
-            ).distinct()
-
         if language:
             recipes = recipes.filter(author__preferred_language__iexact=language)
             stories = stories.filter(author__preferred_language__iexact=language)
