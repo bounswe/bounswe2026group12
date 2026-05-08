@@ -35,5 +35,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(seed_taxonomy, clear_taxonomy),
+        migrations.RunPython(seed_taxonomy, migrations.RunPython.noop),
     ]

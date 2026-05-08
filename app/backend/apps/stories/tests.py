@@ -66,8 +66,7 @@ class StoryCreateAPITest(APITestCase):
         # linked_recipes (array) should return both
         self.assertEqual(len(response.data['linked_recipes']), 2)
         ids = [r['recipe_id'] for r in response.data['linked_recipes']]
-        self.assertIn(self.recipe.id, ids)
-        self.assertIn(recipe2.id, ids)
+        self.assertEqual(ids, [self.recipe.id, recipe2.id])
 
     def test_create_story_without_linked_recipe(self):
         self.client.force_authenticate(user=self.user)
@@ -102,6 +101,18 @@ class StoryCreateAPITest(APITestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['language'], "tr")
+
+    def test_create_story_invalid_religion_id(self):
+        """Verify that story creation fails with 400 if religion_ids contains an invalid ID."""
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "title": "Story with invalid religion",
+            "body": "Body text",
+            "religion_ids": [9999]
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("religion_ids", response.data)
 
 
 class StoryRetrieveAPITest(APITestCase):

@@ -30,7 +30,8 @@ class GlobalSearchView(APIView):
 
     def _serialize_story(self, story):
         # Prefer the story's direct region; fall back to its FIRST linked recipe's region
-        first_link = story.recipe_links.all()[0] if story.recipe_links.all().exists() else None
+        links = list(story.recipe_links.all())
+        first_link = links[0] if links else None
         
         if story.region_id:
             region_tag = story.region.name
@@ -65,13 +66,6 @@ class GlobalSearchView(APIView):
         if query:
             recipes = recipes.filter(Q(title__icontains=query) | Q(description__icontains=query))
             stories = stories.filter(Q(title__icontains=query) | Q(body__icontains=query))
-
-        if region_name:
-            # Filter stories by direct region tag OR their linked recipes' regions.
-            stories = stories.filter(
-                Q(region__name__icontains=region_name) |
-                Q(recipe_links__recipe__region__name__icontains=region_name)
-            ).distinct()
 
         if language:
             recipes = recipes.filter(author__preferred_language__iexact=language)
