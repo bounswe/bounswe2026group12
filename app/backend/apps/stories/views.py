@@ -8,7 +8,9 @@ from .serializers import StorySerializer
 
 class StoryViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Stories."""
-    queryset = Story.objects.select_related('author', 'linked_recipe').all()
+    queryset = Story.objects.select_related('author').prefetch_related(
+        'recipe_links__recipe__region', 'region'
+    ).all()
     serializer_class = StorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
