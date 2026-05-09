@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0016_merge_20260509_1145'),
+        ('recipes', '0017_recipe_public_id'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
