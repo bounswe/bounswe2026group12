@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   modalTitle: { fontSize: 18, fontWeight: '700', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
-  closeText: { fontSize: 16, color: tokens.colors.primary, fontWeight: '700' },
+  closeText: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
   search: {
     borderWidth: 2,
     borderColor: tokens.colors.border,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   addRowText: {
     fontSize: 16,
     fontWeight: '600',
-    color: tokens.colors.primary,
+    color: tokens.colors.text,
   },
   empty: {
     paddingVertical: 16,

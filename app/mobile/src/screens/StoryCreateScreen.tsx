@@ -226,9 +226,9 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.primary,
     backgroundColor: 'transparent',
   },
-  langPillActive: { backgroundColor: tokens.colors.primary, borderColor: tokens.colors.primary },
-  langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.primary },
-  langTextActive: { color: tokens.colors.surface },
+  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.primary },
+  langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.text },
+  langTextActive: { color: tokens.colors.text },
   thumbButton: {
     borderWidth: 2,
     borderColor: tokens.colors.primary,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     backgroundColor: 'transparent',
   },
-  thumbButtonText: { fontSize: 15, fontWeight: '800', color: tokens.colors.primary },
+  thumbButtonText: { fontSize: 15, fontWeight: '800', color: tokens.colors.text },
   thumbClear: { marginTop: 10, alignSelf: 'flex-start' },
   thumbClearText: { fontSize: 14, fontWeight: '700', color: tokens.colors.error },
 });

@@ -19,7 +19,7 @@
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 900;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   text-decoration: none;
   letter-spacing: -0.02em;
 }
@@ -44,8 +44,14 @@
 }
 
 .navbar-link:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   text-decoration: none;
+}
+
+.navbar-link.active,
+.navbar-link[aria-current="page"] {
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .navbar-username {
@@ -61,7 +67,7 @@
 
 .navbar-brand:focus-visible,
 .navbar-link:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 3px solid var(--color-primary);
   outline-offset: 3px;
   border-radius: 3px;
 }

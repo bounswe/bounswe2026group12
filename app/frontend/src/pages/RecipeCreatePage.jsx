@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
@@ -16,6 +16,7 @@ import { fetchRegions } from '../services/searchService';
 import './RecipeCreatePage.css';
 
 const DRAFT_KEY = 'draft:recipe:new';
+const MAX_DESC = 1000;
 
 function makeRow() {
   return {
@@ -26,6 +27,18 @@ function makeRow() {
     unitId: null,
     unitName: '',
   };
+}
+
+function StepHeader({ number, title, hint }) {
+  return (
+    <div className="step-header">
+      <span className="step-number" aria-hidden="true">{number}</span>
+      <div>
+        <h2 className="step-title">{title}</h2>
+        {hint && <p className="step-hint">{hint}</p>}
+      </div>
+    </div>
+  );
 }
 
 export default function RecipeCreatePage() {
@@ -49,11 +62,26 @@ export default function RecipeCreatePage() {
   const draftState = { title, description, region, qaEnabled, rows };
   const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
 
+  const isDirty = useRef(false);
+
   useEffect(() => {
     fetchIngredients().then(setIngredients).catch(() => {});
     fetchUnits().then(setUnits).catch(() => {});
     fetchRegions().then(setRegions).catch(() => {});
   }, []);
+
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    function handleBeforeUnload(e) {
+      if (!isDirty.current) return;
+      e.preventDefault();
+      e.returnValue = '';
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  function markDirty() { isDirty.current = true; }
 
   function showToast(message, type) {
     setToast({ message, type });
@@ -70,6 +98,7 @@ export default function RecipeCreatePage() {
   }
 
   const handleRowChange = useCallback((rowId, field, value) => {
+    markDirty();
     setRows((prev) =>
       prev.map((r) => (r.id === rowId ? { ...r, [field]: value } : r))
     );
@@ -102,14 +131,17 @@ export default function RecipeCreatePage() {
       }
     }
     const filledRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
-    if (filledRows.length === 0) e.ingredients = 'At least one ingredient with amount is required.';
+    if (filledRows.length === 0) e.ingredients = 'Please add at least one ingredient with an amount.';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      document.getElementById('error-summary')?.focus();
+      return;
+    }
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
     const payload = {
@@ -127,15 +159,14 @@ export default function RecipeCreatePage() {
 
     try {
       const created = await createRecipe(payload);
-
       if (video || thumbnail) {
         const mediaData = new FormData();
         if (video) mediaData.append('video', video);
         if (thumbnail) mediaData.append('image', thumbnail);
         await updateRecipe(created.id, mediaData);
       }
-
       clearDraft();
+      isDirty.current = false;
       showToast('Recipe published!', 'success');
       setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
     } catch {
@@ -143,84 +174,116 @@ export default function RecipeCreatePage() {
     }
   }
 
+  const hasErrors = Object.keys(errors).length > 0;
+
   return (
     <main className="page-card recipe-form">
-      <h1 className="recipe-form-heading">Create Recipe</h1>
+      <h1 className="recipe-form-heading">Create a Recipe</h1>
+      <p className="recipe-form-intro">
+        Fill in the steps below. Fields marked <span aria-hidden="true">*</span>
+        <span className="sr-only">with an asterisk</span> are required.
+      </p>
+
       <DraftRestoreBanner
         draft={savedDraft}
         onRestore={handleRestore}
         onDiscard={clearDraft}
       />
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+
+      {hasErrors && (
+        <div
+          id="error-summary"
+          className="error-summary"
+          role="alert"
+          tabIndex={-1}
+          aria-label="Form errors"
+        >
+          <strong>Please fix the following fields before publishing:</strong>
+          <ul>
+            {errors.title      && <li><a href="#title">Title</a></li>}
+            {errors.content    && <li><a href="#description">Description or video</a></li>}
+            {errors.amount     && <li><a href="#ingredients">Ingredient amount</a></li>}
+            {errors.ingredients && <li><a href="#ingredients">Ingredients</a></li>}
+          </ul>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} noValidate>
+
+        {/* ── Step 1: Basic info ── */}
+        <section className="form-step">
+          <StepHeader
+            number="1"
+            title="Basic Information"
+            hint="Give your recipe a name and tell people what it is."
           />
-          {errors.title && <p className="field-error">{errors.title}</p>}
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-
-        {errors.content && <p className="field-error">{errors.content}</p>}
-
-        <div className="form-group">
-          <label htmlFor="region">Region</label>
-          <select
-            id="region"
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-          >
-            <option value="">Select a region</option>
-            {regions.map((r) => (
-              <option key={r.id} value={r.id}>{r.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="video">Video</label>
-          <input
-            id="video"
-            type="file"
-            accept="video/*"
-            onChange={(e) => setVideo(e.target.files[0] || null)}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="thumbnail">Thumbnail Image (optional)</label>
-          <input
-            id="thumbnail"
-            type="file"
-            accept="image/*"
-            onChange={(e) => setThumbnail(e.target.files[0] || null)}
-          />
-        </div>
-
-        <div className="form-group form-group-checkbox">
-          <label className="checkbox-label">
+          <div className="form-group">
+            <label htmlFor="title">
+              Recipe Title <span className="required-mark" aria-hidden="true">*</span>
+            </label>
+            <p id="title-hint" className="field-hint">
+              Keep it short and descriptive, e.g. "Anatolian Lamb Stew"
+            </p>
             <input
-              type="checkbox"
-              checked={qaEnabled}
-              onChange={(e) => setQaEnabled(e.target.checked)}
+              id="title"
+              aria-describedby="title-hint"
+              aria-required="true"
+              aria-invalid={!!errors.title}
+              value={title}
+              onChange={(e) => { markDirty(); setTitle(e.target.value); }}
+              placeholder="e.g. Anatolian Lamb Stew"
             />
-            Enable Q&amp;A on this recipe
-          </label>
-        </div>
+            {errors.title && <p className="field-error" role="alert">{errors.title}</p>}
+          </div>
 
-        <section className="ingredients-section">
-          <h2>Ingredients</h2>
+          <div className="form-group">
+            <label htmlFor="description">
+              Description
+              <span className="optional-mark"> (optional if uploading media)</span>
+            </label>
+            <p id="desc-hint" className="field-hint">
+              Describe the dish, its history, or how to cook it. Up to {MAX_DESC} characters.
+            </p>
+            <textarea
+              id="description"
+              aria-describedby="desc-hint"
+              rows={5}
+              maxLength={MAX_DESC}
+              value={description}
+              onChange={(e) => { markDirty(); setDescription(e.target.value); }}
+              placeholder="Tell the story of this recipe…"
+            />
+            <p className="char-count" aria-live="polite">
+              {description.length} / {MAX_DESC}
+            </p>
+            {errors.content && <p className="field-error" role="alert">{errors.content}</p>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="region">Region <span className="optional-mark">(optional)</span></label>
+            <p id="region-hint" className="field-hint">Where does this recipe come from?</p>
+            <select
+              id="region"
+              aria-describedby="region-hint"
+              value={region}
+              onChange={(e) => { markDirty(); setRegion(e.target.value); }}
+            >
+              <option value="">— Choose a region —</option>
+              {regions.map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </div>
+        </section>
+
+        {/* ── Step 2: Ingredients ── */}
+        <section className="form-step ingredients-section">
+          <StepHeader
+            number="2"
+            title="Ingredients"
+            hint="Add each ingredient with its amount and unit. You need at least one."
+          />
           {rows.map((row) => (
             <IngredientRow
               key={row.id}
@@ -233,19 +296,81 @@ export default function RecipeCreatePage() {
               onNewUnit={handleNewUnit}
             />
           ))}
-          {errors.amount && <p className="field-error">{errors.amount}</p>}
-          {errors.ingredients && <p className="field-error">{errors.ingredients}</p>}
+          {errors.amount && <p className="field-error" role="alert">{errors.amount}</p>}
+          {errors.ingredients && <p className="field-error" role="alert">{errors.ingredients}</p>}
           <button
             type="button"
-            className="btn btn-outline btn-sm"
-            onClick={() => setRows((prev) => [...prev, makeRow()])}
+            className="btn btn-outline add-ingredient-btn"
+            onClick={() => { markDirty(); setRows((prev) => [...prev, makeRow()]); }}
+            aria-label="Add another ingredient row"
           >
             + Add Ingredient
           </button>
         </section>
 
+        {/* ── Step 3: Media & options ── */}
+        <section className="form-step">
+          <StepHeader
+            number="3"
+            title="Media & Options"
+            hint="Upload a photo or video, and choose your settings."
+          />
+
+          <div className="form-group">
+            <label htmlFor="thumbnail">
+              Thumbnail Photo <span className="optional-mark">(optional)</span>
+            </label>
+            <p id="thumb-hint" className="field-hint">JPG or PNG, up to 10 MB.</p>
+            <input
+              id="thumbnail"
+              type="file"
+              accept="image/*"
+              aria-describedby="thumb-hint"
+              onChange={(e) => { markDirty(); setThumbnail(e.target.files[0] || null); }}
+            />
+            {thumbnail && (
+              <p className="file-chosen">Selected: {thumbnail.name}</p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="video">
+              Video <span className="optional-mark">(optional)</span>
+            </label>
+            <p id="video-hint" className="field-hint">
+              Upload a short cooking video. Required if you do not add a description.
+            </p>
+            <input
+              id="video"
+              type="file"
+              accept="video/*"
+              aria-describedby="video-hint"
+              onChange={(e) => { markDirty(); setVideo(e.target.files[0] || null); }}
+            />
+            {video && (
+              <p className="file-chosen">Selected: {video.name}</p>
+            )}
+          </div>
+
+          <div className="form-group form-group-checkbox">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={qaEnabled}
+                onChange={(e) => setQaEnabled(e.target.checked)}
+              />
+              Enable Q&amp;A on this recipe
+            </label>
+          </div>
+        </section>
+
         <div className="recipe-form-actions">
-          <button type="submit" className="btn btn-primary">Publish Recipe</button>
+          <button type="submit" className="btn btn-primary publish-btn">
+            Publish Recipe
+          </button>
+          <p className="publish-note">
+            Your recipe will be visible to everyone after publishing.
+          </p>
         </div>
       </form>
 

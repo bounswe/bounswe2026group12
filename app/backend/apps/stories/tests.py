@@ -3,6 +3,7 @@ from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from apps.common.ids import ULID_REGEX
 from apps.recipes.models import Recipe, Region
 from apps.stories.models import Story
 
@@ -25,23 +26,95 @@ class StoryCreateAPITest(APITestCase):
 
     def test_create_story_success(self):
         self.client.force_authenticate(user=self.user)
-        data = {"title": "My Story", "body": "A great culinary journey"}
+        data = {"title": "My Story", "body": "A great culinary journey", "summary": "Short intro"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], "My Story")
+        self.assertIsInstance(response.data['id'], int)
+        self.assertRegex(response.data['public_id'], ULID_REGEX)
+        self.assertEqual(response.data['summary'], "Short intro")
         self.assertEqual(response.data['author_username'], "author")
 
-    def test_create_story_with_linked_recipe(self):
+    def test_created_stories_have_distinct_public_ids(self):
         self.client.force_authenticate(user=self.user)
+        first = self.client.post(self.url, {"title": "First Story", "body": "First"})
+        second = self.client.post(self.url, {"title": "Second Story", "body": "Second"})
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(first.data['public_id'], second.data['public_id'])
+
+    def test_create_story_with_linked_recipe_legacy(self):
+        """TC_API_STORY_004 - Story creation with linked recipe (bidirectional).
+
+        Designer: Emirhan Simsek. Lab 9 acceptance test.
+        Requirements: 3.5.1, 3.5.2, 3.5.3, 3.5.4, 3.3.9.
+
+        Asserts the legacy linked_recipe write path returns the recipe ID and
+        title in the read shape, that the new linked_recipes array reflects
+        the link, and that the back-reference is observable from the recipe
+        side (the recipe's story_count goes up and the model-level reverse
+        relation Recipe.linked_stories includes the new story).
+
+        Lab 9 cited a hypothetical Recipe.linkedStories[] field; the current
+        serializer exposes the back-link as story_count plus the reverse
+        manager. This assertion is the surviving bidirectional contract.
+        """
+        self.client.force_authenticate(user=self.user)
+
+        recipe_before = self.client.get(reverse('recipe-detail', kwargs={'pk': self.recipe.id}))
+        self.assertEqual(recipe_before.status_code, status.HTTP_200_OK)
+        story_count_before = recipe_before.data['story_count']
+
         data = {
             "title": "Baklava Story",
             "body": "How I learned to make baklava",
-            "linked_recipe": self.recipe.id
+            "linked_recipe": self.recipe.id,
+            "is_published": True,
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['linked_recipe'], self.recipe.id)
         self.assertEqual(response.data['recipe_title'], "Baklava")
+        self.assertEqual(len(response.data['linked_recipes']), 1)
+        self.assertEqual(response.data['linked_recipes'][0]['recipe_id'], self.recipe.id)
+
+        new_story_id = response.data['id']
+        recipe_after = self.client.get(reverse('recipe-detail', kwargs={'pk': self.recipe.id}))
+        self.assertEqual(recipe_after.status_code, status.HTTP_200_OK)
+        self.assertEqual(recipe_after.data['story_count'], story_count_before + 1)
+
+        self.assertTrue(
+            self.recipe.linked_stories.filter(id=new_story_id).exists(),
+            "Recipe.linked_stories reverse relation must include the new story",
+        )
+
+    def test_create_story_with_multiple_recipes(self):
+        """Test new capability: sending 'linked_recipe_ids' as array."""
+        self.client.force_authenticate(user=self.user)
+        recipe2 = Recipe.objects.create(
+            title="Kunefe", description="Cheese pastry",
+            region=self.region, author=self.user, is_published=True
+        )
+        data = {
+            "title": "Sweet Journey",
+            "body": "Baklava and Kunefe",
+            "linked_recipe_ids": [self.recipe.id, recipe2.id]
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # linked_recipe (singular) should return the first one
+        self.assertEqual(response.data['linked_recipe'], self.recipe.id)
+        
+        # 4. Verify that the response includes 'linked_recipes' array correctly ordered
+        self.assertIn('linked_recipes', response.data)
+        linked = response.data['linked_recipes']
+        
+        # We expect exactly these two recipes in this exact order
+        self.assertEqual(len(linked), 2)
+        self.assertEqual(linked[0]['recipe_id'], self.recipe.id)
+        self.assertEqual(linked[0]['order'], 0)
+        self.assertEqual(linked[1]['recipe_id'], recipe2.id)
+        self.assertEqual(linked[1]['order'], 1)
 
     def test_create_story_without_linked_recipe(self):
         self.client.force_authenticate(user=self.user)
@@ -49,6 +122,7 @@ class StoryCreateAPITest(APITestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNone(response.data['linked_recipe'])
+        self.assertEqual(len(response.data['linked_recipes']), 0)
 
     def test_create_story_missing_title(self):
         self.client.force_authenticate(user=self.user)
@@ -99,7 +173,8 @@ class StoryRetrieveAPITest(APITestCase):
     def test_public_list_shows_published_only(self):
         response = self.client.get(reverse('story-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        titles = [s['title'] for s in response.data]
+        results = response.data.get('results', response.data)
+        titles = [s['title'] for s in results]
         self.assertIn("Published Story", titles)
         self.assertNotIn("Draft Story", titles)
 
@@ -108,6 +183,14 @@ class StoryRetrieveAPITest(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], "Published Story")
+        self.assertIn('updated_at', response.data)
+
+    def test_public_detail_accepts_public_id(self):
+        url = reverse('story-detail', kwargs={'pk': self.published.public_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.published.id)
+        self.assertEqual(response.data['public_id'], self.published.public_id)
 
     def test_public_detail_draft_404(self):
         url = reverse('story-detail', kwargs={'pk': self.draft.id})
@@ -117,7 +200,8 @@ class StoryRetrieveAPITest(APITestCase):
     def test_author_can_see_own_drafts(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('story-list'))
-        titles = [s['title'] for s in response.data]
+        results = response.data.get('results', response.data)
+        titles = [s['title'] for s in results]
         self.assertIn("Draft Story", titles)
 
 

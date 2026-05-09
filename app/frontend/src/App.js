@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import SkipLink from './components/SkipLink';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -16,13 +17,18 @@ import StoryEditPage from './pages/StoryEditPage';
 import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
+import MapPage from './pages/MapPage';
+import ExplorePage from './pages/ExplorePage';
+import EventDetailPage from './pages/EventDetailPage';
+import ModerationPage from './pages/ModerationPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   return (
     <>
+      <SkipLink />
       <Navbar />
-      <div className="page-wrapper">
+      <div className="page-wrapper" id="main-content">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -30,6 +36,9 @@ export default function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/recipes" element={<RecipeListPage />} />
           <Route path="/stories" element={<StoryListPage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/explore/:eventId" element={<EventDetailPage />} />
 
           <Route
             path="/recipes/new"
@@ -62,6 +71,10 @@ export default function App() {
           <Route
             path="/onboarding"
             element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin/moderation"
+            element={<ProtectedRoute><ModerationPage /></ProtectedRoute>}
           />
 
           <Route path="*" element={<NotFoundPage />} />

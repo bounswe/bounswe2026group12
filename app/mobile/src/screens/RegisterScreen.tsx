@@ -44,8 +44,8 @@ export default function RegisterScreen({ navigation }: Props) {
       await login(data.user, data.access);
       navigation.dispatch(
         CommonActions.reset({
-          index: 0,
-          routes: [{ name: 'Home' }],
+          index: 1,
+          routes: [{ name: 'Home' }, { name: 'Onboarding' }],
         })
       );
     } catch (err) {
@@ -171,11 +171,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 24,
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
   },
   field: { marginBottom: 16 },
-  label: { fontSize: 16, fontWeight: '600', marginBottom: 6, color: tokens.colors.surface },
+  label: { fontSize: 16, fontWeight: '600', marginBottom: 6, color: tokens.colors.text },
   input: {
     borderWidth: 2,
     borderColor: tokens.colors.primaryBorder,
@@ -190,23 +190,23 @@ const styles = StyleSheet.create({
   fieldError: { color: tokens.colors.error, marginTop: 6, fontSize: 14 },
   apiError: { color: tokens.colors.error, marginBottom: 12, fontSize: 15 },
   primaryButton: {
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: '#EFBF04',
     paddingVertical: 14,
     borderRadius: tokens.radius.pill,
     alignItems: 'center',
     marginTop: 8,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: '#000000',
     ...shadows.md,
   },
   primaryButtonPressed: { opacity: 0.88 },
-  primaryButtonText: { color: tokens.colors.surface, fontSize: 16, fontWeight: '700' },
+  primaryButtonText: { color: '#000000', fontSize: 16, fontWeight: '800' },
   footer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
     marginTop: 24,
   },
-  footerText: { fontSize: 15, color: tokens.colors.surface },
-  link: { fontSize: 15, color: tokens.colors.surface, fontWeight: '800' },
+  footerText: { fontSize: 15, color: tokens.colors.text },
+  link: { fontSize: 15, color: tokens.colors.text, fontWeight: '800' },
 });

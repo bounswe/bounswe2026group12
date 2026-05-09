@@ -13,3 +13,4 @@ Pillow==11.2.1
 django-storages==1.14.4
 boto3==1.38.11
 exponent-server-sdk==2.1.0
+django-cors-headers==4.9.0

@@ -21,11 +21,20 @@ services:
       SECRET_KEY: ${SECRET_KEY:-dev-insecure-secret-do-not-use-in-prod}
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://genipe.app,https://www.genipe.app}
       POSTGRES_DB: ${POSTGRES_DB:-bounswe_db}
       POSTGRES_USER: ${POSTGRES_USER:-genipe}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genipe_mvp_2026}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
+      # Optional S3-compatible object storage. Leave empty to use the local
+      # media_data volume; set AWS_STORAGE_BUCKET_NAME (and the rest) in .env
+      # to switch DEFAULT_FILE_STORAGE to S3Boto3Storage.
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME:-}
+      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_S3_REGION_NAME: ${AWS_S3_REGION_NAME:-ewr1}
     volumes:
       - media_data:/app/media
       - static_data:/app/staticfiles
@@ -33,6 +42,14 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
+    # /admin/login/ renders without hitting the DB, so this is a clean
+    # liveness probe for gunicorn. urlopen raises on non-2xx, exiting non-zero.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/admin/login/')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
 
   web:
     build:
@@ -45,8 +62,15 @@ services:
       - media_data:/var/www/media:ro
       - static_data:/var/www/django-static:ro
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
 volumes:
   pgdata:

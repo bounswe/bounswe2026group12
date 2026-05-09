@@ -87,7 +87,7 @@
 .result-personalized {
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background: var(--color-primary-tint);
   border: 1px solid var(--color-primary-border);
   border-radius: 999px;

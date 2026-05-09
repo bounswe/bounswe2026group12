@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { SearchResultItem } from '../../services/searchService';
 import { shadows, tokens } from '../../theme';
+import { RankReasonBadge } from '../personalization/RankReasonBadge';
 
 type Props = {
   item: SearchResultItem;
@@ -50,6 +51,7 @@ export function SearchResultCard({ item, onPress }: Props) {
             </Text>
           </View>
         </View>
+        <RankReasonBadge reason={item.rankReason} />
       </View>
     </Pressable>
   );
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   thumbImage: { width: '100%', height: '100%' },
-  thumbText: { color: tokens.colors.textOnDark, fontSize: 26, fontWeight: '800' },
+  thumbText: { color: tokens.colors.text, fontSize: 26, fontWeight: '800' },
   body: { padding: 12, gap: 10 },
   title: {
     fontSize: 16,

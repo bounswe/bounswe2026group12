@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     ...shadows.md,
   },
   text: {
-    color: tokens.colors.textOnDark,
+    color: tokens.colors.text,
     fontSize: 14,
     fontWeight: '500',
   },

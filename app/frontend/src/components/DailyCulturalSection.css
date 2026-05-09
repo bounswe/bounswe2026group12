@@ -46,7 +46,7 @@
 
 .daily-cultural-tags span {
   border: 1px solid var(--color-primary-border);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background: var(--color-primary-tint);
   border-radius: 999px;
   padding: 0.15rem 0.55rem;

@@ -23,12 +23,30 @@ export default function ProfileTabScreen() {
                 Signed in{user ? ` as ${user.username}` : ''}.
               </Text>
               <Pressable
+                onPress={() => navigation.navigate('Feed', { screen: 'Inbox' })}
+                style={({ pressed }) => [styles.actionBtn, styles.messagesBtn, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Open messages"
+              >
+                <Text style={styles.messagesBtnText}>Messages</Text>
+              </Pressable>
+              <View style={{ height: 12 }} />
+              <Pressable
+                onPress={() => navigation.navigate('Feed', { screen: 'Onboarding' })}
+                style={({ pressed }) => [styles.actionBtn, styles.culturalBtn, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Update cultural preferences"
+              >
+                <Text style={styles.culturalBtnText}>Cultural preferences</Text>
+              </Pressable>
+              <View style={{ height: 12 }} />
+              <Pressable
                 onPress={() => void logout()}
-                style={({ pressed }) => [styles.primary, pressed && styles.pressed]}
+                style={({ pressed }) => [styles.actionBtn, styles.logoutBtn, pressed && styles.pressed]}
                 accessibilityRole="button"
                 accessibilityLabel="Log out"
               >
-                <Text style={styles.primaryText}>Log out</Text>
+                <Text style={styles.logoutBtnText}>Log out</Text>
               </Pressable>
             </>
           ) : (
@@ -47,11 +65,11 @@ export default function ProfileTabScreen() {
                 </Pressable>
                 <Pressable
                   onPress={() => navigation.navigate('Feed', { screen: 'Register' })}
-                  style={({ pressed }) => [styles.secondary, pressed && styles.pressed]}
+                  style={({ pressed }) => [styles.registerBtn, pressed && styles.pressed]}
                   accessibilityRole="button"
                   accessibilityLabel="Go to Register"
                 >
-                  <Text style={styles.secondaryText}>Register</Text>
+                  <Text style={styles.registerBtnText}>Register</Text>
                 </Pressable>
               </View>
             </>
@@ -84,29 +102,63 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 12 },
   primary: {
     flex: 1,
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: tokens.radius.pill,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: '#000000',
     ...shadows.md,
     maxWidth: 340,
     alignSelf: 'center',
   },
   primaryText: { color: '#fff', fontSize: 16, fontWeight: '800' },
   secondary: {
-    flex: 1,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
-    backgroundColor: 'transparent',
+    borderColor: tokens.colors.surfaceDark,
+    backgroundColor: tokens.colors.bg,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: tokens.radius.pill,
     alignItems: 'center',
+    maxWidth: 340,
+    alignSelf: 'center',
+    width: '100%',
   },
-  secondaryText: { color: tokens.colors.primary, fontSize: 16, fontWeight: '800' },
+  secondaryText: { color: tokens.colors.text, fontSize: 16, fontWeight: '800' },
+  actionBtn: {
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    alignItems: 'center',
+    maxWidth: 340,
+    alignSelf: 'center',
+    width: '100%',
+    ...shadows.md,
+  },
+  messagesBtn: { backgroundColor: tokens.colors.accentGreen },
+  messagesBtnText: { color: tokens.colors.textOnDark, fontSize: 16, fontWeight: '800' },
+  culturalBtn: { backgroundColor: '#EFBF04' },
+  culturalBtnText: { color: tokens.colors.surfaceDark, fontSize: 16, fontWeight: '800' },
+  logoutBtn: { backgroundColor: tokens.colors.error },
+  logoutBtnText: { color: tokens.colors.textOnDark, fontSize: 16, fontWeight: '800' },
+  registerBtn: {
+    flex: 1,
+    backgroundColor: '#EFBF04',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#000000',
+    ...shadows.md,
+    maxWidth: 340,
+    alignSelf: 'center',
+  },
+  registerBtnText: { color: '#000000', fontSize: 16, fontWeight: '800' },
   pressed: { opacity: 0.9 },
 });
 

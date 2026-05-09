@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   thumbFallback: { alignItems: 'center', justifyContent: 'center' },
   thumbImage: { width: '100%', height: '100%' },
-  thumbText: { color: tokens.colors.textOnDark, fontSize: 22, fontWeight: '900' },
+  thumbText: { color: tokens.colors.text, fontSize: 22, fontWeight: '900' },
   body: { flex: 1, padding: 12, gap: 6 },
   title: {
     fontSize: 15,
@@ -72,5 +72,5 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   excerpt: { fontSize: 13, color: tokens.colors.textMuted, lineHeight: 18 },
-  author: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  author: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
 });

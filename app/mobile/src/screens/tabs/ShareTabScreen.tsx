@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     marginBottom: 10,
     textAlign: 'center',
     fontFamily: tokens.typography.display.fontFamily,
   },
-  subtitle: { fontSize: 15, color: tokens.colors.surface, lineHeight: 20, textAlign: 'center' },
+  subtitle: { fontSize: 15, color: tokens.colors.text, lineHeight: 20, textAlign: 'center' },
   grid: { marginTop: 14, gap: 12 },
   box: {
     borderWidth: 1,

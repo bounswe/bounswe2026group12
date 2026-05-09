@@ -76,7 +76,7 @@
 }
 
 .combobox-list li.add-new {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-style: italic;
   font-weight: 500;
 }

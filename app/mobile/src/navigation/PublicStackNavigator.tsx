@@ -1,6 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import EventDetailScreen from '../screens/EventDetailScreen';
+import ExploreScreen from '../screens/ExploreScreen';
 import HomeScreen from '../screens/HomeScreen';
+import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
+import MapDiscoveryScreen from '../screens/MapDiscoveryScreen';
+import MessageThreadScreen from '../screens/MessageThreadScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
@@ -74,6 +80,34 @@ export function PublicStackNavigator() {
         name="UserProfile"
         component={UserProfileScreen}
         options={{ title: 'Profile' }}
+      />
+      <Stack.Screen
+        name="Inbox"
+        component={InboxScreen}
+        options={{ title: 'Messages' }}
+      />
+      <Stack.Screen
+        name="MessageThread"
+        component={MessageThreadScreen}
+        options={{ title: 'Conversation' }}
+      />
+      <Stack.Screen
+        name="Onboarding"
+        component={OnboardingScreen}
+        options={{ title: 'Cultural Onboarding' }}
+      />
+      <Stack.Screen
+        name="MapDiscovery"
+        component={MapDiscoveryScreen}
+        options={{ title: 'Discover by region' }}
+        name="Explore"
+        component={ExploreScreen}
+        options={{ title: 'Explore' }}
+      />
+      <Stack.Screen
+        name="EventDetail"
+        component={EventDetailScreen}
+        options={{ title: 'Event' }}
       />
     </Stack.Navigator>
   );

@@ -10,7 +10,7 @@ from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UserProfileSerializer,
-    CulturalProfileUpdateSerializer,
+    UserPreferencesUpdateSerializer,
 )
 
 def get_tokens_for_user(user):
@@ -112,7 +112,7 @@ class MeView(APIView):
         return Response(serializer.data)
 
     def patch(self, request):
-        serializer = CulturalProfileUpdateSerializer(request.user, data=request.data, partial=True)
+        serializer = UserPreferencesUpdateSerializer(request.user, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()

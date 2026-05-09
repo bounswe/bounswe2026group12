@@ -14,6 +14,8 @@ export default function Navbar() {
         <div className="navbar-browse-links">
           <NavLink to="/recipes" className="navbar-link">Recipes</NavLink>
           <NavLink to="/stories" className="navbar-link">Stories</NavLink>
+          <NavLink to="/map" className="navbar-link">Map</NavLink>
+          <NavLink to="/explore" className="navbar-link">Explore</NavLink>
         </div>
         <div className="navbar-links">
           {user ? (

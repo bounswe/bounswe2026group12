@@ -1,20 +1,33 @@
 from functools import reduce
 import operator
+from decimal import ROUND_HALF_UP, Decimal
 
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.views import APIView
+from apps.common.ids import is_ulid
 from apps.common.permissions import IsAuthorOrReadOnly
-from .models import Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Vote
+from apps.common.pagination import StandardResultsSetPagination
+from apps.common.personalization import rank_items, score_recipe, has_profile_terms
+from .conversions import ConversionError, convert as convert_units
+from .models import (
+    Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
+    IngredientSubstitution,
+)
 from .serializers import (
+    ConvertRequestSerializer,
     IngredientLookupSerializer,
     IngredientSerializer,
+    IngredientSubstituteSerializer,
     RecipeSerializer,
     RegionSerializer,
+    RegionSubmissionSerializer,
     UnitLookupSerializer,
     UnitSerializer,
     CommentSerializer,
@@ -22,6 +35,8 @@ from .serializers import (
     DietaryTagSerializer,
     EventTagLookupSerializer,
     EventTagSerializer,
+    ReligionLookupSerializer,
+    ReligionSerializer,
 )
 
 
@@ -30,24 +45,37 @@ def _csv_param(params, name):
     return [v.strip() for v in raw.split(',') if v.strip()]
 
 
-def _iexact_or(field, values):
+def _iexact_or(field_or_fields, values):
     if not values:
         return None
-    return reduce(operator.or_, (Q(**{f'{field}__iexact': v}) for v in values))
+    fields = field_or_fields if isinstance(field_or_fields, list) else [field_or_fields]
+    queries = []
+    for v in values:
+        for f in fields:
+            queries.append(Q(**{f'{f}__iexact': v}))
+    return reduce(operator.or_, queries)
 
 
-def apply_recipe_filters(qs, params):
-    """Apply rich filters (M4-15 / #346) across culture, event, diet, ingredient axes.
+def apply_content_filters(qs, params):
+    """Apply rich filters (M4-15 / #346 / M5-20 / #386) across culture, event, diet, ingredient axes.
 
     Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
     comma-separated values. Within an axis: OR. Between axes: AND.
     """
     filter_map = [
-        ('region', 'region__name'),
         ('diet', 'dietary_tags__name'),
         ('event', 'event_tags__name'),
-        ('ingredient', 'recipe_ingredients__ingredient__name'),
+        ('religion', 'religions__name'),
     ]
+    
+    # Region and Ingredient filters are model-specific
+    if hasattr(qs.model, 'recipe_ingredients'):
+        filter_map.append(('region', 'region__name'))
+        filter_map.append(('ingredient', 'recipe_ingredients__ingredient__name'))
+    else:
+        # For stories, allow matching region via linked recipes
+        filter_map.append(('region', ['region__name', 'recipe_links__recipe__region__name']))
+
     for param_name, field in filter_map:
         pos = _iexact_or(field, _csv_param(params, param_name))
         if pos is not None:
@@ -57,29 +85,51 @@ def apply_recipe_filters(qs, params):
             qs = qs.exclude(neg)
     return qs.distinct()
 
-from rest_framework.pagination import PageNumberPagination
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+# Backward compat alias
+def apply_recipe_filters(qs, params):
+    return apply_content_filters(qs, params)
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
-        'dietary_tags', 'event_tags',
+        'dietary_tags', 'event_tags', 'religions',
+    ).annotate(
+        story_count=models.Count('story_links', filter=models.Q(story_links__story__is_published=True))
     ).all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     pagination_class = StandardResultsSetPagination
 
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        lookup_value = self.kwargs.get(self.lookup_url_kwarg or self.lookup_field)
+        lookup = {'public_id': lookup_value} if is_ulid(lookup_value) else {'pk': lookup_value}
+        obj = get_object_or_404(queryset, **lookup)
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     def get_queryset(self):
         qs = super().get_queryset()
         if self.action == 'list':
             qs = apply_recipe_filters(qs, self.request.query_params)
         return qs
+
+    def list(self, request, *args, **kwargs):
+        personalize = request.query_params.get('personalize') != '0'
+        if not personalize or not has_profile_terms(request.user):
+            return super().list(request, *args, **kwargs)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        items = rank_items(queryset[:500], request.user, score_recipe)
+
+        page = self.paginate_queryset(items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(items, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -148,11 +198,108 @@ class ModeratedLookupViewSet(viewsets.ModelViewSet):
             return self.lookup_serializer_class
         return super().get_serializer_class()
 
+    def perform_create(self, serializer):
+        # Stamp submitted_by server-side (#361) so submission attribution
+        # cannot be spoofed via the request body. Subclasses that override
+        # create() entirely (e.g. CulturalTagSubmissionMixin) handle their
+        # own attribution.
+        save_kwargs = {}
+        Model = self.queryset.model
+        if hasattr(Model, 'submitted_by'):
+            save_kwargs['submitted_by'] = self.request.user
+        serializer.save(**save_kwargs)
+
+
+class CulturalTagSubmissionMixin:
+    """Adds cultural-tag-aware create() (#391).
+
+    On POST: short-circuits when a case-insensitive duplicate exists.
+        - approved duplicate → 409 + the existing record
+        - pending duplicate  → 200 + queued payload referencing the existing record
+        - otherwise          → 201; submitted_by + submitted_at populated, lands as is_approved=False
+
+    Subclasses must define `lookup_serializer_class` and `queryset` (already
+    required by ModeratedLookupViewSet).
+    """
+
+    queue_message = 'A submission with this name is already queued for review.'
+
+    def _cleaned_name(self, request):
+        raw_name = request.data.get('name')
+        return raw_name.strip() if isinstance(raw_name, str) else ''
+
+    def create(self, request, *args, **kwargs):
+        name = self._cleaned_name(request)
+        if not name:
+            return Response(
+                {'name': ['This field may not be blank.']},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        Model = self.queryset.model
+        existing = Model.objects.filter(name__iexact=name).first()
+        if existing is not None:
+            data = self.lookup_serializer_class(existing).data
+            if existing.is_approved:
+                return Response(data, status=status.HTTP_409_CONFLICT)
+            return Response(
+                {'detail': self.queue_message, 'queued': True, **data},
+                status=status.HTTP_200_OK,
+            )
+
+        # request.data may be a QueryDict (form-encoded) or a plain dict
+        # (JSON). Normalize to a plain dict via the QueryDict.dict() helper
+        # so we don't accidentally pass list-wrapped values to the serializer.
+        if hasattr(request.data, 'dict'):
+            write_data = request.data.dict()
+        else:
+            write_data = dict(request.data)
+        write_data['name'] = name
+        serializer = self.get_serializer(data=write_data)
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save(submitted_by=request.user, is_approved=False)
+        return Response(
+            self.get_serializer(instance).data,
+            status=status.HTTP_201_CREATED,
+        )
+
 class IngredientViewSet(ModeratedLookupViewSet):
     """ViewSet for list and management of Ingredients."""
     queryset = Ingredient.objects.all().order_by(Lower('name'), 'id')
     serializer_class = IngredientSerializer
     lookup_serializer_class = IngredientLookupSerializer
+
+    def get_permissions(self):
+        # The parent's get_permissions hardcodes IsAdminUser for any action
+        # outside list/retrieve/create. Honor the @action's permission_classes
+        # for the public `substitutes` action.
+        if self.action == 'substitutes':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+
+    @action(detail=True, methods=['get'], url_path='substitutes')
+    def substitutes(self, request, pk=None):
+        """Return categorized, ranked substitution suggestions for an approved ingredient."""
+        # Cannot use self.get_object(): the parent's get_queryset() only filters
+        # is_approved=True for the list/retrieve actions, so a custom action
+        # would silently return unapproved ingredients.
+        source = get_object_or_404(Ingredient, pk=pk, is_approved=True)
+
+        rows = (
+            IngredientSubstitution.objects
+            .filter(from_ingredient_id=source.id, to_ingredient__is_approved=True)
+            .select_related('to_ingredient')
+            .order_by('-closeness', Lower('to_ingredient__name'))
+        )
+
+        grouped = {choice: [] for choice in IngredientSubstitution.MatchType.values}
+        for row in rows:
+            grouped[row.match_type].append(IngredientSubstituteSerializer(row).data)
+
+        return Response({
+            'ingredient': {'id': source.id, 'name': source.name},
+            **grouped,
+        })
 
 class UnitViewSet(ModeratedLookupViewSet):
     """ViewSet for list and management of Units."""
@@ -160,11 +307,16 @@ class UnitViewSet(ModeratedLookupViewSet):
     serializer_class = UnitSerializer
     lookup_serializer_class = UnitLookupSerializer
 
-class RegionViewSet(viewsets.ReadOnlyModelViewSet):
-    """ReadOnlyViewSet for Regions (GET only)."""
-    queryset = Region.objects.all()
-    serializer_class = RegionSerializer
-    permission_classes = [permissions.AllowAny]
+class RegionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
+    """ViewSet for Regions (#391).
+
+    Public list/retrieve returns approved regions only. Authenticated users
+    can submit new regions, which land as is_approved=False and enter the
+    cultural moderation queue.
+    """
+    queryset = Region.objects.all().order_by(Lower('name'), 'id')
+    serializer_class = RegionSubmissionSerializer
+    lookup_serializer_class = RegionSerializer
 
 class DietaryTagViewSet(ModeratedLookupViewSet):
     """ViewSet for list/submission of dietary tags (M4-15)."""
@@ -172,11 +324,17 @@ class DietaryTagViewSet(ModeratedLookupViewSet):
     serializer_class = DietaryTagSerializer
     lookup_serializer_class = DietaryTagLookupSerializer
 
-class EventTagViewSet(ModeratedLookupViewSet):
-    """ViewSet for list/submission of event tags (M4-15)."""
+class EventTagViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
+    """ViewSet for list/submission of event tags (M4-15, #391)."""
     queryset = EventTag.objects.all().order_by(Lower('name'), 'id')
     serializer_class = EventTagSerializer
     lookup_serializer_class = EventTagLookupSerializer
+
+class ReligionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
+    """ViewSet for list/submission of religions (M5-20, #391)."""
+    queryset = Religion.objects.all().order_by(Lower('name'), 'id')
+    serializer_class = ReligionSerializer
+    lookup_serializer_class = ReligionLookupSerializer
 
 class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """ViewSet for deleting and interacting with comments."""
@@ -212,3 +370,49 @@ class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
         # or we can rely on the annotation if get_object() applies it.
         count = getattr(comment, 'helpful_count', comment.votes.count())
         return Response({'helpful_count': count})
+
+
+class ConvertView(APIView):
+    """POST /api/convert/ — public unit conversion endpoint (#376)."""
+
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ConvertRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        density = None
+        ingredient_id = data.get('ingredient_id')
+        if ingredient_id is not None:
+            try:
+                ingredient = Ingredient.objects.get(pk=ingredient_id)
+            except Ingredient.DoesNotExist:
+                return Response(
+                    {'detail': f'Ingredient {ingredient_id} not found.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            density = ingredient.density_g_per_ml
+
+        try:
+            result = convert_units(
+                data['amount'],
+                data['from_unit'],
+                data['to_unit'],
+                density_g_per_ml=density,
+            )
+        except ConversionError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+        result_q = result.quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP)
+        # Strip trailing zeros without resorting to scientific notation.
+        amount_str = format(result_q.normalize(), 'f')
+        if '.' not in amount_str:
+            amount_str = f'{amount_str}.0'
+
+        return Response({
+            'amount': amount_str,
+            'from_unit': data['from_unit'],
+            'to_unit': data['to_unit'],
+            'ingredient_id': ingredient_id,
+        })

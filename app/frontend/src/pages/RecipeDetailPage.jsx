@@ -1,19 +1,43 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecipe } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
+import { fetchSubstitutes, checkIngredient, uncheckIngredient } from '../services/ingredientService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import './RecipeDetailPage.css';
+
+const MATCH_TYPE_LABELS = {
+  'Flavor Match': { label: 'Flavor', cls: 'chip-flavor' },
+  'Texture Match': { label: 'Texture', cls: 'chip-texture' },
+};
+
+function MatchChip({ type }) {
+  const info = MATCH_TYPE_LABELS[type] ?? { label: type, cls: 'chip-default' };
+  return <span className={`sub-match-chip ${info.cls}`}>{info.label}</span>;
+}
 
 export default function RecipeDetailPage() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const [recipe, setRecipe] = useState(null);
   const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [useConverted, setUseConverted] = useState(false);
+
+  // #372 — ingredient check-off
+  const [checked, setChecked] = useState(new Set());
+
+  // #370 — substitution UI
+  const [openSubPanel, setOpenSubPanel] = useState(null); // ingredientId
+  const [substitutes, setSubstitutes] = useState({});     // ingredientId → options[]
+  const [appliedSubs, setAppliedSubs] = useState({});     // ingredientId → substitute obj
+
+  // #373 — shopping list
+  const [showShoppingList, setShowShoppingList] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -25,6 +49,41 @@ export default function RecipeDetailPage() {
     return () => { cancelled = true; };
   }, [id]);
 
+  const toggleCheck = useCallback(async (ingredientId) => {
+    const next = new Set(checked);
+    if (next.has(ingredientId)) {
+      next.delete(ingredientId);
+      await uncheckIngredient(id, ingredientId).catch(() => {});
+    } else {
+      next.add(ingredientId);
+      await checkIngredient(id, ingredientId).catch(() => {});
+    }
+    setChecked(next);
+    // Close sub panel if ingredient gets checked
+    if (openSubPanel === ingredientId) setOpenSubPanel(null);
+  }, [checked, id, openSubPanel]);
+
+  const openSub = useCallback(async (ingredientId, ingredientName) => {
+    if (openSubPanel === ingredientId) {
+      setOpenSubPanel(null);
+      return;
+    }
+    setOpenSubPanel(ingredientId);
+    if (!substitutes[ingredientId]) {
+      const subs = await fetchSubstitutes(ingredientId, ingredientName).catch(() => []);
+      setSubstitutes((prev) => ({ ...prev, [ingredientId]: subs }));
+    }
+  }, [openSubPanel, substitutes]);
+
+  const applySub = useCallback((ingredientId, sub) => {
+    setAppliedSubs((prev) => ({ ...prev, [ingredientId]: sub }));
+    setOpenSubPanel(null);
+  }, []);
+
+  const clearSub = useCallback((ingredientId) => {
+    setAppliedSubs((prev) => { const n = { ...prev }; delete n[ingredientId]; return n; });
+  }, []);
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!recipe) return null;
@@ -32,6 +91,24 @@ export default function RecipeDetailPage() {
   const isAuthor = user && user.id === recipe.author;
   const authorContactable = recipe.author_is_contactable ?? recipe.author_contactable ?? true;
   const regionName = regions.find((r) => r.id === recipe.region)?.name;
+
+  const hasConverted = recipe.ingredients.some((ri) => ri.converted_amount);
+
+  // Shopping list: unchecked ingredients with substitutions applied
+  const shoppingItems = recipe.ingredients
+    .filter((ri) => !checked.has(ri.ingredient))
+    .map((ri) => {
+      const sub = appliedSubs[ri.ingredient];
+      const amount = useConverted && ri.converted_amount ? ri.converted_amount : ri.amount;
+      const unit = useConverted && ri.converted_unit_name ? ri.converted_unit_name : ri.unit_name;
+      return {
+        key: ri.ingredient,
+        name: sub ? sub.name : ri.ingredient_name,
+        amount,
+        unit,
+        isSub: Boolean(sub),
+      };
+    });
 
   return (
     <main className="page-card recipe-detail">
@@ -72,36 +149,158 @@ export default function RecipeDetailPage() {
       </div>
 
       {recipe.image && (
-        <img
-          src={recipe.image}
-          alt={recipe.title}
-          className="recipe-detail-image"
-        />
+        <img src={recipe.image} alt={recipe.title} className="recipe-detail-image" />
       )}
 
       {recipe.video && (
-        <video
-          data-testid="recipe-video"
-          controls
-          src={recipe.video}
-          className="recipe-video"
-        />
+        <video data-testid="recipe-video" controls src={recipe.video} className="recipe-video" />
       )}
 
       {recipe.description && (
         <p className="recipe-description">{recipe.description}</p>
       )}
 
+      {/* ── Ingredients (#372 check-off, #370 substitution, #377 unit toggle) ── */}
       <section className="recipe-ingredients">
-        <h2>Ingredients</h2>
+        <div className="ingredients-header">
+          <h2>Ingredients</h2>
+          <div className="ingredients-header-controls">
+            {hasConverted && (
+              <div className="unit-toggle" role="group" aria-label="Unit system">
+                <button
+                  className={`unit-toggle-btn${!useConverted ? ' active' : ''}`}
+                  onClick={() => setUseConverted(false)}
+                >
+                  Original
+                </button>
+                <button
+                  className={`unit-toggle-btn${useConverted ? ' active' : ''}`}
+                  onClick={() => setUseConverted(true)}
+                >
+                  Converted
+                </button>
+              </div>
+            )}
+            {user && shoppingItems.length > 0 && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => setShowShoppingList((v) => !v)}
+              >
+                {showShoppingList ? 'Hide list' : `Shopping list (${shoppingItems.length})`}
+              </button>
+            )}
+          </div>
+        </div>
+
         <ul className="ingredients-list">
-          {recipe.ingredients.map((ri) => (
-            <li key={ri.ingredient} className="ingredient-item">
-              <span className="ingredient-name">{ri.ingredient_name}</span>
-              <span className="ingredient-amount">{ri.amount} {ri.unit_name}</span>
-            </li>
-          ))}
+          {recipe.ingredients.map((ri) => {
+            const isChecked = checked.has(ri.ingredient);
+            const sub = appliedSubs[ri.ingredient];
+            const amount = useConverted && ri.converted_amount ? ri.converted_amount : ri.amount;
+            const unit = useConverted && ri.converted_unit_name ? ri.converted_unit_name : ri.unit_name;
+            const isSubOpen = openSubPanel === ri.ingredient;
+
+            return (
+              <li key={ri.ingredient} className={`ingredient-item${isChecked ? ' checked' : ''}`}>
+                <div className="ingredient-row">
+                  {user && (
+                    <input
+                      type="checkbox"
+                      className="ingredient-checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleCheck(ri.ingredient)}
+                      aria-label={`Mark ${ri.ingredient_name} as available`}
+                    />
+                  )}
+                  <span className="ingredient-name">
+                    {sub ? (
+                      <>
+                        <span className="ingredient-name-subbed">{ri.ingredient_name}</span>
+                        <span className="ingredient-sub-arrow">→</span>
+                        <span className="ingredient-sub-name">{sub.name}</span>
+                        <button
+                          className="ingredient-clear-sub"
+                          onClick={() => clearSub(ri.ingredient)}
+                          aria-label="Remove substitution"
+                        >
+                          ×
+                        </button>
+                      </>
+                    ) : (
+                      ri.ingredient_name
+                    )}
+                  </span>
+                  <span className="ingredient-amount">{amount} {unit}</span>
+                  {user && !isChecked && (
+                    <button
+                      className={`ingredient-sub-btn${isSubOpen ? ' active' : ''}`}
+                      onClick={() => openSub(ri.ingredient, ri.ingredient_name)}
+                      aria-expanded={isSubOpen}
+                      aria-label={`Find substitutes for ${ri.ingredient_name}`}
+                    >
+                      Sub
+                    </button>
+                  )}
+                </div>
+
+                {isSubOpen && (
+                  <div className="sub-panel" role="listbox" aria-label="Substitution options">
+                    {substitutes[ri.ingredient] ? (
+                      substitutes[ri.ingredient].map((s) => (
+                        <button
+                          key={s.id}
+                          className="sub-option"
+                          role="option"
+                          onClick={() => applySub(ri.ingredient, s)}
+                        >
+                          <span className="sub-option-name">{s.name}</span>
+                          <MatchChip type={s.match_type} />
+                        </button>
+                      ))
+                    ) : (
+                      <p className="sub-loading">Loading…</p>
+                    )}
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
+
+        {/* ── Shopping list (#373) ── */}
+        {user && showShoppingList && (
+          <div className="shopping-list">
+            <div className="shopping-list-header">
+              <h3>Shopping List</h3>
+              <button
+                className="shopping-list-copy"
+                onClick={() => {
+                  const text = shoppingItems
+                    .map((i) => `${i.name} — ${i.amount} ${i.unit}`)
+                    .join('\n');
+                  navigator.clipboard.writeText(text).catch(() => {});
+                }}
+              >
+                Copy
+              </button>
+            </div>
+            {shoppingItems.length === 0 ? (
+              <p className="shopping-list-empty">All ingredients are checked off!</p>
+            ) : (
+              <ul className="shopping-list-items">
+                {shoppingItems.map((item) => (
+                  <li key={item.key} className={`shopping-list-item${item.isSub ? ' is-sub' : ''}`}>
+                    <span className="shopping-item-name">
+                      {item.name}
+                      {item.isSub && <span className="shopping-sub-badge">sub</span>}
+                    </span>
+                    <span className="shopping-item-qty">{item.amount} {item.unit}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </section>
 
       <RecipeCommentsSection

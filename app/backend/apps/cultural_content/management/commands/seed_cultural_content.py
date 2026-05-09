@@ -12,7 +12,7 @@ SEED_ITEMS = [
             'In Aegean homes, Sunday breakfast often starts with the smell of phyllo baking before sunrise. '
             'Grandmothers roll dough by hand, layer by layer, while the rest of the family wakes to the scent.'
         ),
-        'region': 'Aegean',
+        'region_text': 'Aegean',
         'link_kind': CulturalContent.LinkKind.STORY,
         'link_id': 2,
         'cultural_tags': ['Aegean', 'Turkish', 'Breakfast'],
@@ -25,7 +25,7 @@ SEED_ITEMS = [
             'A Levantine festive dish — lamb slow-cooked in fermented yogurt sauce, served over saffron rice. '
             'Eaten standing, with the right hand, around a single shared platter.'
         ),
-        'region': 'Levantine',
+        'region_text': 'Levantine',
         'link_kind': CulturalContent.LinkKind.RECIPE,
         'link_id': 12,
         'cultural_tags': ['Levantine', 'Halal', 'Wedding'],
@@ -38,7 +38,7 @@ SEED_ITEMS = [
             'Across Anatolia and the Middle East, lentil soup is the first food offered to a guest with a cold or to a '
             'recovering relative. The tradition predates modern medicine by centuries.'
         ),
-        'region': 'Anatolian',
+        'region_text': 'Anatolian',
         'link_kind': CulturalContent.LinkKind.RECIPE,
         'link_id': 2,
         'cultural_tags': ['Anatolian', 'Turkish', 'Vegetarian'],
@@ -51,7 +51,7 @@ SEED_ITEMS = [
             'After Turkish coffee, the cup is flipped onto its saucer and the grounds are read. '
             'It is half ritual, half conversation starter — and almost never taken too seriously.'
         ),
-        'region': 'Marmara',
+        'region_text': 'Marmara',
         'cultural_tags': ['Marmara', 'Turkish'],
     },
     {
@@ -62,7 +62,7 @@ SEED_ITEMS = [
             'A pudding made of forty ingredients — wheat, beans, dried fruits, nuts — shared with neighbors on the '
             '10th of Muharram. Tradition says one bowl should never be eaten alone.'
         ),
-        'region': 'Anatolian',
+        'region_text': 'Anatolian',
         'cultural_tags': ['Anatolian', 'Turkish', 'Muharram', 'Religious'],
     },
 ]

@@ -4,10 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useMemo, useState } from 'react';
 import { shadows, tokens } from '../theme';
 import { fetchRecipesList } from '../services/recipeService';
-import { apiGetJson } from '../services/httpClient';
+import { fetchStoriesList } from '../services/storyService';
 import { fetchDailyCultural } from '../services/dailyCulturalService';
+import { fetchRecommendations, type RecommendationItem } from '../services/recommendationsService';
 import { DailyCulturalSection } from '../components/home/DailyCulturalSection';
+import { RecommendationsRail } from '../components/home/RecommendationsRail';
 import { StoryFeatureCard } from '../components/home/StoryFeatureCard';
+import { RankReasonBadge } from '../components/personalization/RankReasonBadge';
 import type { DailyCulturalCard } from '../mocks/dailyCultural';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -19,27 +22,31 @@ export default function HomeScreen({ navigation }: Props) {
   const [stories, setStories] = useState<any[]>([]);
   const [recipes, setRecipes] = useState<any[]>([]);
   const [daily, setDaily] = useState<DailyCulturalCard[]>([]);
+  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const [storyData, recipeData, dailyData] = await Promise.all([
-          apiGetJson<any[]>('/api/stories/'),
+        const [storyData, recipeData, dailyData, recsData] = await Promise.all([
+          fetchStoriesList(),
           fetchRecipesList(),
           fetchDailyCultural(),
+          fetchRecommendations('feed', 10).catch(() => [] as RecommendationItem[]),
         ]);
         if (cancelled) return;
         setStories(Array.isArray(storyData) ? storyData : []);
         setRecipes(Array.isArray(recipeData) ? recipeData : []);
         setDaily(Array.isArray(dailyData) ? dailyData : []);
+        setRecommendations(Array.isArray(recsData) ? recsData : []);
         setLoadError(null);
       } catch (e) {
         if (!cancelled) {
           setStories([]);
           setRecipes([]);
           setDaily([]);
+          setRecommendations([]);
           setLoadError(e instanceof Error ? e.message : 'Could not load feed.');
         }
       }
@@ -48,6 +55,14 @@ export default function HomeScreen({ navigation }: Props) {
       cancelled = true;
     };
   }, []);
+
+  const onRecommendationPress = (item: RecommendationItem) => {
+    if (item.kind === 'recipe') {
+      navigation.navigate('RecipeDetail', { id: item.id });
+    } else {
+      navigation.navigate('StoryDetail', { id: item.id });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -78,7 +93,32 @@ export default function HomeScreen({ navigation }: Props) {
           />
         </View>
 
+        <Pressable
+          onPress={() => navigation.navigate('MapDiscovery')}
+          style={({ pressed }) => [styles.mapEntry, pressed && styles.mapEntryPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Open map discovery"
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.mapTitle}>Discover by region</Text>
+            <Text style={styles.mapSubtitle}>Tap a pin on the map to focus a region</Text>
+          </View>
+          <Text style={styles.mapArrow}>→</Text>
+          onPress={() => navigation.navigate('Explore')}
+          style={({ pressed }) => [styles.exploreEntry, pressed && styles.exploreEntryPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Open Explore by event"
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.exploreTitle}>Explore by event</Text>
+            <Text style={styles.exploreSubtitle}>Wedding, Ramadan, Birthday, and more</Text>
+          </View>
+          <Text style={styles.exploreArrow}>→</Text>
+        </Pressable>
+
         <DailyCulturalSection items={daily} />
+
+        <RecommendationsRail items={recommendations} onItemPress={onRecommendationPress} />
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -112,29 +152,31 @@ export default function HomeScreen({ navigation }: Props) {
                       ? String(linkedRecipeRaw.title)
                       : null;
                 return (
-                  <StoryFeatureCard
-                    key={String(item.id)}
-                    title={item.title}
-                    body={item.body}
-                    image={item.image}
-                    authorUsername={authorUsername ?? null}
-                    recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
-                    onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
-                    onPressAuthor={
-                      authorId != null && authorUsername
-                        ? () =>
-                            navigation.navigate('UserProfile', {
-                              userId: authorId,
-                              username: authorUsername,
-                            })
-                        : undefined
-                    }
-                    onPressRecipe={
-                      linkedRecipeId
-                        ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
-                        : undefined
-                    }
-                  />
+                  <View key={String(item.id)} style={styles.storyWrap}>
+                    <StoryFeatureCard
+                      title={item.title}
+                      body={item.body}
+                      image={item.image}
+                      authorUsername={authorUsername ?? null}
+                      recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
+                      onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
+                      onPressAuthor={
+                        authorId != null && authorUsername
+                          ? () =>
+                              navigation.navigate('UserProfile', {
+                                userId: authorId,
+                                username: authorUsername,
+                              })
+                          : undefined
+                      }
+                      onPressRecipe={
+                        linkedRecipeId
+                          ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
+                          : undefined
+                      }
+                    />
+                    <RankReasonBadge reason={item.rank_reason} style={styles.storyBadge} />
+                  </View>
                 );
               })}
             </View>
@@ -210,6 +252,7 @@ export default function HomeScreen({ navigation }: Props) {
                       {regionName ?? 'Recipe'}
                     </Text>
                   </View>
+                  <RankReasonBadge reason={item.rank_reason} style={styles.recipeBadge} />
                 </Pressable>
               );
             }}
@@ -243,10 +286,33 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 28,
     fontWeight: '800',
-    color: tokens.colors.surface,
+    color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
   },
   searchWrap: { marginBottom: 14 },
+  mapEntry: {
+  exploreEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.bg,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    marginBottom: 14,
+    ...shadows.md,
+  },
+  mapEntryPressed: { opacity: 0.9 },
+  mapTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.text },
+  mapSubtitle: { fontSize: 12, color: tokens.colors.text, marginTop: 2 },
+  mapArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.text },
+  exploreEntryPressed: { opacity: 0.9 },
+  exploreTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.textOnDark },
+  exploreSubtitle: { fontSize: 12, color: tokens.colors.textOnDark, marginTop: 2, opacity: 0.85 },
+  exploreArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.textOnDark },
   searchInput: {
     borderWidth: 2,
     borderColor: tokens.colors.primaryBorder,
@@ -260,8 +326,8 @@ const styles = StyleSheet.create({
   },
   section: { marginTop: 10, marginBottom: 18 },
   sectionHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 10 },
-  sectionTitle: { fontSize: 22, fontWeight: '800', color: tokens.colors.surface, fontFamily: tokens.typography.display.fontFamily },
-  sectionSubTitle: { fontSize: 15, fontWeight: '800', color: tokens.colors.surface },
+  sectionTitle: { fontSize: 22, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
+  sectionSubTitle: { fontSize: 15, fontWeight: '800', color: tokens.colors.text },
   sectionHint: { fontSize: 13, color: tokens.colors.primaryTint, fontWeight: '800' },
   storyList: { gap: 14 },
   emptyHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
@@ -301,7 +367,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   recipeThumbImage: { width: '100%', height: '100%' },
-  thumbText: { color: tokens.colors.textOnDark, fontSize: 24, fontWeight: '900' },
+  thumbText: { color: tokens.colors.text, fontSize: 24, fontWeight: '900' },
   cardTitle: { paddingHorizontal: 12, paddingTop: 10, fontSize: 15, fontWeight: '800', color: tokens.colors.text },
   cardMeta: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: 6, fontSize: 13, color: tokens.colors.textMuted },
   authorPress: {
@@ -316,7 +382,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
-  authorLink: { fontSize: 12, color: tokens.colors.primary, fontWeight: '800' },
+  authorLink: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   tag: {
     alignSelf: 'flex-start',
     marginLeft: 12,
@@ -330,5 +396,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   tagText: { fontSize: 12, fontWeight: '800', color: tokens.colors.text },
-  link: { fontSize: 15, color: tokens.colors.surface, fontWeight: '800' },
+  link: { fontSize: 15, color: tokens.colors.text, fontWeight: '800' },
+  storyWrap: { gap: 6 },
+  storyBadge: { marginLeft: 4 },
+  recipeBadge: { marginLeft: 12, marginBottom: 12 },
 });
