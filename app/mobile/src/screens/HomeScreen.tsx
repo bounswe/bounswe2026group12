@@ -78,6 +78,19 @@ export default function HomeScreen({ navigation }: Props) {
           />
         </View>
 
+        <Pressable
+          onPress={() => navigation.navigate('Explore')}
+          style={({ pressed }) => [styles.exploreEntry, pressed && styles.exploreEntryPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Open Explore by event"
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.exploreTitle}>Explore by event</Text>
+            <Text style={styles.exploreSubtitle}>Wedding, Ramadan, Birthday, and more</Text>
+          </View>
+          <Text style={styles.exploreArrow}>→</Text>
+        </Pressable>
+
         <DailyCulturalSection items={daily} />
 
         <View style={styles.section}>
@@ -247,6 +260,23 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   searchWrap: { marginBottom: 14 },
+  exploreEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    marginBottom: 14,
+    ...shadows.md,
+  },
+  exploreEntryPressed: { opacity: 0.9 },
+  exploreTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.textOnDark },
+  exploreSubtitle: { fontSize: 12, color: tokens.colors.textOnDark, marginTop: 2, opacity: 0.85 },
+  exploreArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.textOnDark },
   searchInput: {
     borderWidth: 2,
     borderColor: tokens.colors.primaryBorder,
