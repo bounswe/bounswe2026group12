@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { RegionDetailSheet } from '../components/map/RegionDetailSheet';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
@@ -89,46 +90,24 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
           ))}
         </MapView>
 
-        {focused ? (
-          <View style={styles.summary} pointerEvents="box-none">
-            <View style={[styles.summaryCard, { borderColor: accent.accentBorder }]}>
-              <Text style={styles.summaryRegion}>{focused.name}</Text>
-              <Text style={styles.summaryCount}>
-                {focused.recipeCount} {focused.recipeCount === 1 ? 'recipe' : 'recipes'}
+        {!focused ? (
+          <View style={styles.hintWrap} pointerEvents="none">
+            <View style={styles.hintCard}>
+              <Text style={styles.hintText}>
+                {pins.length === 0 ? 'No mappable regions yet.' : 'Tap a pin to open the region.'}
               </Text>
-              <Pressable
-                onPress={() =>
-                  navigation.navigate('Search', { region: focused.name })
-                }
-                style={({ pressed }) => [
-                  styles.cta,
-                  { backgroundColor: accent.accent, borderColor: accent.accentBorder },
-                  pressed && styles.ctaPressed,
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={`See ${focused.name} recipes`}
-              >
-                <Text style={[styles.ctaText, { color: accent.accentText }]}>
-                  See {focused.name} recipes
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.hintWrap} pointerEvents="none">
-            <View style={styles.hintCard}>
-              <Text style={styles.hintText}>Tap a pin to focus a region.</Text>
-            </View>
-          </View>
-        )}
-
-        {pins.length === 0 ? (
-          <View style={styles.hintWrap} pointerEvents="none">
-            <View style={styles.hintCard}>
-              <Text style={styles.hintText}>No mappable regions yet.</Text>
             </View>
           </View>
         ) : null}
+
+        <RegionDetailSheet
+          regionName={focused?.name ?? null}
+          onDismiss={() => setFocused(null)}
+          onItemPress={(kind, id) => {
+            if (kind === 'recipes') navigation.navigate('RecipeDetail', { id });
+            else navigation.navigate('StoryDetail', { id });
+          }}
+        />
       </View>
     </SafeAreaView>
   );
