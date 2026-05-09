@@ -104,6 +104,9 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.mapSubtitle}>Tap a pin on the map to focus a region</Text>
           </View>
           <Text style={styles.mapArrow}>→</Text>
+        </Pressable>
+
+        <Pressable
           onPress={() => navigation.navigate('Explore')}
           style={({ pressed }) => [styles.exploreEntry, pressed && styles.exploreEntryPressed]}
           accessibilityRole="button"
@@ -291,7 +294,6 @@ const styles = StyleSheet.create({
   },
   searchWrap: { marginBottom: 14 },
   mapEntry: {
-  exploreEntry: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -299,6 +301,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: tokens.radius.xl,
     backgroundColor: tokens.colors.bg,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    marginBottom: 14,
+    ...shadows.md,
+  },
+  exploreEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.xl,
     backgroundColor: tokens.colors.accentGreen,
     borderWidth: 2,
     borderColor: tokens.colors.surfaceDark,
