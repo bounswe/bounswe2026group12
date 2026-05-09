@@ -3,6 +3,7 @@ from rest_framework import status
 from django.urls import reverse
 from .models import Recipe, Region, Ingredient, Unit, RecipeIngredient
 from apps.stories.models import Story
+from apps.common.ids import ULID_REGEX
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -99,8 +100,25 @@ class RecipeCreateAPITest(APITestCase):
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], "Hummus")
+        self.assertIsInstance(response.data['id'], int)
+        self.assertRegex(response.data['public_id'], ULID_REGEX)
         self.assertEqual(response.data['author_username'], "chef")
         self.assertEqual(len(response.data['ingredients']), 1)
+
+    def test_created_recipes_have_distinct_public_ids(self):
+        data = {
+            "title": "Hummus",
+            "description": "Creamy chickpea dip",
+            "ingredients_write": [
+                {"ingredient": self.ingredient.id, "amount": "200.00", "unit": self.unit.id}
+            ]
+        }
+        first = self.client.post(self.url, data, format='json')
+        second_data = {**data, "title": "Second Hummus"}
+        second = self.client.post(self.url, second_data, format='json')
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(first.data['public_id'], second.data['public_id'])
 
     def test_create_recipe_missing_title(self):
         data = {
@@ -290,3 +308,12 @@ class RecipePublishAPITest(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data['is_published'])
+
+    def test_recipe_detail_accepts_public_id(self):
+        self.recipe.is_published = True
+        self.recipe.save()
+        url = reverse('recipe-detail', kwargs={'pk': self.recipe.public_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.recipe.id)
+        self.assertEqual(response.data['public_id'], self.recipe.public_id)

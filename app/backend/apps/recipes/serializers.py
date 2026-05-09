@@ -183,7 +183,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
-            'id', 'title', 'description', 'image', 'video',
+            'id', 'public_id', 'title', 'description', 'image', 'video',
             'region', 'region_name', 'author', 'author_username', 'qa_enabled',
             'is_published', 'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
@@ -192,7 +192,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'story_count',
             'rank_score', 'rank_reason',
         ]
-        read_only_fields = ['author', 'created_at', 'updated_at']
+        read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
 
     def get_rank_score(self, obj):
         return getattr(obj, 'rank_score', 0)

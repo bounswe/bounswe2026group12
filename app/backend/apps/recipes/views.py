@@ -11,6 +11,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
+from apps.common.ids import is_ulid
 from apps.common.permissions import IsAuthorOrReadOnly
 from apps.common.pagination import StandardResultsSetPagination
 from apps.common.personalization import rank_items, score_recipe, has_profile_terms
@@ -100,6 +101,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     pagination_class = StandardResultsSetPagination
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        lookup_value = self.kwargs.get(self.lookup_url_kwarg or self.lookup_field)
+        lookup = {'public_id': lookup_value} if is_ulid(lookup_value) else {'pk': lookup_value}
+        obj = get_object_or_404(queryset, **lookup)
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get_queryset(self):
         qs = super().get_queryset()
