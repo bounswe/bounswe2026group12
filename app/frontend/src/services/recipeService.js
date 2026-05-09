@@ -27,16 +27,27 @@ export async function updateRecipe(id, formData) {
   return response.data;
 }
 
+let _ingredientsPromise = null;
+let _unitsPromise = null;
+
 export async function fetchIngredients() {
   if (USE_MOCK) return getMockIngredients();
-  const response = await apiClient.get('/api/ingredients/');
-  return response.data;
+  if (!_ingredientsPromise) {
+    _ingredientsPromise = apiClient.get('/api/ingredients/')
+      .then(r => r.data)
+      .catch(err => { _ingredientsPromise = null; return Promise.reject(err); });
+  }
+  return _ingredientsPromise;
 }
 
 export async function fetchUnits() {
   if (USE_MOCK) return getMockUnits();
-  const response = await apiClient.get('/api/units/');
-  return response.data;
+  if (!_unitsPromise) {
+    _unitsPromise = apiClient.get('/api/units/')
+      .then(r => r.data)
+      .catch(err => { _unitsPromise = null; return Promise.reject(err); });
+  }
+  return _unitsPromise;
 }
 
 export async function submitIngredient(name) {
