@@ -10,7 +10,9 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_approved')
+    list_display = ('name', 'is_approved', 'density_g_per_ml')
+    list_filter = ('is_approved',)
+    search_fields = ('name',)
 
 @admin.register(Unit)
 class UnitAdmin(admin.ModelAdmin):
@@ -18,7 +20,23 @@ class UnitAdmin(admin.ModelAdmin):
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'parent', 'latitude', 'longitude')
+    list_select_related = ('parent',)
+    search_fields = ('name',)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'parent'),
+        }),
+        ('Geographic Center', {
+            'description': 'Coordinates used for map pin placement.',
+            'fields': ('latitude', 'longitude'),
+        }),
+        ('Bounding Box (optional)', {
+            'description': 'Used for viewport-bounded discovery queries.',
+            'classes': ('collapse',),
+            'fields': ('bbox_north', 'bbox_south', 'bbox_east', 'bbox_west'),
+        }),
+    )
 
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):

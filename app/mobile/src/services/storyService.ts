@@ -15,6 +15,8 @@ export type StoryListItem = {
   image: string | null;
   authorUsername: string | null;
   linkedRecipeId: string | null;
+  rank_score?: number;
+  rank_reason?: string | null;
 };
 
 function pickListItem(raw: any): StoryListItem {
@@ -38,15 +40,34 @@ function pickListItem(raw: any): StoryListItem {
     image: typeof raw?.image === 'string' ? raw.image : null,
     authorUsername,
     linkedRecipeId,
+    rank_score: typeof raw?.rank_score === 'number' ? raw.rank_score : undefined,
+    rank_reason: typeof raw?.rank_reason === 'string' ? raw.rank_reason : null,
   };
+}
+
+function unwrapStoriesPayload(data: unknown): any[] {
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === 'object' && Array.isArray((data as { results?: unknown }).results)) {
+    return (data as { results: any[] }).results;
+  }
+  return [];
+}
+
+/**
+ * Fetch the raw story list, transparently handling both raw arrays and the
+ * DRF-paginated `{results}` envelope. Returns the API objects untouched so
+ * callers can read `author`, `linked_recipe`, `image`, etc. directly.
+ */
+export async function fetchStoriesList(): Promise<any[]> {
+  const data = await apiGetJson<unknown>(`/api/stories/`);
+  return unwrapStoriesPayload(data);
 }
 
 /** Stories where `linked_recipe` matches the given recipe id. Filters client-side. */
 export async function fetchStoriesForRecipe(recipeId: string | number): Promise<StoryListItem[]> {
-  const list = await apiGetJson<any[]>(`/api/stories/`);
-  if (!Array.isArray(list)) return [];
+  const data = await apiGetJson<unknown>(`/api/stories/`);
   const target = String(recipeId);
-  return list.map(pickListItem).filter((s) => s.linkedRecipeId === target);
+  return unwrapStoriesPayload(data).map(pickListItem).filter((s) => s.linkedRecipeId === target);
 }
 
 function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): StoryDetail {

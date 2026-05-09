@@ -20,6 +20,8 @@ export type RootStackParamList = {
   };
   Onboarding: undefined;
   MapDiscovery: undefined;
+  Explore: undefined;
+  EventDetail: { eventId: number; eventName: string };
 };
 
 declare global {

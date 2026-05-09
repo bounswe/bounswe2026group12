@@ -1,0 +1,905 @@
+{
+  "users": [
+    {
+      "username": "ayse",
+      "email": "ayse@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Elder cook from Trabzon sharing Black Sea traditions with the next generation.",
+      "region": "Black Sea",
+      "preferred_language": "en",
+      "cultural_interests": ["Turkish cuisine", "Black Sea traditions"],
+      "regional_ties": ["Black Sea", "Marmara"],
+      "religious_preferences": ["Islam"],
+      "event_interests": ["Wedding", "Religious Holiday"]
+    },
+    {
+      "username": "mehmet",
+      "email": "mehmet@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Istanbul-based food blogger exploring cross-regional Turkish cuisine.",
+      "region": "Marmara",
+      "preferred_language": "en",
+      "cultural_interests": ["Turkish cuisine", "street food", "food history"],
+      "regional_ties": ["Marmara", "Aegean", "Anatolian"],
+      "religious_preferences": [],
+      "event_interests": ["Birthday", "Anniversary"]
+    },
+    {
+      "username": "elif",
+      "email": "elif@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Aegean home cook passionate about olive oil and vegetarian Mediterranean dishes.",
+      "region": "Aegean",
+      "preferred_language": "en",
+      "cultural_interests": ["Aegean cuisine", "olive oil cooking", "vegetarian"],
+      "regional_ties": ["Aegean"],
+      "religious_preferences": [],
+      "event_interests": ["Birthday"]
+    },
+    {
+      "username": "fatma",
+      "email": "fatma@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Spice specialist from Gaziantep keeping southeastern Turkish traditions alive.",
+      "region": "Southeastern Anatolia",
+      "preferred_language": "en",
+      "cultural_interests": ["Turkish cuisine", "spice blending", "southeastern traditions"],
+      "regional_ties": ["Southeastern Anatolia"],
+      "religious_preferences": ["Islam"],
+      "event_interests": ["Wedding", "Religious Holiday"]
+    },
+    {
+      "username": "emily",
+      "email": "emily@example.com",
+      "password": "StrongPassword123!",
+      "bio": "American exchange student in Istanbul discovering Turkish food culture.",
+      "region": "North American",
+      "preferred_language": "en",
+      "cultural_interests": ["world cuisines", "cultural exchange"],
+      "regional_ties": ["North American"],
+      "religious_preferences": ["Christianity"],
+      "event_interests": ["Birthday", "Graduation"]
+    },
+    {
+      "username": "sarah",
+      "email": "sarah@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Irish-American home baker preserving family baking traditions across generations.",
+      "region": "North American",
+      "preferred_language": "en",
+      "cultural_interests": ["baking", "Irish heritage", "family recipes"],
+      "regional_ties": ["North American"],
+      "religious_preferences": ["Christianity"],
+      "event_interests": ["Religious Holiday"]
+    },
+    {
+      "username": "dimitris",
+      "email": "dimitris@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Greek taverna cook from Athens sharing generations of Mediterranean recipes.",
+      "region": "Balkan",
+      "preferred_language": "en",
+      "cultural_interests": ["Greek cuisine", "Mediterranean diet", "taverna culture"],
+      "regional_ties": ["Balkan"],
+      "religious_preferences": ["Christianity"],
+      "event_interests": ["Religious Holiday"]
+    },
+    {
+      "username": "lars",
+      "email": "lars@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Swedish food historian researching culinary connections between cultures.",
+      "region": "Nordic",
+      "preferred_language": "en",
+      "cultural_interests": ["food history", "Nordic cuisine", "cross-cultural cooking"],
+      "regional_ties": ["Nordic"],
+      "religious_preferences": [],
+      "event_interests": []
+    },
+    {
+      "username": "leila",
+      "email": "leila@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Lebanese home cook celebrating the communal traditions of Levantine cuisine.",
+      "region": "Levantine",
+      "preferred_language": "en",
+      "cultural_interests": ["Levantine cuisine", "mezze culture", "family cooking"],
+      "regional_ties": ["Levantine"],
+      "religious_preferences": ["Islam"],
+      "event_interests": ["Wedding", "Religious Holiday"]
+    },
+    {
+      "username": "priya",
+      "email": "priya@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Indian spice enthusiast exploring the intersections of Ayurveda and daily cooking.",
+      "region": "Indian",
+      "preferred_language": "en",
+      "cultural_interests": ["Indian cuisine", "spices", "Ayurveda", "vegetarian"],
+      "regional_ties": ["Indian"],
+      "religious_preferences": ["Hinduism"],
+      "event_interests": ["Religious Holiday"]
+    },
+    {
+      "username": "yuki",
+      "email": "yuki@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Japanese fermentation hobbyist fascinated by the living cultures in traditional food.",
+      "region": "Japanese",
+      "preferred_language": "en",
+      "cultural_interests": ["Japanese cuisine", "fermentation", "washoku"],
+      "regional_ties": ["Japanese"],
+      "religious_preferences": ["Buddhism"],
+      "event_interests": []
+    },
+    {
+      "username": "maria",
+      "email": "maria@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Italian grandmother keeping the Sunday ragu tradition alive for her grandchildren.",
+      "region": "Italian",
+      "preferred_language": "en",
+      "cultural_interests": ["Italian cuisine", "family traditions", "pasta"],
+      "regional_ties": ["Italian"],
+      "religious_preferences": ["Christianity"],
+      "event_interests": ["Religious Holiday"]
+    }
+  ],
+  "recipes": [
+    {
+      "title": "Black Sea Collard Green Sarma",
+      "description": "Traditional Black Sea-style sarma made with collard greens, ground beef, rice, and generous amounts of butter. A hearty winter dish served at weddings and family gatherings throughout the Trabzon region.",
+      "author": "ayse",
+      "region": "Black Sea",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": ["Wedding"],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Collard Greens", "amount": "500.00", "unit": "grams"},
+        {"name": "Ground Beef", "amount": "300.00", "unit": "grams"},
+        {"name": "Rice", "amount": "150.00", "unit": "grams"},
+        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
+        {"name": "Butter", "amount": "50.00", "unit": "grams"},
+        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Pepper", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Aegean Olive Oil Stuffed Grape Leaves",
+      "description": "Delicate grape leaves filled with herbed rice, pine nuts, and currants, cooked slowly in olive oil. Served cold with a squeeze of lemon, this is a hallmark of Aegean vegetarian cuisine.",
+      "author": "elif",
+      "region": "Aegean",
+      "is_published": true,
+      "dietary_tags": ["Vegan", "Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Grape Leaves", "amount": "40.00", "unit": "pieces"},
+        {"name": "Rice", "amount": "200.00", "unit": "grams"},
+        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
+        {"name": "Pine Nuts", "amount": "30.00", "unit": "grams"},
+        {"name": "Olive Oil", "amount": "100.00", "unit": "ml"},
+        {"name": "Lemon", "amount": "1.00", "unit": "pieces"},
+        {"name": "Mint", "amount": "1.00", "unit": "bunch"}
+      ]
+    },
+    {
+      "title": "Southeastern Sarma with Pomegranate Molasses",
+      "description": "Southeastern Turkey's distinctive sarma featuring lamb, rice, and a tangy pomegranate molasses finish. The molasses gives this version its characteristic sweet-sour depth.",
+      "author": "fatma",
+      "region": "Southeastern Anatolia",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": ["Wedding"],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Grape Leaves", "amount": "30.00", "unit": "pieces"},
+        {"name": "Ground Lamb", "amount": "250.00", "unit": "grams"},
+        {"name": "Rice", "amount": "150.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Pomegranate Molasses", "amount": "3.00", "unit": "tablespoons"},
+        {"name": "Tomato Paste", "amount": "2.00", "unit": "tablespoons"},
+        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Greek Dolmadakia",
+      "description": "Classic Greek stuffed grape leaves with rice, herbs, and olive oil. Always served cold as part of a mezze spread, with plenty of fresh lemon juice.",
+      "author": "dimitris",
+      "region": "Balkan",
+      "is_published": true,
+      "dietary_tags": ["Vegan", "Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Grape Leaves", "amount": "40.00", "unit": "pieces"},
+        {"name": "Rice", "amount": "200.00", "unit": "grams"},
+        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
+        {"name": "Olive Oil", "amount": "80.00", "unit": "ml"},
+        {"name": "Lemon", "amount": "1.00", "unit": "pieces"},
+        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
+        {"name": "Mint", "amount": "1.00", "unit": "bunch"}
+      ]
+    },
+    {
+      "title": "Swedish Cabbage Rolls - Kaldolmar",
+      "description": "Sweden's beloved cabbage rolls, a direct descendant of Ottoman dolma brought back by King Charles XII. Served with cream sauce and lingonberry jam.",
+      "author": "lars",
+      "region": "Nordic",
+      "is_published": true,
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Cabbage", "amount": "1.00", "unit": "pieces"},
+        {"name": "Ground Beef", "amount": "400.00", "unit": "grams"},
+        {"name": "Rice", "amount": "100.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Cream", "amount": "100.00", "unit": "ml"},
+        {"name": "Sugar", "amount": "1.00", "unit": "tablespoons"}
+      ]
+    },
+    {
+      "title": "Lebanese Stuffed Grape Leaves with Lamb",
+      "description": "Hearty Lebanese grape leaf rolls filled with spiced lamb and rice, slow-cooked with tomatoes and lemon. A centerpiece of Levantine family feasts.",
+      "author": "leila",
+      "region": "Levantine",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": [],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Grape Leaves", "amount": "40.00", "unit": "pieces"},
+        {"name": "Ground Lamb", "amount": "300.00", "unit": "grams"},
+        {"name": "Rice", "amount": "150.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Tomato", "amount": "2.00", "unit": "pieces"},
+        {"name": "Lemon", "amount": "1.00", "unit": "pieces"},
+        {"name": "Cinnamon", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Trabzon Butter Kuymak",
+      "description": "A rich, stretchy fondue of cornmeal, butter, and cheese from the Black Sea coast. Best served piping hot in a copper pan, eaten with fresh bread.",
+      "author": "ayse",
+      "region": "Black Sea",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Cornmeal", "amount": "200.00", "unit": "grams"},
+        {"name": "Butter", "amount": "100.00", "unit": "grams"},
+        {"name": "Mozzarella", "amount": "200.00", "unit": "grams"},
+        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Istanbul Lahmacun",
+      "description": "Thin, crispy Turkish flatbread topped with a spiced lamb and vegetable mixture. Rolled up with fresh parsley and a squeeze of lemon, it is Istanbul's quintessential street food.",
+      "author": "mehmet",
+      "region": "Marmara",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Flour", "amount": "300.00", "unit": "grams"},
+        {"name": "Ground Lamb", "amount": "250.00", "unit": "grams"},
+        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
+        {"name": "Tomato", "amount": "2.00", "unit": "pieces"},
+        {"name": "Green Pepper", "amount": "2.00", "unit": "pieces"},
+        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
+        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Aegean Herb Borek",
+      "description": "Layers of hand-stretched phyllo dough filled with fresh herbs and white cheese, brushed with olive oil and baked golden. A staple of Aegean Sunday breakfast tables.",
+      "author": "elif",
+      "region": "Aegean",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Phyllo Dough", "amount": "500.00", "unit": "grams"},
+        {"name": "Feta Cheese", "amount": "300.00", "unit": "grams"},
+        {"name": "Eggs", "amount": "3.00", "unit": "pieces"},
+        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
+        {"name": "Olive Oil", "amount": "50.00", "unit": "ml"}
+      ]
+    },
+    {
+      "title": "Red Lentil Soup - Mercimek Corbasi",
+      "description": "Turkey's most beloved soup, made with red lentils, onion, and a touch of cumin. Served with a wedge of lemon and crusty bread, it is comfort food at its purest.",
+      "author": "mehmet",
+      "region": "Marmara",
+      "is_published": true,
+      "dietary_tags": ["Vegan"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Lentils", "amount": "300.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Potato", "amount": "1.00", "unit": "pieces"},
+        {"name": "Tomato Paste", "amount": "1.00", "unit": "tablespoons"},
+        {"name": "Olive Oil", "amount": "2.00", "unit": "tablespoons"},
+        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Lemon", "amount": "1.00", "unit": "pieces"}
+      ]
+    },
+    {
+      "title": "Adana Kebab",
+      "description": "Fiery hand-minced lamb kebab from Adana, seasoned with red pepper flakes and sumac. Grilled on wide flat skewers over charcoal and served with grilled tomatoes and flatbread.",
+      "author": "fatma",
+      "region": "Southeastern Anatolia",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": ["Wedding"],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Ground Lamb", "amount": "500.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Red Pepper Flakes", "amount": "2.00", "unit": "teaspoons"},
+        {"name": "Sumac", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
+        {"name": "Tomato", "amount": "2.00", "unit": "pieces"}
+      ]
+    },
+    {
+      "title": "Anatolian Manti Dumplings",
+      "description": "Tiny hand-pinched dumplings filled with spiced ground beef, served under a blanket of garlicky yogurt and drizzled with red pepper butter. The smaller the manti, the greater the love.",
+      "author": "ayse",
+      "region": "Anatolian",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": [],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Flour", "amount": "400.00", "unit": "grams"},
+        {"name": "Ground Beef", "amount": "300.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Yogurt", "amount": "200.00", "unit": "grams"},
+        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
+        {"name": "Butter", "amount": "50.00", "unit": "grams"},
+        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Mint", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Traditional Irish Soda Bread",
+      "description": "A simple four-ingredient bread that needs no yeast and no rising time. The tanginess of buttermilk reacts with baking soda to create a tender, crusty loaf in under an hour.",
+      "author": "sarah",
+      "region": "North American",
+      "is_published": true,
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Flour", "amount": "450.00", "unit": "grams"},
+        {"name": "Buttermilk", "amount": "350.00", "unit": "ml"},
+        {"name": "Baking Soda", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Greek Moussaka",
+      "description": "Layers of fried eggplant, spiced ground beef, and creamy bechamel sauce baked until golden. A taverna classic that tastes even better the next day.",
+      "author": "dimitris",
+      "region": "Balkan",
+      "is_published": true,
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Eggplant", "amount": "3.00", "unit": "pieces"},
+        {"name": "Ground Beef", "amount": "400.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Tomato", "amount": "3.00", "unit": "pieces"},
+        {"name": "Potato", "amount": "2.00", "unit": "pieces"},
+        {"name": "Cream", "amount": "200.00", "unit": "ml"},
+        {"name": "Eggs", "amount": "2.00", "unit": "pieces"},
+        {"name": "Cinnamon", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Lebanese Tabbouleh",
+      "description": "A vibrant parsley salad with bulgur wheat, tomatoes, and a bright lemon-olive oil dressing. In Lebanon, tabbouleh is a parsley salad with a little bulgur, not the other way around.",
+      "author": "leila",
+      "region": "Levantine",
+      "is_published": true,
+      "dietary_tags": ["Vegan"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Bulgur Wheat", "amount": "100.00", "unit": "grams"},
+        {"name": "Parsley", "amount": "3.00", "unit": "bunch"},
+        {"name": "Tomato", "amount": "3.00", "unit": "pieces"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Lemon", "amount": "2.00", "unit": "pieces"},
+        {"name": "Olive Oil", "amount": "80.00", "unit": "ml"},
+        {"name": "Mint", "amount": "1.00", "unit": "bunch"}
+      ]
+    },
+    {
+      "title": "Lebanese Hummus",
+      "description": "Silky smooth chickpea dip blended with tahini, lemon, and garlic. Drizzled with olive oil and served with warm pita, it is the cornerstone of every Lebanese mezze.",
+      "author": "leila",
+      "region": "Levantine",
+      "is_published": true,
+      "dietary_tags": ["Vegan"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Chickpeas", "amount": "400.00", "unit": "grams"},
+        {"name": "Tahini", "amount": "100.00", "unit": "grams"},
+        {"name": "Lemon", "amount": "2.00", "unit": "pieces"},
+        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
+        {"name": "Olive Oil", "amount": "50.00", "unit": "ml"},
+        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Italian Sunday Ragu",
+      "description": "A slow-simmered meat sauce that anchors the Italian Sunday family meal. Started in the morning, served at noon over pasta, it is less a recipe and more a weekly ritual.",
+      "author": "maria",
+      "region": "Italian",
+      "is_published": true,
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Ground Beef", "amount": "500.00", "unit": "grams"},
+        {"name": "Tomato Paste", "amount": "3.00", "unit": "tablespoons"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Garlic", "amount": "4.00", "unit": "cloves"},
+        {"name": "Olive Oil", "amount": "50.00", "unit": "ml"},
+        {"name": "Pasta", "amount": "500.00", "unit": "grams"},
+        {"name": "Oregano", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Levantine Kibbeh",
+      "description": "Torpedo-shaped shells of bulgur wheat and spiced lamb, stuffed with pine nuts and more lamb, then deep-fried until crisp. A celebration dish across the Levant.",
+      "author": "leila",
+      "region": "Levantine",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": [],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Bulgur Wheat", "amount": "200.00", "unit": "grams"},
+        {"name": "Ground Lamb", "amount": "400.00", "unit": "grams"},
+        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
+        {"name": "Pine Nuts", "amount": "50.00", "unit": "grams"},
+        {"name": "Cinnamon", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Indian Dal Tadka",
+      "description": "Comforting yellow lentils tempered with a sizzling tadka of cumin, garlic, and ghee. A daily staple in Indian households, served with rice or flatbread.",
+      "author": "priya",
+      "region": "Indian",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Lentils", "amount": "250.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Tomato", "amount": "2.00", "unit": "pieces"},
+        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
+        {"name": "Ginger", "amount": "1.00", "unit": "pieces"},
+        {"name": "Turmeric", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Butter", "amount": "30.00", "unit": "grams"}
+      ]
+    },
+    {
+      "title": "Japanese Miso Soup",
+      "description": "A delicate broth of miso paste, tofu, and seaweed that opens nearly every Japanese meal. The key is to never boil the miso, preserving its living cultures.",
+      "author": "yuki",
+      "region": "Japanese",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Miso Paste", "amount": "3.00", "unit": "tablespoons"},
+        {"name": "Tofu", "amount": "200.00", "unit": "grams"},
+        {"name": "Seaweed", "amount": "5.00", "unit": "grams"},
+        {"name": "Green Onion", "amount": "2.00", "unit": "pieces"}
+      ]
+    },
+    {
+      "title": "Paneer Tikka Masala",
+      "description": "Cubes of paneer marinated in spiced yogurt, grilled, and simmered in a creamy tomato gravy. A vegetarian favorite that holds its own against any meat dish.",
+      "author": "priya",
+      "region": "Indian",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": ["Hinduism"],
+      "ingredients": [
+        {"name": "Paneer", "amount": "300.00", "unit": "grams"},
+        {"name": "Yogurt", "amount": "100.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Tomato", "amount": "3.00", "unit": "pieces"},
+        {"name": "Cream", "amount": "100.00", "unit": "ml"},
+        {"name": "Ginger", "amount": "1.00", "unit": "pieces"},
+        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
+        {"name": "Garam Masala", "amount": "2.00", "unit": "teaspoons"},
+        {"name": "Turmeric", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Japanese Onigiri Rice Balls",
+      "description": "Simple triangular rice balls wrapped in crisp seaweed, shaped by hand with a sprinkling of salt and sesame. The ultimate Japanese comfort food, portable and satisfying.",
+      "author": "yuki",
+      "region": "Japanese",
+      "is_published": true,
+      "dietary_tags": ["Vegan"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Rice", "amount": "300.00", "unit": "grams"},
+        {"name": "Seaweed", "amount": "4.00", "unit": "pieces"},
+        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Sesame Seeds", "amount": "1.00", "unit": "tablespoons"}
+      ]
+    },
+    {
+      "title": "Swedish Meatballs - Kottbullar",
+      "description": "Small, tender meatballs in a rich cream sauce, traditionally served with lingonberry jam and mashed potatoes. Like kaldolmar, their origins trace back to Ottoman culinary influence.",
+      "author": "lars",
+      "region": "Nordic",
+      "is_published": true,
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Ground Beef", "amount": "400.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Cream", "amount": "100.00", "unit": "ml"},
+        {"name": "Flour", "amount": "2.00", "unit": "tablespoons"},
+        {"name": "Butter", "amount": "30.00", "unit": "grams"},
+        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Pepper", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Baklava",
+      "description": "Layers of paper-thin phyllo dough, crushed pistachios and walnuts, drenched in honey syrup with a hint of lemon. A sweet jewel of Ottoman pastry tradition.",
+      "author": "mehmet",
+      "region": "Marmara",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": ["Religious Holiday"],
+      "religions": [],
+      "ingredients": [
+        {"name": "Phyllo Dough", "amount": "500.00", "unit": "grams"},
+        {"name": "Pistachios", "amount": "200.00", "unit": "grams"},
+        {"name": "Walnuts", "amount": "200.00", "unit": "grams"},
+        {"name": "Butter", "amount": "250.00", "unit": "grams"},
+        {"name": "Sugar", "amount": "300.00", "unit": "grams"},
+        {"name": "Honey", "amount": "100.00", "unit": "grams"},
+        {"name": "Lemon", "amount": "1.00", "unit": "pieces"}
+      ]
+    },
+    {
+      "title": "Buttermilk Scones",
+      "description": "Tender, flaky scones made with buttermilk and cold butter. A slightly sweeter cousin of Irish soda bread, perfect for weekend breakfast with jam and clotted cream.",
+      "author": "sarah",
+      "region": "North American",
+      "is_published": true,
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Flour", "amount": "350.00", "unit": "grams"},
+        {"name": "Buttermilk", "amount": "200.00", "unit": "ml"},
+        {"name": "Butter", "amount": "100.00", "unit": "grams"},
+        {"name": "Sugar", "amount": "50.00", "unit": "grams"},
+        {"name": "Eggs", "amount": "1.00", "unit": "pieces"},
+        {"name": "Baking Soda", "amount": "1.00", "unit": "teaspoons"}
+      ]
+    },
+    {
+      "title": "Aegean Olive Oil Cake",
+      "description": "A moist, fragrant cake made with Aegean olive oil, yogurt, and lemon zest. Light and not overly sweet, it captures the essence of Mediterranean baking.",
+      "author": "elif",
+      "region": "Aegean",
+      "is_published": true,
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {"name": "Flour", "amount": "300.00", "unit": "grams"},
+        {"name": "Olive Oil", "amount": "150.00", "unit": "ml"},
+        {"name": "Sugar", "amount": "200.00", "unit": "grams"},
+        {"name": "Eggs", "amount": "3.00", "unit": "pieces"},
+        {"name": "Yogurt", "amount": "100.00", "unit": "grams"},
+        {"name": "Lemon", "amount": "1.00", "unit": "pieces"}
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "title": "Rolling Sarma by the Black Sea",
+      "summary": "A grandmother's autumn ritual of rolling sarma with collard greens and butter.",
+      "body": "Every autumn in Trabzon, as the Black Sea winds begin to cool, families gather in the kitchen. My grandmother would lay out freshly picked collard greens on the wooden table, her hands moving with decades of practiced grace. She always said the secret was in the butter, real Black Sea butter, golden and rich. We would spend the entire morning rolling, talking, and laughing, filling the house with the warm scent of slow-cooked sarma.",
+      "author": "ayse",
+      "region": "Black Sea",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Black Sea Collard Green Sarma"],
+      "dietary_tags": [],
+      "event_tags": ["Wedding"],
+      "religions": ["Islam"]
+    },
+    {
+      "title": "Summer Sarma in the Aegean",
+      "summary": "The lighter, olive-oil version of sarma that marks the beginning of summer.",
+      "body": "In the Aegean, sarma takes a different form. No meat, no butter, just tender grape leaves wrapped around a filling of rice, pine nuts, and fresh herbs, all bound together with good olive oil. We make them in late spring when the grape leaves are young and tender. My mother always insisted on squeezing a whole lemon over the pot before serving. It was how she marked the start of summer.",
+      "author": "elif",
+      "region": "Aegean",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Aegean Olive Oil Stuffed Grape Leaves"],
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "From Anatolia to Athens: The Dolma Trail",
+      "summary": "Tracing how stuffed grape leaves traveled from Anatolian kitchens to Greek tavernas.",
+      "body": "Every Greek grandmother will tell you dolmadakia is a Greek dish. But the trail of stuffed grape leaves stretches far beyond Athens. The Ottoman culinary tradition spread this technique across the entire eastern Mediterranean. In my taverna, I serve dolmadakia the way my grandmother taught me, cold, with a generous squeeze of lemon. Yet when I traveled to Izmir, I found the same dish, the same love, in a language I could not speak.",
+      "author": "dimitris",
+      "region": "Balkan",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Greek Dolmadakia"],
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "How Swedish Cabbage Rolls Came from the Ottoman Empire",
+      "summary": "The surprising Ottoman origins of Sweden's beloved kaldolmar.",
+      "body": "In the early 18th century, King Charles XII of Sweden spent years in exile in the Ottoman Empire. When he returned, he brought back more than political ambitions, he brought a taste for stuffed leaves. The Swedish kaldolmar, cabbage rolls filled with rice and meat, is a direct descendant of Ottoman dolma. Today, it sits alongside kottbullar as one of Sweden's most beloved comfort foods, a culinary bridge between two distant cultures.",
+      "author": "lars",
+      "region": "Nordic",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Swedish Cabbage Rolls - Kaldolmar", "Swedish Meatballs - Kottbullar"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "The Buttermilk Substitute",
+      "summary": "Discovering how to adapt Irish family recipes when ingredients are not available.",
+      "body": "When I first tried to bake my grandmother's soda bread in Istanbul, I could not find buttermilk anywhere. A Turkish neighbor suggested mixing yogurt with a little water, and the tanginess was remarkably similar. That small moment of culinary problem-solving taught me something profound: food traditions survive not by rigid adherence to recipes, but through creative adaptation. My grandmother would have approved.",
+      "author": "sarah",
+      "region": "North American",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Traditional Irish Soda Bread"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "Sunday Borek Ritual",
+      "summary": "The early-morning tradition of making borek for the whole family.",
+      "body": "Every Sunday in our Aegean household begins the same way. My mother rises before dawn to stretch phyllo dough paper-thin across the dining table. The filling, fresh herbs from the garden, crumbled white cheese, a whisper of olive oil, is simple but sacred. By the time the rest of us wake, the house smells of golden, flaky pastry. It is not just breakfast; it is how we say we belong to each other.",
+      "author": "elif",
+      "region": "Aegean",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Aegean Herb Borek"],
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "Wedding Feasts of Southeastern Turkey",
+      "summary": "How kebabs and sarma anchor the multi-day wedding celebrations of the southeast.",
+      "body": "In Gaziantep and Adana, a wedding is not complete without at least three days of cooking. Adana kebab is grilled over charcoal in massive quantities, while sarma made with pomegranate molasses adds a distinctive tang that sets southeastern celebrations apart. My family's wedding tradition involves the entire neighborhood, each household contributing a dish, and the feast stretching across borrowed tables lining the street.",
+      "author": "fatma",
+      "region": "Southeastern Anatolia",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Adana Kebab", "Southeastern Sarma with Pomegranate Molasses"],
+      "dietary_tags": ["Halal"],
+      "event_tags": ["Wedding"],
+      "religions": ["Islam"]
+    },
+    {
+      "title": "Miso: A Living Ingredient",
+      "summary": "Understanding miso as a fermented, living paste central to Japanese home cooking.",
+      "body": "Miso is not simply a flavoring, it is alive. The fermentation process that creates it involves koji mold working over months, sometimes years, transforming soybeans into something far greater than their parts. In my family's kitchen, we never boil miso soup. To boil it would be to kill the living cultures that make it nourishing. This respect for the ingredient, this patience with time, is at the heart of Japanese cooking.",
+      "author": "yuki",
+      "region": "Japanese",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Japanese Miso Soup"],
+      "dietary_tags": ["Vegetarian"],
+      "event_tags": [],
+      "religions": ["Buddhism"]
+    },
+    {
+      "title": "The Spice Road to Indian Kitchens",
+      "summary": "How ancient trade routes shaped the spice palette of everyday Indian cooking.",
+      "body": "Every Indian kitchen is a living museum of the spice trade. The turmeric in our dal traveled ancient routes from Southeast Asia. The cumin came through Persian traders. Even the humble chili pepper, which feels so essentially Indian, only arrived with Portuguese colonists five centuries ago. When I prepare dal tadka and watch the cumin seeds crackle in hot ghee, I am participating in a culinary tradition shaped by centuries of exchange.",
+      "author": "priya",
+      "region": "Indian",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Indian Dal Tadka"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "My Grandmother's Manti",
+      "summary": "The painstaking art of making tiny Anatolian dumplings by hand.",
+      "body": "Making manti is an act of devotion. My grandmother would sit for hours, cutting tiny squares of dough and pinching each one closed around a speck of seasoned meat. She said the smaller the manti, the greater the love. We would serve them drowning in garlicky yogurt with a drizzle of butter infused with red pepper flakes. No restaurant version has ever matched what she made in her small kitchen in Kayseri.",
+      "author": "ayse",
+      "region": "Anatolian",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Anatolian Manti Dumplings"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": ["Islam"]
+    },
+    {
+      "title": "Italian Sundays",
+      "summary": "The sacred weekly tradition of slow-cooked ragu and family gathering.",
+      "body": "In our family, Sunday is ragu day. The sauce starts early in the morning, ground meat, tomato paste, a slow simmer that fills the entire apartment with warmth. By noon, three generations are seated around the same table. The pasta is always the same, the sauce is always the same, and somehow that consistency is what makes it feel like home. My grandchildren now set the table without being asked.",
+      "author": "maria",
+      "region": "Italian",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Italian Sunday Ragu"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": ["Christianity"]
+    },
+    {
+      "title": "Istanbul Street Food Memories",
+      "summary": "Recalling the lahmacun stands that shaped a food blogger's palate.",
+      "body": "My love of food began on the streets of Istanbul. After school, I would stop at a lahmacun stand near Kadikoy, watching the baker slide thin rounds of dough into a blazing wood-fired oven. The lahmacun came out in seconds, crisp, aromatic, rolled up with fresh parsley and a squeeze of lemon. It cost almost nothing and tasted like everything. Those street-side meals taught me that great food does not require a great kitchen.",
+      "author": "mehmet",
+      "region": "Marmara",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Istanbul Lahmacun"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "A Lebanese Table Is Never Empty",
+      "summary": "The Lebanese philosophy of abundance and hospitality through food.",
+      "body": "In Lebanon, an empty table is a source of shame. Even an unexpected guest will find tabbouleh, hummus, bread, and olives appearing as if by magic. My mother kept a bowl of hummus in the refrigerator at all times, not as a planned dish but as a constant presence. The act of feeding others is inseparable from the act of welcoming them. Every mezze spread says the same thing: you are not a stranger here.",
+      "author": "leila",
+      "region": "Levantine",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Lebanese Tabbouleh", "Lebanese Hummus"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": ["Islam"]
+    },
+    {
+      "title": "Baking Across the Atlantic",
+      "summary": "How Irish baking traditions survived and adapted in American kitchens.",
+      "body": "My grandmother emigrated from County Cork with a handful of recipes written on index cards. Her soda bread recipe was the simplest, four ingredients, no yeast, no waiting. In Boston, she taught my mother, who taught me. Along the way, scones entered the repertoire, a slightly sweeter, richer cousin of the bread she grew up with. The recipes changed with each generation, absorbing American butter and sugar, but the ritual of weekend baking remained constant.",
+      "author": "sarah",
+      "region": "North American",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Traditional Irish Soda Bread", "Buttermilk Scones"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": ["Christianity"]
+    },
+    {
+      "title": "When Yogurt Connects Continents",
+      "summary": "Exploring how yogurt serves as a culinary bridge between Turkish and Indian traditions.",
+      "body": "Yogurt might be the most democratic ingredient in the world. In Trabzon, it tops kuymak, adding tang to the rich, cheesy cornmeal. In India, it forms the base of raita and tempers the heat of dal. The word itself comes from Turkish, yet yogurt belongs to no single culture. When I discovered that Indian cooks use yogurt as both a marinade and a cooling condiment, just as we do in Turkey, it reminded me that kitchens speak a universal language.",
+      "author": "mehmet",
+      "region": "Marmara",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Trabzon Butter Kuymak", "Indian Dal Tadka"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": []
+    },
+    {
+      "title": "Fermentation East and West",
+      "summary": "Drawing parallels between Japanese miso fermentation and Mediterranean preservation.",
+      "body": "Fermentation is humanity's oldest form of food technology, and every culture has its own version. In Japan, we ferment soybeans into miso. In Greece, grape leaves are preserved in brine for dolmadakia. The underlying principle is the same, harnessing beneficial microorganisms to transform simple ingredients into something complex and enduring. When I tasted Greek dolmadakia for the first time, the familiar tang of fermentation felt like a greeting from a distant cousin.",
+      "author": "yuki",
+      "region": "Japanese",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": ["Japanese Miso Soup", "Greek Dolmadakia"],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": []
+    }
+  ],
+  "cultural_content": [
+    {
+      "slug": "sunday-borek-mornings",
+      "kind": "tradition",
+      "title": "Sunday Borek Mornings",
+      "body": "In Aegean homes, Sunday breakfast begins with the smell of phyllo baking before sunrise. Grandmothers roll dough by hand while the rest of the family wakes to the scent of golden, flaky borek.",
+      "region": "Aegean",
+      "cultural_tags": ["Aegean", "Turkish", "breakfast", "family"]
+    },
+    {
+      "slug": "dish-of-the-day-mansaf",
+      "kind": "dish",
+      "title": "Dish of the Day: Mansaf",
+      "body": "Mansaf is a Levantine festive dish of lamb slow-cooked in fermented yogurt sauce, served over saffron rice. Traditionally eaten standing, with the right hand, around a single shared platter.",
+      "region": "Levantine",
+      "cultural_tags": ["Levantine", "Halal", "wedding", "communal dining"]
+    },
+    {
+      "slug": "why-lentil-soup-is-healing",
+      "kind": "fact",
+      "title": "Why Lentil Soup is Healing",
+      "body": "Across Anatolia and the Middle East, lentil soup is the first food offered to a guest with a cold or a recovering relative. The tradition predates modern medicine by centuries.",
+      "region": "Anatolian",
+      "cultural_tags": ["Anatolian", "Turkish", "vegetarian", "health"]
+    },
+    {
+      "slug": "the-coffee-reading",
+      "kind": "tradition",
+      "title": "The Coffee Reading",
+      "body": "After Turkish coffee, the cup is flipped onto its saucer and the grounds are read. It is half ritual, half conversation starter, and almost never taken too seriously.",
+      "region": "Marmara",
+      "cultural_tags": ["Marmara", "Turkish", "social"]
+    },
+    {
+      "slug": "asure-day",
+      "kind": "holiday",
+      "title": "Asure Day",
+      "body": "Asure is a pudding made of wheat, beans, dried fruits, and nuts, shared with neighbors on the 10th of Muharram. Tradition says one bowl should never be eaten alone.",
+      "region": "Anatolian",
+      "cultural_tags": ["Anatolian", "Turkish", "Muharram", "religious", "community"]
+    },
+    {
+      "slug": "greek-mezze-tradition",
+      "kind": "tradition",
+      "title": "The Greek Mezze Tradition",
+      "body": "In Greece, dining begins with a spread of small plates: olives, feta, dips, grilled vegetables. The mezze is not a course but a philosophy: meals should be shared, unhurried, and abundant.",
+      "region": "Balkan",
+      "cultural_tags": ["Balkan", "Greek", "social dining", "Mediterranean"]
+    },
+    {
+      "slug": "japans-washoku-philosophy",
+      "kind": "fact",
+      "title": "Japan's Washoku Philosophy",
+      "body": "Washoku, traditional Japanese cuisine, emphasizes balance of five colors, five tastes, and five cooking methods in every meal. UNESCO recognized it as an Intangible Cultural Heritage in 2013.",
+      "region": "Japanese",
+      "cultural_tags": ["Japanese", "balance", "UNESCO", "mindful eating"]
+    },
+    {
+      "slug": "indias-six-tastes",
+      "kind": "fact",
+      "title": "India's Six Tastes",
+      "body": "Ayurvedic tradition holds that every meal should include six tastes: sweet, sour, salty, bitter, pungent, and astringent. This principle shapes Indian cooking from everyday dal to elaborate festive thalis.",
+      "region": "Indian",
+      "cultural_tags": ["Indian", "Ayurveda", "balance", "spices"]
+    }
+  ]
+}

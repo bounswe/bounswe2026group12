@@ -65,7 +65,7 @@ describe('Protected routes (unauthenticated)', () => {
 describe('Protected routes (authenticated)', () => {
   test('/recipes/new renders RecipeCreate page when authenticated', () => {
     renderApp('/recipes/new', 'valid-token');
-    expect(screen.getByRole('heading', { name: /create recipe/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /create a recipe/i })).toBeInTheDocument();
   });
 
   test('/stories/new renders StoryCreate page when authenticated', () => {

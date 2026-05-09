@@ -1,39 +1,118 @@
 from django.db import models
 from django.conf import settings
+from apps.common.ids import generate_ulid, validate_ulid
 
-class Region(models.Model):
-    """Region model for tagging recipes and user origin."""
+class CulturalModerationMixin(models.Model):
+    """Audit fields for moderated lookup submissions.
+
+    Originally introduced for cultural tags (#391); now also applied to
+    Ingredient, Unit, and DietaryTag (#361) so the same admin queue and
+    audit trail covers every user-submittable lookup.
+
+    submitted_*: who created the record and when.
+    reviewed_*: who approved or rejected it and when.
+    rejection_reason: free text shown back to the submitter on reject.
+
+    Fields are nullable / blank so legacy rows (created before this mixin)
+    keep working; new submissions populate submitted_by + submitted_at.
+    """
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    submitted_at = models.DateTimeField(auto_now_add=True, null=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True, default='')
+
+    class Meta:
+        abstract = True
+
+
+class Region(CulturalModerationMixin, models.Model):
+    """Region model for tagging recipes and user origin.
+
+    Extended for map discovery (#381) with geographic center coordinates,
+    an optional bounding box, and an optional parent for single-level hierarchy
+    (e.g., "Aegean Coast" → parent "Turkey").
+
+    Plain FloatFields are used instead of PostGIS PointField because the
+    region table is small (tens of rows) and simple float comparisons are
+    sufficient for bounding-box queries without adding a geo dependency.
+
+    Now user-submittable behind moderation (#391). Existing seeded rows are
+    backfilled to is_approved=True via data migration.
+    """
     name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-class Ingredient(models.Model):
-    """Ingredient model for reuse across recipes."""
-    name = models.CharField(max_length=200, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
+    # Geographic center — used for map pin placement
+    latitude  = models.FloatField(null=True, blank=True, help_text='Center latitude of the region.')
+    longitude = models.FloatField(null=True, blank=True, help_text='Center longitude of the region.')
+
+    # Optional bounding box — enables rectangle-bounded viewport queries
+    bbox_north = models.FloatField(null=True, blank=True, help_text='Northern latitude bound.')
+    bbox_south = models.FloatField(null=True, blank=True, help_text='Southern latitude bound.')
+    bbox_east  = models.FloatField(null=True, blank=True, help_text='Eastern longitude bound.')
+    bbox_west  = models.FloatField(null=True, blank=True, help_text='Western longitude bound.')
+
+    # Optional single-level hierarchy (e.g., "Aegean Coast" → parent "Turkey")
+    parent = models.ForeignKey(
+        'self', on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='children',
+        help_text='Optional parent region for hierarchical grouping.',
+    )
+
     def __str__(self):
         return self.name
 
-class Unit(models.Model):
-    """Unit of measurement (e.g., grams, liters, cups)."""
+class Ingredient(CulturalModerationMixin, models.Model):
+    """Ingredient model for reuse across recipes. User-submittable, moderated (#361)."""
+    name = models.CharField(max_length=200, unique=True)
+    is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
+    density_g_per_ml = models.DecimalField(
+        max_digits=8, decimal_places=4,
+        null=True, blank=True,
+        help_text='g per ml. Required for mass to volume conversions. See apps/recipes/conversions/references.md for cited sources.',
+    )
+
+    def __str__(self):
+        return self.name
+
+class Unit(CulturalModerationMixin, models.Model):
+    """Unit of measurement (e.g., grams, liters, cups). User-submittable, moderated (#361)."""
     name = models.CharField(max_length=50, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
     def __str__(self):
         return self.name
 
-class DietaryTag(models.Model):
-    """Dietary tag (e.g., Vegan, Gluten-free, Halal). User-submittable, moderated."""
+class DietaryTag(CulturalModerationMixin, models.Model):
+    """Dietary tag (e.g., Vegan, Gluten-free, Halal). User-submittable, moderated (#361)."""
     name = models.CharField(max_length=100, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
     def __str__(self):
         return self.name
 
-class EventTag(models.Model):
+class EventTag(CulturalModerationMixin, models.Model):
     """Event tag (e.g., Wedding, Ramadan, Birthday). User-submittable, moderated."""
+    name = models.CharField(max_length=100, unique=True)
+    is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
+
+    def __str__(self):
+        return self.name
+
+class Religion(CulturalModerationMixin, models.Model):
+    """Religion model (e.g., Islam, Christianity, Judaism). User-submittable, moderated."""
     name = models.CharField(max_length=100, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
@@ -42,6 +121,13 @@ class EventTag(models.Model):
 
 class Recipe(models.Model):
     """Core Recipe model."""
+    public_id = models.CharField(
+        max_length=26,
+        unique=True,
+        editable=False,
+        default=generate_ulid,
+        validators=[validate_ulid],
+    )
     title = models.CharField(max_length=255)
     description = models.TextField()
     image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)
@@ -52,6 +138,7 @@ class Recipe(models.Model):
     is_published = models.BooleanField(default=False)
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
+    religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
