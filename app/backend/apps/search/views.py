@@ -13,6 +13,7 @@ from apps.common.personalization import (
 )
 from apps.recipes.models import Recipe
 from apps.recipes.views import apply_content_filters
+from apps.search.query_parser import parse_query
 from apps.stories.models import Story
 
 
@@ -86,26 +87,63 @@ class GlobalSearchView(APIView):
         query = request.query_params.get('q', '').strip()
         language = request.query_params.get('language', '').strip()
 
+        parsed = parse_query(query)
+        has_facets = bool(
+            parsed['region'] or parsed['event']
+            or parsed['diets'] or parsed['religions']
+        )
+
+        # Inject parsed facets into a working copy of query_params, but never
+        # override values the client already supplied (#389).
+        params = request.query_params.copy()
+        if parsed['region'] and not params.get('region'):
+            params['region'] = parsed['region']
+        if parsed['event'] and not params.get('event'):
+            params['event'] = parsed['event']
+        if parsed['diets'] and not params.get('diet'):
+            params['diet'] = ','.join(parsed['diets'])
+        if parsed['religions'] and not params.get('religion'):
+            params['religion'] = ','.join(parsed['religions'])
+
+        # Keep the existing free-text behavior when no facet matched, so plain
+        # keyword search is byte-for-byte identical to the pre-#389 endpoint.
+        text_query = parsed['cleaned_query'] if has_facets else query
+
         recipes = _recipe_queryset()
         stories = _story_queryset()
 
-        if query:
-            recipes = recipes.filter(Q(title__icontains=query) | Q(description__icontains=query))
-            stories = stories.filter(Q(title__icontains=query) | Q(body__icontains=query))
+        if text_query:
+            recipes = recipes.filter(Q(title__icontains=text_query) | Q(description__icontains=text_query))
+            stories = stories.filter(Q(title__icontains=text_query) | Q(body__icontains=text_query))
 
         if language:
             recipes = recipes.filter(author__preferred_language__iexact=language)
             stories = stories.filter(author__preferred_language__iexact=language)
 
-        recipes = apply_content_filters(recipes, request.query_params)
-        stories = apply_content_filters(stories, request.query_params)
+        recipes = apply_content_filters(recipes, params)
+        stories = apply_content_filters(stories, params)
 
         personalize = request.query_params.get('personalize') != '0'
         use_ranking = personalize and has_profile_terms(request.user)
 
+        # Light bias toward regional/event matches when the parser surfaced
+        # them, so tag-aligned items outrank items that only matched on the
+        # residual free text.
+        weights = dict(WEIGHTS)
+        if parsed['region']:
+            weights['regional'] = int(weights['regional'] * 1.5)
+        if parsed['event']:
+            weights['event'] = int(weights['event'] * 1.5)
+
         if use_ranking:
-            ranked_recipes = rank_items(recipes[:500], request.user, score_recipe)
-            ranked_stories = rank_items(stories[:500], request.user, score_story)
+            ranked_recipes = rank_items(
+                recipes[:500], request.user, score_recipe,
+                scorer_kwargs={'weights': weights},
+            )
+            ranked_stories = rank_items(
+                stories[:500], request.user, score_story,
+                scorer_kwargs={'weights': weights},
+            )
         else:
             ranked_recipes = recipes[:100]
             ranked_stories = stories[:100]
@@ -119,6 +157,12 @@ class GlobalSearchView(APIView):
             'stories': story_results,
             'results': unified,
             'total_count': len(recipe_results) + len(story_results),
+            'parsed': {
+                'region': parsed['region'],
+                'event': parsed['event'],
+                'diets': parsed['diets'],
+                'religions': parsed['religions'],
+            },
         }, status=status.HTTP_200_OK)
 
 
