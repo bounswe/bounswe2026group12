@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from .models import Story, StoryRecipeLink
+from apps.recipes.models import DietaryTag, EventTag, Religion
+from apps.recipes.serializers import (
+    DietaryTagLookupSerializer, EventTagLookupSerializer, ReligionLookupSerializer
+)
 
 
 class StoryRecipeLinkSerializer(serializers.ModelSerializer):
@@ -29,6 +33,24 @@ class StorySerializer(serializers.ModelSerializer):
     linked_recipe_ids = serializers.ListField(
         child=serializers.IntegerField(), write_only=True, required=False
     )
+    
+    # --- TAXONOMY (M5-20 / #386) ---
+    dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
+    event_tags = EventTagLookupSerializer(many=True, read_only=True)
+    religions = ReligionLookupSerializer(many=True, read_only=True)
+    
+    dietary_tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=DietaryTag.objects.all(), source='dietary_tags',
+        many=True, write_only=True, required=False
+    )
+    event_tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=EventTag.objects.all(), source='event_tags',
+        many=True, write_only=True, required=False
+    )
+    religion_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Religion.objects.all(), source='religions',
+        many=True, write_only=True, required=False
+    )
 
     # Expose region name for frontend display (string, not FK id)
     region_name = serializers.SerializerMethodField()
@@ -40,6 +62,8 @@ class StorySerializer(serializers.ModelSerializer):
             'linked_recipe', 'recipe_title',    # backward compat (read)
             'linked_recipes',                   # new array (read)
             'linked_recipe_id', 'linked_recipe_ids',  # write aliases
+            'dietary_tags', 'event_tags', 'religions',
+            'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'language', 'region', 'region_name',
             'is_published', 'created_at', 'updated_at'
         ]
@@ -90,19 +114,45 @@ class StorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         single_id = validated_data.pop('linked_recipe_id', None)
         multi_ids = validated_data.pop('linked_recipe_ids', None)
+        
+        dietary_tags = validated_data.pop('dietary_tags', None)
+        event_tags = validated_data.pop('event_tags', None)
+        religions = validated_data.pop('religions', None)
+        
         story = Story.objects.create(**validated_data)
         self._set_recipes(story, single_id, multi_ids)
+        
+        if dietary_tags is not None:
+            story.dietary_tags.set(dietary_tags)
+        if event_tags is not None:
+            story.event_tags.set(event_tags)
+        if religions is not None:
+            story.religions.set(religions)
+            
         return story
 
     def update(self, instance, validated_data):
         single_id = validated_data.pop('linked_recipe_id', None)
         multi_ids = validated_data.pop('linked_recipe_ids', None)
+        
+        dietary_tags = validated_data.pop('dietary_tags', None)
+        event_tags = validated_data.pop('event_tags', None)
+        religions = validated_data.pop('religions', None)
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
         
         if single_id is not None or multi_ids is not None:
             self._set_recipes(instance, single_id, multi_ids)
+            
+        if dietary_tags is not None:
+            instance.dietary_tags.set(dietary_tags)
+        if event_tags is not None:
+            instance.event_tags.set(event_tags)
+        if religions is not None:
+            instance.religions.set(religions)
+            
         return instance
 
     def _set_recipes(self, story, single_id, multi_ids):
