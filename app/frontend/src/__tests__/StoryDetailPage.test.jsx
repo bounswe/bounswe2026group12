@@ -12,7 +12,8 @@ const mockStory = {
   body: 'Every Sunday morning the smell of fresh bread...',
   author: 3,
   author_username: 'eren',
-  linked_recipe: { id: 5, title: 'Baklava', region: 'Aegean' },
+  linked_recipe: 5,
+  recipe_title: 'Baklava',
   language: 'en',
   is_published: true,
 };
