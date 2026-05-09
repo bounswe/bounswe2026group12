@@ -22,8 +22,12 @@ class LookupApiTests(APITestCase):
         response = self.client.get(self.ingredient_list_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Scope to fixtures created here. The endpoint also returns rows seeded
+        # by 0005_seed_ingredients_units; assertion stays exact for our IDs.
+        created_ids = {self.apple.id, self.banana.id}
+        filtered = [row for row in response.data if row['id'] in created_ids]
         self.assertEqual(
-            response.data,
+            filtered,
             [
                 {'id': self.apple.id, 'name': 'Apple'},
                 {'id': self.banana.id, 'name': 'banana'},
@@ -34,8 +38,10 @@ class LookupApiTests(APITestCase):
         response = self.client.get(self.unit_list_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        created_ids = {self.cup.id, self.tablespoon.id}
+        filtered = [row for row in response.data if row['id'] in created_ids]
         self.assertEqual(
-            response.data,
+            filtered,
             [
                 {'id': self.cup.id, 'name': 'cup'},
                 {'id': self.tablespoon.id, 'name': 'Tablespoon'},
