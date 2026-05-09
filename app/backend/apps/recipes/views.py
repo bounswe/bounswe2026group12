@@ -74,6 +74,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
         'dietary_tags', 'event_tags',
+    ).annotate(
+        story_count=models.Count('story_links', filter=models.Q(story_links__story__is_published=True))
     ).all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]

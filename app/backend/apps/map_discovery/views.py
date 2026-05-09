@@ -134,14 +134,15 @@ class RegionContentView(APIView):
             results += list(MapRecipeCardSerializer(recipes[:max_limit], many=True).data)
 
         if not content_type or content_type == 'story':
-            # Stories tagged directly to the region OR inheriting via linked recipe
+            # Stories tagged directly to the region OR inheriting via linked recipes
             stories = (
                 Story.objects
                 .filter(
-                    Q(region=region) | Q(linked_recipe__region=region),
+                    Q(region=region) | Q(recipe_links__recipe__region=region),
                     is_published=True,
                 )
-                .select_related('author', 'region', 'linked_recipe__region')
+                .select_related('author', 'region')
+                .prefetch_related('recipe_links__recipe__region')
                 .distinct()
                 .order_by('-created_at')
             )
@@ -251,6 +252,7 @@ class BoundingBoxDiscoverView(APIView):
             qs = qs.filter(
                 Q(recipes__title__icontains=keyword, recipes__is_published=True) |
                 Q(stories__title__icontains=keyword, stories__is_published=True) |
+                Q(stories__recipe_links__recipe__title__icontains=keyword, stories__is_published=True) |
                 Q(cultural_content__title__icontains=keyword, cultural_content__is_active=True)
             ).distinct()
 

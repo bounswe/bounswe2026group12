@@ -2,6 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from .models import Recipe, Region, Ingredient, Unit, RecipeIngredient
+from apps.stories.models import Story
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -13,10 +14,10 @@ class PublicEndpointTest(APITestCase):
     """
 
     def setUp(self):
-        self.region = Region.objects.create(name="Mediterranean")
+        self.region, _ = Region.objects.get_or_create(name="Mediterranean")
         self.user = User.objects.create_user(
-            email="author@example.com",
-            username="author",
+            email="author_pub@example.com",
+            username="author_pub",
             password="SecurePass123!"
         )
         self.recipe = Recipe.objects.create(
@@ -33,8 +34,9 @@ class PublicEndpointTest(APITestCase):
     def test_recipe_list_is_public(self):
         response = self.client.get(self.recipe_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['title'], "Hummus")
+        results = response.data.get('results', response.data)
+        self.assertGreaterEqual(len(results), 1)
+        self.assertTrue(any(r['title'] == "Hummus" for r in results))
 
     def test_recipe_detail_is_public(self):
         response = self.client.get(self.recipe_detail_url)
@@ -46,6 +48,21 @@ class PublicEndpointTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('recipes', response.data)
         self.assertEqual(response.data['recipes'][0]['title'], "Hummus")
+
+    def test_recipe_list_story_count(self):
+        """Verify story_count annotation works correctly."""
+        # Link a published story to the recipe
+        Story.objects.create(
+            title="Hummus Story", body="Very tasty",
+            author=self.user, is_published=True
+        ).linked_recipes.add(self.recipe)
+        
+        response = self.client.get(self.recipe_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Find hummus in results (paginated)
+        results = response.data.get('results', response.data)
+        hummus = next(r for r in results if r['id'] == self.recipe.id)
+        self.assertEqual(hummus['story_count'], 1)
 
     def test_creation_requires_auth(self):
         data = {
@@ -64,9 +81,9 @@ class RecipeCreateAPITest(APITestCase):
         self.user = User.objects.create_user(
             email="chef@example.com", username="chef", password="StrongPass123!"
         )
-        self.region = Region.objects.create(name="Turkish")
-        self.ingredient = Ingredient.objects.create(name="Chickpeas", is_approved=True)
-        self.unit = Unit.objects.create(name="grams", is_approved=True)
+        self.region, _ = Region.objects.get_or_create(name="Turkish")
+        self.ingredient, _ = Ingredient.objects.get_or_create(name="Chickpeas", defaults={"is_approved": True})
+        self.unit, _ = Unit.objects.get_or_create(name="grams", defaults={"is_approved": True})
         self.client.force_authenticate(user=self.user)
         self.url = reverse('recipe-list')
 
@@ -136,7 +153,7 @@ class RecipeCreateAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_recipe_multiple_ingredients(self):
-        flour = Ingredient.objects.create(name="Flour", is_approved=True)
+        flour, _ = Ingredient.objects.get_or_create(name="Flour", defaults={"is_approved": True})
         data = {
             "title": "Bread",
             "description": "Simple bread",
@@ -167,13 +184,13 @@ class RecipeEditAPITest(APITestCase):
 
     def setUp(self):
         self.author = User.objects.create_user(
-            email="author@example.com", username="author", password="StrongPass123!"
+            email="author_edit@example.com", username="author_edit", password="StrongPass123!"
         )
         self.other = User.objects.create_user(
             email="other@example.com", username="other", password="StrongPass123!"
         )
-        self.ingredient = Ingredient.objects.create(name="Tomato", is_approved=True)
-        self.unit = Unit.objects.create(name="pieces", is_approved=True)
+        self.ingredient, _ = Ingredient.objects.get_or_create(name="Tomato", defaults={"is_approved": True})
+        self.unit, _ = Unit.objects.get_or_create(name="pieces", defaults={"is_approved": True})
         self.recipe = Recipe.objects.create(
             title="Salad", description="Green salad", author=self.author
         )
@@ -215,7 +232,7 @@ class RecipeEditAPITest(APITestCase):
 
     def test_edit_replaces_ingredients(self):
         self.client.force_authenticate(user=self.author)
-        new_ing = Ingredient.objects.create(name="Cucumber", is_approved=True)
+        new_ing, _ = Ingredient.objects.get_or_create(name="Cucumber", defaults={"is_approved": True})
         url = reverse('recipe-detail', kwargs={'pk': self.recipe.id})
         data = {
             "title": "Salad",

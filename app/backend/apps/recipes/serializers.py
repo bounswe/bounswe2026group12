@@ -118,6 +118,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=EventTag.objects.all(), source='event_tags',
         many=True, write_only=True, required=False,
     )
+    story_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = Recipe
@@ -127,6 +128,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_published', 'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'dietary_tag_ids', 'event_tag_ids',
+            'story_count',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
 
