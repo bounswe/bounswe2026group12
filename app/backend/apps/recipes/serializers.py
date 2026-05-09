@@ -49,6 +49,14 @@ class IngredientLookupSerializer(serializers.ModelSerializer):
 class NamedSubmissionSerializer(serializers.ModelSerializer):
     duplicate_message = 'This name already exists.'
 
+    # Audit-trail fields exposed in the response but locked against client
+    # spoofing on submission. Set server-side via the viewset.
+    AUDIT_READ_ONLY_FIELDS = (
+        'submitted_by', 'submitted_at',
+        'reviewed_by', 'reviewed_at',
+        'rejection_reason',
+    )
+
     def validate_name(self, value):
         cleaned_value = value.strip()
         if not cleaned_value:
@@ -76,6 +84,7 @@ class IngredientSerializer(NamedSubmissionSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
+        read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
 
 class UnitLookupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -88,6 +97,7 @@ class UnitSerializer(NamedSubmissionSerializer):
     class Meta:
         model = Unit
         fields = '__all__'
+        read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
 
 
 class DietaryTagLookupSerializer(serializers.ModelSerializer):
@@ -102,6 +112,7 @@ class DietaryTagSerializer(NamedSubmissionSerializer):
     class Meta:
         model = DietaryTag
         fields = '__all__'
+        read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
 
 
 class EventTagLookupSerializer(serializers.ModelSerializer):

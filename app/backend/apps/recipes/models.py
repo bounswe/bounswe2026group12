@@ -3,7 +3,11 @@ from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
 
 class CulturalModerationMixin(models.Model):
-    """Audit fields for cultural-tag moderation (#391).
+    """Audit fields for moderated lookup submissions.
+
+    Originally introduced for cultural tags (#391); now also applied to
+    Ingredient, Unit, and DietaryTag (#361) so the same admin queue and
+    audit trail covers every user-submittable lookup.
 
     submitted_*: who created the record and when.
     reviewed_*: who approved or rejected it and when.
@@ -70,8 +74,8 @@ class Region(CulturalModerationMixin, models.Model):
     def __str__(self):
         return self.name
 
-class Ingredient(models.Model):
-    """Ingredient model for reuse across recipes."""
+class Ingredient(CulturalModerationMixin, models.Model):
+    """Ingredient model for reuse across recipes. User-submittable, moderated (#361)."""
     name = models.CharField(max_length=200, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
     density_g_per_ml = models.DecimalField(
@@ -83,16 +87,16 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name
 
-class Unit(models.Model):
-    """Unit of measurement (e.g., grams, liters, cups)."""
+class Unit(CulturalModerationMixin, models.Model):
+    """Unit of measurement (e.g., grams, liters, cups). User-submittable, moderated (#361)."""
     name = models.CharField(max_length=50, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
     def __str__(self):
         return self.name
 
-class DietaryTag(models.Model):
-    """Dietary tag (e.g., Vegan, Gluten-free, Halal). User-submittable, moderated."""
+class DietaryTag(CulturalModerationMixin, models.Model):
+    """Dietary tag (e.g., Vegan, Gluten-free, Halal). User-submittable, moderated (#361)."""
     name = models.CharField(max_length=100, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
