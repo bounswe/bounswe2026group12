@@ -6,8 +6,8 @@ import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { useAuth } from '../context/AuthContext';
 import type { RootStackParamList } from '../navigation/types';
-import { apiGetJson } from '../services/httpClient';
 import { fetchRecipesList } from '../services/recipeService';
+import { fetchStoriesList } from '../services/storyService';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'UserProfile'>;
@@ -46,11 +46,11 @@ export default function UserProfileScreen({ route, navigation }: Props) {
       try {
         const [recipeList, storyList] = await Promise.all([
           fetchRecipesList(),
-          apiGetJson<ListItem[]>('/api/stories/'),
+          fetchStoriesList(),
         ]);
         if (cancelled) return;
         setRecipes(Array.isArray(recipeList) ? recipeList : []);
-        setStories(Array.isArray(storyList) ? storyList : []);
+        setStories(Array.isArray(storyList) ? (storyList as ListItem[]) : []);
       } catch (e) {
         if (!cancelled) {
           setRecipes([]);
