@@ -21,6 +21,7 @@ services:
       SECRET_KEY: ${SECRET_KEY:-dev-insecure-secret-do-not-use-in-prod}
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://genipe.app,https://www.genipe.app}
       POSTGRES_DB: ${POSTGRES_DB:-bounswe_db}
       POSTGRES_USER: ${POSTGRES_USER:-genipe}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genipe_mvp_2026}
