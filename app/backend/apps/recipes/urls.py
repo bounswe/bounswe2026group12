@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     RecipeViewSet, IngredientViewSet, UnitViewSet, RegionViewSet, CommentViewSet,
-    DietaryTagViewSet, EventTagViewSet, ReligionViewSet,
+    DietaryTagViewSet, EventTagViewSet, ReligionViewSet, ConvertView,
 )
 
 router = DefaultRouter()
@@ -17,4 +17,5 @@ router.register(r'religions', ReligionViewSet, basename='religion')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('convert/', ConvertView.as_view(), name='convert'),
 ]

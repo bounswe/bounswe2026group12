@@ -1,5 +1,6 @@
 from functools import reduce
 import operator
+from decimal import ROUND_HALF_UP, Decimal
 
 from django.db import models
 from django.db.models import Q
@@ -9,14 +10,17 @@ from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.views import APIView
 from apps.common.permissions import IsAuthorOrReadOnly
 from apps.common.pagination import StandardResultsSetPagination
 from apps.common.personalization import rank_items, score_recipe, has_profile_terms
+from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
     IngredientSubstitution,
 )
 from .serializers import (
+    ConvertRequestSerializer,
     IngredientLookupSerializer,
     IngredientSerializer,
     IngredientSubstituteSerializer,
@@ -286,3 +290,49 @@ class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
         # or we can rely on the annotation if get_object() applies it.
         count = getattr(comment, 'helpful_count', comment.votes.count())
         return Response({'helpful_count': count})
+
+
+class ConvertView(APIView):
+    """POST /api/convert/ — public unit conversion endpoint (#376)."""
+
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ConvertRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        density = None
+        ingredient_id = data.get('ingredient_id')
+        if ingredient_id is not None:
+            try:
+                ingredient = Ingredient.objects.get(pk=ingredient_id)
+            except Ingredient.DoesNotExist:
+                return Response(
+                    {'detail': f'Ingredient {ingredient_id} not found.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            density = ingredient.density_g_per_ml
+
+        try:
+            result = convert_units(
+                data['amount'],
+                data['from_unit'],
+                data['to_unit'],
+                density_g_per_ml=density,
+            )
+        except ConversionError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+        result_q = result.quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP)
+        # Strip trailing zeros without resorting to scientific notation.
+        amount_str = format(result_q.normalize(), 'f')
+        if '.' not in amount_str:
+            amount_str = f'{amount_str}.0'
+
+        return Response({
+            'amount': amount_str,
+            'from_unit': data['from_unit'],
+            'to_unit': data['to_unit'],
+            'ingredient_id': ingredient_id,
+        })
