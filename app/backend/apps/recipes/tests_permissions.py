@@ -48,10 +48,25 @@ class PermissionTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_non_author_cannot_edit_recipe(self):
+        """TC_API_REC_002 - Non-author cannot PATCH another user's recipe.
+
+        Designer: Ufuk Altunbulak. Lab 9 acceptance test.
+        Requirements: 3.2.5, 4.4.1.
+
+        Asserts HTTP 403 on the unauthorized PATCH and verifies that a
+        subsequent GET still returns the original title (IDOR-prevention
+        coverage).
+        """
+        original_title = self.recipe.title
         self.client.force_authenticate(user=self.user2)
         data = {"title": "Stolen Title"}
         response = self.client.patch(f'/api/recipes/{self.recipe.id}/', data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.force_authenticate(user=self.user1)
+        get_response = self.client.get(f'/api/recipes/{self.recipe.id}/')
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(get_response.data['title'], original_title)
 
     def test_unauthenticated_can_list_ingredients(self):
         response = self.client.get('/api/ingredients/')
