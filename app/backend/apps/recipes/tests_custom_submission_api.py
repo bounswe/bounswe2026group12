@@ -29,10 +29,10 @@ class CustomSubmissionApiTests(APITestCase):
         self.assertFalse(response.data['is_approved'])
 
     def test_authenticated_user_can_submit_a_new_unit(self):
-        response = self.client.post(self.unit_list_url, {'name': '  Pinch '})
+        response = self.client.post(self.unit_list_url, {'name': '  TestUnit-zeta '})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['name'], 'Pinch')
+        self.assertEqual(response.data['name'], 'TestUnit-zeta')
         self.assertFalse(response.data['is_approved'])
 
     def test_ingredient_submission_rejects_blank_names(self):
@@ -48,9 +48,9 @@ class CustomSubmissionApiTests(APITestCase):
         self.assertEqual(response.data['name'][0], 'This field may not be blank.')
 
     def test_ingredient_submission_rejects_case_insensitive_duplicates(self):
-        Ingredient.objects.create(name='Salt', is_approved=True)
+        Ingredient.objects.create(name='TestIngredient-omega', is_approved=True)
 
-        response = self.client.post(self.ingredient_list_url, {'name': '  salt  '})
+        response = self.client.post(self.ingredient_list_url, {'name': '  testingredient-omega  '})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['name'][0], 'An ingredient with this name already exists.')
