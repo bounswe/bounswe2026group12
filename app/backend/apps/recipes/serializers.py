@@ -7,7 +7,39 @@ from .models import (
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'is_approved',
+            'latitude', 'longitude',
+            'bbox_north', 'bbox_south', 'bbox_east', 'bbox_west',
+            'parent',
+        ]
+
+
+class RegionSubmissionSerializer(serializers.ModelSerializer):
+    """Write serializer for user-submitted regions (#391).
+
+    Only `name` is settable on submission; geo metadata stays admin-only.
+    Dedup is enforced at the viewset layer so we can return 409 for approved
+    duplicates and 200 for already-queued submissions instead of a flat 400.
+    """
+
+    class Meta:
+        model = Region
+        fields = ['id', 'name', 'is_approved']
+        read_only_fields = ['id']
+
+    def validate_name(self, value):
+        cleaned_value = value.strip() if isinstance(value, str) else ''
+        if not cleaned_value:
+            raise serializers.ValidationError('This field may not be blank.')
+        return cleaned_value
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if 'is_approved' in data:
+            if not request or not request.user or not request.user.is_staff:
+                data.pop('is_approved')
+        return data
 
 class IngredientLookupSerializer(serializers.ModelSerializer):
     class Meta:
