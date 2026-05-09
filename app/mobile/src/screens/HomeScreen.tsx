@@ -78,6 +78,19 @@ export default function HomeScreen({ navigation }: Props) {
           />
         </View>
 
+        <Pressable
+          onPress={() => navigation.navigate('MapDiscovery')}
+          style={({ pressed }) => [styles.mapEntry, pressed && styles.mapEntryPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Open map discovery"
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.mapTitle}>Discover by region</Text>
+            <Text style={styles.mapSubtitle}>Tap a pin on the map to focus a region</Text>
+          </View>
+          <Text style={styles.mapArrow}>→</Text>
+        </Pressable>
+
         <DailyCulturalSection items={daily} />
 
         <View style={styles.section}>
@@ -247,6 +260,23 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   searchWrap: { marginBottom: 14 },
+  mapEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    marginBottom: 14,
+    ...shadows.md,
+  },
+  mapEntryPressed: { opacity: 0.9 },
+  mapTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.text },
+  mapSubtitle: { fontSize: 12, color: tokens.colors.text, marginTop: 2 },
+  mapArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.text },
   searchInput: {
     borderWidth: 2,
     borderColor: tokens.colors.primaryBorder,

@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
+import MapDiscoveryScreen from '../screens/MapDiscoveryScreen';
 import MessageThreadScreen from '../screens/MessageThreadScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
@@ -92,6 +93,11 @@ export function PublicStackNavigator() {
         name="Onboarding"
         component={OnboardingScreen}
         options={{ title: 'Cultural Onboarding' }}
+      />
+      <Stack.Screen
+        name="MapDiscovery"
+        component={MapDiscoveryScreen}
+        options={{ title: 'Discover by region' }}
       />
     </Stack.Navigator>
   );
