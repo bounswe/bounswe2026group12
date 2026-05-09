@@ -47,6 +47,8 @@ jobs:
               echo 'ALLOWED_HOSTS=genipe.app,www.genipe.app,45.76.34.210,localhost,backend' >> .env
             grep -q '^REACT_APP_API_URL=' .env || \
               echo 'REACT_APP_API_URL=https://genipe.app' >> .env
+            grep -q '^CORS_ALLOWED_ORIGINS=' .env || \
+              echo 'CORS_ALLOWED_ORIGINS=https://genipe.app,https://www.genipe.app' >> .env
 
             # Build images first. If this fails, nothing on the running host
             # is touched — legacy stack keeps serving.
@@ -73,7 +75,10 @@ jobs:
 
             # Bring up the compose stack. The backend entrypoint runs migrate
             # and collectstatic automatically before gunicorn starts.
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            # --force-recreate guards against stale containers that survive a
+            # config change (e.g. when the prod overlay adds ports or volumes
+            # that compose's normal diff misses on already-running containers).
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
 
             # Smoke test: give services 15s to settle then hit the domain.
             # If this fails, dump last 100 lines of logs and exit non-zero so
