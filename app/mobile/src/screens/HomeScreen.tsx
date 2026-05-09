@@ -94,6 +94,16 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <Pressable
+          onPress={() => navigation.navigate('MapDiscovery')}
+          style={({ pressed }) => [styles.mapEntry, pressed && styles.mapEntryPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Open map discovery"
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.mapTitle}>Discover by region</Text>
+            <Text style={styles.mapSubtitle}>Tap a pin on the map to focus a region</Text>
+          </View>
+          <Text style={styles.mapArrow}>→</Text>
           onPress={() => navigation.navigate('Explore')}
           style={({ pressed }) => [styles.exploreEntry, pressed && styles.exploreEntryPressed]}
           accessibilityRole="button"
@@ -280,6 +290,7 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   searchWrap: { marginBottom: 14 },
+  mapEntry: {
   exploreEntry: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -287,12 +298,17 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.bg,
     backgroundColor: tokens.colors.accentGreen,
     borderWidth: 2,
     borderColor: tokens.colors.surfaceDark,
     marginBottom: 14,
     ...shadows.md,
   },
+  mapEntryPressed: { opacity: 0.9 },
+  mapTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.text },
+  mapSubtitle: { fontSize: 12, color: tokens.colors.text, marginTop: 2 },
+  mapArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.text },
   exploreEntryPressed: { opacity: 0.9 },
   exploreTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.textOnDark },
   exploreSubtitle: { fontSize: 12, color: tokens.colors.textOnDark, marginTop: 2, opacity: 0.85 },

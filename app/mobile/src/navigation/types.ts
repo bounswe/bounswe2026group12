@@ -19,6 +19,7 @@ export type RootStackParamList = {
     otherUsername?: string;
   };
   Onboarding: undefined;
+  MapDiscovery: undefined;
   Explore: undefined;
   EventDetail: { eventId: number; eventName: string };
 };
