@@ -8,7 +8,7 @@ import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRegionPins, type RegionPin } from '../services/mapDataService';
 import { INITIAL_MAP_REGION } from '../utils/regionGeo';
-import { shadows, tokens } from '../theme';
+import { shadows, tokens, useTheme } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MapDiscovery'>;
 
@@ -18,6 +18,13 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const { accent, setFocusedRegion } = useTheme();
+
+  useEffect(() => {
+    setFocusedRegion(focused?.name ?? null);
+  }, [focused, setFocusedRegion]);
+
+  useEffect(() => () => setFocusedRegion(null), [setFocusedRegion]);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,7 +80,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
               coordinate={pin.coords}
               title={pin.name}
               description={`${pin.recipeCount} ${pin.recipeCount === 1 ? 'recipe' : 'recipes'}`}
-              pinColor={focused?.id === pin.id ? tokens.colors.accentGreen : tokens.colors.primary}
+              pinColor={focused?.id === pin.id ? accent.accent : tokens.colors.primary}
               onPress={(e) => {
                 e.stopPropagation?.();
                 setFocused(pin);
@@ -84,7 +91,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
 
         {focused ? (
           <View style={styles.summary} pointerEvents="box-none">
-            <View style={styles.summaryCard}>
+            <View style={[styles.summaryCard, { borderColor: accent.accentBorder }]}>
               <Text style={styles.summaryRegion}>{focused.name}</Text>
               <Text style={styles.summaryCount}>
                 {focused.recipeCount} {focused.recipeCount === 1 ? 'recipe' : 'recipes'}
@@ -93,11 +100,17 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
                 onPress={() =>
                   navigation.navigate('Search', { region: focused.name })
                 }
-                style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
+                style={({ pressed }) => [
+                  styles.cta,
+                  { backgroundColor: accent.accent, borderColor: accent.accentBorder },
+                  pressed && styles.ctaPressed,
+                ]}
                 accessibilityRole="button"
                 accessibilityLabel={`See ${focused.name} recipes`}
               >
-                <Text style={styles.ctaText}>See {focused.name} recipes</Text>
+                <Text style={[styles.ctaText, { color: accent.accentText }]}>
+                  See {focused.name} recipes
+                </Text>
               </Pressable>
             </View>
           </View>

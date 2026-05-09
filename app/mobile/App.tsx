@@ -26,6 +26,7 @@ import {
 import { AuthProvider } from './src/context/AuthContext';
 import { ToastProvider } from './src/context/ToastContext';
 import { RootTabsNavigator } from './src/navigation/RootTabsNavigator';
+import { ThemeProvider } from './src/theme';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -40,14 +41,16 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <ToastProvider>
-          <NavigationContainer>
-            <StatusBar style="auto" />
-            <RootTabsNavigator />
-          </NavigationContainer>
-        </ToastProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <NavigationContainer>
+              <StatusBar style="auto" />
+              <RootTabsNavigator />
+            </NavigationContainer>
+          </ToastProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
