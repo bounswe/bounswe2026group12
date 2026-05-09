@@ -2,8 +2,35 @@ from django.db import models
 from django.conf import settings
 
 class Region(models.Model):
-    """Region model for tagging recipes and user origin."""
+    """Region model for tagging recipes and user origin.
+
+    Extended for map discovery (#381) with geographic center coordinates,
+    an optional bounding box, and an optional parent for single-level hierarchy
+    (e.g., "Aegean Coast" → parent "Turkey").
+
+    Plain FloatFields are used instead of PostGIS PointField because the
+    region table is small (tens of rows) and simple float comparisons are
+    sufficient for bounding-box queries without adding a geo dependency.
+    """
     name = models.CharField(max_length=100, unique=True)
+
+    # Geographic center — used for map pin placement
+    latitude  = models.FloatField(null=True, blank=True, help_text='Center latitude of the region.')
+    longitude = models.FloatField(null=True, blank=True, help_text='Center longitude of the region.')
+
+    # Optional bounding box — enables rectangle-bounded viewport queries
+    bbox_north = models.FloatField(null=True, blank=True, help_text='Northern latitude bound.')
+    bbox_south = models.FloatField(null=True, blank=True, help_text='Southern latitude bound.')
+    bbox_east  = models.FloatField(null=True, blank=True, help_text='Eastern longitude bound.')
+    bbox_west  = models.FloatField(null=True, blank=True, help_text='Western longitude bound.')
+
+    # Optional single-level hierarchy (e.g., "Aegean Coast" → parent "Turkey")
+    parent = models.ForeignKey(
+        'self', on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='children',
+        help_text='Optional parent region for hierarchical grouping.',
+    )
 
     def __str__(self):
         return self.name

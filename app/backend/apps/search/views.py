@@ -29,12 +29,19 @@ class GlobalSearchView(APIView):
         }
 
     def _serialize_story(self, story):
+        # Prefer the story's direct region; fall back to its linked recipe's region
+        if story.region_id:
+            region_tag = story.region.name
+        elif story.linked_recipe and story.linked_recipe.region:
+            region_tag = story.linked_recipe.region.name
+        else:
+            region_tag = None
         return {
             'result_type': 'story',
             'id': story.id,
             'title': story.title,
             'body': story.body[:200],
-            'region_tag': story.linked_recipe.region.name if story.linked_recipe and story.linked_recipe.region else None,
+            'region_tag': region_tag,
             'linked_recipe_id': story.linked_recipe_id,
             'author_username': story.author.username,
             'created_at': story.created_at,
@@ -48,14 +55,20 @@ class GlobalSearchView(APIView):
         recipes = Recipe.objects.select_related('region', 'author').prefetch_related(
             'dietary_tags', 'event_tags',
         ).filter(is_published=True)
-        stories = Story.objects.select_related('author', 'linked_recipe__region').filter(is_published=True)
+        stories = Story.objects.select_related('author', 'linked_recipe__region', 'region').filter(is_published=True)
 
         if query:
             recipes = recipes.filter(Q(title__icontains=query) | Q(description__icontains=query))
             stories = stories.filter(Q(title__icontains=query) | Q(body__icontains=query))
 
         if region_name:
-            stories = stories.filter(linked_recipe__region__name__icontains=region_name)
+            # Filter stories by direct region tag OR their linked recipe's region.
+            # Stories may have a region set directly (added in #381) or inherit
+            # it from their linked recipe; we include both cases.
+            stories = stories.filter(
+                Q(region__name__icontains=region_name) |
+                Q(linked_recipe__region__name__icontains=region_name)
+            )
 
         if language:
             recipes = recipes.filter(author__preferred_language__iexact=language)

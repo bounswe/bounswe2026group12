@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.cultural_content',
     'apps.messaging',
+    'apps.map_discovery',
 ]
 
 # Custom user model
