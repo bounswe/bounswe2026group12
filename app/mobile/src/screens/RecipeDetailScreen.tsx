@@ -12,9 +12,10 @@ import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSectio
 import type { RootStackParamList } from '../navigation/types';
 import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
+import { fetchConversion } from '../services/unitConversionService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
-import { convertIngredient } from '../utils/unitConversion';
+import { targetUnitFor, type ConvertedAmount } from '../utils/unitConversion';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
@@ -29,6 +30,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [showConverted, setShowConverted] = useState(false);
   const [linkedStories, setLinkedStories] = useState<StoryListItem[]>([]);
   const [substituteTarget, setSubstituteTarget] = useState<{ id: number; name: string } | null>(null);
+  const [convertedByLine, setConvertedByLine] = useState<Record<string, ConvertedAmount>>({});
+  const [convertingLoading, setConvertingLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,6 +68,45 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
       cancelled = true;
     };
   }, [id, reloadToken]);
+
+  useEffect(() => {
+    if (!showConverted || !recipe) return;
+    const ingredients = recipe.ingredients ?? [];
+    const targets = ingredients
+      .map((ri, idx) => {
+        const lineKey = ri.lineId != null ? `line-${ri.lineId}` : `idx-${idx}-${ri.ingredient.id}`;
+        const toUnit = targetUnitFor(ri.unit.name);
+        if (!toUnit) return null;
+        return { lineKey, amount: ri.amount, fromUnit: ri.unit.name, toUnit, ingredientId: ri.ingredient.id };
+      })
+      .filter((t): t is NonNullable<typeof t> => t !== null);
+
+    const missing = targets.filter((t) => convertedByLine[t.lineKey] === undefined);
+    if (missing.length === 0) return;
+
+    let cancelled = false;
+    setConvertingLoading(true);
+    Promise.allSettled(
+      missing.map((t) => fetchConversion(t.amount, t.fromUnit, t.toUnit, t.ingredientId)),
+    )
+      .then((results) => {
+        if (cancelled) return;
+        const next: Record<string, ConvertedAmount> = {};
+        results.forEach((r, i) => {
+          if (r.status === 'fulfilled') next[missing[i].lineKey] = r.value;
+        });
+        if (Object.keys(next).length > 0) {
+          setConvertedByLine((prev) => ({ ...prev, ...next }));
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setConvertingLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showConverted, recipe, convertedByLine]);
 
   if (loading) {
     return (
@@ -192,7 +234,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                   accessibilityLabel="Show converted units"
                 >
                   <Text style={[styles.unitToggleText, showConverted && styles.unitToggleTextActive]}>
-                    Converted
+                    {convertingLoading ? 'Converting…' : 'Converted'}
                   </Text>
                 </Pressable>
               </View>
@@ -203,9 +245,9 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           ) : (
             <View style={styles.list}>
               {ingredients.map((ri, index) => {
-                const converted = showConverted
-                  ? convertIngredient(ri.amount, ri.unit.name)
-                  : null;
+                const lineKey =
+                  ri.lineId != null ? `line-${ri.lineId}` : `idx-${index}-${ri.ingredient.id}`;
+                const converted = showConverted ? convertedByLine[lineKey] : undefined;
                 const displayAmount = converted ? converted.amount : String(ri.amount);
                 const displayUnit = converted ? converted.unit : ri.unit.name;
                 return (

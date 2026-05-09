@@ -100,6 +100,8 @@ export function PublicStackNavigator() {
         name="MapDiscovery"
         component={MapDiscoveryScreen}
         options={{ title: 'Discover by region' }}
+      />
+      <Stack.Screen
         name="Explore"
         component={ExploreScreen}
         options={{ title: 'Explore' }}
