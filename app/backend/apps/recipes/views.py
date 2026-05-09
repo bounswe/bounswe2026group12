@@ -198,6 +198,17 @@ class ModeratedLookupViewSet(viewsets.ModelViewSet):
             return self.lookup_serializer_class
         return super().get_serializer_class()
 
+    def perform_create(self, serializer):
+        # Stamp submitted_by server-side (#361) so submission attribution
+        # cannot be spoofed via the request body. Subclasses that override
+        # create() entirely (e.g. CulturalTagSubmissionMixin) handle their
+        # own attribution.
+        save_kwargs = {}
+        Model = self.queryset.model
+        if hasattr(Model, 'submitted_by'):
+            save_kwargs['submitted_by'] = self.request.user
+        serializer.save(**save_kwargs)
+
 
 class CulturalTagSubmissionMixin:
     """Adds cultural-tag-aware create() (#391).
