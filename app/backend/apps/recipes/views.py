@@ -22,6 +22,7 @@ from .serializers import (
     IngredientSubstituteSerializer,
     RecipeSerializer,
     RegionSerializer,
+    RegionSubmissionSerializer,
     UnitLookupSerializer,
     UnitSerializer,
     CommentSerializer,
@@ -184,6 +185,60 @@ class ModeratedLookupViewSet(viewsets.ModelViewSet):
             return self.lookup_serializer_class
         return super().get_serializer_class()
 
+
+class CulturalTagSubmissionMixin:
+    """Adds cultural-tag-aware create() (#391).
+
+    On POST: short-circuits when a case-insensitive duplicate exists.
+        - approved duplicate → 409 + the existing record
+        - pending duplicate  → 200 + queued payload referencing the existing record
+        - otherwise          → 201; submitted_by + submitted_at populated, lands as is_approved=False
+
+    Subclasses must define `lookup_serializer_class` and `queryset` (already
+    required by ModeratedLookupViewSet).
+    """
+
+    queue_message = 'A submission with this name is already queued for review.'
+
+    def _cleaned_name(self, request):
+        raw_name = request.data.get('name')
+        return raw_name.strip() if isinstance(raw_name, str) else ''
+
+    def create(self, request, *args, **kwargs):
+        name = self._cleaned_name(request)
+        if not name:
+            return Response(
+                {'name': ['This field may not be blank.']},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        Model = self.queryset.model
+        existing = Model.objects.filter(name__iexact=name).first()
+        if existing is not None:
+            data = self.lookup_serializer_class(existing).data
+            if existing.is_approved:
+                return Response(data, status=status.HTTP_409_CONFLICT)
+            return Response(
+                {'detail': self.queue_message, 'queued': True, **data},
+                status=status.HTTP_200_OK,
+            )
+
+        # request.data may be a QueryDict (form-encoded) or a plain dict
+        # (JSON). Normalize to a plain dict via the QueryDict.dict() helper
+        # so we don't accidentally pass list-wrapped values to the serializer.
+        if hasattr(request.data, 'dict'):
+            write_data = request.data.dict()
+        else:
+            write_data = dict(request.data)
+        write_data['name'] = name
+        serializer = self.get_serializer(data=write_data)
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save(submitted_by=request.user, is_approved=False)
+        return Response(
+            self.get_serializer(instance).data,
+            status=status.HTTP_201_CREATED,
+        )
+
 class IngredientViewSet(ModeratedLookupViewSet):
     """ViewSet for list and management of Ingredients."""
     queryset = Ingredient.objects.all().order_by(Lower('name'), 'id')
@@ -228,11 +283,16 @@ class UnitViewSet(ModeratedLookupViewSet):
     serializer_class = UnitSerializer
     lookup_serializer_class = UnitLookupSerializer
 
-class RegionViewSet(viewsets.ReadOnlyModelViewSet):
-    """ReadOnlyViewSet for Regions (GET only)."""
-    queryset = Region.objects.all()
-    serializer_class = RegionSerializer
-    permission_classes = [permissions.AllowAny]
+class RegionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
+    """ViewSet for Regions (#391).
+
+    Public list/retrieve returns approved regions only. Authenticated users
+    can submit new regions, which land as is_approved=False and enter the
+    cultural moderation queue.
+    """
+    queryset = Region.objects.all().order_by(Lower('name'), 'id')
+    serializer_class = RegionSubmissionSerializer
+    lookup_serializer_class = RegionSerializer
 
 class DietaryTagViewSet(ModeratedLookupViewSet):
     """ViewSet for list/submission of dietary tags (M4-15)."""
@@ -240,14 +300,14 @@ class DietaryTagViewSet(ModeratedLookupViewSet):
     serializer_class = DietaryTagSerializer
     lookup_serializer_class = DietaryTagLookupSerializer
 
-class EventTagViewSet(ModeratedLookupViewSet):
-    """ViewSet for list/submission of event tags (M4-15)."""
+class EventTagViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
+    """ViewSet for list/submission of event tags (M4-15, #391)."""
     queryset = EventTag.objects.all().order_by(Lower('name'), 'id')
     serializer_class = EventTagSerializer
     lookup_serializer_class = EventTagLookupSerializer
 
-class ReligionViewSet(ModeratedLookupViewSet):
-    """ViewSet for list/submission of religions (M5-20)."""
+class ReligionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
+    """ViewSet for list/submission of religions (M5-20, #391)."""
     queryset = Religion.objects.all().order_by(Lower('name'), 'id')
     serializer_class = ReligionSerializer
     lookup_serializer_class = ReligionLookupSerializer

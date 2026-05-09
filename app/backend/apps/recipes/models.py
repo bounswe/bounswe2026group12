@@ -1,7 +1,37 @@
 from django.db import models
 from django.conf import settings
 
-class Region(models.Model):
+class CulturalModerationMixin(models.Model):
+    """Audit fields for cultural-tag moderation (#391).
+
+    submitted_*: who created the record and when.
+    reviewed_*: who approved or rejected it and when.
+    rejection_reason: free text shown back to the submitter on reject.
+
+    Fields are nullable / blank so legacy rows (created before this mixin)
+    keep working; new submissions populate submitted_by + submitted_at.
+    """
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    submitted_at = models.DateTimeField(auto_now_add=True, null=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True, default='')
+
+    class Meta:
+        abstract = True
+
+
+class Region(CulturalModerationMixin, models.Model):
     """Region model for tagging recipes and user origin.
 
     Extended for map discovery (#381) with geographic center coordinates,
@@ -11,8 +41,12 @@ class Region(models.Model):
     Plain FloatFields are used instead of PostGIS PointField because the
     region table is small (tens of rows) and simple float comparisons are
     sufficient for bounding-box queries without adding a geo dependency.
+
+    Now user-submittable behind moderation (#391). Existing seeded rows are
+    backfilled to is_approved=True via data migration.
     """
     name = models.CharField(max_length=100, unique=True)
+    is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
 
     # Geographic center — used for map pin placement
     latitude  = models.FloatField(null=True, blank=True, help_text='Center latitude of the region.')
@@ -59,7 +93,7 @@ class DietaryTag(models.Model):
     def __str__(self):
         return self.name
 
-class EventTag(models.Model):
+class EventTag(CulturalModerationMixin, models.Model):
     """Event tag (e.g., Wedding, Ramadan, Birthday). User-submittable, moderated."""
     name = models.CharField(max_length=100, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
@@ -67,7 +101,7 @@ class EventTag(models.Model):
     def __str__(self):
         return self.name
 
-class Religion(models.Model):
+class Religion(CulturalModerationMixin, models.Model):
     """Religion model (e.g., Islam, Christianity, Judaism). User-submittable, moderated."""
     name = models.CharField(max_length=100, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
