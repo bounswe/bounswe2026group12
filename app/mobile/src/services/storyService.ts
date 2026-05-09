@@ -53,6 +53,16 @@ function unwrapStoriesPayload(data: unknown): any[] {
   return [];
 }
 
+/**
+ * Fetch the raw story list, transparently handling both raw arrays and the
+ * DRF-paginated `{results}` envelope. Returns the API objects untouched so
+ * callers can read `author`, `linked_recipe`, `image`, etc. directly.
+ */
+export async function fetchStoriesList(): Promise<any[]> {
+  const data = await apiGetJson<unknown>(`/api/stories/`);
+  return unwrapStoriesPayload(data);
+}
+
 /** Stories where `linked_recipe` matches the given recipe id. Filters client-side. */
 export async function fetchStoriesForRecipe(recipeId: string | number): Promise<StoryListItem[]> {
   const data = await apiGetJson<unknown>(`/api/stories/`);

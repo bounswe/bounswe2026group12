@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useMemo, useState } from 'react';
 import { shadows, tokens } from '../theme';
 import { fetchRecipesList } from '../services/recipeService';
-import { apiGetJson } from '../services/httpClient';
+import { fetchStoriesList } from '../services/storyService';
 import { fetchDailyCultural } from '../services/dailyCulturalService';
 import { fetchRecommendations, type RecommendationItem } from '../services/recommendationsService';
 import { DailyCulturalSection } from '../components/home/DailyCulturalSection';
@@ -30,18 +30,13 @@ export default function HomeScreen({ navigation }: Props) {
     void (async () => {
       try {
         const [storyData, recipeData, dailyData, recsData] = await Promise.all([
-          apiGetJson<any>('/api/stories/'),
+          fetchStoriesList(),
           fetchRecipesList(),
           fetchDailyCultural(),
           fetchRecommendations('feed', 10).catch(() => [] as RecommendationItem[]),
         ]);
         if (cancelled) return;
-        const storyList = Array.isArray(storyData)
-          ? storyData
-          : storyData && Array.isArray(storyData.results)
-            ? storyData.results
-            : [];
-        setStories(storyList);
+        setStories(Array.isArray(storyData) ? storyData : []);
         setRecipes(Array.isArray(recipeData) ? recipeData : []);
         setDaily(Array.isArray(dailyData) ? dailyData : []);
         setRecommendations(Array.isArray(recsData) ? recsData : []);
