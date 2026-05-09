@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from apps.common.ids import generate_ulid, validate_ulid
 from apps.recipes.models import Recipe, Region, DietaryTag, EventTag, Religion
 
 class StoryRecipeLink(models.Model):
@@ -20,6 +21,13 @@ class Story(models.Model):
     can be tagged independently of a linked recipe. If `region` is null but
     `linked_recipe` exists, the map API will fall back to the recipe's region.
     """
+    public_id = models.CharField(
+        max_length=26,
+        unique=True,
+        editable=False,
+        default=generate_ulid,
+        validators=[validate_ulid],
+    )
     title = models.CharField(max_length=255)
     summary = models.TextField(blank=True, default='')
     body = models.TextField()

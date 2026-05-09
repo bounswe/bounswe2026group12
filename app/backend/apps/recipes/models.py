@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from apps.common.ids import generate_ulid, validate_ulid
 
 class CulturalModerationMixin(models.Model):
     """Audit fields for cultural-tag moderation (#391).
@@ -116,6 +117,13 @@ class Religion(CulturalModerationMixin, models.Model):
 
 class Recipe(models.Model):
     """Core Recipe model."""
+    public_id = models.CharField(
+        max_length=26,
+        unique=True,
+        editable=False,
+        default=generate_ulid,
+        validators=[validate_ulid],
+    )
     title = models.CharField(max_length=255)
     description = models.TextField()
     image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)

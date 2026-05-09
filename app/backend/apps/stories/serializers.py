@@ -61,7 +61,7 @@ class StorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Story
         fields = [
-            'id', 'title', 'summary', 'body', 'image', 'author', 'author_username',
+            'id', 'public_id', 'title', 'summary', 'body', 'image', 'author', 'author_username',
             'linked_recipe', 'recipe_title',    # backward compat (read)
             'linked_recipes',                   # new array (read)
             'linked_recipe_id', 'linked_recipe_ids',  # write aliases
@@ -71,7 +71,7 @@ class StorySerializer(serializers.ModelSerializer):
             'is_published', 'created_at', 'updated_at',
             'rank_score', 'rank_reason',
         ]
-        read_only_fields = ['author', 'created_at', 'updated_at']
+        read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
 
     def get_rank_score(self, obj):
         return getattr(obj, 'rank_score', 0)

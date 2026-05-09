@@ -3,6 +3,7 @@ from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from apps.common.ids import ULID_REGEX
 from apps.recipes.models import Recipe, Region
 from apps.stories.models import Story
 
@@ -29,8 +30,18 @@ class StoryCreateAPITest(APITestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], "My Story")
+        self.assertIsInstance(response.data['id'], int)
+        self.assertRegex(response.data['public_id'], ULID_REGEX)
         self.assertEqual(response.data['summary'], "Short intro")
         self.assertEqual(response.data['author_username'], "author")
+
+    def test_created_stories_have_distinct_public_ids(self):
+        self.client.force_authenticate(user=self.user)
+        first = self.client.post(self.url, {"title": "First Story", "body": "First"})
+        second = self.client.post(self.url, {"title": "Second Story", "body": "Second"})
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(first.data['public_id'], second.data['public_id'])
 
     def test_create_story_with_linked_recipe_legacy(self):
         """TC_API_STORY_004 - Story creation with linked recipe (bidirectional).
@@ -173,6 +184,13 @@ class StoryRetrieveAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], "Published Story")
         self.assertIn('updated_at', response.data)
+
+    def test_public_detail_accepts_public_id(self):
+        url = reverse('story-detail', kwargs={'pk': self.published.public_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.published.id)
+        self.assertEqual(response.data['public_id'], self.published.public_id)
 
     def test_public_detail_draft_404(self):
         url = reverse('story-detail', kwargs={'pk': self.draft.id})
