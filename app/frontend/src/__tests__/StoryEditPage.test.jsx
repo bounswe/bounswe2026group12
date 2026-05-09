@@ -99,3 +99,36 @@ describe('StoryEditPage', () => {
     );
   });
 });
+
+describe('StoryEditPage — draft auto-save', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    localStorage.clear();
+  });
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('shows DraftRestoreBanner when a draft exists for this story', async () => {
+    localStorage.setItem(
+      'draft:story:1',
+      JSON.stringify({ title: 'Draft Edit Story', body: 'x', language: 'en', linkedRecipe: null })
+    );
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/unsaved draft found/i)).toBeInTheDocument()
+    );
+  });
+
+  it('restores title from draft when Restore is clicked', async () => {
+    localStorage.setItem(
+      'draft:story:1',
+      JSON.stringify({ title: 'Restored Story Edit', body: 'x', language: 'en', linkedRecipe: null })
+    );
+    renderPage();
+    await waitFor(() => screen.getByText(/unsaved draft found/i));
+    fireEvent.click(screen.getByRole('button', { name: /restore/i }));
+    expect(screen.getByLabelText(/title/i).value).toBe('Restored Story Edit');
+  });
+});

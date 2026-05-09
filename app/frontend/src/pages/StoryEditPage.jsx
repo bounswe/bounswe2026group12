@@ -4,6 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import { fetchStory, updateStory } from '../services/storyService';
 import { fetchRecipes } from '../services/recipeService';
 import Toast from '../components/Toast';
+import DraftRestoreBanner from '../components/DraftRestoreBanner';
+import useDraftAutosave from '../hooks/useDraftAutosave';
 import './StoryEditPage.css';
 
 export default function StoryEditPage() {
@@ -26,6 +28,10 @@ export default function StoryEditPage() {
 
   const toastTimerRef = useRef(null);
   const navTimerRef = useRef(null);
+
+  const draftKey = `draft:story:${id}`;
+  const draftState = { title, body, language, linkedRecipe };
+  const { savedDraft, clearDraft } = useDraftAutosave(draftKey, draftState, { enabled: !loading });
 
   useEffect(() => {
     let cancelled = false;
@@ -50,6 +56,14 @@ export default function StoryEditPage() {
     toastTimerRef.current = setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
   }
 
+  function handleRestore(draft) {
+    if (draft.title !== undefined) setTitle(draft.title);
+    if (draft.body !== undefined) setBody(draft.body);
+    if (draft.language !== undefined) setLanguage(draft.language);
+    if (draft.linkedRecipe !== undefined) setLinkedRecipe(draft.linkedRecipe);
+    clearDraft();
+  }
+
   function validate() {
     const e = {};
     if (!title.trim()) e.title = 'Title is required.';
@@ -71,6 +85,7 @@ export default function StoryEditPage() {
 
     try {
       await updateStory(id, formData);
+      clearDraft();
       showToast('Story updated!', 'success');
       if (navTimerRef.current) clearTimeout(navTimerRef.current);
       navTimerRef.current = setTimeout(() => navigate(`/stories/${id}`), 1500);
@@ -102,6 +117,11 @@ export default function StoryEditPage() {
   return (
     <main className="page-card story-form">
       <h1 className="story-form-heading">Edit Story</h1>
+      <DraftRestoreBanner
+        draft={savedDraft}
+        onRestore={handleRestore}
+        onDiscard={clearDraft}
+      />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="story-title">Title</label>

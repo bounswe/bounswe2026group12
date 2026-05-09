@@ -123,3 +123,47 @@ describe('StoryCreatePage', () => {
     expect(screen.getByLabelText(/photo/i)).toBeInTheDocument();
   });
 });
+
+describe('StoryCreatePage — draft auto-save', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    localStorage.clear();
+  });
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('shows DraftRestoreBanner when a draft exists in localStorage', async () => {
+    localStorage.setItem(
+      'draft:story:new',
+      JSON.stringify({ title: 'Draft Story', body: 'Some body', language: 'en', linkedRecipe: null })
+    );
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/unsaved draft found/i)).toBeInTheDocument()
+    );
+  });
+
+  it('restores title from draft when Restore is clicked', async () => {
+    localStorage.setItem(
+      'draft:story:new',
+      JSON.stringify({ title: 'Restored Story', body: 'Body text', language: 'en', linkedRecipe: null })
+    );
+    renderPage();
+    await waitFor(() => screen.getByText(/unsaved draft found/i));
+    fireEvent.click(screen.getByRole('button', { name: /restore/i }));
+    expect(screen.getByLabelText(/title/i).value).toBe('Restored Story');
+  });
+
+  it('hides the banner after Discard is clicked', async () => {
+    localStorage.setItem(
+      'draft:story:new',
+      JSON.stringify({ title: 'x', body: 'y', language: 'en', linkedRecipe: null })
+    );
+    renderPage();
+    await waitFor(() => screen.getByText(/unsaved draft found/i));
+    fireEvent.click(screen.getByRole('button', { name: /discard/i }));
+    expect(screen.queryByText(/unsaved draft found/i)).not.toBeInTheDocument();
+  });
+});

@@ -1,0 +1,18 @@
+.draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  background: #fff8e1;
+  border: 1px solid #f9a825;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #5d4037;
+}
+
+.draft-banner-actions {
+  display: flex;
+  gap: 0.5rem;
+}

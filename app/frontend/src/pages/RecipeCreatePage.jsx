@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
+import DraftRestoreBanner from '../components/DraftRestoreBanner';
+import useDraftAutosave from '../hooks/useDraftAutosave';
 import {
   createRecipe,
   updateRecipe,
@@ -12,6 +14,8 @@ import {
 } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
 import './RecipeCreatePage.css';
+
+const DRAFT_KEY = 'draft:recipe:new';
 
 function makeRow() {
   return {
@@ -42,6 +46,9 @@ export default function RecipeCreatePage() {
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const draftState = { title, description, region, qaEnabled, rows };
+  const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
+
   useEffect(() => {
     fetchIngredients().then(setIngredients).catch(() => {});
     fetchUnits().then(setUnits).catch(() => {});
@@ -51,6 +58,15 @@ export default function RecipeCreatePage() {
   function showToast(message, type) {
     setToast({ message, type });
     setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+  }
+
+  function handleRestore(draft) {
+    if (draft.title !== undefined) setTitle(draft.title);
+    if (draft.description !== undefined) setDescription(draft.description);
+    if (draft.region !== undefined) setRegion(draft.region);
+    if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
+    if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    clearDraft();
   }
 
   const handleRowChange = useCallback((rowId, field, value) => {
@@ -119,6 +135,7 @@ export default function RecipeCreatePage() {
         await updateRecipe(created.id, mediaData);
       }
 
+      clearDraft();
       showToast('Recipe published!', 'success');
       setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
     } catch {
@@ -129,6 +146,11 @@ export default function RecipeCreatePage() {
   return (
     <main className="page-card recipe-form">
       <h1 className="recipe-form-heading">Create Recipe</h1>
+      <DraftRestoreBanner
+        draft={savedDraft}
+        onRestore={handleRestore}
+        onDiscard={clearDraft}
+      />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="title">Title</label>
