@@ -39,6 +39,11 @@ class Ingredient(models.Model):
     """Ingredient model for reuse across recipes."""
     name = models.CharField(max_length=200, unique=True)
     is_approved = models.BooleanField(default=False, help_text='Moderation flag.')
+    density_g_per_ml = models.DecimalField(
+        max_digits=8, decimal_places=4,
+        null=True, blank=True,
+        help_text='g per ml. Required for mass to volume conversions. See apps/recipes/conversions/references.md for cited sources.',
+    )
 
     def __str__(self):
         return self.name
