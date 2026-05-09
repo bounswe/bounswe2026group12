@@ -108,6 +108,8 @@ export async function fetchRecipesList(): Promise<
     author?: any;
     author_username?: string;
     image?: string | null;
+    rank_score?: number;
+    rank_reason?: string | null;
   }[]
 > {
   const data = await apiGetJson<any>(`/api/recipes/`);
@@ -137,6 +139,8 @@ export async function fetchRecipesList(): Promise<
       author: r.author ?? undefined,
       author_username: typeof r.author_username === 'string' ? r.author_username : undefined,
       image: typeof r.image === 'string' ? r.image : null,
+      rank_score: typeof r.rank_score === 'number' ? r.rank_score : undefined,
+      rank_reason: typeof r.rank_reason === 'string' ? r.rank_reason : null,
     };
   });
 }

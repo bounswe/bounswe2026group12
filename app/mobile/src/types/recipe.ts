@@ -21,4 +21,6 @@ export type RecipeDetail = {
   ingredients?: RecipeIngredientRow[];
   /** Matches web `RecipeEditPage` (`qa_enabled`). */
   qa_enabled?: boolean;
+  rank_score?: number;
+  rank_reason?: string | null;
 };
