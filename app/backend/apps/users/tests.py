@@ -108,11 +108,35 @@ class LoginTest(APITestCase):
         )
 
     def test_login_success(self):
+        """TC_API_AUTH_001 - Login returns valid JWT.
+
+        Designer: Ahmet Akdag. Lab 9 acceptance test.
+        Requirements: 3.0.2, 3.1.1.
+
+        Asserts HTTP 200, that the response contains both access and refresh
+        tokens, and that the access token decodes against the configured
+        signing key with a user_id claim matching the registered user and an
+        exp claim within the configured ACCESS_TOKEN_LIFETIME.
+        """
+        import time
+        import jwt
+        from django.conf import settings
+
         data = {"email": "login@example.com", "password": "StrongPass123!"}
         response = self.client.post('/api/auth/login/', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
         self.assertIn('refresh', response.data)
+
+        access = response.data['access']
+        decoded = jwt.decode(access, settings.SECRET_KEY, algorithms=['HS256'])
+        # SimpleJWT stringifies the user_id claim; compare as string.
+        self.assertEqual(str(decoded['user_id']), str(self.user.id))
+
+        now = int(time.time())
+        self.assertGreater(decoded['exp'], now)
+        lifetime_seconds = int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds())
+        self.assertLessEqual(decoded['exp'] - now, lifetime_seconds + 5)
 
     def test_login_wrong_password(self):
         data = {"email": "login@example.com", "password": "WrongPass999!"}

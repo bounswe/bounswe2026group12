@@ -15,18 +15,16 @@ def backfill_region_fk(apps, schema_editor):
     Region          = apps.get_model('recipes', 'Region')
 
     region_cache = {r.name.lower(): r for r in Region.objects.all()}
+    to_update = []
 
-    for cc in CulturalContent.objects.all():
-        # region_text was just added; populate it from whatever region holds now
-        # (at this point 'region' is the FK field — SQLite stores NULL or an int).
-        # We stored the original text in region_text already via 0002.
-        # Attempt to resolve the FK using the text.
+    for cc in CulturalContent.objects.filter(region__isnull=True):
         text = (cc.region_text or '').strip().lower()
-        if text and cc.region_id is None:
-            matched = region_cache.get(text)
-            if matched:
-                cc.region = matched
-                cc.save(update_fields=['region'])
+        if text and text in region_cache:
+            cc.region = region_cache[text]
+            to_update.append(cc)
+
+    if to_update:
+        CulturalContent.objects.bulk_update(to_update, ['region'])
 
 
 def reverse_backfill(apps, schema_editor):

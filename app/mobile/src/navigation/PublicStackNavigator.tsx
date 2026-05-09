@@ -1,4 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import EventDetailScreen from '../screens/EventDetailScreen';
+import ExploreScreen from '../screens/ExploreScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -92,6 +94,16 @@ export function PublicStackNavigator() {
         name="Onboarding"
         component={OnboardingScreen}
         options={{ title: 'Cultural Onboarding' }}
+      />
+      <Stack.Screen
+        name="Explore"
+        component={ExploreScreen}
+        options={{ title: 'Explore' }}
+      />
+      <Stack.Screen
+        name="EventDetail"
+        component={EventDetailScreen}
+        options={{ title: 'Event' }}
       />
     </Stack.Navigator>
   );

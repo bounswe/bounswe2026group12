@@ -1,6 +1,6 @@
 import { apiGetJson } from './httpClient';
 
-export type Tag = { id: number; name: string; is_approved: boolean };
+export type Tag = { id: number; name: string; is_approved?: boolean };
 
 type Paginated<T> = { count: number; next: string | null; previous: string | null; results: T[] };
 
@@ -18,7 +18,9 @@ async function fetchAll(path: string): Promise<Tag[]> {
     const u: URL = new URL(data.next);
     cursor = `${u.pathname}${u.search}`;
   }
-  return collected.filter((t) => t.is_approved);
+  // Server already filters list/retrieve by is_approved=True; the lookup
+  // serializer doesn't expose the flag at all. No client-side filtering needed.
+  return collected;
 }
 
 export async function fetchDietaryTags(): Promise<Tag[]> {

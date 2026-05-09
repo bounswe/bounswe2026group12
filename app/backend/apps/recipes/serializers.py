@@ -7,7 +7,39 @@ from .models import (
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'is_approved',
+            'latitude', 'longitude',
+            'bbox_north', 'bbox_south', 'bbox_east', 'bbox_west',
+            'parent',
+        ]
+
+
+class RegionSubmissionSerializer(serializers.ModelSerializer):
+    """Write serializer for user-submitted regions (#391).
+
+    Only `name` is settable on submission; geo metadata stays admin-only.
+    Dedup is enforced at the viewset layer so we can return 409 for approved
+    duplicates and 200 for already-queued submissions instead of a flat 400.
+    """
+
+    class Meta:
+        model = Region
+        fields = ['id', 'name', 'is_approved']
+        read_only_fields = ['id']
+
+    def validate_name(self, value):
+        cleaned_value = value.strip() if isinstance(value, str) else ''
+        if not cleaned_value:
+            raise serializers.ValidationError('This field may not be blank.')
+        return cleaned_value
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if 'is_approved' in data:
+            if not request or not request.user or not request.user.is_staff:
+                data.pop('is_approved')
+        return data
 
 class IngredientLookupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,6 +129,15 @@ class ReligionSerializer(NamedSubmissionSerializer):
         model = Religion
         fields = '__all__'
 
+
+class ConvertRequestSerializer(serializers.Serializer):
+    """Input shape for POST /api/convert/."""
+
+    amount = serializers.DecimalField(max_digits=14, decimal_places=6, min_value=0)
+    from_unit = serializers.CharField(max_length=50)
+    to_unit = serializers.CharField(max_length=50)
+    ingredient_id = serializers.IntegerField(required=False, allow_null=True)
+
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
     unit_name = serializers.ReadOnlyField(source='unit.name')
@@ -136,6 +177,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         many=True, write_only=True, required=False,
     )
     story_count = serializers.IntegerField(read_only=True, default=0)
+    rank_score = serializers.SerializerMethodField()
+    rank_reason = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -147,8 +190,15 @@ class RecipeSerializer(serializers.ModelSerializer):
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'story_count',
+            'rank_score', 'rank_reason',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
+
+    def get_rank_score(self, obj):
+        return getattr(obj, 'rank_score', 0)
+
+    def get_rank_reason(self, obj):
+        return getattr(obj, 'rank_reason', None)
 
     def validate(self, data):
         if self.context['request'].method == 'POST':

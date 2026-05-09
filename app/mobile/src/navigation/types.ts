@@ -19,6 +19,8 @@ export type RootStackParamList = {
     otherUsername?: string;
   };
   Onboarding: undefined;
+  Explore: undefined;
+  EventDetail: { eventId: number; eventName: string };
 };
 
 declare global {

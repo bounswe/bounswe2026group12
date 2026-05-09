@@ -55,6 +55,9 @@ class StorySerializer(serializers.ModelSerializer):
     # Expose region name for frontend display (string, not FK id)
     region_name = serializers.SerializerMethodField()
 
+    rank_score = serializers.SerializerMethodField()
+    rank_reason = serializers.SerializerMethodField()
+
     class Meta:
         model = Story
         fields = [
@@ -65,9 +68,16 @@ class StorySerializer(serializers.ModelSerializer):
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'language', 'region', 'region_name',
-            'is_published', 'created_at', 'updated_at'
+            'is_published', 'created_at', 'updated_at',
+            'rank_score', 'rank_reason',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
+
+    def get_rank_score(self, obj):
+        return getattr(obj, 'rank_score', 0)
+
+    def get_rank_reason(self, obj):
+        return getattr(obj, 'rank_reason', None)
 
     def to_internal_value(self, data):
         """Shim to handle legacy 'linked_recipe' as 'linked_recipe_id'."""
