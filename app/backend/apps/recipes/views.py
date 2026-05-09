@@ -10,6 +10,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.common.permissions import IsAuthorOrReadOnly
+from apps.common.pagination import StandardResultsSetPagination
+from apps.common.personalization import rank_items, score_recipe, has_profile_terms
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
     IngredientSubstitution,
@@ -81,13 +83,6 @@ def apply_content_filters(qs, params):
 def apply_recipe_filters(qs, params):
     return apply_content_filters(qs, params)
 
-from rest_framework.pagination import PageNumberPagination
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
@@ -106,6 +101,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             qs = apply_recipe_filters(qs, self.request.query_params)
         return qs
+
+    def list(self, request, *args, **kwargs):
+        personalize = request.query_params.get('personalize') != '0'
+        if not personalize or not has_profile_terms(request.user):
+            return super().list(request, *args, **kwargs)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        items = rank_items(queryset[:500], request.user, score_recipe)
+
+        page = self.paginate_queryset(items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(items, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

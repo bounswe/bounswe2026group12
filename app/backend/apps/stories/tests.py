@@ -132,10 +132,8 @@ class StoryRetrieveAPITest(APITestCase):
     def test_public_list_shows_published_only(self):
         response = self.client.get(reverse('story-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # In a real DRF list, it might be in a 'results' key if paginated, 
-        # but the StoryViewSet doesn't specify pagination (defaults to none or global).
-        # Based on previous view_file, it returns a list directly.
-        titles = [s['title'] for s in response.data]
+        results = response.data.get('results', response.data)
+        titles = [s['title'] for s in results]
         self.assertIn("Published Story", titles)
         self.assertNotIn("Draft Story", titles)
 
@@ -154,7 +152,8 @@ class StoryRetrieveAPITest(APITestCase):
     def test_author_can_see_own_drafts(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('story-list'))
-        titles = [s['title'] for s in response.data]
+        results = response.data.get('results', response.data)
+        titles = [s['title'] for s in results]
         self.assertIn("Draft Story", titles)
 
 
