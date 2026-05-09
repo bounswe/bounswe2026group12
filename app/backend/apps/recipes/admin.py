@@ -10,7 +10,9 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_approved')
+    list_display = ('name', 'is_approved', 'density_g_per_ml')
+    list_filter = ('is_approved',)
+    search_fields = ('name',)
 
 @admin.register(Unit)
 class UnitAdmin(admin.ModelAdmin):

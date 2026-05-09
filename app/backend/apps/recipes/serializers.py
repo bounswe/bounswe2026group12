@@ -97,6 +97,15 @@ class ReligionSerializer(NamedSubmissionSerializer):
         model = Religion
         fields = '__all__'
 
+
+class ConvertRequestSerializer(serializers.Serializer):
+    """Input shape for POST /api/convert/."""
+
+    amount = serializers.DecimalField(max_digits=14, decimal_places=6, min_value=0)
+    from_unit = serializers.CharField(max_length=50)
+    to_unit = serializers.CharField(max_length=50)
+    ingredient_id = serializers.IntegerField(required=False, allow_null=True)
+
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
     unit_name = serializers.ReadOnlyField(source='unit.name')
