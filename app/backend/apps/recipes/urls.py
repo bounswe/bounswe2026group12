@@ -1,5 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from .moderation_views import (
+    LookupModerationActionView,
+    LookupModerationQueueView,
+)
 from .views import (
     RecipeViewSet, IngredientViewSet, UnitViewSet, RegionViewSet, CommentViewSet,
     DietaryTagViewSet, EventTagViewSet, ReligionViewSet, ConvertView,
@@ -18,4 +22,19 @@ router.register(r'religions', ReligionViewSet, basename='religion')
 urlpatterns = [
     path('', include(router.urls)),
     path('convert/', ConvertView.as_view(), name='convert'),
+    path(
+        'moderation/lookups/',
+        LookupModerationQueueView.as_view(),
+        name='lookup-moderation-queue',
+    ),
+    path(
+        'moderation/lookups/<str:type_key>/<int:pk>/approve/',
+        LookupModerationActionView.as_view(action='approve'),
+        name='lookup-moderation-approve',
+    ),
+    path(
+        'moderation/lookups/<str:type_key>/<int:pk>/reject/',
+        LookupModerationActionView.as_view(action='reject'),
+        name='lookup-moderation-reject',
+    ),
 ]
