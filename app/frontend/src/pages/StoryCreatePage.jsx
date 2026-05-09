@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { createStory } from '../services/storyService';
 import { fetchRecipes } from '../services/recipeService';
 import Toast from '../components/Toast';
+import DraftRestoreBanner from '../components/DraftRestoreBanner';
+import useDraftAutosave from '../hooks/useDraftAutosave';
 import './StoryCreatePage.css';
+
+const DRAFT_KEY = 'draft:story:new';
 
 export default function StoryCreatePage() {
   const navigate = useNavigate();
@@ -18,6 +22,9 @@ export default function StoryCreatePage() {
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const draftState = { title, body, language, linkedRecipe };
+  const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
+
   useEffect(() => {
     fetchRecipes().then(setAllRecipes).catch(() => {});
   }, []);
@@ -25,6 +32,14 @@ export default function StoryCreatePage() {
   function showToast(message, type) {
     setToast({ message, type });
     setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+  }
+
+  function handleRestore(draft) {
+    if (draft.title !== undefined) setTitle(draft.title);
+    if (draft.body !== undefined) setBody(draft.body);
+    if (draft.language !== undefined) setLanguage(draft.language);
+    if (draft.linkedRecipe !== undefined) setLinkedRecipe(draft.linkedRecipe);
+    clearDraft();
   }
 
   function validate() {
@@ -49,6 +64,7 @@ export default function StoryCreatePage() {
 
     try {
       const created = await createStory(formData);
+      clearDraft();
       showToast('Story published!', 'success');
       navigate(`/stories/${created.id}`);
     } catch {
@@ -65,6 +81,11 @@ export default function StoryCreatePage() {
   return (
     <main className="page-card story-form">
       <h1 className="story-form-heading">Create Story</h1>
+      <DraftRestoreBanner
+        draft={savedDraft}
+        onRestore={handleRestore}
+        onDiscard={clearDraft}
+      />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="story-title">Title</label>

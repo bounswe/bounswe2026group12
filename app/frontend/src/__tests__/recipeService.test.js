@@ -109,3 +109,117 @@ describe('fetchRecipes', () => {
     expect(result).toEqual([{ id: 1, title: 'Baklava' }]);
   });
 });
+
+describe('fetchIngredients — promise cache', () => {
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
+  it('calls GET /api/ingredients/ only once on repeated calls', async () => {
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn().mockResolvedValue({ data: [{ id: 1, name: 'Salt' }] }) },
+    }));
+    const { fetchIngredients } = require('../services/recipeService');
+    await fetchIngredients();
+    await fetchIngredients();
+    const { apiClient } = require('../services/api');
+    expect(apiClient.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns the same data on repeated calls', async () => {
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn().mockResolvedValue({ data: [{ id: 2, name: 'Pepper' }] }) },
+    }));
+    const { fetchIngredients } = require('../services/recipeService');
+    const first = await fetchIngredients();
+    const second = await fetchIngredients();
+    expect(first).toEqual(second);
+  });
+
+  it('fires only one request when called concurrently', async () => {
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn().mockResolvedValue({ data: [{ id: 1, name: 'Salt' }] }) },
+    }));
+    const { fetchIngredients } = require('../services/recipeService');
+    const [a, b] = await Promise.all([fetchIngredients(), fetchIngredients()]);
+    const { apiClient } = require('../services/api');
+    expect(apiClient.get).toHaveBeenCalledTimes(1);
+    expect(a).toEqual(b);
+  });
+
+  it('retries after a fetch error', async () => {
+    let calls = 0;
+    jest.doMock('../services/api', () => ({
+      apiClient: {
+        get: jest.fn().mockImplementation(() => {
+          calls += 1;
+          if (calls === 1) return Promise.reject(new Error('Network Error'));
+          return Promise.resolve({ data: [{ id: 1, name: 'Salt' }] });
+        }),
+      },
+    }));
+    const { fetchIngredients } = require('../services/recipeService');
+    await expect(fetchIngredients()).rejects.toThrow('Network Error');
+    const result = await fetchIngredients();
+    expect(result[0].name).toBe('Salt');
+    expect(calls).toBe(2);
+  });
+});
+
+describe('fetchUnits — promise cache', () => {
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
+  it('calls GET /api/units/ only once on repeated calls', async () => {
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn().mockResolvedValue({ data: [{ id: 1, name: 'cup' }] }) },
+    }));
+    const { fetchUnits } = require('../services/recipeService');
+    await fetchUnits();
+    await fetchUnits();
+    const { apiClient } = require('../services/api');
+    expect(apiClient.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns the same data on repeated calls', async () => {
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn().mockResolvedValue({ data: [{ id: 3, name: 'tbsp' }] }) },
+    }));
+    const { fetchUnits } = require('../services/recipeService');
+    const first = await fetchUnits();
+    const second = await fetchUnits();
+    expect(first).toEqual(second);
+  });
+
+  it('fires only one request when called concurrently', async () => {
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn().mockResolvedValue({ data: [{ id: 1, name: 'cup' }] }) },
+    }));
+    const { fetchUnits } = require('../services/recipeService');
+    const [a, b] = await Promise.all([fetchUnits(), fetchUnits()]);
+    const { apiClient } = require('../services/api');
+    expect(apiClient.get).toHaveBeenCalledTimes(1);
+    expect(a).toEqual(b);
+  });
+
+  it('retries after a fetch error', async () => {
+    let calls = 0;
+    jest.doMock('../services/api', () => ({
+      apiClient: {
+        get: jest.fn().mockImplementation(() => {
+          calls += 1;
+          if (calls === 1) return Promise.reject(new Error('Network Error'));
+          return Promise.resolve({ data: [{ id: 1, name: 'g' }] });
+        }),
+      },
+    }));
+    const { fetchUnits } = require('../services/recipeService');
+    await expect(fetchUnits()).rejects.toThrow('Network Error');
+    const result = await fetchUnits();
+    expect(result[0].name).toBe('g');
+    expect(calls).toBe(2);
+  });
+});

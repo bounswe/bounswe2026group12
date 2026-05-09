@@ -155,3 +155,36 @@ describe('RecipeEditPage', () => {
     });
   });
 });
+
+describe('RecipeEditPage — draft auto-save', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    localStorage.clear();
+  });
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('shows DraftRestoreBanner when a draft exists for this recipe', async () => {
+    localStorage.setItem(
+      'draft:recipe:1',
+      JSON.stringify({ title: 'Draft Edit', description: 'x', region: '', qaEnabled: false, rows: [] })
+    );
+    renderPage();
+    await waitFor(() =>
+      expect(screen.getByText(/unsaved draft found/i)).toBeInTheDocument()
+    );
+  });
+
+  it('restores title from draft when Restore is clicked', async () => {
+    localStorage.setItem(
+      'draft:recipe:1',
+      JSON.stringify({ title: 'Restored Title', description: 'x', region: '', qaEnabled: false, rows: [] })
+    );
+    renderPage();
+    await waitFor(() => screen.getByText(/unsaved draft found/i));
+    fireEvent.click(screen.getByRole('button', { name: /restore/i }));
+    expect(screen.getByLabelText(/title/i).value).toBe('Restored Title');
+  });
+});

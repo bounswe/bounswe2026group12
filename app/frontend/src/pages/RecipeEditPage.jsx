@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
+import DraftRestoreBanner from '../components/DraftRestoreBanner';
+import useDraftAutosave from '../hooks/useDraftAutosave';
 import {
   fetchRecipe,
   updateRecipe,
@@ -57,6 +59,10 @@ export default function RecipeEditPage() {
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const draftKey = `draft:recipe:${id}`;
+  const draftState = { title, description, region, qaEnabled, rows };
+  const { savedDraft, clearDraft } = useDraftAutosave(draftKey, draftState, { enabled: !loading });
+
   useEffect(() => {
     let cancelled = false;
     fetchRegions().then((regs) => { if (!cancelled) setRegions(regs); }).catch(() => {});
@@ -88,6 +94,15 @@ export default function RecipeEditPage() {
   function showToast(message, type) {
     setToast({ message, type });
     setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+  }
+
+  function handleRestore(draft) {
+    if (draft.title !== undefined) setTitle(draft.title);
+    if (draft.description !== undefined) setDescription(draft.description);
+    if (draft.region !== undefined) setRegion(draft.region);
+    if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
+    if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    clearDraft();
   }
 
   const handleRowChange = useCallback((rowId, field, value) => {
@@ -156,6 +171,7 @@ export default function RecipeEditPage() {
         await updateRecipe(id, mediaData);
       }
 
+      clearDraft();
       showToast('Recipe updated!', 'success');
       setTimeout(() => navigate(`/recipes/${id}`), 1500);
     } catch {
@@ -172,6 +188,11 @@ export default function RecipeEditPage() {
   return (
     <main className="page-card recipe-form">
       <h1 className="recipe-form-heading">Edit Recipe</h1>
+      <DraftRestoreBanner
+        draft={savedDraft}
+        onRestore={handleRestore}
+        onDiscard={clearDraft}
+      />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="title">Title</label>

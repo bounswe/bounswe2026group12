@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
+import DraftRestoreBanner from '../components/DraftRestoreBanner';
+import useDraftAutosave from '../hooks/useDraftAutosave';
 import {
   createRecipe,
   updateRecipe,
@@ -13,6 +15,7 @@ import {
 import { fetchRegions } from '../services/searchService';
 import './RecipeCreatePage.css';
 
+const DRAFT_KEY = 'draft:recipe:new';
 const MAX_DESC = 1000;
 
 function makeRow() {
@@ -56,6 +59,9 @@ export default function RecipeCreatePage() {
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const draftState = { title, description, region, qaEnabled, rows };
+  const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
+
   const isDirty = useRef(false);
 
   useEffect(() => {
@@ -80,6 +86,15 @@ export default function RecipeCreatePage() {
   function showToast(message, type) {
     setToast({ message, type });
     setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+  }
+
+  function handleRestore(draft) {
+    if (draft.title !== undefined) setTitle(draft.title);
+    if (draft.description !== undefined) setDescription(draft.description);
+    if (draft.region !== undefined) setRegion(draft.region);
+    if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
+    if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    clearDraft();
   }
 
   const handleRowChange = useCallback((rowId, field, value) => {
@@ -150,6 +165,7 @@ export default function RecipeCreatePage() {
         if (thumbnail) mediaData.append('image', thumbnail);
         await updateRecipe(created.id, mediaData);
       }
+      clearDraft();
       isDirty.current = false;
       showToast('Recipe published!', 'success');
       setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
@@ -167,6 +183,12 @@ export default function RecipeCreatePage() {
         Fill in the steps below. Fields marked <span aria-hidden="true">*</span>
         <span className="sr-only">with an asterisk</span> are required.
       </p>
+
+      <DraftRestoreBanner
+        draft={savedDraft}
+        onRestore={handleRestore}
+        onDiscard={clearDraft}
+      />
 
       {hasErrors && (
         <div
