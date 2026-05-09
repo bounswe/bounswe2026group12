@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
+import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubstitutesSheet';
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import type { RootStackParamList } from '../navigation/types';
@@ -27,6 +28,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [reloadToken, setReloadToken] = useState(0);
   const [showConverted, setShowConverted] = useState(false);
   const [linkedStories, setLinkedStories] = useState<StoryListItem[]>([]);
+  const [substituteTarget, setSubstituteTarget] = useState<{ id: number; name: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -215,11 +217,24 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                     }
                     style={styles.ingredientRow}
                   >
-                    <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
-                    <Text style={styles.ingredientAmount}>
-                      {' — '}
-                      {displayAmount} {displayUnit}
-                    </Text>
+                    <View style={styles.ingredientText}>
+                      <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
+                      <Text style={styles.ingredientAmount}>
+                        {' — '}
+                        {displayAmount} {displayUnit}
+                      </Text>
+                    </View>
+                    <Pressable
+                      onPress={() =>
+                        setSubstituteTarget({ id: ri.ingredient.id, name: ri.ingredient.name })
+                      }
+                      style={({ pressed }) => [styles.subBtn, pressed && styles.pressed]}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Find substitutes for ${ri.ingredient.name}`}
+                      hitSlop={8}
+                    >
+                      <Text style={styles.subBtnText}>Substitutes</Text>
+                    </Pressable>
                   </View>
                 );
               })}
@@ -249,6 +264,12 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           </View>
         </View>
       </ScrollView>
+
+      <IngredientSubstitutesSheet
+        ingredientId={substituteTarget?.id ?? null}
+        ingredientName={substituteTarget?.name ?? ''}
+        onClose={() => setSubstituteTarget(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -373,13 +394,26 @@ const styles = StyleSheet.create({
   ingredientRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'baseline',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: tokens.colors.primaryTint,
   },
+  ingredientText: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline' },
   ingredientName: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
   ingredientAmount: { fontSize: 16, color: tokens.colors.text },
+  subBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  subBtnText: { fontSize: 12, fontWeight: '800', color: tokens.colors.textOnDark },
+  pressed: { opacity: 0.85 },
   storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
   storyList: { gap: 10 },
 });
