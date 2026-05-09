@@ -106,22 +106,11 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100 
 
 ## Rollback
 
-Two layers of rollback are available.
-
-1. **Within compose**: redeploy the previous commit.
-   ```bash
-   git reset --hard <prev-sha>
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml build
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
-   ```
-
-2. **Out of compose, back to legacy systemd + standalone Postgres** — kept
-   warm for one week post-cutover. The exact commands and the legacy
-   `genipe-db` container details are in `sunucu_ayarlari.md` (server-side
-   copy at `/root/bounswe2026group12/sunucu_ayarlari.md`).
-
-The `pgdata` volume is named (`bounswe2026group12_pgdata`) and survives
-`compose down`. Only `compose down -v` would destroy data; do not run that.
+Three rollback paths (quick reset to a previous good commit, full revert to
+the legacy systemd stack during the post-cutover window, database restore
+from a SQL dump) are documented in `ops/ROLLBACK.md`. Start there when a
+deploy breaks prod. The named volume `bounswe2026group12_pgdata` survives
+`compose down`; only `compose down -v` destroys data, so do not run that.
 
 ## Healthchecks
 
