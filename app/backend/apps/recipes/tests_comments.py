@@ -66,25 +66,53 @@ class CommentQuestionAPITests(APITestCase):
         self.assertEqual(Comment.objects.count(), 0)
 
     def test_qa_enabled_logic(self):
-        """Check qa_enabled flag when posting QUESTION."""
+        """TC_API_QA_005 - POST comment 403 when qa_enabled=false.
+
+        Designer: Uygar Apan (gh: roboticrustacean). Lab 9 acceptance test.
+        Requirements: 3.4.1, 3.2.1.
+
+        Walks the full Lab 9 flow:
+        1) non-author Bob POSTs a QUESTION on a recipe with qa_enabled=False
+           and gets 403;
+        2) the recipe author flips qa_enabled to True;
+        3) Bob retries the same POST and gets 201.
+        Also verifies COMMENTs remain allowed regardless of the flag (the
+        toggle scopes to QUESTION posts only).
+        """
         self.client.force_authenticate(user=self.user1)
-        
+
         # Recipe 1 has qa_enabled=True
         url1 = f'/api/recipes/{self.recipe1.id}/comments/'
         data1 = {'body': 'A question?', 'type': 'QUESTION'}
         response1 = self.client.post(url1, data1)
         self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
-        
-        # Recipe 2 has qa_enabled=False
+
+        # Recipe 2 has qa_enabled=False; user1 (Bob, non-author of recipe2)
+        # should be blocked from posting a QUESTION there.
         url2 = f'/api/recipes/{self.recipe2.id}/comments/'
         data2 = {'body': 'A question?', 'type': 'QUESTION'}
         response2 = self.client.post(url2, data2)
         self.assertEqual(response2.status_code, status.HTTP_403_FORBIDDEN)
-        
-        # Recipe 2 allows COMMENT despite qa_enabled=False
+
+        # Recipe 2 allows COMMENT despite qa_enabled=False.
         data3 = {'body': 'A comment.', 'type': 'COMMENT'}
         response3 = self.client.post(url2, data3)
         self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+
+        # The author of recipe 2 (user2) flips qa_enabled to True.
+        self.client.force_authenticate(user=self.user2)
+        toggle = self.client.patch(
+            f'/api/recipes/{self.recipe2.id}/',
+            {'qa_enabled': True},
+            format='json',
+        )
+        self.assertEqual(toggle.status_code, status.HTTP_200_OK)
+        self.assertTrue(toggle.data['qa_enabled'])
+
+        # Bob retries the original QUESTION post and now succeeds.
+        self.client.force_authenticate(user=self.user1)
+        retry = self.client.post(url2, data2)
+        self.assertEqual(retry.status_code, status.HTTP_201_CREATED)
 
     def test_reply_flow_and_validation(self):
         """Test reply flow and parent_comment cross-recipe validation."""

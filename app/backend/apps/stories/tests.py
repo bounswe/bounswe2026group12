@@ -33,12 +33,32 @@ class StoryCreateAPITest(APITestCase):
         self.assertEqual(response.data['author_username'], "author")
 
     def test_create_story_with_linked_recipe_legacy(self):
-        """Test backward compatibility: sending 'linked_recipe' as single ID."""
+        """TC_API_STORY_004 - Story creation with linked recipe (bidirectional).
+
+        Designer: Emirhan Simsek. Lab 9 acceptance test.
+        Requirements: 3.5.1, 3.5.2, 3.5.3, 3.5.4, 3.3.9.
+
+        Asserts the legacy linked_recipe write path returns the recipe ID and
+        title in the read shape, that the new linked_recipes array reflects
+        the link, and that the back-reference is observable from the recipe
+        side (the recipe's story_count goes up and the model-level reverse
+        relation Recipe.linked_stories includes the new story).
+
+        Lab 9 cited a hypothetical Recipe.linkedStories[] field; the current
+        serializer exposes the back-link as story_count plus the reverse
+        manager. This assertion is the surviving bidirectional contract.
+        """
         self.client.force_authenticate(user=self.user)
+
+        recipe_before = self.client.get(reverse('recipe-detail', kwargs={'pk': self.recipe.id}))
+        self.assertEqual(recipe_before.status_code, status.HTTP_200_OK)
+        story_count_before = recipe_before.data['story_count']
+
         data = {
             "title": "Baklava Story",
             "body": "How I learned to make baklava",
-            "linked_recipe": self.recipe.id
+            "linked_recipe": self.recipe.id,
+            "is_published": True,
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -46,6 +66,16 @@ class StoryCreateAPITest(APITestCase):
         self.assertEqual(response.data['recipe_title'], "Baklava")
         self.assertEqual(len(response.data['linked_recipes']), 1)
         self.assertEqual(response.data['linked_recipes'][0]['recipe_id'], self.recipe.id)
+
+        new_story_id = response.data['id']
+        recipe_after = self.client.get(reverse('recipe-detail', kwargs={'pk': self.recipe.id}))
+        self.assertEqual(recipe_after.status_code, status.HTTP_200_OK)
+        self.assertEqual(recipe_after.data['story_count'], story_count_before + 1)
+
+        self.assertTrue(
+            self.recipe.linked_stories.filter(id=new_story_id).exists(),
+            "Recipe.linked_stories reverse relation must include the new story",
+        )
 
     def test_create_story_with_multiple_recipes(self):
         """Test new capability: sending 'linked_recipe_ids' as array."""
