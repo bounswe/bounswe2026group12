@@ -136,6 +136,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         many=True, write_only=True, required=False,
     )
     story_count = serializers.IntegerField(read_only=True, default=0)
+    rank_score = serializers.SerializerMethodField()
+    rank_reason = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -147,8 +149,15 @@ class RecipeSerializer(serializers.ModelSerializer):
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'story_count',
+            'rank_score', 'rank_reason',
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
+
+    def get_rank_score(self, obj):
+        return getattr(obj, 'rank_score', 0)
+
+    def get_rank_reason(self, obj):
+        return getattr(obj, 'rank_reason', None)
 
     def validate(self, data):
         if self.context['request'].method == 'POST':
