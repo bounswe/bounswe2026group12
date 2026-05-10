@@ -8,7 +8,15 @@ export type RegionPin = {
   recipeCount: number;
 };
 
+export type RegionOption = { id: number; name: string };
+
 type RawRegion = { id: number | string; name: string };
+
+/** Lightweight region list for pickers (id + name only). */
+export async function fetchRegions(): Promise<RegionOption[]> {
+  const data = await apiGetJson<unknown>('/api/regions/');
+  return unwrapList<RawRegion>(data).map((r) => ({ id: Number(r.id), name: r.name }));
+}
 
 function unwrapList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];

@@ -122,7 +122,8 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
   }
 
   // Backend exposes `region` as the FK pk and the friendly label in
-  // `region_name`. Surface the name so the detail screen renders it directly.
+  // `region_name`. Surface BOTH: the name for display (detail pill, cards) and
+  // the pk for the region picker on edit.
   const reg = (data as { region?: unknown }).region;
   const regionLabel =
     typeof reg === 'string'
@@ -132,6 +133,12 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
         : typeof (data as { region_name?: unknown }).region_name === 'string'
           ? (data as unknown as { region_name: string }).region_name
           : undefined;
+  const regionId =
+    typeof reg === 'number'
+      ? reg
+      : reg && typeof reg === 'object' && 'id' in reg && typeof (reg as { id: unknown }).id === 'number'
+        ? (reg as { id: number }).id
+        : null;
 
   return {
     ...data,
@@ -140,6 +147,7 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
     image: typeof data.image === 'string' ? data.image : null,
     is_published: typeof data.is_published === 'boolean' ? data.is_published : undefined,
     region: regionLabel,
+    region_id: regionId,
   };
 }
 
@@ -151,6 +159,7 @@ export async function updateStoryById(
     language: string;
     linked_recipe: number | null;
     is_published: boolean;
+    region?: number | null;
   },
 ): Promise<void> {
   await apiPatchJson(`/api/stories/${id}/`, body);
