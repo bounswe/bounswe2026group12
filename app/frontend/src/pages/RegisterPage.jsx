@@ -44,22 +44,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <>
-      <div className="auth-branding">
-        <h1>Genipe</h1>
-      </div>
-      <main className={`page-card auth-page ${animationClass}`}>
-      <div className="auth-heading-row">
-        <h1 className="auth-heading">Register</h1>
-        <button
-          className="auth-close-btn"
-          onClick={() => navigate('/')}
-          aria-label="Close"
-          type="button"
-        >
-          ←
-        </button>
-      </div>
+    <main className={`page-card auth-page ${animationClass}`}>
+      <h1 className="auth-heading">Register</h1>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="username">Username</label>
@@ -95,7 +81,6 @@ export default function RegisterPage() {
         <button type="submit" className="btn btn-primary auth-submit">Register</button>
       </form>
       <p className="auth-footer">Already have an account? <Link to="/login" state={{ from: 'register' }}>Log In</Link></p>
-      </main>
-    </>
+    </main>
   );
 }
