@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'apps.map_discovery',
     'apps.drafts',
     'apps.heritage',
+    'apps.passport',
 ]
 
 # Custom user model
