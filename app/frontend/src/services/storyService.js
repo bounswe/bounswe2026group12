@@ -11,7 +11,7 @@ export async function fetchStory(id) {
 
 export async function fetchStories() {
   const response = await apiClient.get('/api/stories/');
-  return response.data;
+  return response.data.results ?? response.data;
 }
 
 export async function createStory(data) {
