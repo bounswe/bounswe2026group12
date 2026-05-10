@@ -155,31 +155,30 @@ export default function HomeScreen({ navigation }: Props) {
                       ? String(linkedRecipeRaw.title)
                       : null;
                 return (
-                  <View key={String(item.id)} style={styles.storyWrap}>
-                    <StoryFeatureCard
-                      title={item.title}
-                      body={item.body}
-                      image={item.image}
-                      authorUsername={authorUsername ?? null}
-                      recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
-                      onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
-                      onPressAuthor={
-                        authorId != null && authorUsername
-                          ? () =>
-                              navigation.navigate('UserProfile', {
-                                userId: authorId,
-                                username: authorUsername,
-                              })
-                          : undefined
-                      }
-                      onPressRecipe={
-                        linkedRecipeId
-                          ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
-                          : undefined
-                      }
-                    />
-                    <RankReasonBadge reason={item.rank_reason} style={styles.storyBadge} />
-                  </View>
+                  <StoryFeatureCard
+                    key={String(item.id)}
+                    title={item.title}
+                    body={item.body}
+                    image={item.image}
+                    authorUsername={authorUsername ?? null}
+                    recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
+                    footer={<RankReasonBadge reason={item.rank_reason} />}
+                    onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
+                    onPressAuthor={
+                      authorId != null && authorUsername
+                        ? () =>
+                            navigation.navigate('UserProfile', {
+                              userId: authorId,
+                              username: authorUsername,
+                            })
+                        : undefined
+                    }
+                    onPressRecipe={
+                      linkedRecipeId
+                        ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
+                        : undefined
+                    }
+                  />
                 );
               })}
             </View>
@@ -411,7 +410,5 @@ const styles = StyleSheet.create({
   },
   tagText: { fontSize: 12, fontWeight: '800', color: tokens.colors.text },
   link: { fontSize: 15, color: tokens.colors.text, fontWeight: '800' },
-  storyWrap: { gap: 6 },
-  storyBadge: { marginLeft: 4 },
   recipeBadge: { marginLeft: 12, marginBottom: 12 },
 });
