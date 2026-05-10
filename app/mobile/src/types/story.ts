@@ -9,6 +9,8 @@ export type StoryDetail = {
   is_published?: boolean;
   /** Optional image URL/uri (mock uses remote url). */
   image?: string | null;
+  /** Friendly region name surfaced by `normalizeStoryDetail` (backend exposes `region_name`). */
+  region?: string;
   rank_score?: number;
   rank_reason?: string | null;
 };

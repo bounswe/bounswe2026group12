@@ -121,12 +121,25 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
     };
   }
 
+  // Backend exposes `region` as the FK pk and the friendly label in
+  // `region_name`. Surface the name so the detail screen renders it directly.
+  const reg = (data as { region?: unknown }).region;
+  const regionLabel =
+    typeof reg === 'string'
+      ? reg
+      : reg && typeof reg === 'object' && 'name' in reg && typeof (reg as { name: unknown }).name === 'string'
+        ? (reg as { name: string }).name
+        : typeof (data as { region_name?: unknown }).region_name === 'string'
+          ? (data as unknown as { region_name: string }).region_name
+          : undefined;
+
   return {
     ...data,
     author,
     linked_recipe,
     image: typeof data.image === 'string' ? data.image : null,
     is_published: typeof data.is_published === 'boolean' ? data.is_published : undefined,
+    region: regionLabel,
   };
 }
 
