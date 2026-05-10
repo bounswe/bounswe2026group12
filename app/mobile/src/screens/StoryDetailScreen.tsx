@@ -86,6 +86,19 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
           <Text style={styles.title} accessibilityRole="header">
             {story.title}
           </Text>
+          {story.region ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Search', { region: story.region as string })
+              }
+              style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Browse ${story.region} content`}
+              hitSlop={6}
+            >
+              <Text style={styles.regionPillText}>{story.region}</Text>
+            </Pressable>
+          ) : null}
           {authorObj ? (
             <Pressable
               onPress={() =>
@@ -168,6 +181,17 @@ const styles = StyleSheet.create({
   thumb: { width: '100%', height: '100%' },
   title: { fontSize: 24, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 8 },
+  regionPill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  regionPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   authorPill: {
     alignSelf: 'flex-start',
     marginTop: 8,

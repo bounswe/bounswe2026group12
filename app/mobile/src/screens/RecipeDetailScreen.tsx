@@ -148,7 +148,19 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           <Text style={styles.title} accessibilityRole="header">
             {recipe.title}
           </Text>
-          {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
+          {recipe.region ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Search', { region: recipe.region as string })
+              }
+              style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Browse ${recipe.region} recipes`}
+              hitSlop={6}
+            >
+              <Text style={styles.regionPillText}>{recipe.region}</Text>
+            </Pressable>
+          ) : null}
           {authorObj ? (
             <Pressable
               onPress={() =>
@@ -341,6 +353,17 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 6 },
+  regionPill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  regionPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   author: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 4 },
   authorPill: {
     alignSelf: 'flex-start',
