@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
@@ -182,7 +182,7 @@ export default function RecipeEditPage() {
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
   if (recipe && user && user.id !== recipe.author) {
-    return <p className="page-status page-error">You are not authorized to edit this recipe.</p>;
+    return <Navigate to={`/recipes/${id}`} replace />;
   }
 
   return (
