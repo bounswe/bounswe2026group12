@@ -75,3 +75,38 @@ class HeritageJourneyStep(models.Model):
 
     def __str__(self):
         return f'{self.heritage_group} #{self.order} {self.location}'
+
+
+class CulturalFact(models.Model):
+    """A short cultural context fact surfaced as a "Did You Know?" card.
+
+    A fact may be tied to a specific HeritageGroup (e.g. Sarma / Dolma),
+    to a Region, to both, or to neither (general). Both FKs are nullable
+    so curators can target any combination. The Region FK is declared as
+    a string reference to avoid hard-coupling app import order.
+    """
+
+    heritage_group = models.ForeignKey(
+        HeritageGroup,
+        on_delete=models.CASCADE,
+        related_name='cultural_facts',
+        null=True,
+        blank=True,
+    )
+    region = models.ForeignKey(
+        'recipes.Region',
+        on_delete=models.SET_NULL,
+        related_name='cultural_facts',
+        null=True,
+        blank=True,
+    )
+    text = models.TextField()
+    source_url = models.URLField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.text[:60]
