@@ -130,7 +130,7 @@ SIMPLE_JWT = {
     # Mobile client relies on these exact lifetimes for its refresh-and-retry logic.
     # Do not change without updating app/mobile/src/services/httpClient.ts accordingly.
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,          # Each refresh call issues a new refresh token
     'BLACKLIST_AFTER_ROTATION': True,       # Old refresh token is immediately invalidated
     'AUTH_HEADER_TYPES': ('Bearer',),
