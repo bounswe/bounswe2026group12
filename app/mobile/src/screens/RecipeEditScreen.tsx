@@ -58,6 +58,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
   const [remoteVideoUrl, setRemoteVideoUrl] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const applyRecipe = useCallback((recipe: RecipeDetail) => {
     setTitle(recipe.title ?? '');
@@ -177,8 +178,9 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
 
   function submit() {
     setAttemptedSubmit(true);
-    if (!isValid) return;
+    if (!isValid || submitting) return;
 
+    setSubmitting(true);
     const jsonBody = buildRecipePatchJsonBody({
       title,
       description,
@@ -206,6 +208,8 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
         setTimeout(() => navigation.navigate('RecipeDetail', { id }), 1500);
       } catch {
         showToast('Failed to save changes. Please try again.', 'error');
+      } finally {
+        setSubmitting(false);
       }
     })();
   }
@@ -388,11 +392,16 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
 
         <Pressable
           onPress={submit}
-          style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+          disabled={submitting}
+          style={({ pressed }) => [
+            styles.primaryButton,
+            pressed && styles.buttonPressed,
+            submitting && { opacity: 0.7 },
+          ]}
           accessibilityRole="button"
           accessibilityLabel="Save recipe changes"
         >
-          <Text style={styles.primaryButtonText}>Save changes</Text>
+          <Text style={styles.primaryButtonText}>{submitting ? 'Saving…' : 'Save changes'}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
