@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: tokens.colors.primaryTint,
+    borderBottomColor: tokens.colors.surfaceDark,
   },
   ingredientText: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline' },
   ingredientTextChecked: { opacity: 0.5 },
@@ -726,6 +726,6 @@ const styles = StyleSheet.create({
   },
   shoppingItemName: { flex: 1, fontSize: 14, color: tokens.colors.text, fontWeight: '700' },
   shoppingItemQty: { fontSize: 13, color: tokens.colors.text, fontWeight: '600' },
-  storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark, gap: 12 },
   storyList: { gap: 10 },
 });

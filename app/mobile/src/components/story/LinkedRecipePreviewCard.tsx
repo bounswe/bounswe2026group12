@@ -70,9 +70,9 @@ const styles = StyleSheet.create({
   },
   tag: {
     alignSelf: 'flex-start',
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.bg,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 8,

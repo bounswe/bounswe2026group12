@@ -91,7 +91,7 @@ export function IngredientSubstitutesSheet({ ingredientId, ingredientName, onClo
 
           {loading ? (
             <View style={styles.centered}>
-              <ActivityIndicator color={tokens.colors.primary} />
+              <ActivityIndicator color={tokens.colors.surfaceDark} />
               <Text style={styles.muted}>Loading…</Text>
             </View>
           ) : error ? (

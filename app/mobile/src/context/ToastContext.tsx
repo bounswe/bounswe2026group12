@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: tokens.radius.pill,
     borderWidth: 2,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     ...shadows.md,
   },
   text: {

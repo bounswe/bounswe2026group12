@@ -81,7 +81,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
               coordinate={pin.coords}
               title={pin.name}
               description={`${pin.recipeCount} ${pin.recipeCount === 1 ? 'recipe' : 'recipes'}`}
-              pinColor={focused?.id === pin.id ? accent.accent : tokens.colors.primary}
+              pinColor={focused?.id === pin.id ? accent.accent : tokens.colors.accentMustard}
               onPress={(e) => {
                 e.stopPropagation?.();
                 setFocused(pin);
