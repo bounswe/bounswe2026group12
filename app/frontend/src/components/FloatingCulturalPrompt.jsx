@@ -5,16 +5,16 @@ import './FloatingCulturalPrompt.css';
 
 const PROMPTS = [
   {
-    question: 'Nerelisin?',
-    response: () => 'Hadi evine ufak bir yolculuğa çıkalım 🏡',
+    question: 'Where are you from? 🏡',
+    response: () => 'Let\'s take a little trip home',
   },
   {
-    question: 'Sıradaki seyahatin nereye?',
-    response: (name) => `${name} mutfağını keşfedelim 🗺️`,
+    question: 'Where is your next destination? 🗺️',
+    response: (name) => `Explore the cuisine of ${name}`,
   },
   {
-    question: 'Bu hafta neyi tatmak isterdin?',
-    response: (name) => `${name}'den hikayeler seni bekliyor ✨`,
+    question: 'What would you like to taste this week? ✨',
+    response: (name) => `Stories from ${name} are waiting for you`,
   },
 ];
 
@@ -157,7 +157,7 @@ export default function FloatingCulturalPrompt({ regions }) {
             <div className="story-modal-body">
               {storiesLoading && <p className="story-modal-status">Loading…</p>}
               {!storiesLoading && storiesError && (
-                <p className="story-modal-status">Hikayeler yüklenemedi. Lütfen tekrar deneyin.</p>
+                <p className="story-modal-status">Failed to load stories. Please try again.</p>
               )}
               {!storiesLoading && !storiesError && stories.length === 0 && (
                 <p className="story-modal-status">No stories for this region yet.</p>
