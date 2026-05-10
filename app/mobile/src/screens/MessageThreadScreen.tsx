@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   bubbleMine: {
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.surfaceDark,
     borderBottomRightRadius: 4,
   },
   bubbleTheirs: {

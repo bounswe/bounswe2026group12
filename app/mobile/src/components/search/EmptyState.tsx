@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: tokens.radius.pill,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     backgroundColor: 'transparent',
   },
   actionPressed: { opacity: 0.9 },

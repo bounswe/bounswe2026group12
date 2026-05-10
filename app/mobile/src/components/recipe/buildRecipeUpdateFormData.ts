@@ -8,20 +8,21 @@ import type { LocalVideoSelection } from './RecipeVideoSection';
 export function buildRecipePatchJsonBody(input: {
   title: string;
   description: string;
-  region: string;
   qaEnabled: boolean;
   rows: AuthoringIngredientRow[];
 }): Record<string, unknown> {
   const validRows = input.rows.filter(
     (r) => r.ingredient.id != null && r.amount.trim() !== '' && r.unit.id != null,
   );
-  const regionTrim = input.region.trim();
-  const regionNum = regionTrim ? Number(regionTrim) : NaN;
 
+  // Region intentionally omitted from the patch body. The detail API exposes
+  // the region as a friendly NAME, not the FK pk we'd need to PATCH back.
+  // Including it here used to silently null the region on every edit because
+  // `Number("Aegean")` is `NaN`. Until a proper region picker lands, leaving
+  // the field out of the payload keeps the existing region untouched.
   return {
     title: input.title.trim(),
     description: input.description.trim(),
-    region: regionTrim && Number.isFinite(regionNum) ? regionNum : null,
     qa_enabled: input.qaEnabled,
     is_published: true,
     ingredients_write: validRows.map((r) => ({

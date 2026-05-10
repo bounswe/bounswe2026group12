@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 16, fontWeight: '600', marginBottom: 6, color: tokens.colors.text },
   input: {
     borderWidth: 2,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 12,

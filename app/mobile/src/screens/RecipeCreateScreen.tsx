@@ -19,7 +19,7 @@ import { tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
 
-export default function RecipeCreateScreen(_props: Props) {
+export default function RecipeCreateScreen({ navigation }: Props) {
   const { showToast } = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -40,6 +40,7 @@ export default function RecipeCreateScreen(_props: Props) {
   });
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const errors = useMemo(() => {
     const next: {
@@ -139,8 +140,9 @@ export default function RecipeCreateScreen(_props: Props) {
 
   function submit() {
     setAttemptedSubmit(true);
-    if (!isValid) return;
+    if (!isValid || submitting) return;
 
+    setSubmitting(true);
     const payload = {
       description: description.trim(),
       qa_enabled: qaEnabled,
@@ -187,8 +189,11 @@ export default function RecipeCreateScreen(_props: Props) {
           await apiPatchFormData(`/api/recipes/${created.id}/`, fd);
         }
         showToast('Recipe published!', 'success');
+        navigation.navigate('RecipeDetail', { id: String(created.id) });
       } catch {
         showToast('Failed to publish recipe. Please try again.', 'error');
+      } finally {
+        setSubmitting(false);
       }
     })();
   }
@@ -309,11 +314,16 @@ export default function RecipeCreateScreen(_props: Props) {
 
           <Pressable
             onPress={submit}
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+            disabled={submitting}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              pressed && styles.buttonPressed,
+              submitting && { opacity: 0.7 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Submit recipe"
           >
-            <Text style={styles.primaryButtonText}>Submit</Text>
+            <Text style={styles.primaryButtonText}>{submitting ? 'Publishing…' : 'Submit'}</Text>
           </Pressable>
 
           <View style={styles.summary}>

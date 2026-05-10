@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
     paddingLeft: 4,
     borderRadius: tokens.radius.xl,
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.accentGreenTint,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
   },
   header: {
     flexDirection: 'row',
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.surface,
     borderRadius: tokens.radius.lg,
     borderWidth: 1,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     ...shadows.lg,
   },
   kindRow: {
@@ -155,9 +155,9 @@ const styles = StyleSheet.create({
   linkPill: {
     alignSelf: 'flex-start',
     marginTop: 12,
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.bg,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 10,

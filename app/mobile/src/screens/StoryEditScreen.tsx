@@ -43,6 +43,9 @@ export default function StoryEditScreen({ route, navigation }: Props) {
   const [regionLabel, setRegionLabel] = useState<string | null>(null);
   const [published, setPublished] = useState(true);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  /** Remote URL of the image when the story was loaded; used to detect whether
+   * the user picked a new local file or is still showing the server image. */
+  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -62,6 +65,7 @@ export default function StoryEditScreen({ route, navigation }: Props) {
     }
     setPublished(story.is_published !== false);
     setImageUri(story.image ?? null);
+    setInitialImageUrl(story.image ?? null);
     setRegionId(story.region_id ?? null);
     setRegionLabel(story.region ?? null);
   }, []);
@@ -138,7 +142,11 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           is_published: published,
           region: regionId,
         });
-        if (imageUri) {
+        // Only upload when the user picked a NEW local file. The remote URL
+        // loaded from the server stays as `imageUri` until they pick something,
+        // and re-uploading that URL as if it were a local file used to corrupt
+        // the image / fail on Android.
+        if (imageUri && imageUri !== initialImageUrl) {
           await updateStoryImageById(String(id), { uri: imageUri });
         }
         showToast('Story updated!', 'success');
@@ -368,15 +376,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     backgroundColor: 'transparent',
   },
-  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.primary },
+  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.surfaceDark },
   langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.text },
   langTextActive: { color: tokens.colors.text },
   thumbButton: {
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: 999,
     paddingVertical: 12,
     paddingHorizontal: 14,
