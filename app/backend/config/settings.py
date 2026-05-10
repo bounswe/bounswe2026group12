@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'apps.cultural_content',
     'apps.messaging',
     'apps.map_discovery',
+    'apps.drafts',
 ]
 
 # Custom user model
