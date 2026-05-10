@@ -5,6 +5,11 @@ const USE_MOCK = process.env.REACT_APP_USE_MOCK === 'true';
 
 export async function fetchMapRegions() {
   if (USE_MOCK) return MOCK_MAP_REGIONS;
-  const response = await apiClient.get('/api/regions/map/');
+  const response = await apiClient.get('/api/map/regions/');
   return response.data;
+}
+
+export async function fetchMapRegionContent(regionId) {
+  const response = await apiClient.get(`/api/map/regions/${regionId}/content/`);
+  return response.data.results ?? response.data;
 }
