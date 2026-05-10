@@ -488,3 +488,108 @@ class TokenRefreshTest(APITestCase):
         response = self.client.post('/api/auth/token/refresh/', {"refresh": bad_token})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['code'], 'token_not_valid')
+
+
+class PublicUserProfileTest(APITestCase):
+    """Tests for GET /api/users/<username>/ (Issue #582)."""
+
+    PUBLIC_FIELDS = [
+        'username', 'bio', 'region', 'cultural_interests',
+        'religious_preferences', 'event_interests', 'created_at',
+        'recipe_count', 'story_count',
+    ]
+    SENSITIVE_FIELDS = ['email', 'is_contactable', 'password']
+
+    def setUp(self):
+        self.alice = User.objects.create_user(
+            email='alice@example.com',
+            username='alice',
+            password='StrongPass123!',
+            bio='Loves slow cooking.',
+            region='Aegean',
+            cultural_interests=['Mediterranean cuisine'],
+            religious_preferences=['Halal'],
+            event_interests=['Wedding'],
+        )
+        self.bob = User.objects.create_user(
+            email='bob@example.com',
+            username='bob',
+            password='StrongPass123!',
+        )
+
+    def test_public_profile_returns_200_for_existing_user(self):
+        response = self.client.get('/api/users/alice/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field in self.PUBLIC_FIELDS:
+            self.assertIn(field, response.data)
+        self.assertEqual(response.data['username'], 'alice')
+        self.assertEqual(response.data['bio'], 'Loves slow cooking.')
+        self.assertEqual(response.data['region'], 'Aegean')
+        self.assertEqual(response.data['cultural_interests'], ['Mediterranean cuisine'])
+        self.assertEqual(response.data['religious_preferences'], ['Halal'])
+        self.assertEqual(response.data['event_interests'], ['Wedding'])
+
+    def test_public_profile_excludes_sensitive_fields(self):
+        response = self.client.get('/api/users/alice/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field in self.SENSITIVE_FIELDS:
+            self.assertNotIn(field, response.data)
+
+    def test_public_profile_404_for_unknown_username(self):
+        response = self.client.get('/api/users/ghost/')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_public_profile_recipe_and_story_counts(self):
+        from apps.recipes.models import Recipe
+        from apps.stories.models import Story
+
+        Recipe.objects.create(
+            title='Alice Recipe 1', description='d', author=self.alice, is_published=True,
+        )
+        Recipe.objects.create(
+            title='Alice Recipe 2', description='d', author=self.alice, is_published=True,
+        )
+        Recipe.objects.create(
+            title='Alice Draft', description='d', author=self.alice, is_published=False,
+        )
+        Recipe.objects.create(
+            title='Bob Recipe', description='d', author=self.bob, is_published=True,
+        )
+        Story.objects.create(
+            title='Alice Story', body='b', author=self.alice, is_published=True,
+        )
+        Story.objects.create(
+            title='Alice Draft Story', body='b', author=self.alice, is_published=False,
+        )
+
+        response = self.client.get('/api/users/alice/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['recipe_count'], 2)
+        self.assertEqual(response.data['story_count'], 1)
+
+        response = self.client.get('/api/users/bob/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['recipe_count'], 1)
+        self.assertEqual(response.data['story_count'], 0)
+
+    def test_users_me_still_works(self):
+        login = self.client.post(
+            '/api/auth/login/',
+            {"email": "alice@example.com", "password": "StrongPass123!"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {login.data["access"]}')
+        response = self.client.get('/api/users/me/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['email'], 'alice@example.com')
+        self.assertEqual(response.data['username'], 'alice')
+
+    def test_authenticated_visitor_to_other_profile_does_not_see_email(self):
+        login = self.client.post(
+            '/api/auth/login/',
+            {"email": "alice@example.com", "password": "StrongPass123!"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {login.data["access"]}')
+        response = self.client.get('/api/users/bob/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field in self.SENSITIVE_FIELDS:
+            self.assertNotIn(field, response.data)
