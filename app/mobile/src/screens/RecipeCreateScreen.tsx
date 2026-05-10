@@ -45,14 +45,12 @@ export default function RecipeCreateScreen(_props: Props) {
     const next: {
       title?: string;
       description?: string;
-      video?: string;
       rows?: Record<string, { amount?: string; ingredient?: string; unit?: string }>;
       rowsTop?: string;
     } = {};
 
     if (!title.trim()) next.title = 'Title is required.';
     if (!description.trim()) next.description = 'Description is required.';
-    if (!localVideo) next.video = 'Please select a video.';
 
     if (!rows.length) {
       next.rowsTop = 'Add at least one ingredient.';
@@ -71,12 +69,11 @@ export default function RecipeCreateScreen(_props: Props) {
     }
 
     return next;
-  }, [title, description, rows, localVideo]);
+  }, [title, description, rows]);
 
   const isValid =
     !errors.title &&
     !errors.description &&
-    !errors.video &&
     !errors.rowsTop &&
     (!errors.rows || Object.keys(errors.rows).length === 0);
 
@@ -207,8 +204,8 @@ export default function RecipeCreateScreen(_props: Props) {
             Recipe upload
           </Text>
           <Text style={styles.lead}>
-            Add a title and description, ingredients, and a video. Ingredient and unit pickers load
-            from the same API as the web app.
+            Add a title and description, and at least one ingredient. A photo or video is optional —
+            you can share text-only recipes too.
           </Text>
 
           <View style={styles.section}>
@@ -293,9 +290,8 @@ export default function RecipeCreateScreen(_props: Props) {
             onPickPress={() => void pickVideo()}
             localVideo={localVideo}
             onClearLocal={() => setLocalVideo(null)}
-            requireSelection
+            requireSelection={false}
             attemptedSubmit={attemptedSubmit}
-            errorMessage={errors.video}
           />
 
           <Pressable
