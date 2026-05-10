@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchStory, updateStory } from '../services/storyService';
 import { fetchRecipes } from '../services/recipeService';
@@ -104,8 +104,9 @@ export default function StoryEditPage() {
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
   const storyAuthorId = story?.author && typeof story.author === 'object' ? story.author.id : story?.author;
-  if (!user || (story && storyAuthorId != null && user.id !== storyAuthorId)) {
-    return <p className="page-status page-error">You are not authorized to edit this story.</p>;
+  const isAuthor = user && story && storyAuthorId != null && user.id === storyAuthorId;
+  if (!isAuthor) {
+    return <Navigate to={`/stories/${id}`} replace />;
   }
 
   const filteredRecipes = recipeSearch.trim()

@@ -63,11 +63,18 @@ describe('StoryEditPage', () => {
     expect(screen.getByDisplayValue('Some body text.')).toBeInTheDocument();
   });
 
-  it('shows unauthorized error when non-author accesses edit', async () => {
-    renderPage(otherUser);
-    await waitFor(() =>
-      expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
+  it('redirects non-authors to the detail page', async () => {
+    render(
+      <AuthContext.Provider value={{ user: { id: 99, username: 'visitor' }, token: 'tok', login: jest.fn(), logout: jest.fn(), loading: false }}>
+        <MemoryRouter initialEntries={['/stories/1/edit']}>
+          <Routes>
+            <Route path="/stories/:id/edit" element={<StoryEditPage />} />
+            <Route path="/stories/:id" element={<div>Story Detail</div>} />
+          </Routes>
+        </MemoryRouter>
+      </AuthContext.Provider>,
     );
+    await waitFor(() => expect(screen.getByText('Story Detail')).toBeInTheDocument());
   });
 
   it('shows title required error on empty submit', async () => {
