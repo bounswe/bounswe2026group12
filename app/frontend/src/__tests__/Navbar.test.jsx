@@ -66,4 +66,10 @@ describe('Navbar', () => {
     renderNavbar();
     expect(screen.getByRole('link', { name: /^stories$/i })).toBeInTheDocument();
   });
+
+  it('renders @username as a link to /profile when logged in', () => {
+    renderNavbar({ id: 1, username: 'eren' });
+    const link = screen.getByRole('link', { name: '@eren' });
+    expect(link).toHaveAttribute('href', '/profile');
+  });
 });

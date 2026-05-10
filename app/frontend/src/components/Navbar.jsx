@@ -20,7 +20,7 @@ export default function Navbar() {
         <div className="navbar-links">
           {user ? (
             <>
-              <span className="navbar-username">@{user.username}</span>
+              <Link to="/profile" className="navbar-username">@{user.username}</Link>
               <NotificationTray />
               <NavLink to="/inbox" className="navbar-link">Inbox</NavLink>
               <Link to="/recipes/new" className="btn btn-outline navbar-btn">

@@ -1,0 +1,45 @@
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-title {
+  margin: 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-username {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.profile-email {
+  color: var(--text-muted, #666);
+  margin: 0;
+}
+
+.profile-preferences {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border, #e5e5e5);
+  padding-top: 1rem;
+}
+
+.profile-preferences-desc {
+  margin: 0;
+  color: var(--text-muted, #666);
+  font-size: 0.95rem;
+}
+
+.profile-actions {
+  border-top: 1px solid var(--border, #e5e5e5);
+  padding-top: 1rem;
+}
