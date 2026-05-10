@@ -1,9 +1,11 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Clipboard from 'expo-clipboard';
 import { ResizeMode, Video } from 'expo-av';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubstitutesSheet';
@@ -34,6 +36,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [convertedByLine, setConvertedByLine] = useState<Record<string, ConvertedAmount>>({});
   const [convertingLoading, setConvertingLoading] = useState(false);
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
+  const [showShoppingList, setShowShoppingList] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     let cancelled = false;
@@ -174,6 +178,26 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   }
 
   const ingredients = recipe.ingredients ?? [];
+
+  const shoppingItems = ingredients
+    .filter((ri) => !checkedIds.has(ri.ingredient.id))
+    .map((ri) => ({
+      key: `shop-${ri.lineId ?? ri.ingredient.id}`,
+      name: ri.ingredient.name,
+      amount: String(ri.amount),
+      unit: ri.unit.name,
+    }));
+
+  async function copyShoppingList() {
+    if (shoppingItems.length === 0) return;
+    const text = shoppingItems.map((i) => `${i.name} — ${i.amount} ${i.unit}`).join('\n');
+    try {
+      await Clipboard.setStringAsync(text);
+      showToast('Shopping list copied to clipboard', 'success');
+    } catch {
+      showToast('Could not copy to clipboard', 'error');
+    }
+  }
 
   const authorObj =
     recipe.author && typeof recipe.author === 'object' && recipe.author.username && recipe.author.id != null
@@ -374,6 +398,59 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               })}
             </View>
           )}
+
+          {isAuthenticated && ingredients.length > 0 ? (
+            <View style={styles.shoppingSection}>
+              <Pressable
+                onPress={() => setShowShoppingList((v) => !v)}
+                style={({ pressed }) => [styles.shoppingToggle, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  showShoppingList ? 'Hide shopping list' : `Show shopping list with ${shoppingItems.length} items`
+                }
+              >
+                <Text style={styles.shoppingToggleText}>
+                  {showShoppingList
+                    ? 'Hide shopping list'
+                    : `Shopping list (${shoppingItems.length})`}
+                </Text>
+              </Pressable>
+
+              {showShoppingList ? (
+                <View style={styles.shoppingPanel}>
+                  <View style={styles.shoppingPanelHeader}>
+                    <Text style={styles.shoppingPanelTitle}>Shopping List</Text>
+                    {shoppingItems.length > 0 ? (
+                      <Pressable
+                        onPress={() => void copyShoppingList()}
+                        style={({ pressed }) => [styles.shoppingCopyBtn, pressed && styles.pressed]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Copy shopping list to clipboard"
+                      >
+                        <Text style={styles.shoppingCopyBtnText}>Copy</Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                  {shoppingItems.length === 0 ? (
+                    <Text style={styles.shoppingEmpty}>All ingredients are checked off!</Text>
+                  ) : (
+                    <View style={styles.shoppingList}>
+                      {shoppingItems.map((item) => (
+                        <View key={item.key} style={styles.shoppingItem}>
+                          <Text style={styles.shoppingItemName} numberOfLines={2}>
+                            {item.name}
+                          </Text>
+                          <Text style={styles.shoppingItemQty}>
+                            {item.amount} {item.unit}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
 
           <RecipeCommentsSection recipeId={id} qaEnabled={recipe.qa_enabled !== false} />
 
@@ -595,6 +672,60 @@ const styles = StyleSheet.create({
   },
   subBtnText: { fontSize: 12, fontWeight: '800', color: tokens.colors.textOnDark },
   pressed: { opacity: 0.85 },
+  shoppingSection: { marginTop: 18 },
+  shoppingToggle: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  shoppingToggleText: { fontSize: 13, fontWeight: '800', color: tokens.colors.text, letterSpacing: 0.2 },
+  shoppingPanel: {
+    marginTop: 12,
+    padding: 14,
+    borderRadius: tokens.radius.lg,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+    gap: 10,
+  },
+  shoppingPanelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  shoppingPanelTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  shoppingCopyBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  shoppingCopyBtnText: { fontSize: 12, fontWeight: '800', color: tokens.colors.textOnDark, letterSpacing: 0.3 },
+  shoppingEmpty: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
+  shoppingList: { gap: 8 },
+  shoppingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingVertical: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: tokens.colors.surfaceDark,
+  },
+  shoppingItemName: { flex: 1, fontSize: 14, color: tokens.colors.text, fontWeight: '700' },
+  shoppingItemQty: { fontSize: 13, color: tokens.colors.text, fontWeight: '600' },
   storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
   storyList: { gap: 10 },
 });
