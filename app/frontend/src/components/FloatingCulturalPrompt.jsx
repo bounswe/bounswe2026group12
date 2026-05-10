@@ -28,11 +28,8 @@ export default function FloatingCulturalPrompt({ regions }) {
   const [storiesError, setStoriesError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Fix 2: ref for modal close button (focus on open)
   const modalCloseRef = useRef(null);
-  // Fix 4: ref for modal container (focus trap)
   const modalRef = useRef(null);
-  // Fix 7: prevent setState after unmount
   const isMountedRef = useRef(true);
 
   useEffect(() => {
@@ -52,14 +49,12 @@ export default function FloatingCulturalPrompt({ regions }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fix 2: move focus to close button when modal opens
   useEffect(() => {
     if (modalOpen && modalCloseRef.current) {
       modalCloseRef.current.focus();
     }
   }, [modalOpen]);
 
-  // Fix 3: close modal on Escape key
   useEffect(() => {
     if (!modalOpen) return;
     function handleKey(e) {
@@ -69,7 +64,6 @@ export default function FloatingCulturalPrompt({ regions }) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [modalOpen]);
 
-  // Fix 4: focus trap inside modal
   useEffect(() => {
     if (!modalOpen || !modalRef.current) return;
 
@@ -99,7 +93,6 @@ export default function FloatingCulturalPrompt({ regions }) {
     return () => modal.removeEventListener('keydown', handleTab);
   }, [modalOpen, stories, storiesLoading]);
 
-  // Fix 6 & 7: error handling + isMounted guard
   function handleRegionSelect(region) {
     setSelectedRegion(region);
     setModalOpen(true);
@@ -146,7 +139,6 @@ export default function FloatingCulturalPrompt({ regions }) {
 
       {modalOpen && (
         <div className="story-modal-backdrop" onClick={closeModal}>
-          {/* Fix 1: aria-labelledby; Fix 4: ref */}
           <div
             ref={modalRef}
             className="story-modal"
@@ -156,18 +148,14 @@ export default function FloatingCulturalPrompt({ regions }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="story-modal-header">
-              {/* Fix 1: id on h2 */}
               <h2 id="story-modal-title">{selectedRegion?.name}</h2>
-              {/* Fix 2: ref on close button */}
               <button ref={modalCloseRef} className="story-modal-close" onClick={closeModal} aria-label="Close">×</button>
             </div>
-            {/* Fix 5: response subtitle */}
             {selectedRegion && (
               <p className="story-modal-subtitle">{prompt.response(selectedRegion.name)}</p>
             )}
             <div className="story-modal-body">
               {storiesLoading && <p className="story-modal-status">Loading…</p>}
-              {/* Fix 6: error state */}
               {!storiesLoading && storiesError && (
                 <p className="story-modal-status">Hikayeler yüklenemedi. Lütfen tekrar deneyin.</p>
               )}
