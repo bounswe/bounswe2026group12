@@ -54,7 +54,7 @@ export default function OnboardingPage() {
   const progress = Math.round(((stepIndex + 1) / STEPS.length) * 100);
 
   const isComplete = useMemo(() => (
-    STEPS.every((step) => Array.isArray(values[step.key]))
+    STEPS.every((step) => Array.isArray(values[step.key]) && values[step.key].length > 0)
   ), [values]);
 
   function toggleValue(option) {
