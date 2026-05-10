@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from .models import HeritageGroup, HeritageGroupMembership
+from .models import HeritageGroup, HeritageGroupMembership, HeritageJourneyStep
 
 
 def _heritage_target_ct_q():
@@ -47,11 +47,21 @@ class HeritageGroupMembershipGenericInline(GenericTabularInline):
     fields = ('heritage_group',)
 
 
+class HeritageJourneyStepInline(admin.TabularInline):
+    """Inline shown on the HeritageGroup admin page so curators can author
+    the timeline directly from the group they're editing."""
+
+    model = HeritageJourneyStep
+    extra = 0
+    fields = ('order', 'location', 'era', 'story')
+    ordering = ('order',)
+
+
 @admin.register(HeritageGroup)
 class HeritageGroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'member_count', 'created_at')
     search_fields = ('name',)
-    inlines = [HeritageGroupMembershipInline]
+    inlines = [HeritageGroupMembershipInline, HeritageJourneyStepInline]
 
     def member_count(self, obj):
         return obj.memberships.count()
@@ -64,3 +74,11 @@ class HeritageGroupMembershipAdmin(admin.ModelAdmin):
     list_display = ('heritage_group', 'content_type', 'object_id', 'created_at')
     list_filter = ('content_type', 'heritage_group')
     search_fields = ('heritage_group__name',)
+
+
+@admin.register(HeritageJourneyStep)
+class HeritageJourneyStepAdmin(admin.ModelAdmin):
+    list_display = ('heritage_group', 'order', 'location', 'era')
+    list_filter = ('heritage_group',)
+    ordering = ('heritage_group', 'order')
+    search_fields = ('heritage_group__name', 'location', 'era')
