@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'apps.messaging',
     'apps.map_discovery',
     'apps.drafts',
+    'apps.heritage',
 ]
 
 # Custom user model
