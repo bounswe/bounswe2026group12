@@ -45,39 +45,39 @@ describe('HomePage', () => {
     expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
   });
 
-  it('populates region dropdown from API', async () => {
+  it('populates region chips from API', async () => {
     renderPage();
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Aegean' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Aegean' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Mediterranean' })).toBeInTheDocument();
     });
   });
 
-  it('renders ingredient and meal type filter inputs', () => {
+  it('renders meal type chip buttons', () => {
     renderPage();
-    expect(screen.getByLabelText(/ingredient/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/meal type/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Breakfast' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Soup' })).toBeInTheDocument();
   });
 
-  it('navigates to /search with all params on submit', async () => {
+  it('navigates to /search with region and meal_type on submit', async () => {
     renderPage();
-    await waitFor(() => screen.getByRole('option', { name: 'Aegean' }));
+    await waitFor(() => screen.getByRole('button', { name: 'Aegean' }));
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'baklava' } });
-    fireEvent.change(screen.getByLabelText(/region/i), { target: { value: 'Aegean' } });
-    fireEvent.change(screen.getByLabelText(/ingredient/i), { target: { value: 'yogurt' } });
-    fireEvent.change(screen.getByLabelText(/meal type/i), { target: { value: 'soup' } });
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'Aegean' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Soup' }));
+    fireEvent.click(screen.getByRole('button', { name: /^search$/i }));
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/search?q=baklava&region=Aegean&ingredient=yogurt&meal_type=soup'
+      '/search?q=baklava&region=Aegean&meal_type=Soup'
     );
   });
 
   it('navigates with empty params when no input is given', () => {
     renderPage();
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^search$/i }));
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/search?q=&region=&ingredient=&meal_type='
+      '/search?q=&region=&meal_type='
     );
   });
 
