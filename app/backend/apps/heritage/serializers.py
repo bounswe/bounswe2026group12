@@ -1,6 +1,18 @@
 from rest_framework import serializers
 
-from .models import HeritageGroup
+from .models import HeritageGroup, HeritageJourneyStep
+
+
+class HeritageJourneyStepSerializer(serializers.ModelSerializer):
+    """Read/write shape for an ordered journey step under a heritage group."""
+
+    class Meta:
+        model = HeritageJourneyStep
+        fields = [
+            'id', 'heritage_group', 'order', 'location', 'story', 'era',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['created_at', 'updated_at']
 
 
 class HeritageGroupListSerializer(serializers.ModelSerializer):
@@ -23,10 +35,15 @@ class HeritageGroupDetailSerializer(serializers.ModelSerializer):
     """Detail shape: full group + resolved members from Recipe and Story."""
 
     members = serializers.SerializerMethodField()
+    journey_steps = serializers.SerializerMethodField()
 
     class Meta:
         model = HeritageGroup
-        fields = ['id', 'name', 'description', 'members']
+        fields = ['id', 'name', 'description', 'members', 'journey_steps']
+
+    def get_journey_steps(self, obj):
+        steps = obj.journey_steps.all().order_by('order')
+        return HeritageJourneyStepSerializer(steps, many=True).data
 
     def get_members(self, obj):
         memberships = list(
