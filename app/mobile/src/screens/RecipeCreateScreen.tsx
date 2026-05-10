@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { RecipeIngredientRowsSection } from '../components/recipe/RecipeIngredientRowsSection';
@@ -275,15 +275,28 @@ export default function RecipeCreateScreen(_props: Props) {
               </Text>
             </Pressable>
             {localImage ? (
-              <Pressable
-                onPress={() => setLocalImage(null)}
-                style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed, { marginTop: 10 }]}
-                accessibilityRole="button"
-                accessibilityLabel="Remove recipe thumbnail image"
-              >
-                <Text style={styles.secondaryButtonText}>Remove image</Text>
-              </Pressable>
-            ) : null}
+              <>
+                <View style={styles.mediaWrap} accessibilityLabel="Recipe image preview">
+                  <Image
+                    source={{ uri: localImage.uri }}
+                    style={styles.mediaImage}
+                    resizeMode="cover"
+                  />
+                </View>
+                <Pressable
+                  onPress={() => setLocalImage(null)}
+                  style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed, { marginTop: 10 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove recipe thumbnail image"
+                >
+                  <Text style={styles.secondaryButtonText}>Remove image</Text>
+                </Pressable>
+              </>
+            ) : (
+              <View style={styles.mediaPlaceholder} accessibilityLabel="No image selected">
+                <Text style={styles.mediaPlaceholderText}>No image selected</Text>
+              </View>
+            )}
           </View>
 
           <RecipeVideoSection
