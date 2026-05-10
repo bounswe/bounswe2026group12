@@ -33,7 +33,7 @@ export function RecipeVideoSection({
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Video</Text>
+      <Text style={styles.sectionTitle}>{requireSelection ? 'Video' : 'Video (optional)'}</Text>
 
       {hasRemoteOnly ? (
         <Text style={styles.videoHint}>
