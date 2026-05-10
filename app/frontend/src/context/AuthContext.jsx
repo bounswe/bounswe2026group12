@@ -6,6 +6,7 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem('refresh_token'));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(() => !!localStorage.getItem('token'));
 
@@ -16,6 +17,14 @@ export function AuthProvider({ children }) {
       localStorage.removeItem('token');
     }
   }, [token]);
+
+  useEffect(() => {
+    if (refreshToken) {
+      localStorage.setItem('refresh_token', refreshToken);
+    } else {
+      localStorage.removeItem('refresh_token');
+    }
+  }, [refreshToken]);
 
   useEffect(() => {
     if (!token) {
@@ -32,9 +41,10 @@ export function AuthProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function login(userData, accessToken) {
+  function login(userData, accessToken, refreshTokenValue = null) {
     setUser(userData);
     setToken(accessToken);
+    setRefreshToken(refreshTokenValue);
     registerWebDeviceToken().catch(() => {});
   }
 
@@ -45,10 +55,11 @@ export function AuthProvider({ children }) {
   function logout() {
     setUser(null);
     setToken(null);
+    setRefreshToken(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
+    <AuthContext.Provider value={{ user, token, refreshToken, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
