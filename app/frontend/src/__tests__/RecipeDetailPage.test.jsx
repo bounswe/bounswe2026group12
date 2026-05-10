@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import RecipeDetailPage from '../pages/RecipeDetailPage';
@@ -141,5 +142,44 @@ describe('RecipeDetailPage', () => {
     renderPage('1', { id: 99, username: 'other' });
     await waitFor(() => screen.getByText('Baklava'));
     expect(screen.getByRole('button', { name: /messaging disabled by author/i })).toBeDisabled();
+  });
+
+  describe('delete flow', () => {
+    beforeEach(() => {
+      recipeService.deleteRecipe = jest.fn().mockResolvedValue({ status: 204 });
+    });
+
+    it('shows a Delete button only to the author', async () => {
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+    });
+
+    it('does not show a Delete button to non-authors', async () => {
+      renderPage('1', { id: 99, username: 'someone' });
+      await waitFor(() => screen.getByText('Baklava'));
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+    });
+
+    it('confirms, deletes, and navigates to /recipes on success', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(confirmSpy).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(recipeService.deleteRecipe).toHaveBeenCalledWith(1);
+      });
+      confirmSpy.mockRestore();
+    });
+
+    it('does nothing when the user cancels the confirm', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(false);
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(recipeService.deleteRecipe).not.toHaveBeenCalled();
+      confirmSpy.mockRestore();
+    });
   });
 });

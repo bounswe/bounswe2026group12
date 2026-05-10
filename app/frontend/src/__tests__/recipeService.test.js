@@ -3,6 +3,7 @@ import {
   fetchRecipe,
   createRecipe,
   updateRecipe,
+  deleteRecipe,
   fetchIngredients,
   fetchUnits,
   submitIngredient,
@@ -16,6 +17,7 @@ jest.mock('../services/api', () => ({
     post: jest.fn(),
     put: jest.fn(),
     patch: jest.fn(),
+    delete: jest.fn(),
   },
 }));
 
@@ -57,6 +59,19 @@ describe('updateRecipe', () => {
     const result = await updateRecipe(1, formData);
     expect(apiClient.patch).toHaveBeenCalledWith('/api/recipes/1/', formData);
     expect(result.id).toBe(1);
+  });
+});
+
+describe('deleteRecipe', () => {
+  it('calls DELETE /api/recipes/:id/', async () => {
+    apiClient.delete.mockResolvedValue({ status: 204 });
+    await deleteRecipe(42);
+    expect(apiClient.delete).toHaveBeenCalledWith('/api/recipes/42/');
+  });
+
+  it('propagates API errors to the caller', async () => {
+    apiClient.delete.mockRejectedValue(new Error('Forbidden'));
+    await expect(deleteRecipe(42)).rejects.toThrow('Forbidden');
   });
 });
 
