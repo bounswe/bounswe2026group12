@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { recipeFormStyles as form } from '../components/recipe/recipeFormStyles';
+import { RegionPicker } from '../components/pickers/RegionPicker';
 import { RecipeLinkPicker, type RecipeLink } from '../components/story/RecipeLinkPicker';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
@@ -38,6 +39,8 @@ export default function StoryEditScreen({ route, navigation }: Props) {
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
+  const [regionId, setRegionId] = useState<number | null>(null);
+  const [regionLabel, setRegionLabel] = useState<string | null>(null);
   const [published, setPublished] = useState(true);
   const [imageUri, setImageUri] = useState<string | null>(null);
 
@@ -59,6 +62,8 @@ export default function StoryEditScreen({ route, navigation }: Props) {
     }
     setPublished(story.is_published !== false);
     setImageUri(story.image ?? null);
+    setRegionId(story.region_id ?? null);
+    setRegionLabel(story.region ?? null);
   }, []);
 
   async function pickImage() {
@@ -131,6 +136,7 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           language,
           linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
           is_published: published,
+          region: regionId,
         });
         if (imageUri) {
           await updateStoryImageById(String(id), { uri: imageUri });
@@ -300,6 +306,22 @@ export default function StoryEditScreen({ route, navigation }: Props) {
             />
             <Text style={{ flex: 1, fontSize: 15, color: tokens.colors.textMuted, marginLeft: 12 }}>
               Published
+            </Text>
+          </View>
+
+          <View style={form.section}>
+            <Text style={form.sectionTitle}>Region (optional)</Text>
+            <RegionPicker
+              value={regionId}
+              fallbackLabel={regionLabel}
+              onChange={(next) => {
+                setRegionId(next ? next.id : null);
+                setRegionLabel(next ? next.name : null);
+              }}
+            />
+            <Text style={form.videoHint}>
+              Tag the story with a region so it shows up on the map. If left empty, the linked
+              recipe&apos;s region (if any) will be used as a fallback.
             </Text>
           </View>
 

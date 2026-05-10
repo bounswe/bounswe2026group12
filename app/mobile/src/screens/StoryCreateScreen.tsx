@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { recipeFormStyles as form } from '../components/recipe/recipeFormStyles';
+import { RegionPicker } from '../components/pickers/RegionPicker';
 import { RecipeLinkPicker, type RecipeLink } from '../components/story/RecipeLinkPicker';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -31,6 +32,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
+  const [regionId, setRegionId] = useState<number | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
@@ -77,6 +79,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
           language,
           is_published: true,
           linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
+          region: regionId,
         });
         if (imageUri) {
           await updateStoryImageById(String(created.id), { uri: imageUri });
@@ -178,6 +181,18 @@ export default function StoryCreateScreen({ navigation }: Props) {
                 <Text style={styles.thumbClearText}>Remove image</Text>
               </Pressable>
             ) : null}
+          </View>
+
+          <View style={form.section}>
+            <Text style={form.sectionTitle}>Region (optional)</Text>
+            <RegionPicker
+              value={regionId}
+              onChange={(next) => setRegionId(next ? next.id : null)}
+            />
+            <Text style={form.videoHint}>
+              Tag the story with a region so it shows up on the map. If left empty, the linked
+              recipe&apos;s region (if any) will be used as a fallback.
+            </Text>
           </View>
 
           <View style={form.section}>
