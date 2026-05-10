@@ -40,6 +40,9 @@ export default function StoryEditScreen({ route, navigation }: Props) {
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
   const [published, setPublished] = useState(true);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  /** Remote URL of the image when the story was loaded; used to detect whether
+   * the user picked a new local file or is still showing the server image. */
+  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -59,6 +62,7 @@ export default function StoryEditScreen({ route, navigation }: Props) {
     }
     setPublished(story.is_published !== false);
     setImageUri(story.image ?? null);
+    setInitialImageUrl(story.image ?? null);
   }, []);
 
   async function pickImage() {
@@ -132,7 +136,11 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
           is_published: published,
         });
-        if (imageUri) {
+        // Only upload when the user picked a NEW local file. The remote URL
+        // loaded from the server stays as `imageUri` until they pick something,
+        // and re-uploading that URL as if it were a local file used to corrupt
+        // the image / fail on Android.
+        if (imageUri && imageUri !== initialImageUrl) {
           await updateStoryImageById(String(id), { uri: imageUri });
         }
         showToast('Story updated!', 'success');

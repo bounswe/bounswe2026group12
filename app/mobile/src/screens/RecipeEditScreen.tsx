@@ -182,7 +182,6 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     const jsonBody = buildRecipePatchJsonBody({
       title,
       description,
-      region,
       qaEnabled,
       rows,
     });
@@ -322,12 +321,15 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           <Text style={styles.sectionTitle}>Region</Text>
           <TextInput
             value={region}
-            onChangeText={setRegion}
             placeholder="Region"
             placeholderTextColor="#94a3b8"
-            style={styles.input}
-            accessibilityLabel="Recipe region"
+            style={[styles.input, { opacity: 0.7 }]}
+            editable={false}
+            accessibilityLabel="Recipe region (read-only)"
           />
+          <Text style={styles.videoHint}>
+            Region cannot be changed from this screen yet. The original region is preserved.
+          </Text>
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
