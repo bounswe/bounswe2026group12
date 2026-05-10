@@ -13,6 +13,7 @@ export type StoryListItem = {
   title: string;
   body: string;
   image: string | null;
+  authorId: string | null;
   authorUsername: string | null;
   linkedRecipeId: string | null;
   rank_score?: number;
@@ -27,17 +28,25 @@ function pickListItem(raw: any): StoryListItem {
       : typeof linkedRaw === 'object' && 'id' in linkedRaw
         ? String(linkedRaw.id)
         : String(linkedRaw);
+  const authorRaw = raw?.author;
+  const authorId =
+    authorRaw == null
+      ? null
+      : typeof authorRaw === 'object' && 'id' in authorRaw
+        ? String((authorRaw as { id: unknown }).id)
+        : String(authorRaw);
   const authorUsername =
     typeof raw?.author_username === 'string'
       ? raw.author_username
-      : typeof raw?.author === 'object' && raw?.author?.username
-        ? String(raw.author.username)
+      : typeof authorRaw === 'object' && authorRaw?.username
+        ? String(authorRaw.username)
         : null;
   return {
     id: String(raw?.id ?? ''),
     title: typeof raw?.title === 'string' ? raw.title : '',
     body: typeof raw?.body === 'string' ? raw.body : '',
     image: typeof raw?.image === 'string' ? raw.image : null,
+    authorId,
     authorUsername,
     linkedRecipeId,
     rank_score: typeof raw?.rank_score === 'number' ? raw.rank_score : undefined,
