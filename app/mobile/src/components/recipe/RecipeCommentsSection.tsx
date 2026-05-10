@@ -455,7 +455,12 @@ const styles = StyleSheet.create({
   helpfulTextActive: { color: '#FAF7EF' },
   helpfulCount: { fontSize: 13, fontWeight: '700', color: tokens.colors.surfaceDark },
   actions: { flexDirection: 'row', gap: 16, marginTop: 4 },
-  actionText: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary },
+  actionText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    textDecorationLine: 'underline',
+  },
   destructive: { color: '#991b1b' },
   repliesWrap: { marginTop: 10, marginLeft: 16, gap: 10 },
 });
