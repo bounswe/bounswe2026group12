@@ -189,6 +189,46 @@ class IngredientSubstitution(models.Model):
     def __str__(self):
         return f"{self.from_ingredient} → {self.to_ingredient} ({self.match_type})"
 
+class IngredientCheckOff(models.Model):
+    """Server-persisted ingredient check-off per (user, recipe, ingredient) (#529).
+
+    Backs the cooking-mode "I have this" toggle on web (#437) and mobile (#372)
+    so checks survive reload and sync across devices, and so downstream features
+    (substitution suggestions #371, shopping list #373) can read a single source
+    of truth for what the user already has on hand.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='ingredient_checkoffs',
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        on_delete=models.CASCADE,
+        related_name='checkoffs',
+    )
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        related_name='checkoffs',
+    )
+    checked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe', 'ingredient'],
+                name='unique_checkoff_per_user_recipe_ingredient',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['user', 'recipe']),
+        ]
+
+    def __str__(self):
+        return f"{self.user} checked {self.ingredient} in {self.recipe}"
+
+
 class Comment(models.Model):
     """Comment or Question on a Recipe."""
     COMMENT_TYPES = (
