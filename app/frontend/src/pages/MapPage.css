@@ -72,6 +72,14 @@
   color: var(--color-text);
 }
 
+.map-panel-counts {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
 .map-panel-desc {
   font-size: 0.9375rem;
   color: var(--color-text-muted);
