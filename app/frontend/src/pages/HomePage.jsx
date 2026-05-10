@@ -4,17 +4,21 @@ import { AuthContext } from '../context/AuthContext';
 import { fetchRegions } from '../services/searchService';
 import { fetchDailyCulturalContent } from '../services/culturalContentService';
 import DailyCulturalSection from '../components/DailyCulturalSection';
+import FloatingCulturalPrompt from '../components/FloatingCulturalPrompt';
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import './HomePage.css';
+
+const MEAL_TYPES = ['Breakfast', 'Soup', 'Main Course', 'Dessert', 'Snack', 'Drink'];
+const STORY_TYPES = ['Traditional', 'Historical', 'Family', 'Festive', 'Personal'];
 
 export default function HomePage() {
   const auth = useContext(AuthContext) || {};
   const user = auth.user;
   const navigate = useNavigate();
   const [q, setQ] = useState('');
-  const [region, setRegion] = useState('');
-  const [ingredient, setIngredient] = useState('');
-  const [mealType, setMealType] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedMealType, setSelectedMealType] = useState('');
+  const [selectedStoryType, setSelectedStoryType] = useState('');
   const [regions, setRegions] = useState([]);
   const [dailyCards, setDailyCards] = useState([]);
   const searchInputRef = useRef(null);
@@ -59,7 +63,7 @@ export default function HomePage() {
   function handleSubmit(e) {
     e.preventDefault();
     navigate(
-      `/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(region)}&ingredient=${encodeURIComponent(ingredient)}&meal_type=${encodeURIComponent(mealType)}`
+      `/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(selectedRegion)}&meal_type=${encodeURIComponent(selectedMealType)}`
     );
   }
 
@@ -106,46 +110,62 @@ export default function HomePage() {
           <button type="submit" className="btn btn-primary home-search-btn">Search</button>
         </div>
 
-        <div className="home-filters">
-          <div className="form-group home-filter-group">
-            <label htmlFor="ingredient-input">Ingredient</label>
-            <input
-              id="ingredient-input"
-              type="text"
-              value={ingredient}
-              onChange={(e) => setIngredient(e.target.value)}
-              placeholder="e.g. yogurt"
-            />
-          </div>
-
-          <div className="form-group home-filter-group">
-            <label htmlFor="meal-type-input">Meal Type</label>
-            <input
-              id="meal-type-input"
-              type="text"
-              value={mealType}
-              onChange={(e) => setMealType(e.target.value)}
-              placeholder="e.g. soup"
-            />
-          </div>
-
-          <div className="form-group home-filter-group">
-            <label htmlFor="region-select">Region</label>
-            <select
-              id="region-select"
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-            >
-              <option value="">All regions</option>
+        <div className="home-chip-filters">
+          <div className="home-chip-group">
+            <span className="home-chip-label">Region</span>
+            <div className="home-chips">
               {regions.map((r) => (
-                <option key={r.id} value={r.name}>{r.name}</option>
+                <button
+                  key={r.id}
+                  type="button"
+                  className={`home-chip${selectedRegion === r.name ? ' active' : ''}`}
+                  onClick={() => setSelectedRegion(selectedRegion === r.name ? '' : r.name)}
+                >
+                  {r.name}
+                </button>
               ))}
-            </select>
+            </div>
+          </div>
+
+          <div className="home-chip-group">
+            <span className="home-chip-label">Meal Type</span>
+            <div className="home-chips">
+              {MEAL_TYPES.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  className={`home-chip${selectedMealType === m ? ' active' : ''}`}
+                  onClick={() => setSelectedMealType(selectedMealType === m ? '' : m)}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="home-chip-group">
+            <span className="home-chip-label">
+              Story Type <span className="chip-soon">coming soon</span>
+            </span>
+            <div className="home-chips">
+              {STORY_TYPES.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={`home-chip${selectedStoryType === s ? ' active' : ''}`}
+                  onClick={() => setSelectedStoryType(selectedStoryType === s ? '' : s)}
+                  disabled
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </form>
 
       <DailyCulturalSection items={dailyCards} personalized={isPersonalized} />
+      <FloatingCulturalPrompt regions={regions} />
     </main>
   );
 }

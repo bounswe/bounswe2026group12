@@ -22,7 +22,7 @@ describe('fetchDailyCulturalContent', () => {
     });
     const result = await fetchDailyCulturalContent();
     expect(result).toEqual([
-      { id: 1, title: 'Card', body: 'Body', imageUrl: '/img.jpg', tags: ['Aegean'] },
+      { id: 1, kind: null, title: 'Card', body: 'Body', region: null, imageUrl: '/img.jpg', tags: ['Aegean'] },
     ]);
   });
 });
