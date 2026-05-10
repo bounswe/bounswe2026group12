@@ -19,6 +19,8 @@ export const MOCK_STORIES = {
   },
 };
 
+export const MOCK_STORIES_LIST = Object.values(MOCK_STORIES);
+
 export function getMockStoryById(id) {
   return MOCK_STORIES[id] ?? null;
 }
