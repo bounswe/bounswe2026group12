@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
@@ -136,9 +137,18 @@ class Recipe(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
+    is_heritage = models.BooleanField(default=False)
+    heritage_notes = models.TextField(blank=True, default='')
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
+    # Reverse generic relation to HeritageGroupMembership (#499). Virtual
+    # field; no extra column on Recipe. Used for prefetch and serializer
+    # lookup of the recipe's heritage group.
+    heritage_memberships = GenericRelation(
+        'heritage.HeritageGroupMembership',
+        related_query_name='recipe',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -188,6 +198,46 @@ class IngredientSubstitution(models.Model):
 
     def __str__(self):
         return f"{self.from_ingredient} → {self.to_ingredient} ({self.match_type})"
+
+class IngredientCheckOff(models.Model):
+    """Server-persisted ingredient check-off per (user, recipe, ingredient) (#529).
+
+    Backs the cooking-mode "I have this" toggle on web (#437) and mobile (#372)
+    so checks survive reload and sync across devices, and so downstream features
+    (substitution suggestions #371, shopping list #373) can read a single source
+    of truth for what the user already has on hand.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='ingredient_checkoffs',
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        on_delete=models.CASCADE,
+        related_name='checkoffs',
+    )
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        related_name='checkoffs',
+    )
+    checked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe', 'ingredient'],
+                name='unique_checkoff_per_user_recipe_ingredient',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['user', 'recipe']),
+        ]
+
+    def __str__(self):
+        return f"{self.user} checked {self.ingredient} in {self.recipe}"
+
 
 class Comment(models.Model):
     """Comment or Question on a Recipe."""

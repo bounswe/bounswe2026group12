@@ -8,6 +8,8 @@ type Props = {
   image?: string | null;
   authorUsername?: string | null;
   recipeTitle?: string | null;
+  /** Optional footer node (e.g. RankReasonBadge) rendered inside the card body. */
+  footer?: React.ReactNode;
   onPress: () => void;
   onPressAuthor?: () => void;
   onPressRecipe?: () => void;
@@ -19,6 +21,7 @@ export function StoryFeatureCard({
   image,
   authorUsername,
   recipeTitle,
+  footer,
   onPress,
   onPressAuthor,
   onPressRecipe,
@@ -75,6 +78,7 @@ export function StoryFeatureCard({
             </Pressable>
           ) : null}
         </View>
+        {footer ? <View style={styles.footer}>{footer}</View> : null}
       </View>
     </Pressable>
   );
@@ -108,9 +112,9 @@ const styles = StyleSheet.create({
   excerpt: { fontSize: 14, color: tokens.colors.textMuted, lineHeight: 20 },
   metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 },
   pill: {
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.bg,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 10,
@@ -123,5 +127,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     maxWidth: '70%',
   },
-  recipePillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
+  recipePillText: { fontSize: 12, color: tokens.colors.textOnDark, fontWeight: '800' },
+  footer: { marginTop: 6 },
 });

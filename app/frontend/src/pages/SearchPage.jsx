@@ -6,6 +6,35 @@ import { fetchDietaryTags, fetchEventTags, fetchIngredients } from '../services/
 import SearchResultCard from '../components/SearchResultCard';
 import './SearchPage.css';
 
+function FilterAccordion({ title, activeCount, children }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (activeCount > 0) setOpen(true);
+  }, [activeCount]);
+
+  return (
+    <div className={`filter-accordion${open ? ' filter-accordion-open' : ''}`}>
+      <button
+        type="button"
+        className="filter-accordion-header"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
+        <span className="filter-accordion-title">
+          {title}
+          {activeCount > 0 && (
+            <span className="filter-accordion-badge">{activeCount}</span>
+          )}
+        </span>
+        <span className="filter-accordion-chevron" aria-hidden="true">▼</span>
+      </button>
+      <div className="filter-accordion-body">
+        <div className="filter-accordion-inner">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 function parseCsv(value) {
   if (!value) return [];
   return value.split(',').map((v) => v.trim()).filter(Boolean);
@@ -213,8 +242,7 @@ export default function SearchPage() {
         </div>
 
         <div className="rich-filter-panels">
-          <div className="rich-filter-group">
-            <h3>Dietary Tags</h3>
+          <FilterAccordion title="Dietary Tags" activeCount={localDietInclude.length + localDietExclude.length}>
             <div className="rich-chip-list">
               {dietaryTags.map((tag) => (
                 <div className="rich-chip-wrap" key={tag.id}>
@@ -235,10 +263,9 @@ export default function SearchPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </FilterAccordion>
 
-          <div className="rich-filter-group">
-            <h3>Event Tags</h3>
+          <FilterAccordion title="Event Tags" activeCount={localEventInclude.length + localEventExclude.length}>
             <div className="rich-chip-list">
               {eventTags.map((tag) => (
                 <div className="rich-chip-wrap" key={tag.id}>
@@ -259,10 +286,9 @@ export default function SearchPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </FilterAccordion>
 
-          <div className="rich-filter-group">
-            <h3>Ingredients</h3>
+          <FilterAccordion title="Ingredients" activeCount={localIngredientInclude.length + localIngredientExclude.length}>
             <div className="rich-chip-list">
               {ingredientTags.map((tag) => (
                 <div className="rich-chip-wrap" key={tag.id}>
@@ -283,7 +309,7 @@ export default function SearchPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </FilterAccordion>
         </div>
       </form>
 

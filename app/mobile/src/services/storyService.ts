@@ -13,6 +13,7 @@ export type StoryListItem = {
   title: string;
   body: string;
   image: string | null;
+  authorId: string | null;
   authorUsername: string | null;
   linkedRecipeId: string | null;
   rank_score?: number;
@@ -27,17 +28,25 @@ function pickListItem(raw: any): StoryListItem {
       : typeof linkedRaw === 'object' && 'id' in linkedRaw
         ? String(linkedRaw.id)
         : String(linkedRaw);
+  const authorRaw = raw?.author;
+  const authorId =
+    authorRaw == null
+      ? null
+      : typeof authorRaw === 'object' && 'id' in authorRaw
+        ? String((authorRaw as { id: unknown }).id)
+        : String(authorRaw);
   const authorUsername =
     typeof raw?.author_username === 'string'
       ? raw.author_username
-      : typeof raw?.author === 'object' && raw?.author?.username
-        ? String(raw.author.username)
+      : typeof authorRaw === 'object' && authorRaw?.username
+        ? String(authorRaw.username)
         : null;
   return {
     id: String(raw?.id ?? ''),
     title: typeof raw?.title === 'string' ? raw.title : '',
     body: typeof raw?.body === 'string' ? raw.body : '',
     image: typeof raw?.image === 'string' ? raw.image : null,
+    authorId,
     authorUsername,
     linkedRecipeId,
     rank_score: typeof raw?.rank_score === 'number' ? raw.rank_score : undefined,
@@ -112,12 +121,33 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
     };
   }
 
+  // Backend exposes `region` as the FK pk and the friendly label in
+  // `region_name`. Surface BOTH: the name for display (detail pill, cards) and
+  // the pk for the region picker on edit.
+  const reg = (data as { region?: unknown }).region;
+  const regionLabel =
+    typeof reg === 'string'
+      ? reg
+      : reg && typeof reg === 'object' && 'name' in reg && typeof (reg as { name: unknown }).name === 'string'
+        ? (reg as { name: string }).name
+        : typeof (data as { region_name?: unknown }).region_name === 'string'
+          ? (data as unknown as { region_name: string }).region_name
+          : undefined;
+  const regionId =
+    typeof reg === 'number'
+      ? reg
+      : reg && typeof reg === 'object' && 'id' in reg && typeof (reg as { id: unknown }).id === 'number'
+        ? (reg as { id: number }).id
+        : null;
+
   return {
     ...data,
     author,
     linked_recipe,
     image: typeof data.image === 'string' ? data.image : null,
     is_published: typeof data.is_published === 'boolean' ? data.is_published : undefined,
+    region: regionLabel,
+    region_id: regionId,
   };
 }
 
@@ -129,6 +159,7 @@ export async function updateStoryById(
     language: string;
     linked_recipe: number | null;
     is_published: boolean;
+    region?: number | null;
   },
 ): Promise<void> {
   await apiPatchJson(`/api/stories/${id}/`, body);

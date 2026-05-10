@@ -2,22 +2,35 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { fetchMapRegions } from '../services/mapService';
+import { fetchMapRegions, fetchMapRegionContent } from '../services/mapService';
 import './MapPage.css';
 
 export default function MapPage() {
   const [regions, setRegions] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [contentLoading, setContentLoading] = useState(false);
 
   useEffect(() => {
     fetchMapRegions()
       .then((data) => {
         setRegions(data);
-        if (data.length > 0) setSelected(data[0]);
+        if (data.length > 0) selectRegion(data[0]);
       })
       .finally(() => setLoading(false));
   }, []);
+
+  function selectRegion(region) {
+    setSelected(region);
+    setContentLoading(true);
+    fetchMapRegionContent(region.id)
+      .then(setContent)
+      .finally(() => setContentLoading(false));
+  }
+
+  const recipes = content.filter((c) => c.content_type === 'recipe');
+  const stories = content.filter((c) => c.content_type === 'story');
 
   return (
     <div className="map-page">
@@ -38,13 +51,13 @@ export default function MapPage() {
               scrollWheelZoom={false}
             >
               <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
               />
               {regions.map((region) => (
                 <CircleMarker
                   key={region.id}
-                  center={[region.lat, region.lng]}
+                  center={[region.latitude, region.longitude]}
                   radius={selected?.id === region.id ? 16 : 11}
                   pathOptions={{
                     color: selected?.id === region.id ? '#A3401A' : '#C4521E',
@@ -52,7 +65,7 @@ export default function MapPage() {
                     fillOpacity: selected?.id === region.id ? 0.9 : 0.7,
                     weight: 2,
                   }}
-                  eventHandlers={{ click: () => setSelected(region) }}
+                  eventHandlers={{ click: () => selectRegion(region) }}
                 >
                   <Tooltip direction="top" offset={[0, -8]} opacity={0.95}>
                     {region.name}
@@ -68,13 +81,18 @@ export default function MapPage() {
           {selected ? (
             <>
               <h2 className="map-panel-title">{selected.name}</h2>
-              <p className="map-panel-desc">{selected.description}</p>
+              <div className="map-panel-counts">
+                <span>{selected.content_count.recipes} recipes</span>
+                <span>{selected.content_count.stories} stories</span>
+              </div>
 
-              {selected.featured_recipes?.length > 0 && (
+              {contentLoading && <p className="map-panel-empty">Loading…</p>}
+
+              {!contentLoading && recipes.length > 0 && (
                 <section className="map-panel-section">
                   <h3>Recipes</h3>
                   <ul className="map-content-list">
-                    {selected.featured_recipes.map((r) => (
+                    {recipes.map((r) => (
                       <li key={r.id}>
                         <Link to={`/recipes/${r.id}`} className="map-content-item">
                           <span className="map-content-title">{r.title}</span>
@@ -86,11 +104,11 @@ export default function MapPage() {
                 </section>
               )}
 
-              {selected.featured_stories?.length > 0 && (
+              {!contentLoading && stories.length > 0 && (
                 <section className="map-panel-section">
                   <h3>Stories</h3>
                   <ul className="map-content-list">
-                    {selected.featured_stories.map((s) => (
+                    {stories.map((s) => (
                       <li key={s.id}>
                         <Link to={`/stories/${s.id}`} className="map-content-item">
                           <span className="map-content-title">{s.title}</span>
@@ -100,6 +118,10 @@ export default function MapPage() {
                     ))}
                   </ul>
                 </section>
+              )}
+
+              {!contentLoading && recipes.length === 0 && stories.length === 0 && (
+                <p className="map-panel-empty">No content yet for this region.</p>
               )}
 
               <Link
@@ -120,7 +142,7 @@ export default function MapPage() {
           <button
             key={region.id}
             className={`map-region-chip${selected?.id === region.id ? ' active' : ''}`}
-            onClick={() => setSelected(region)}
+            onClick={() => selectRegion(region)}
           >
             {region.name}
           </button>

@@ -40,3 +40,30 @@ class MiddlewareTests(TestCase):
         response = self.middleware.process_request(request)
         self.assertIsNone(response)
         self.assertEqual(request.user, self.user)
+
+    def test_middleware_authenticates_valid_jwt(self):
+        """A valid Bearer token in the header attaches the user (#530 gap)."""
+        from rest_framework_simplejwt.tokens import RefreshToken
+        access = str(RefreshToken.for_user(self.user).access_token)
+        request = self.factory.post(
+            '/api/some-endpoint/',
+            HTTP_AUTHORIZATION=f'Bearer {access}',
+        )
+        response = self.middleware.process_request(request)
+        self.assertIsNone(response)
+        self.assertEqual(request.user, self.user)
+
+    def test_middleware_handles_malformed_jwt_gracefully(self):
+        """A malformed token does not crash; the request continues unauthenticated.
+
+        The downstream 401 enforcement still fires because no user was attached,
+        but the middleware itself must not propagate the JWT decode error.
+        """
+        request = self.factory.post(
+            '/api/some-endpoint/',
+            HTTP_AUTHORIZATION='Bearer not.a.valid.jwt',
+        )
+        response = self.middleware.process_request(request)
+        # No authenticated user, so the write-method guard kicks in with 401
+        self.assertIsInstance(response, JsonResponse)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

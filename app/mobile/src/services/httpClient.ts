@@ -3,6 +3,36 @@ import { API_BASE_URL } from '../config/apiBase';
 
 const TOKEN_KEY = 'token';
 
+/**
+ * Read a JSON response safely. Returns `null` for 204 No Content and for any
+ * empty body — `res.json()` would otherwise throw `SyntaxError: Unexpected end
+ * of JSON input` on these inputs and crash the calling screen. Most mutation
+ * endpoints in this API do return JSON, so this only kicks in for the rare
+ * empty-body cases (delete-style responses, certain 200/204 toggles).
+ */
+async function parseJsonResponse<T>(res: Response): Promise<T> {
+  if (res.status === 204) return null as T;
+  const text = await res.text();
+  if (!text || !text.trim()) return null as T;
+  return JSON.parse(text) as T;
+}
+
+/**
+ * Convert the `next` URL from a DRF paginated response into a relative path
+ * the rest of the client can re-fetch. Bad/malformed links are tolerated by
+ * returning `null` (treated as last page) instead of throwing — `new URL()`
+ * is strict and used to take down the entire list fetch on a single bad link.
+ */
+export function nextPagePath(next: string | null | undefined): string | null {
+  if (!next) return null;
+  try {
+    const url = new URL(next);
+    return `${url.pathname}${url.search}`;
+  } catch {
+    return null;
+  }
+}
+
 async function readErrorMessage(res: Response): Promise<string> {
   const contentType = res.headers.get('content-type') ?? '';
   try {
@@ -48,7 +78,7 @@ export async function apiGetJson<T>(path: string): Promise<T> {
     const message = (await readErrorMessage(res)).trim();
     throw new Error(message || `GET ${path} failed (${res.status})`);
   }
-  return res.json() as Promise<T>;
+  return parseJsonResponse<T>(res);
 }
 
 /** POST JSON — mirrors axios `apiClient.post` usage on web. */
@@ -62,7 +92,7 @@ export async function apiPostJson<T>(path: string, body: object): Promise<T> {
     const message = (await readErrorMessage(res)).trim();
     throw new Error(message || `POST ${path} failed (${res.status})`);
   }
-  return res.json() as Promise<T>;
+  return parseJsonResponse<T>(res);
 }
 
 /** PATCH JSON — e.g. `PATCH /api/stories/:id/`. */
@@ -76,7 +106,7 @@ export async function apiPatchJson<T>(path: string, body: object): Promise<T> {
     const message = (await readErrorMessage(res)).trim();
     throw new Error(message || `PATCH ${path} failed (${res.status})`);
   }
-  return res.json() as Promise<T>;
+  return parseJsonResponse<T>(res);
 }
 
 /** DELETE — succeeds on 204 with no body. */

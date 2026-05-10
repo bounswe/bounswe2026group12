@@ -1,4 +1,4 @@
-import { apiDelete, apiGetJson, apiPostJson } from './httpClient';
+import { apiDelete, apiGetJson, apiPostJson, nextPagePath } from './httpClient';
 
 export type CommentType = 'COMMENT' | 'QUESTION';
 
@@ -29,9 +29,7 @@ export async function fetchCommentsForRecipe(recipeId: string | number): Promise
       break;
     }
     collected.push(...data.results);
-    if (!data.next) break;
-    const url: URL = new URL(data.next);
-    path = `${url.pathname}${url.search}`;
+    path = nextPagePath(data.next);
   }
   return collected;
 }

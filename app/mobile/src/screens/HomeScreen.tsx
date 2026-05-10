@@ -104,6 +104,9 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.mapSubtitle}>Tap a pin on the map to focus a region</Text>
           </View>
           <Text style={styles.mapArrow}>→</Text>
+        </Pressable>
+
+        <Pressable
           onPress={() => navigation.navigate('Explore')}
           style={({ pressed }) => [styles.exploreEntry, pressed && styles.exploreEntryPressed]}
           accessibilityRole="button"
@@ -152,31 +155,30 @@ export default function HomeScreen({ navigation }: Props) {
                       ? String(linkedRecipeRaw.title)
                       : null;
                 return (
-                  <View key={String(item.id)} style={styles.storyWrap}>
-                    <StoryFeatureCard
-                      title={item.title}
-                      body={item.body}
-                      image={item.image}
-                      authorUsername={authorUsername ?? null}
-                      recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
-                      onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
-                      onPressAuthor={
-                        authorId != null && authorUsername
-                          ? () =>
-                              navigation.navigate('UserProfile', {
-                                userId: authorId,
-                                username: authorUsername,
-                              })
-                          : undefined
-                      }
-                      onPressRecipe={
-                        linkedRecipeId
-                          ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
-                          : undefined
-                      }
-                    />
-                    <RankReasonBadge reason={item.rank_reason} style={styles.storyBadge} />
-                  </View>
+                  <StoryFeatureCard
+                    key={String(item.id)}
+                    title={item.title}
+                    body={item.body}
+                    image={item.image}
+                    authorUsername={authorUsername ?? null}
+                    recipeTitle={linkedRecipeId ? linkedRecipeTitle : null}
+                    footer={<RankReasonBadge reason={item.rank_reason} />}
+                    onPress={() => navigation.navigate('StoryDetail', { id: String(item.id) })}
+                    onPressAuthor={
+                      authorId != null && authorUsername
+                        ? () =>
+                            navigation.navigate('UserProfile', {
+                              userId: authorId,
+                              username: authorUsername,
+                            })
+                        : undefined
+                    }
+                    onPressRecipe={
+                      linkedRecipeId
+                        ? () => navigation.navigate('RecipeDetail', { id: linkedRecipeId })
+                        : undefined
+                    }
+                  />
                 );
               })}
             </View>
@@ -291,7 +293,6 @@ const styles = StyleSheet.create({
   },
   searchWrap: { marginBottom: 14 },
   mapEntry: {
-  exploreEntry: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -299,6 +300,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: tokens.radius.xl,
     backgroundColor: tokens.colors.bg,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    marginBottom: 14,
+    ...shadows.md,
+  },
+  exploreEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.xl,
     backgroundColor: tokens.colors.accentGreen,
     borderWidth: 2,
     borderColor: tokens.colors.surfaceDark,
@@ -315,7 +328,7 @@ const styles = StyleSheet.create({
   exploreArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.textOnDark },
   searchInput: {
     borderWidth: 2,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -328,7 +341,7 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 10 },
   sectionTitle: { fontSize: 22, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   sectionSubTitle: { fontSize: 15, fontWeight: '800', color: tokens.colors.text },
-  sectionHint: { fontSize: 13, color: tokens.colors.primaryTint, fontWeight: '800' },
+  sectionHint: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '800' },
   storyList: { gap: 14 },
   emptyHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
   hList: { gap: 12, paddingRight: 16 },
@@ -375,9 +388,9 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     marginTop: 6,
     marginBottom: 12,
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.bg,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 10,
@@ -388,16 +401,14 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     marginTop: 8,
     marginBottom: 12,
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.bg,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
   tagText: { fontSize: 12, fontWeight: '800', color: tokens.colors.text },
   link: { fontSize: 15, color: tokens.colors.text, fontWeight: '800' },
-  storyWrap: { gap: 6 },
-  storyBadge: { marginLeft: 4 },
   recipeBadge: { marginLeft: 12, marginBottom: 12 },
 });

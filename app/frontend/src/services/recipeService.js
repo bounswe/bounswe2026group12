@@ -70,7 +70,7 @@ export async function submitUnit(name) {
 export async function fetchRecipes() {
   if (USE_MOCK) return MOCK_RECIPES_LIST;
   const response = await apiClient.get('/api/recipes/');
-  return response.data;
+  return response.data.results ?? response.data;
 }
 
 export async function fetchDietaryTags() {

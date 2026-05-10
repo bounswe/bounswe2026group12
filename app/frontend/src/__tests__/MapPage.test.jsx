@@ -13,8 +13,15 @@ jest.mock('react-leaflet', () => ({
 
 beforeEach(() => {
   mapService.fetchMapRegions.mockResolvedValue([
-    { id: 1, name: 'Aegean', lat: 38.5, lng: 27.0, featured_recipes: [], featured_stories: [] },
+    {
+      id: 1,
+      name: 'Aegean',
+      latitude: 38.5,
+      longitude: 27.0,
+      content_count: { recipes: 0, stories: 0 },
+    },
   ]);
+  mapService.fetchMapRegionContent.mockResolvedValue([]);
 });
 
 describe('MapPage', () => {

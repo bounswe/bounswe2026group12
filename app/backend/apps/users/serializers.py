@@ -40,6 +40,37 @@ class UserProfileSerializer(serializers.ModelSerializer):
         ]
 
 
+class PublicUserSerializer(serializers.ModelSerializer):
+    """Public-facing user profile (#582).
+
+    Excludes sensitive fields (email, is_contactable, password) so the same
+    payload is safe to return to anonymous visitors. `recipe_count` and
+    `story_count` reflect published content only.
+    """
+    recipe_count = serializers.SerializerMethodField()
+    story_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'bio',
+            'region',
+            'cultural_interests',
+            'religious_preferences',
+            'event_interests',
+            'created_at',
+            'recipe_count',
+            'story_count',
+        ]
+
+    def get_recipe_count(self, obj):
+        return obj.recipes.filter(is_published=True).count()
+
+    def get_story_count(self, obj):
+        return obj.stories.filter(is_published=True).count()
+
+
 class StringTagListField(serializers.ListField):
     """List of string tags; rejects non-string items instead of coercing."""
 

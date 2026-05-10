@@ -86,6 +86,19 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
           <Text style={styles.title} accessibilityRole="header">
             {story.title}
           </Text>
+          {story.region ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Search', { region: story.region as string })
+              }
+              style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Browse ${story.region} content`}
+              hitSlop={6}
+            >
+              <Text style={styles.regionPillText}>{story.region}</Text>
+            </Pressable>
+          ) : null}
           {authorObj ? (
             <Pressable
               onPress={() =>
@@ -168,19 +181,30 @@ const styles = StyleSheet.create({
   thumb: { width: '100%', height: '100%' },
   title: { fontSize: 24, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 8 },
-  authorPill: {
+  regionPill: {
     alignSelf: 'flex-start',
     marginTop: 8,
-    backgroundColor: tokens.colors.primarySubtle,
-    borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
     borderRadius: tokens.radius.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
   },
-  authorPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
+  regionPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
+  authorPill: {
+    alignSelf: 'flex-start',
+    marginTop: 10,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    borderRadius: tokens.radius.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  authorPillText: { fontSize: 13, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.text },
-  linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
+  linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark },
   linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   noLinked: { fontSize: 15, color: tokens.colors.textMuted, lineHeight: 22 },
   editLink: {

@@ -169,17 +169,24 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
           ) : null}
           {replyTarget ? (
             <View style={styles.replyBanner}>
-              <Text style={styles.replyBannerText} numberOfLines={1}>
-                Replying to {replyTarget.author_username}
-              </Text>
-              <Pressable
-                onPress={() => setReplyTo(null)}
-                hitSlop={6}
-                accessibilityRole="button"
-                accessibilityLabel="Cancel reply"
-              >
-                <Text style={styles.replyBannerCancel}>Cancel</Text>
-              </Pressable>
+              <View style={styles.replyBannerHeader}>
+                <Text style={styles.replyBannerText} numberOfLines={1}>
+                  Replying to {replyTarget.author_username}
+                </Text>
+                <Pressable
+                  onPress={() => setReplyTo(null)}
+                  hitSlop={6}
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancel reply"
+                >
+                  <Text style={styles.replyBannerCancel}>Cancel</Text>
+                </Pressable>
+              </View>
+              {replyTarget.body ? (
+                <Text style={styles.replyBannerBody} numberOfLines={2}>
+                  {replyTarget.body}
+                </Text>
+              ) : null}
             </View>
           ) : null}
           <TextInput
@@ -219,7 +226,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
 
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator color={tokens.colors.primary} />
+          <ActivityIndicator color={tokens.colors.surfaceDark} />
         </View>
       ) : loadError ? (
         <View style={styles.errorBanner}>
@@ -348,7 +355,7 @@ function CommentNodeView({
 }
 
 const styles = StyleSheet.create({
-  section: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  section: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark, gap: 12 },
   heading: { fontSize: 18, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   qaHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
   composer: {
@@ -370,25 +377,36 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.surface,
   },
   typeBtn: { paddingVertical: 6, paddingHorizontal: 12 },
-  typeBtnActive: { backgroundColor: tokens.colors.primary },
-  typeText: { fontSize: 13, fontWeight: '700', color: tokens.colors.textMuted },
-  typeTextActive: { color: tokens.colors.surface },
+  typeBtnActive: { backgroundColor: tokens.colors.accentGreen },
+  typeText: { fontSize: 13, fontWeight: '700', color: tokens.colors.text },
+  typeTextActive: { color: tokens.colors.textOnDark },
   replyBanner: {
+    padding: 10,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.colors.bg,
+    borderLeftWidth: 4,
+    borderLeftColor: tokens.colors.surfaceDark,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: tokens.colors.surfaceDark,
+    borderRightColor: tokens.colors.surfaceDark,
+    borderBottomColor: tokens.colors.surfaceDark,
+    gap: 6,
+  },
+  replyBannerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 8,
-    borderRadius: tokens.radius.md,
-    backgroundColor: tokens.colors.primarySubtle,
-    borderWidth: 1,
-    borderColor: tokens.colors.primaryBorder,
+    gap: 8,
   },
-  replyBannerText: { flex: 1, fontSize: 13, fontWeight: '700', color: tokens.colors.primary },
-  replyBannerCancel: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary, marginLeft: 8 },
+  replyBannerText: { flex: 1, fontSize: 13, fontWeight: '800', color: tokens.colors.text },
+  replyBannerCancel: { fontSize: 13, fontWeight: '800', color: tokens.colors.text, marginLeft: 8, textDecorationLine: 'underline' },
+  replyBannerBody: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic', lineHeight: 18 },
   input: {
     minHeight: 70,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -399,17 +417,19 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     alignSelf: 'flex-end',
-    backgroundColor: tokens.colors.primary,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: tokens.radius.pill,
   },
   submitBtnDisabled: { opacity: 0.5 },
-  submitText: { color: tokens.colors.surface, fontWeight: '800', fontSize: 14 },
+  submitText: { color: tokens.colors.textOnDark, fontWeight: '800', fontSize: 14 },
   signInHint: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
   errorBanner: { gap: 6, paddingVertical: 8 },
   errorText: { color: '#991b1b', fontSize: 13, fontWeight: '700' },
-  retryText: { color: tokens.colors.primary, fontWeight: '800' },
+  retryText: { color: tokens.colors.text, fontWeight: '800', textDecorationLine: 'underline' },
   emptyText: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
   centered: { paddingVertical: 16, alignItems: 'center' },
   list: { gap: 12 },
@@ -453,7 +473,12 @@ const styles = StyleSheet.create({
   helpfulTextActive: { color: '#FAF7EF' },
   helpfulCount: { fontSize: 13, fontWeight: '700', color: tokens.colors.surfaceDark },
   actions: { flexDirection: 'row', gap: 16, marginTop: 4 },
-  actionText: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary },
+  actionText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    textDecorationLine: 'underline',
+  },
   destructive: { color: '#991b1b' },
   repliesWrap: { marginTop: 10, marginLeft: 16, gap: 10 },
 });

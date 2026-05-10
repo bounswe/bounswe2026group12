@@ -9,6 +9,10 @@ export type StoryDetail = {
   is_published?: boolean;
   /** Optional image URL/uri (mock uses remote url). */
   image?: string | null;
+  /** Friendly region name surfaced by `normalizeStoryDetail` (backend exposes `region_name`). */
+  region?: string;
+  /** Region FK pk surfaced for the region picker on edit. Null when the story has no direct region. */
+  region_id?: number | null;
   rank_score?: number;
   rank_reason?: string | null;
 };

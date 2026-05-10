@@ -8,9 +8,17 @@ type Props = {
   image?: string | null;
   authorUsername?: string | null;
   onPress: () => void;
+  onPressAuthor?: () => void;
 };
 
-export function LinkedStoryPreviewCard({ title, excerpt, image, authorUsername, onPress }: Props) {
+export function LinkedStoryPreviewCard({
+  title,
+  excerpt,
+  image,
+  authorUsername,
+  onPress,
+  onPressAuthor,
+}: Props) {
   return (
     <Pressable
       onPress={onPress}
@@ -37,9 +45,25 @@ export function LinkedStoryPreviewCard({ title, excerpt, image, authorUsername, 
           </Text>
         ) : null}
         {authorUsername ? (
-          <Text style={styles.author} numberOfLines={1}>
-            By {authorUsername}
-          </Text>
+          onPressAuthor ? (
+            <Pressable
+              onPress={onPressAuthor}
+              style={({ pressed }) => [styles.authorPill, pressed && styles.authorPillPressed]}
+              accessibilityRole="link"
+              accessibilityLabel={`Open profile of ${authorUsername}`}
+              hitSlop={6}
+            >
+              <Text style={styles.authorPillText} numberOfLines={1}>
+                By {authorUsername}
+              </Text>
+            </Pressable>
+          ) : (
+            <View style={styles.authorPill}>
+              <Text style={styles.authorPillText} numberOfLines={1}>
+                By {authorUsername}
+              </Text>
+            </View>
+          )
         ) : null}
       </View>
     </Pressable>
@@ -72,5 +96,16 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   excerpt: { fontSize: 13, color: tokens.colors.textMuted, lineHeight: 18 },
-  author: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
+  authorPill: {
+    alignSelf: 'flex-start',
+    marginTop: 2,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  authorPillPressed: { opacity: 0.85 },
+  authorPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
 });

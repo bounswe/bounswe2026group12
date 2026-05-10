@@ -45,6 +45,7 @@ describe('Navbar', () => {
     renderNavbar({ username: 'alice', id: 1 });
     expect(screen.getByText('@alice')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /notifications/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /@alice/i }));
     expect(screen.getByRole('link', { name: /new recipe/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /new story/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /log out/i })).toBeInTheDocument();
@@ -53,6 +54,7 @@ describe('Navbar', () => {
   it('calls logout when Log Out clicked', () => {
     const mockLogout = jest.fn();
     renderNavbar({ username: 'alice', id: 1 }, mockLogout);
+    fireEvent.click(screen.getByRole('button', { name: /@alice/i }));
     fireEvent.click(screen.getByRole('button', { name: /log out/i }));
     expect(mockLogout).toHaveBeenCalledTimes(1);
   });
@@ -67,9 +69,10 @@ describe('Navbar', () => {
     expect(screen.getByRole('link', { name: /^stories$/i })).toBeInTheDocument();
   });
 
-  it('renders @username as a link to /profile when logged in', () => {
+  it('exposes a Profile link to /profile inside the user dropdown', () => {
     renderNavbar({ id: 1, username: 'eren' });
-    const link = screen.getByRole('link', { name: '@eren' });
+    fireEvent.click(screen.getByRole('button', { name: /@eren/i }));
+    const link = screen.getByRole('link', { name: /^profile$/i });
     expect(link).toHaveAttribute('href', '/profile');
   });
 });

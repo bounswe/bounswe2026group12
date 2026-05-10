@@ -1,20 +1,24 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Clipboard from 'expo-clipboard';
 import { ResizeMode, Video } from 'expo-av';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubstitutesSheet';
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import type { RootStackParamList } from '../navigation/types';
+import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
+import { fetchConversion } from '../services/unitConversionService';
 import type { RecipeDetail } from '../types/recipe';
 import { isRecipeAuthor } from '../utils/recipeAuthor';
-import { convertIngredient } from '../utils/unitConversion';
+import { targetUnitFor, type ConvertedAmount } from '../utils/unitConversion';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeDetail'>;
@@ -29,6 +33,11 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [showConverted, setShowConverted] = useState(false);
   const [linkedStories, setLinkedStories] = useState<StoryListItem[]>([]);
   const [substituteTarget, setSubstituteTarget] = useState<{ id: number; name: string } | null>(null);
+  const [convertedByLine, setConvertedByLine] = useState<Record<string, ConvertedAmount>>({});
+  const [convertingLoading, setConvertingLoading] = useState(false);
+  const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
+  const [showShoppingList, setShowShoppingList] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +75,85 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
     };
   }, [id, reloadToken]);
 
+  useEffect(() => {
+    if (!showConverted || !recipe) return;
+    const ingredients = recipe.ingredients ?? [];
+    const targets = ingredients
+      .map((ri, idx) => {
+        const lineKey = ri.lineId != null ? `line-${ri.lineId}` : `idx-${idx}-${ri.ingredient.id}`;
+        const toUnit = targetUnitFor(ri.unit.name);
+        if (!toUnit) return null;
+        return { lineKey, amount: ri.amount, fromUnit: ri.unit.name, toUnit, ingredientId: ri.ingredient.id };
+      })
+      .filter((t): t is NonNullable<typeof t> => t !== null);
+
+    const missing = targets.filter((t) => convertedByLine[t.lineKey] === undefined);
+    if (missing.length === 0) return;
+
+    let cancelled = false;
+    setConvertingLoading(true);
+    Promise.allSettled(
+      missing.map((t) => fetchConversion(t.amount, t.fromUnit, t.toUnit, t.ingredientId)),
+    )
+      .then((results) => {
+        if (cancelled) return;
+        const next: Record<string, ConvertedAmount> = {};
+        results.forEach((r, i) => {
+          if (r.status === 'fulfilled') next[missing[i].lineKey] = r.value;
+        });
+        if (Object.keys(next).length > 0) {
+          setConvertedByLine((prev) => ({ ...prev, ...next }));
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setConvertingLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showConverted, recipe, convertedByLine]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCheckedIds(new Set());
+      return;
+    }
+    let cancelled = false;
+    fetchCheckedIngredients(id)
+      .then((ids) => {
+        if (!cancelled) setCheckedIds(new Set(ids));
+      })
+      .catch(() => {
+        if (!cancelled) setCheckedIds(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isAuthenticated, reloadToken]);
+
+  const onToggleChecked = async (ingredientId: number) => {
+    if (!isAuthenticated) return;
+    const next = !checkedIds.has(ingredientId);
+    setCheckedIds((prev) => {
+      const copy = new Set(prev);
+      if (next) copy.add(ingredientId);
+      else copy.delete(ingredientId);
+      return copy;
+    });
+    try {
+      const canonical = await toggleCheckedIngredient(id, ingredientId, next);
+      setCheckedIds(new Set(canonical));
+    } catch {
+      setCheckedIds((prev) => {
+        const copy = new Set(prev);
+        if (next) copy.delete(ingredientId);
+        else copy.add(ingredientId);
+        return copy;
+      });
+    }
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -91,6 +179,26 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 
   const ingredients = recipe.ingredients ?? [];
 
+  const shoppingItems = ingredients
+    .filter((ri) => !checkedIds.has(ri.ingredient.id))
+    .map((ri) => ({
+      key: `shop-${ri.lineId ?? ri.ingredient.id}`,
+      name: ri.ingredient.name,
+      amount: String(ri.amount),
+      unit: ri.unit.name,
+    }));
+
+  async function copyShoppingList() {
+    if (shoppingItems.length === 0) return;
+    const text = shoppingItems.map((i) => `${i.name} — ${i.amount} ${i.unit}`).join('\n');
+    try {
+      await Clipboard.setStringAsync(text);
+      showToast('Shopping list copied to clipboard', 'success');
+    } catch {
+      showToast('Could not copy to clipboard', 'error');
+    }
+  }
+
   const authorObj =
     recipe.author && typeof recipe.author === 'object' && recipe.author.username && recipe.author.id != null
       ? recipe.author
@@ -106,7 +214,19 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           <Text style={styles.title} accessibilityRole="header">
             {recipe.title}
           </Text>
-          {recipe.region ? <Text style={styles.meta}>{recipe.region}</Text> : null}
+          {recipe.region ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Search', { region: recipe.region as string })
+              }
+              style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
+              accessibilityRole="link"
+              accessibilityLabel={`Browse ${recipe.region} recipes`}
+              hitSlop={6}
+            >
+              <Text style={styles.regionPillText}>{recipe.region}</Text>
+            </Pressable>
+          ) : null}
           {authorObj ? (
             <Pressable
               onPress={() =>
@@ -192,7 +312,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                   accessibilityLabel="Show converted units"
                 >
                   <Text style={[styles.unitToggleText, showConverted && styles.unitToggleTextActive]}>
-                    Converted
+                    {convertingLoading ? 'Converting…' : 'Converted'}
                   </Text>
                 </Pressable>
               </View>
@@ -203,11 +323,12 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           ) : (
             <View style={styles.list}>
               {ingredients.map((ri, index) => {
-                const converted = showConverted
-                  ? convertIngredient(ri.amount, ri.unit.name)
-                  : null;
+                const lineKey =
+                  ri.lineId != null ? `line-${ri.lineId}` : `idx-${index}-${ri.ingredient.id}`;
+                const converted = showConverted ? convertedByLine[lineKey] : undefined;
                 const displayAmount = converted ? converted.amount : String(ri.amount);
                 const displayUnit = converted ? converted.unit : ri.unit.name;
+                const isChecked = checkedIds.has(ri.ingredient.id);
                 return (
                   <View
                     key={
@@ -217,9 +338,46 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                     }
                     style={styles.ingredientRow}
                   >
-                    <View style={styles.ingredientText}>
-                      <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
-                      <Text style={styles.ingredientAmount}>
+                    {isAuthenticated ? (
+                      <Pressable
+                        onPress={() => onToggleChecked(ri.ingredient.id)}
+                        style={({ pressed }) => [
+                          styles.checkbox,
+                          isChecked && styles.checkboxChecked,
+                          pressed && styles.pressed,
+                        ]}
+                        accessibilityRole="checkbox"
+                        accessibilityState={{ checked: isChecked }}
+                        accessibilityLabel={
+                          isChecked
+                            ? `Mark ${ri.ingredient.name} as not on hand`
+                            : `Mark ${ri.ingredient.name} as on hand`
+                        }
+                        hitSlop={8}
+                      >
+                        {isChecked ? <Text style={styles.checkboxMark}>✓</Text> : null}
+                      </Pressable>
+                    ) : null}
+                    <View
+                      style={[
+                        styles.ingredientText,
+                        isChecked && styles.ingredientTextChecked,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.ingredientName,
+                          isChecked && styles.ingredientNameChecked,
+                        ]}
+                      >
+                        {ri.ingredient.name}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.ingredientAmount,
+                          isChecked && styles.ingredientAmountChecked,
+                        ]}
+                      >
                         {' — '}
                         {displayAmount} {displayUnit}
                       </Text>
@@ -241,6 +399,59 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             </View>
           )}
 
+          {isAuthenticated && ingredients.length > 0 ? (
+            <View style={styles.shoppingSection}>
+              <Pressable
+                onPress={() => setShowShoppingList((v) => !v)}
+                style={({ pressed }) => [styles.shoppingToggle, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  showShoppingList ? 'Hide shopping list' : `Show shopping list with ${shoppingItems.length} items`
+                }
+              >
+                <Text style={styles.shoppingToggleText}>
+                  {showShoppingList
+                    ? 'Hide shopping list'
+                    : `Shopping list (${shoppingItems.length})`}
+                </Text>
+              </Pressable>
+
+              {showShoppingList ? (
+                <View style={styles.shoppingPanel}>
+                  <View style={styles.shoppingPanelHeader}>
+                    <Text style={styles.shoppingPanelTitle}>Shopping List</Text>
+                    {shoppingItems.length > 0 ? (
+                      <Pressable
+                        onPress={() => void copyShoppingList()}
+                        style={({ pressed }) => [styles.shoppingCopyBtn, pressed && styles.pressed]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Copy shopping list to clipboard"
+                      >
+                        <Text style={styles.shoppingCopyBtnText}>Copy</Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                  {shoppingItems.length === 0 ? (
+                    <Text style={styles.shoppingEmpty}>All ingredients are checked off!</Text>
+                  ) : (
+                    <View style={styles.shoppingList}>
+                      {shoppingItems.map((item) => (
+                        <View key={item.key} style={styles.shoppingItem}>
+                          <Text style={styles.shoppingItemName} numberOfLines={2}>
+                            {item.name}
+                          </Text>
+                          <Text style={styles.shoppingItemQty}>
+                            {item.amount} {item.unit}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
+
           <RecipeCommentsSection recipeId={id} qaEnabled={recipe.qa_enabled !== false} />
 
           <View style={styles.storiesSection}>
@@ -257,6 +468,15 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                     image={s.image}
                     authorUsername={s.authorUsername}
                     onPress={() => navigation.navigate('StoryDetail', { id: s.id })}
+                    onPressAuthor={
+                      s.authorId && s.authorUsername
+                        ? () =>
+                            navigation.navigate('UserProfile', {
+                              userId: s.authorId as string,
+                              username: s.authorUsername ?? undefined,
+                            })
+                        : undefined
+                    }
                   />
                 ))}
               </View>
@@ -299,26 +519,41 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   meta: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 6 },
+  regionPill: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  regionPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   author: { fontSize: 14, color: tokens.colors.textMuted, marginTop: 4 },
   authorPill: {
     alignSelf: 'flex-start',
-    marginTop: 8,
-    backgroundColor: tokens.colors.primarySubtle,
-    borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    marginTop: 10,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
   },
-  authorPillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
+  authorPillText: { fontSize: 13, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   qaMeta: { fontSize: 13, color: tokens.colors.textMuted, marginTop: 6 },
   editLink: {
     alignSelf: 'flex-start',
     marginTop: 12,
     paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
   },
-  editLinkText: { fontSize: 16, color: tokens.colors.text, fontWeight: '800' },
+  editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
   imageWrap: {
     marginTop: 14,
     width: '100%',
@@ -399,11 +634,34 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: tokens.colors.primaryTint,
+    borderBottomColor: tokens.colors.surfaceDark,
   },
   ingredientText: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline' },
+  ingredientTextChecked: { opacity: 0.5 },
   ingredientName: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
+  ingredientNameChecked: { textDecorationLine: 'line-through' },
   ingredientAmount: { fontSize: 16, color: tokens.colors.text },
+  ingredientAmountChecked: { textDecorationLine: 'line-through' },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    backgroundColor: tokens.colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: tokens.colors.accentGreen,
+  },
+  checkboxMark: {
+    color: tokens.colors.textOnDark,
+    fontSize: 14,
+    fontWeight: '900',
+    lineHeight: 16,
+  },
   subBtn: {
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -414,6 +672,60 @@ const styles = StyleSheet.create({
   },
   subBtnText: { fontSize: 12, fontWeight: '800', color: tokens.colors.textOnDark },
   pressed: { opacity: 0.85 },
-  storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  shoppingSection: { marginTop: 18 },
+  shoppingToggle: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  shoppingToggleText: { fontSize: 13, fontWeight: '800', color: tokens.colors.text, letterSpacing: 0.2 },
+  shoppingPanel: {
+    marginTop: 12,
+    padding: 14,
+    borderRadius: tokens.radius.lg,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+    gap: 10,
+  },
+  shoppingPanelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  shoppingPanelTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  shoppingCopyBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  shoppingCopyBtnText: { fontSize: 12, fontWeight: '800', color: tokens.colors.textOnDark, letterSpacing: 0.3 },
+  shoppingEmpty: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
+  shoppingList: { gap: 8 },
+  shoppingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingVertical: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: tokens.colors.surfaceDark,
+  },
+  shoppingItemName: { flex: 1, fontSize: 14, color: tokens.colors.text, fontWeight: '700' },
+  shoppingItemQty: { fontSize: 13, color: tokens.colors.text, fontWeight: '600' },
+  storiesSection: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark, gap: 12 },
   storyList: { gap: 10 },
 });

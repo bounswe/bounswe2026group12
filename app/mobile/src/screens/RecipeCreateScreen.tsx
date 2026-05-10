@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { RecipeIngredientRowsSection } from '../components/recipe/RecipeIngredientRowsSection';
@@ -19,7 +19,7 @@ import { tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
 
-export default function RecipeCreateScreen(_props: Props) {
+export default function RecipeCreateScreen({ navigation }: Props) {
   const { showToast } = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -40,19 +40,18 @@ export default function RecipeCreateScreen(_props: Props) {
   });
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const errors = useMemo(() => {
     const next: {
       title?: string;
       description?: string;
-      video?: string;
       rows?: Record<string, { amount?: string; ingredient?: string; unit?: string }>;
       rowsTop?: string;
     } = {};
 
     if (!title.trim()) next.title = 'Title is required.';
     if (!description.trim()) next.description = 'Description is required.';
-    if (!localVideo) next.video = 'Please select a video.';
 
     if (!rows.length) {
       next.rowsTop = 'Add at least one ingredient.';
@@ -71,12 +70,11 @@ export default function RecipeCreateScreen(_props: Props) {
     }
 
     return next;
-  }, [title, description, rows, localVideo]);
+  }, [title, description, rows]);
 
   const isValid =
     !errors.title &&
     !errors.description &&
-    !errors.video &&
     !errors.rowsTop &&
     (!errors.rows || Object.keys(errors.rows).length === 0);
 
@@ -142,8 +140,9 @@ export default function RecipeCreateScreen(_props: Props) {
 
   function submit() {
     setAttemptedSubmit(true);
-    if (!isValid) return;
+    if (!isValid || submitting) return;
 
+    setSubmitting(true);
     const payload = {
       description: description.trim(),
       qa_enabled: qaEnabled,
@@ -190,8 +189,11 @@ export default function RecipeCreateScreen(_props: Props) {
           await apiPatchFormData(`/api/recipes/${created.id}/`, fd);
         }
         showToast('Recipe published!', 'success');
+        navigation.navigate('RecipeDetail', { id: String(created.id) });
       } catch {
         showToast('Failed to publish recipe. Please try again.', 'error');
+      } finally {
+        setSubmitting(false);
       }
     })();
   }
@@ -207,8 +209,8 @@ export default function RecipeCreateScreen(_props: Props) {
             Recipe upload
           </Text>
           <Text style={styles.lead}>
-            Add a title and description, ingredients, and a video. Ingredient and unit pickers load
-            from the same API as the web app.
+            Add a title and description, and at least one ingredient. A photo or video is optional —
+            you can share text-only recipes too.
           </Text>
 
           <View style={styles.section}>
@@ -278,33 +280,50 @@ export default function RecipeCreateScreen(_props: Props) {
               </Text>
             </Pressable>
             {localImage ? (
-              <Pressable
-                onPress={() => setLocalImage(null)}
-                style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed, { marginTop: 10 }]}
-                accessibilityRole="button"
-                accessibilityLabel="Remove recipe thumbnail image"
-              >
-                <Text style={styles.secondaryButtonText}>Remove image</Text>
-              </Pressable>
-            ) : null}
+              <>
+                <View style={styles.mediaWrap} accessibilityLabel="Recipe image preview">
+                  <Image
+                    source={{ uri: localImage.uri }}
+                    style={styles.mediaImage}
+                    resizeMode="cover"
+                  />
+                </View>
+                <Pressable
+                  onPress={() => setLocalImage(null)}
+                  style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed, { marginTop: 10 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove recipe thumbnail image"
+                >
+                  <Text style={styles.secondaryButtonText}>Remove image</Text>
+                </Pressable>
+              </>
+            ) : (
+              <View style={styles.mediaPlaceholder} accessibilityLabel="No image selected">
+                <Text style={styles.mediaPlaceholderText}>No image selected</Text>
+              </View>
+            )}
           </View>
 
           <RecipeVideoSection
             onPickPress={() => void pickVideo()}
             localVideo={localVideo}
             onClearLocal={() => setLocalVideo(null)}
-            requireSelection
+            requireSelection={false}
             attemptedSubmit={attemptedSubmit}
-            errorMessage={errors.video}
           />
 
           <Pressable
             onPress={submit}
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+            disabled={submitting}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              pressed && styles.buttonPressed,
+              submitting && { opacity: 0.7 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Submit recipe"
           >
-            <Text style={styles.primaryButtonText}>Submit</Text>
+            <Text style={styles.primaryButtonText}>{submitting ? 'Publishing…' : 'Submit'}</Text>
           </Pressable>
 
           <View style={styles.summary}>
