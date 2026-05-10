@@ -299,6 +299,15 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                     image={s.image}
                     authorUsername={s.authorUsername}
                     onPress={() => navigation.navigate('StoryDetail', { id: s.id })}
+                    onPressAuthor={
+                      s.authorId && s.authorUsername
+                        ? () =>
+                            navigation.navigate('UserProfile', {
+                              userId: s.authorId as string,
+                              username: s.authorUsername ?? undefined,
+                            })
+                        : undefined
+                    }
                   />
                 ))}
               </View>
