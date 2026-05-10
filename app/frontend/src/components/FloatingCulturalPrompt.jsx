@@ -6,7 +6,7 @@ import './FloatingCulturalPrompt.css';
 const PROMPTS = [
   {
     question: 'Nerelisin?',
-    response: (name) => `Hadi ${name}'e ufak bir yolculuğa çıkalım 🏡`,
+    response: () => 'Hadi evine ufak bir yolculuğa çıkalım 🏡',
   },
   {
     question: 'Sıradaki seyahatin nereye?',
@@ -87,7 +87,7 @@ export default function FloatingCulturalPrompt({ regions }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="story-modal-header">
-              <h2>{selectedRegion && prompt.response(selectedRegion.name)}</h2>
+              <h2>{selectedRegion?.name}</h2>
               <button className="story-modal-close" onClick={closeModal} aria-label="Close">×</button>
             </div>
             <div className="story-modal-body">
@@ -103,8 +103,9 @@ export default function FloatingCulturalPrompt({ regions }) {
                   onClick={closeModal}
                 >
                   <h3>{story.title}</h3>
-                  <p className="story-modal-excerpt">{story.body?.slice(0, 120)}…</p>
+                  <p className="story-modal-excerpt">{story.body}</p>
                   <span className="story-modal-author">@{story.author_username}</span>
+                  <span className="story-modal-read-more">Read story →</span>
                 </Link>
               ))}
             </div>
