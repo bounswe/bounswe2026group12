@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
   },
-  hint: { fontSize: 13, color: tokens.colors.primaryTint, fontWeight: '800' },
+  hint: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '800' },
   list: { gap: 12, paddingRight: 16 },
   card: {
     width: 240,

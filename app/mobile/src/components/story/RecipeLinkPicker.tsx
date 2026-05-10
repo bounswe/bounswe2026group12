@@ -137,7 +137,7 @@ export function RecipeLinkPicker({ value, onChange, fetchRecipes, currentUserId 
                     }}
                     style={({ pressed }) => [
                       styles.row,
-                      pressed && { backgroundColor: tokens.colors.primarySubtle },
+                      pressed && { backgroundColor: tokens.colors.accentGreenTint },
                     ]}
                     accessibilityRole="button"
                     accessibilityLabel={`Link recipe ${item.title}`}

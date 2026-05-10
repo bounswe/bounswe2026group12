@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   authorPillText: { fontSize: 13, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   body: { fontSize: 16, marginTop: 16, lineHeight: 24, color: tokens.colors.text },
-  linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint },
+  linked: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark },
   linkedHeading: { fontSize: 18, fontWeight: '800', marginBottom: 10, color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   noLinked: { fontSize: 15, color: tokens.colors.textMuted, lineHeight: 22 },
   editLink: {

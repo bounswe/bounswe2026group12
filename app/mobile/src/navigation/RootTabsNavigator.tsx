@@ -21,7 +21,7 @@ export function RootTabsNavigator() {
       initialRouteName="Feed"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: tokens.colors.primary,
+        tabBarActiveTintColor: tokens.colors.surfaceDark,
         tabBarInactiveTintColor: tokens.colors.textMuted,
         tabBarStyle: {
           borderTopColor: tokens.colors.border,

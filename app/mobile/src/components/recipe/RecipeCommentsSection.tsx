@@ -226,7 +226,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
 
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator color={tokens.colors.primary} />
+          <ActivityIndicator color={tokens.colors.surfaceDark} />
         </View>
       ) : loadError ? (
         <View style={styles.errorBanner}>
@@ -355,7 +355,7 @@ function CommentNodeView({
 }
 
 const styles = StyleSheet.create({
-  section: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  section: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark, gap: 12 },
   heading: { fontSize: 18, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   qaHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
   composer: {
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 70,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   signInHint: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
   errorBanner: { gap: 6, paddingVertical: 8 },
   errorText: { color: '#991b1b', fontSize: 13, fontWeight: '700' },
-  retryText: { color: tokens.colors.primary, fontWeight: '800' },
+  retryText: { color: tokens.colors.text, fontWeight: '800', textDecorationLine: 'underline' },
   emptyText: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
   centered: { paddingVertical: 16, alignItems: 'center' },
   list: { gap: 12 },
