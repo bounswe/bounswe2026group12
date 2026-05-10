@@ -57,6 +57,7 @@ class StorySerializer(serializers.ModelSerializer):
 
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
+    heritage_group = serializers.SerializerMethodField()
 
     class Meta:
         model = Story
@@ -70,8 +71,19 @@ class StorySerializer(serializers.ModelSerializer):
             'language', 'region', 'region_name',
             'is_published', 'created_at', 'updated_at',
             'rank_score', 'rank_reason',
+            'heritage_group',
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
+
+    def get_heritage_group(self, obj):
+        # Most recent membership wins. GenericRelation prefetch keeps this
+        # cheap for list responses.
+        memberships = list(obj.heritage_memberships.all())
+        if not memberships:
+            return None
+        memberships.sort(key=lambda m: m.created_at, reverse=True)
+        group = memberships[0].heritage_group
+        return {'id': group.id, 'name': group.name}
 
     def get_rank_score(self, obj):
         return getattr(obj, 'rank_score', 0)

@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
@@ -52,6 +53,13 @@ class Story(models.Model):
     )
     language = models.CharField(max_length=10, blank=True, default='en')
     is_published = models.BooleanField(default=False)
+    # Reverse generic relation to HeritageGroupMembership (#499). Virtual
+    # field; no extra column on Story. Used for prefetch and serializer
+    # lookup of the story's heritage group.
+    heritage_memberships = GenericRelation(
+        'heritage.HeritageGroupMembership',
+        related_query_name='story',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
