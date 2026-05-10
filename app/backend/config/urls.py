@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/', include('apps.messaging.urls')),
     path('api/', include('apps.map_discovery.urls')),
     path('api/drafts/', include('apps.drafts.urls')),
+    path('api/', include('apps.passport.urls')),
 ]
 
 if settings.DEBUG:
