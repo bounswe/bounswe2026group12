@@ -136,6 +136,8 @@ class Recipe(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
+    is_heritage = models.BooleanField(default=False)
+    heritage_notes = models.TextField(blank=True, default='')
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
