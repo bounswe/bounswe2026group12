@@ -2,7 +2,7 @@ import * as storyService from '../services/storyService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
-  apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn() },
+  apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
 }));
 
 beforeEach(() => jest.clearAllMocks());
@@ -55,5 +55,11 @@ describe('storyService — new functions', () => {
     const result = await storyService.updateStory(2, payload);
     expect(apiClient.patch).toHaveBeenCalledWith('/api/stories/2/', payload);
     expect(result).toEqual({ id: 2, title: 'Updated' });
+  });
+
+  it('deleteStory DELETEs /api/stories/:id/', async () => {
+    apiClient.delete.mockResolvedValue({ status: 204 });
+    await storyService.deleteStory(7);
+    expect(apiClient.delete).toHaveBeenCalledWith('/api/stories/7/');
   });
 });

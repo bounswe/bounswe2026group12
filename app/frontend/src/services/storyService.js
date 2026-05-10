@@ -24,3 +24,8 @@ export async function updateStory(id, data) {
   const response = await apiClient.patch(`/api/stories/${id}/`, data);
   return response.data;
 }
+
+export async function deleteStory(id) {
+  if (USE_MOCK) return { status: 204 };
+  return apiClient.delete(`/api/stories/${id}/`);
+}
