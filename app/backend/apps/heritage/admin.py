@@ -1,7 +1,12 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from .models import HeritageGroup, HeritageGroupMembership, HeritageJourneyStep
+from .models import (
+    CulturalFact,
+    HeritageGroup,
+    HeritageGroupMembership,
+    HeritageJourneyStep,
+)
 
 
 def _heritage_target_ct_q():
@@ -82,3 +87,16 @@ class HeritageJourneyStepAdmin(admin.ModelAdmin):
     list_filter = ('heritage_group',)
     ordering = ('heritage_group', 'order')
     search_fields = ('heritage_group__name', 'location', 'era')
+
+
+@admin.register(CulturalFact)
+class CulturalFactAdmin(admin.ModelAdmin):
+    list_display = ('text_preview', 'heritage_group', 'region', 'created_at')
+    list_filter = ('heritage_group', 'region')
+    search_fields = ('text',)
+
+    def text_preview(self, obj):
+        text = obj.text or ''
+        return text[:80] + ('...' if len(text) > 80 else '')
+
+    text_preview.short_description = 'Text'
