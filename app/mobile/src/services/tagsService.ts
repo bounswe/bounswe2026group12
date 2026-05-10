@@ -1,4 +1,4 @@
-import { apiGetJson } from './httpClient';
+import { apiGetJson, nextPagePath } from './httpClient';
 
 export type Tag = { id: number; name: string; is_approved?: boolean };
 
@@ -14,9 +14,7 @@ async function fetchAll(path: string): Promise<Tag[]> {
       break;
     }
     collected.push(...data.results);
-    if (!data.next) break;
-    const u: URL = new URL(data.next);
-    cursor = `${u.pathname}${u.search}`;
+    cursor = nextPagePath(data.next);
   }
   // Server already filters list/retrieve by is_approved=True; the lookup
   // serializer doesn't expose the flag at all. No client-side filtering needed.
