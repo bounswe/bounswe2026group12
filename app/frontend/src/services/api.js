@@ -33,8 +33,11 @@ apiClient.interceptors.response.use(
     original._retry = true;
     try {
       if (!refreshInFlight) {
-        refreshInFlight = apiClient
-          .post('/api/auth/refresh/', { refresh: refreshToken })
+        // Use raw axios (not apiClient) so the refresh POST bypasses this
+        // interceptor — otherwise a 401 from the refresh endpoint would
+        // re-enter and self-await refreshInFlight, deadlocking forever.
+        refreshInFlight = axios
+          .post(`${BASE_URL}/api/auth/refresh/`, { refresh: refreshToken })
           .then((res) => {
             const { access, refresh } = res.data;
             localStorage.setItem('token', access);

@@ -13,6 +13,7 @@ jest.mock('axios', () => {
   };
   const mockAxios = {
     create: jest.fn(() => instance),
+    post: jest.fn(),
     interceptors: {
       request: { use: jest.fn() },
       response: { use: jest.fn() },
@@ -99,8 +100,8 @@ describe('apiClient 401 response interceptor', () => {
     localStorage.setItem('refresh_token', 'r1');
     const instance = axios.create.mock.results[0].value;
 
-    // Mock the refresh call (POST /api/auth/refresh/)
-    instance.post.mockResolvedValueOnce({ data: { access: 'new-access', refresh: 'new-refresh' } });
+    // Mock the refresh call (POST /api/auth/refresh/ via raw axios)
+    axios.post = jest.fn().mockResolvedValueOnce({ data: { access: 'new-access', refresh: 'new-refresh' } });
     // Mock the retry of the original failing request
     instance.request = jest.fn().mockResolvedValueOnce({ data: { ok: true } });
 
@@ -122,15 +123,16 @@ describe('apiClient 401 response interceptor', () => {
     const onRejected = responseInterceptor[1];
     localStorage.setItem('token', 'old');
     localStorage.setItem('refresh_token', 'bad');
-    const instance = axios.create.mock.results[0].value;
-    instance.post.mockRejectedValueOnce({ response: { status: 401 } });
+    axios.post = jest.fn().mockRejectedValueOnce({ response: { status: 401 } });
 
     const error = {
       config: { url: '/x', method: 'get', headers: {}, _retry: false },
       response: { status: 401 },
     };
 
-    await expect(onRejected(error)).rejects.toBeDefined();
+    await expect(onRejected(error)).rejects.toEqual(
+      expect.objectContaining({ response: { status: 401 } })
+    );
     expect(localStorage.getItem('token')).toBeNull();
     expect(localStorage.getItem('refresh_token')).toBeNull();
     expect(window.location.href).toBe('/login');
@@ -149,5 +151,25 @@ describe('apiClient 401 response interceptor', () => {
       response: { status: 401 },
     };
     await expect(onRejected(error)).rejects.toBe(error);
+  });
+
+  it('deduplicates concurrent 401s into a single refresh call', async () => {
+    const onRejected = responseInterceptor[1];
+    localStorage.setItem('refresh_token', 'r1');
+    const instance = axios.create.mock.results[0].value;
+
+    // After the critical fix, the refresh uses raw axios.post, not instance.post.
+    axios.post = jest.fn().mockResolvedValue({ data: { access: 'new-access', refresh: 'new-refresh' } });
+    instance.request = jest.fn().mockResolvedValue({ data: { ok: true } });
+
+    const err1 = { config: { url: '/a', method: 'get', headers: {}, _retry: false }, response: { status: 401 } };
+    const err2 = { config: { url: '/b', method: 'get', headers: {}, _retry: false }, response: { status: 401 } };
+
+    const [r1, r2] = await Promise.all([onRejected(err1), onRejected(err2)]);
+
+    expect(axios.post).toHaveBeenCalledTimes(1);
+    expect(instance.request).toHaveBeenCalledTimes(2);
+    expect(r1).toEqual({ data: { ok: true } });
+    expect(r2).toEqual({ data: { ok: true } });
   });
 });
