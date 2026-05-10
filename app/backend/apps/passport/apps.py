@@ -5,3 +5,6 @@ class PassportConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.passport'
     label = 'passport'
+
+    def ready(self):
+        import apps.passport.signals  # noqa: F401
