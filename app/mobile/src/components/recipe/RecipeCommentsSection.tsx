@@ -169,17 +169,24 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
           ) : null}
           {replyTarget ? (
             <View style={styles.replyBanner}>
-              <Text style={styles.replyBannerText} numberOfLines={1}>
-                Replying to {replyTarget.author_username}
-              </Text>
-              <Pressable
-                onPress={() => setReplyTo(null)}
-                hitSlop={6}
-                accessibilityRole="button"
-                accessibilityLabel="Cancel reply"
-              >
-                <Text style={styles.replyBannerCancel}>Cancel</Text>
-              </Pressable>
+              <View style={styles.replyBannerHeader}>
+                <Text style={styles.replyBannerText} numberOfLines={1}>
+                  Replying to {replyTarget.author_username}
+                </Text>
+                <Pressable
+                  onPress={() => setReplyTo(null)}
+                  hitSlop={6}
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancel reply"
+                >
+                  <Text style={styles.replyBannerCancel}>Cancel</Text>
+                </Pressable>
+              </View>
+              {replyTarget.body ? (
+                <Text style={styles.replyBannerBody} numberOfLines={2}>
+                  {replyTarget.body}
+                </Text>
+              ) : null}
             </View>
           ) : null}
           <TextInput
@@ -374,17 +381,28 @@ const styles = StyleSheet.create({
   typeText: { fontSize: 13, fontWeight: '700', color: tokens.colors.text },
   typeTextActive: { color: tokens.colors.textOnDark },
   replyBanner: {
+    padding: 10,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.colors.bg,
+    borderLeftWidth: 4,
+    borderLeftColor: tokens.colors.surfaceDark,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: tokens.colors.surfaceDark,
+    borderRightColor: tokens.colors.surfaceDark,
+    borderBottomColor: tokens.colors.surfaceDark,
+    gap: 6,
+  },
+  replyBannerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 8,
-    borderRadius: tokens.radius.md,
-    backgroundColor: tokens.colors.primarySubtle,
-    borderWidth: 1,
-    borderColor: tokens.colors.primaryBorder,
+    gap: 8,
   },
-  replyBannerText: { flex: 1, fontSize: 13, fontWeight: '700', color: tokens.colors.primary },
-  replyBannerCancel: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary, marginLeft: 8 },
+  replyBannerText: { flex: 1, fontSize: 13, fontWeight: '800', color: tokens.colors.text },
+  replyBannerCancel: { fontSize: 13, fontWeight: '800', color: tokens.colors.text, marginLeft: 8, textDecorationLine: 'underline' },
+  replyBannerBody: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic', lineHeight: 18 },
   input: {
     minHeight: 70,
     borderWidth: 1.5,
