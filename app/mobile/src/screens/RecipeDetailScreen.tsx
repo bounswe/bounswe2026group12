@@ -10,6 +10,7 @@ import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubst
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import type { RootStackParamList } from '../navigation/types';
+import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
 import { fetchConversion } from '../services/unitConversionService';
@@ -32,6 +33,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [substituteTarget, setSubstituteTarget] = useState<{ id: number; name: string } | null>(null);
   const [convertedByLine, setConvertedByLine] = useState<Record<string, ConvertedAmount>>({});
   const [convertingLoading, setConvertingLoading] = useState(false);
+  const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -107,6 +109,46 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
       cancelled = true;
     };
   }, [showConverted, recipe, convertedByLine]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCheckedIds(new Set());
+      return;
+    }
+    let cancelled = false;
+    fetchCheckedIngredients(id)
+      .then((ids) => {
+        if (!cancelled) setCheckedIds(new Set(ids));
+      })
+      .catch(() => {
+        if (!cancelled) setCheckedIds(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isAuthenticated, reloadToken]);
+
+  const onToggleChecked = async (ingredientId: number) => {
+    if (!isAuthenticated) return;
+    const next = !checkedIds.has(ingredientId);
+    setCheckedIds((prev) => {
+      const copy = new Set(prev);
+      if (next) copy.add(ingredientId);
+      else copy.delete(ingredientId);
+      return copy;
+    });
+    try {
+      const canonical = await toggleCheckedIngredient(id, ingredientId, next);
+      setCheckedIds(new Set(canonical));
+    } catch {
+      setCheckedIds((prev) => {
+        const copy = new Set(prev);
+        if (next) copy.delete(ingredientId);
+        else copy.add(ingredientId);
+        return copy;
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -262,6 +304,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                 const converted = showConverted ? convertedByLine[lineKey] : undefined;
                 const displayAmount = converted ? converted.amount : String(ri.amount);
                 const displayUnit = converted ? converted.unit : ri.unit.name;
+                const isChecked = checkedIds.has(ri.ingredient.id);
                 return (
                   <View
                     key={
@@ -271,9 +314,46 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                     }
                     style={styles.ingredientRow}
                   >
-                    <View style={styles.ingredientText}>
-                      <Text style={styles.ingredientName}>{ri.ingredient.name}</Text>
-                      <Text style={styles.ingredientAmount}>
+                    {isAuthenticated ? (
+                      <Pressable
+                        onPress={() => onToggleChecked(ri.ingredient.id)}
+                        style={({ pressed }) => [
+                          styles.checkbox,
+                          isChecked && styles.checkboxChecked,
+                          pressed && styles.pressed,
+                        ]}
+                        accessibilityRole="checkbox"
+                        accessibilityState={{ checked: isChecked }}
+                        accessibilityLabel={
+                          isChecked
+                            ? `Mark ${ri.ingredient.name} as not on hand`
+                            : `Mark ${ri.ingredient.name} as on hand`
+                        }
+                        hitSlop={8}
+                      >
+                        {isChecked ? <Text style={styles.checkboxMark}>✓</Text> : null}
+                      </Pressable>
+                    ) : null}
+                    <View
+                      style={[
+                        styles.ingredientText,
+                        isChecked && styles.ingredientTextChecked,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.ingredientName,
+                          isChecked && styles.ingredientNameChecked,
+                        ]}
+                      >
+                        {ri.ingredient.name}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.ingredientAmount,
+                          isChecked && styles.ingredientAmountChecked,
+                        ]}
+                      >
                         {' — '}
                         {displayAmount} {displayUnit}
                       </Text>
@@ -480,8 +560,31 @@ const styles = StyleSheet.create({
     borderBottomColor: tokens.colors.primaryTint,
   },
   ingredientText: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline' },
+  ingredientTextChecked: { opacity: 0.5 },
   ingredientName: { fontSize: 16, color: tokens.colors.text, fontWeight: '700' },
+  ingredientNameChecked: { textDecorationLine: 'line-through' },
   ingredientAmount: { fontSize: 16, color: tokens.colors.text },
+  ingredientAmountChecked: { textDecorationLine: 'line-through' },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    backgroundColor: tokens.colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: tokens.colors.accentGreen,
+  },
+  checkboxMark: {
+    color: tokens.colors.textOnDark,
+    fontSize: 14,
+    fontWeight: '900',
+    lineHeight: 16,
+  },
   subBtn: {
     paddingHorizontal: 10,
     paddingVertical: 5,
