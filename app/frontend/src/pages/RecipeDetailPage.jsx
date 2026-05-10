@@ -97,7 +97,7 @@ export default function RecipeDetailPage() {
       setDeleteError('Could not delete recipe.');
       setDeleting(false);
     }
-  }, [deleting, navigate, recipe?.id]);
+  }, [deleting, navigate, recipe]);
 
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
@@ -279,6 +279,7 @@ export default function RecipeDetailPage() {
                           key={s.id}
                           className="sub-option"
                           role="option"
+                          aria-selected={false}
                           onClick={() => applySub(ri.ingredient, s)}
                         >
                           <span className="sub-option-name">{s.name}</span>

@@ -37,7 +37,7 @@ export default function StoryDetailPage() {
       setDeleteError('Could not delete story.');
       setDeleting(false);
     }
-  }, [deleting, navigate, story?.id]);
+  }, [deleting, navigate, story]);
 
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;

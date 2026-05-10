@@ -15,10 +15,6 @@ function formatCsv(values) {
   return values.join(',');
 }
 
-function toggleInList(list, value) {
-  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
-}
-
 export default function SearchPage() {
   const auth = useContext(AuthContext) || {};
   const user = auth.user;
