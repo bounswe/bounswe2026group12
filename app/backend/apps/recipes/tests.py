@@ -317,3 +317,127 @@ class RecipePublishAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], self.recipe.id)
         self.assertEqual(response.data['public_id'], self.recipe.public_id)
+
+
+class RecipeHeritageFieldsAPITest(APITestCase):
+    """Tests for Recipe.is_heritage and Recipe.heritage_notes (#585).
+
+    These fields back the Cultural Passport stamp logic (#584, #587). The author
+    opts a recipe in as heritage and explains why; downstream stamping reads both.
+    """
+
+    def setUp(self):
+        self.author = User.objects.create_user(
+            email="heritage_author@example.com",
+            username="heritage_author",
+            password="StrongPass123!",
+        )
+        self.region, _ = Region.objects.get_or_create(name="Anatolian")
+        self.ingredient, _ = Ingredient.objects.get_or_create(
+            name="Bulgur", defaults={"is_approved": True}
+        )
+        self.unit, _ = Unit.objects.get_or_create(
+            name="cups", defaults={"is_approved": True}
+        )
+        self.list_url = reverse('recipe-list')
+        self.client.force_authenticate(user=self.author)
+
+    def _payload(self, **overrides):
+        data = {
+            "title": "Grandmother's Pilaf",
+            "description": "Bulgur pilaf passed down four generations.",
+            "region": self.region.id,
+            "ingredients_write": [
+                {"ingredient": self.ingredient.id, "amount": "2.00", "unit": self.unit.id}
+            ],
+        }
+        data.update(overrides)
+        return data
+
+    def test_create_with_heritage_fields_round_trips(self):
+        data = self._payload(
+            is_heritage=True,
+            heritage_notes="Cooked at every Eid since the 1940s in our family.",
+        )
+        response = self.client.post(self.list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response.data['is_heritage'])
+        self.assertEqual(
+            response.data['heritage_notes'],
+            "Cooked at every Eid since the 1940s in our family.",
+        )
+        recipe = Recipe.objects.get(pk=response.data['id'])
+        self.assertTrue(recipe.is_heritage)
+        self.assertEqual(
+            recipe.heritage_notes,
+            "Cooked at every Eid since the 1940s in our family.",
+        )
+
+    def test_create_defaults_when_fields_omitted(self):
+        response = self.client.post(self.list_url, self._payload(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response.data['is_heritage'])
+        self.assertEqual(response.data['heritage_notes'], "")
+
+    def test_patch_flips_is_heritage_and_edits_notes(self):
+        create_resp = self.client.post(self.list_url, self._payload(), format='json')
+        self.assertEqual(create_resp.status_code, status.HTTP_201_CREATED)
+        recipe_id = create_resp.data['id']
+        detail_url = reverse('recipe-detail', kwargs={'pk': recipe_id})
+        patch_resp = self.client.patch(
+            detail_url,
+            {"is_heritage": True, "heritage_notes": "Reclassified as heritage."},
+            format='json',
+        )
+        self.assertEqual(patch_resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(patch_resp.data['is_heritage'])
+        self.assertEqual(patch_resp.data['heritage_notes'], "Reclassified as heritage.")
+
+    def test_detail_get_surfaces_heritage_fields(self):
+        recipe = Recipe.objects.create(
+            title="Manti",
+            description="Tiny dumplings in yoghurt sauce.",
+            author=self.author,
+            is_heritage=True,
+            heritage_notes="Hand-folded every winter solstice.",
+        )
+        url = reverse('recipe-detail', kwargs={'pk': recipe.id})
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_heritage'])
+        self.assertEqual(
+            response.data['heritage_notes'],
+            "Hand-folded every winter solstice.",
+        )
+
+    def test_list_get_surfaces_heritage_fields(self):
+        Recipe.objects.create(
+            title="Lokum",
+            description="Turkish delight.",
+            author=self.author,
+            is_published=True,
+            is_heritage=True,
+            heritage_notes="Sold in our shop since 1923.",
+        )
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        match = next(r for r in results if r['title'] == "Lokum")
+        self.assertTrue(match['is_heritage'])
+        self.assertEqual(match['heritage_notes'], "Sold in our shop since 1923.")
+
+    def test_legacy_recipe_serializes_with_defaults(self):
+        recipe = Recipe.objects.create(
+            title="Plain Tea",
+            description="No heritage opt-in.",
+            author=self.author,
+            is_published=True,
+        )
+        url = reverse('recipe-detail', kwargs={'pk': recipe.id})
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['is_heritage'])
+        self.assertEqual(response.data['heritage_notes'], "")
