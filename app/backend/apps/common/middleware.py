@@ -19,10 +19,14 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
     where a view might accidentally omit permission_classes.
     """
     
+    # Paths that are public for unsafe methods (POST/PUT/PATCH/DELETE).
+    # The middleware otherwise blocks anonymous unsafe requests to /api/* before
+    # DRF gets a chance to resolve view-level permission_classes (#503).
     EXEMPT_POST_PATHS = [
         '/api/auth/register/',
         '/api/auth/login/',
         '/api/auth/refresh/',
+        '/api/convert/',
     ]
 
     def process_request(self, request):

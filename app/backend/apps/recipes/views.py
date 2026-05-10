@@ -373,8 +373,16 @@ class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
 
 
 class ConvertView(APIView):
-    """POST /api/convert/ — public unit conversion endpoint (#376)."""
+    """POST /api/convert/ public unit conversion endpoint (#376, #503).
 
+    Anonymous and authenticated users both hit the same code path. The view is
+    explicitly auth-free: an empty authentication_classes list tells DRF not to
+    even attempt JWT/session resolution, and AllowAny documents the intent at
+    the permission layer. The custom JWTAuthenticationMiddleware also exempts
+    this path from its blanket unsafe-method block (see apps.common.middleware).
+    """
+
+    authentication_classes = []
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
