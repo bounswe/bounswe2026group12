@@ -117,3 +117,13 @@ test('modal close button closes modal', async () => {
   fireEvent.click(screen.getByLabelText('Close'));
   expect(document.querySelector('.story-modal')).not.toBeInTheDocument();
 });
+
+test('prompt does not appear when sessionStorage flag is already set', () => {
+  sessionStorage.setItem('cultural_prompt_shown', '1');
+  wrap(<FloatingCulturalPrompt regions={REGIONS} />);
+  act(() => {
+    Object.defineProperty(window, 'scrollY', { value: 350, configurable: true });
+    fireEvent.scroll(window);
+  });
+  expect(document.querySelector('.floating-prompt')).not.toBeInTheDocument();
+});
