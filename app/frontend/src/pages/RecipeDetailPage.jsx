@@ -27,6 +27,8 @@ export default function RecipeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [useConverted, setUseConverted] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   // #372 — ingredient check-off
   const [checked, setChecked] = useState(new Set());
@@ -85,14 +87,17 @@ export default function RecipeDetailPage() {
   }, []);
 
   const handleDelete = useCallback(async () => {
+    if (deleting) return;
     if (!window.confirm('Delete this recipe? This cannot be undone.')) return;
+    setDeleting(true);
     try {
       await deleteRecipe(recipe.id);
       navigate('/recipes');
     } catch {
-      setError('Could not delete recipe.');
+      setDeleteError('Could not delete recipe.');
+      setDeleting(false);
     }
-  }, [navigate, recipe]);
+  }, [deleting, navigate, recipe?.id]);
 
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
@@ -141,9 +146,13 @@ export default function RecipeDetailPage() {
               type="button"
               className="btn btn-danger btn-sm"
               onClick={handleDelete}
+              disabled={deleting}
             >
-              Delete
+              {deleting ? 'Deleting…' : 'Delete'}
             </button>
+          )}
+          {isAuthor && deleteError && (
+            <p className="recipe-detail-error" role="alert">{deleteError}</p>
           )}
           {user && !isAuthor && recipe.author_username && (
             authorContactable ? (

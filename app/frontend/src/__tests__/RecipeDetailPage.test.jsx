@@ -181,5 +181,37 @@ describe('RecipeDetailPage', () => {
       expect(recipeService.deleteRecipe).not.toHaveBeenCalled();
       confirmSpy.mockRestore();
     });
+
+    it('disables the Delete button while a delete request is in flight', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      let resolveDelete;
+      recipeService.deleteRecipe = jest.fn(
+        () => new Promise((resolve) => { resolveDelete = resolve; })
+      );
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      const deleteBtn = screen.getByRole('button', { name: /delete/i });
+      await userEvent.click(deleteBtn);
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /deleting/i })).toBeDisabled();
+      });
+      resolveDelete({ status: 204 });
+      confirmSpy.mockRestore();
+    });
+
+    it('shows an inline error if delete fails and keeps the recipe rendered', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      recipeService.deleteRecipe = jest.fn().mockRejectedValue(new Error('boom'));
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(screen.getByRole('button', { name: /delete/i }));
+      await waitFor(() => {
+        expect(screen.getByText(/could not delete recipe/i)).toBeInTheDocument();
+      });
+      // Recipe content still visible — not replaced by error
+      expect(screen.getByText('Baklava')).toBeInTheDocument();
+      expect(screen.getByText('A sweet pastry.')).toBeInTheDocument();
+      confirmSpy.mockRestore();
+    });
   });
 });
