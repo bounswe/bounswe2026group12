@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
@@ -139,6 +140,13 @@ class Recipe(models.Model):
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
+    # Reverse generic relation to HeritageGroupMembership (#499). Virtual
+    # field; no extra column on Recipe. Used for prefetch and serializer
+    # lookup of the recipe's heritage group.
+    heritage_memberships = GenericRelation(
+        'heritage.HeritageGroupMembership',
+        related_query_name='recipe',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

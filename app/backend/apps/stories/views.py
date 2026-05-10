@@ -22,6 +22,7 @@ class StoryViewSet(viewsets.ModelViewSet):
         'dietary_tags',
         'event_tags',
         'religions',
+        'heritage_memberships__heritage_group',
     ).all()
     serializer_class = StorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
