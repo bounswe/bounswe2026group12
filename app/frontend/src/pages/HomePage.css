@@ -97,8 +97,6 @@
   flex-direction: column;
   gap: 0.85rem;
   text-align: left;
-  max-width: 680px;
-  margin: 0 auto;
 }
 
 .home-chip-group {
