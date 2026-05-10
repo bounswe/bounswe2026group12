@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction
-from rest_framework import status, permissions
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -9,6 +9,7 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
+    PublicUserSerializer,
     UserProfileSerializer,
     UserPreferencesUpdateSerializer,
 )
@@ -117,3 +118,16 @@ class MeView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(UserProfileSerializer(request.user).data)
+
+
+class PublicUserView(generics.RetrieveAPIView):
+    """Public profile lookup by username (#582).
+
+    Anonymous access allowed; returns 404 for unknown usernames. The response
+    shape is uniform across visitors and the profile owner; editable fields
+    remain on `users/me/`.
+    """
+    permission_classes = [permissions.AllowAny]
+    serializer_class = PublicUserSerializer
+    queryset = get_user_model().objects.all()
+    lookup_field = 'username'
