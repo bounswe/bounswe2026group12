@@ -40,7 +40,15 @@ class StoryViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         if self.action in ['list', 'retrieve']:
             if not self.request.user.is_authenticated:
-                return qs.filter(is_published=True)
+                qs = qs.filter(is_published=True)
+        if self.action == 'list':
+            story_type = self.request.query_params.get('story_type')
+            if story_type is not None:
+                valid_values = {choice for choice, _ in Story.StoryType.choices}
+                if story_type in valid_values:
+                    qs = qs.filter(story_type=story_type)
+                else:
+                    qs = qs.none()
         return qs
 
     def list(self, request, *args, **kwargs):
