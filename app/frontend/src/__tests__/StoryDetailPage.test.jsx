@@ -28,6 +28,7 @@ function renderPage(storyId = '1', authUser = null) {
         <Routes>
           <Route path="/stories/:id" element={<StoryDetailPage />} />
           <Route path="/stories/:id/edit" element={<div>Edit Page</div>} />
+          <Route path="/stories" element={<div>Story List Page</div>} />
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>
@@ -142,6 +143,26 @@ describe('StoryDetailPage', () => {
       await waitFor(() => {
         expect(storyService.deleteStory).toHaveBeenCalledWith(1);
       });
+      await waitFor(() => {
+        expect(screen.getByText(/story list page/i)).toBeInTheDocument();
+      });
+      confirmSpy.mockRestore();
+    });
+
+    it('disables the Delete button while a delete request is in flight', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      let resolveDelete;
+      storyService.deleteStory = jest.fn(
+        () => new Promise((resolve) => { resolveDelete = resolve; })
+      );
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByRole('heading', { level: 1 }));
+      const deleteBtn = screen.getByRole('button', { name: /^delete$/i });
+      await userEvent.click(deleteBtn);
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /deleting/i })).toBeDisabled();
+      });
+      resolveDelete({ status: 204 });
       confirmSpy.mockRestore();
     });
 
