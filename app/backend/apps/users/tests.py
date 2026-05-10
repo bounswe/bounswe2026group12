@@ -138,6 +138,29 @@ class LoginTest(APITestCase):
         lifetime_seconds = int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds())
         self.assertLessEqual(decoded['exp'] - now, lifetime_seconds + 5)
 
+    def test_access_token_lifetime_configuration(self):
+        from django.conf import settings
+        self.assertEqual(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(), 3600)
+
+    def test_refresh_token_lifetime_configuration(self):
+        from django.conf import settings
+        self.assertEqual(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(), 90 * 24 * 3600)
+
+    def test_refresh_token_payload_lifetime(self):
+        import time
+        import jwt
+        from django.conf import settings
+
+        data = {"email": "login@example.com", "password": "StrongPass123!"}
+        response = self.client.post('/api/auth/login/', data)
+        refresh = response.data['refresh']
+        decoded = jwt.decode(refresh, settings.SECRET_KEY, algorithms=['HS256'])
+
+        now = int(time.time())
+        lifetime_seconds = int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds())
+        self.assertLessEqual(decoded['exp'] - now, lifetime_seconds + 5)
+        self.assertGreaterEqual(decoded['exp'] - now, lifetime_seconds - 5)
+
     def test_login_wrong_password(self):
         data = {"email": "login@example.com", "password": "WrongPass999!"}
         response = self.client.post('/api/auth/login/', data)
