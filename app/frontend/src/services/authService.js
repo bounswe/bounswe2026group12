@@ -36,6 +36,12 @@ export async function updateMe(payload) {
   return response.data;
 }
 
+export async function refreshAccessToken(refreshToken) {
+  // Use raw axios (no apiClient) so we don't trigger our own response interceptor.
+  const response = await axios.post(`${API}/api/auth/refresh/`, { refresh: refreshToken });
+  return response.data; // { access, refresh }
+}
+
 export function getContactabilityValue(user) {
   if (!user) return true;
   if (typeof user.is_contactable === 'boolean') return user.is_contactable;

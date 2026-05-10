@@ -14,6 +14,55 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// 401 → refresh → retry. Parallel 401s queue on a single refresh promise.
+let refreshInFlight = null;
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const original = error.config;
+    const status = error.response?.status;
+    if (status !== 401 || !original || original._retry) {
+      return Promise.reject(error);
+    }
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      hardLogout();
+      return Promise.reject(error);
+    }
+    original._retry = true;
+    try {
+      if (!refreshInFlight) {
+        refreshInFlight = apiClient
+          .post('/api/auth/refresh/', { refresh: refreshToken })
+          .then((res) => {
+            const { access, refresh } = res.data;
+            localStorage.setItem('token', access);
+            if (refresh) localStorage.setItem('refresh_token', refresh);
+            return access;
+          })
+          .finally(() => { refreshInFlight = null; });
+      }
+      const newAccess = await refreshInFlight;
+      original.headers = original.headers || {};
+      original.headers.Authorization = `Bearer ${newAccess}`;
+      return apiClient.request(original);
+    } catch (refreshError) {
+      hardLogout();
+      return Promise.reject(refreshError);
+    }
+  },
+);
+
+function hardLogout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('refresh_token');
+  // Full reload guarantees React state resets and ProtectedRoute redirects cleanly.
+  if (typeof window !== 'undefined' && window.location) {
+    window.location.href = '/login';
+  }
+}
+
 export function extractApiError(err, fallback = 'Something went wrong. Please try again.') {
   const data = err?.response?.data;
   if (!data || typeof data !== 'object') return fallback;
