@@ -196,7 +196,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'public_id', 'title', 'description', 'image', 'video',
             'region', 'region_name', 'author', 'author_username', 'qa_enabled',
-            'is_published', 'created_at', 'updated_at',
+            'is_published', 'is_heritage', 'heritage_notes',
+            'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
