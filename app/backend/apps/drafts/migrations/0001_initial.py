@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
                 (
                     "target_type",
                     models.CharField(
+                        choices=[("story", "Story"), ("recipe", "Recipe")],
                         help_text="Type of entity (e.g., 'story', 'recipe')",
                         max_length=50,
                     ),

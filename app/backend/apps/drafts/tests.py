@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from apps.stories.models import Story
 from apps.recipes.models import Recipe
 from .models import Draft
+from .serializers import DRAFT_DATA_MAX_BYTES
 
 User = get_user_model()
 
@@ -73,6 +74,33 @@ class DraftAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Draft.objects.count(), 0)
 
+    def test_rejects_unknown_target_type(self):
+        response = self.client.post(
+            self.url,
+            {"target_type": "foo", "data": {"title": "Invalid"}},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Draft.objects.count(), 0)
+
+    def test_rejects_overlong_target_id(self):
+        response = self.client.post(
+            self.url,
+            {"target_type": "story", "target_id": "x" * 27, "data": {}},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Draft.objects.count(), 0)
+
+    def test_rejects_oversized_data(self):
+        response = self.client.post(
+            self.url,
+            {"target_type": "story", "data": {"body": "x" * DRAFT_DATA_MAX_BYTES}},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Draft.objects.count(), 0)
+
 
 class DraftSignalTest(TestCase):
     def setUp(self):
@@ -94,7 +122,27 @@ class DraftSignalTest(TestCase):
         story.save()
         self.assertEqual(Draft.objects.count(), 0)
 
+    def test_story_update_preserves_unrelated_new_draft(self):
+        story = Story.objects.create(title="S1", body="B1", author=self.user)
+        Draft.objects.create(user=self.user, target_type='story', target_id=None, data={'title': 'New Story'})
+
+        story.title = "Updated"
+        story.save()
+
+        self.assertEqual(Draft.objects.count(), 1)
+        self.assertEqual(Draft.objects.first().target_id, None)
+
     def test_recipe_cleanup(self):
         Draft.objects.create(user=self.user, target_type='recipe', target_id=None, data={})
         Recipe.objects.create(title="R1", description="D1", author=self.user)
         self.assertEqual(Draft.objects.count(), 0)
+
+    def test_recipe_update_preserves_unrelated_new_draft(self):
+        recipe = Recipe.objects.create(title="R1", description="D1", author=self.user)
+        Draft.objects.create(user=self.user, target_type='recipe', target_id=None, data={'title': 'New Recipe'})
+
+        recipe.title = "Updated"
+        recipe.save()
+
+        self.assertEqual(Draft.objects.count(), 1)
+        self.assertEqual(Draft.objects.first().target_id, None)

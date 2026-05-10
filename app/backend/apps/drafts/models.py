@@ -3,6 +3,13 @@ from django.conf import settings
 from django.db.models import Q
 
 class Draft(models.Model):
+    TARGET_STORY = 'story'
+    TARGET_RECIPE = 'recipe'
+    TARGET_TYPE_CHOICES = [
+        (TARGET_STORY, 'Story'),
+        (TARGET_RECIPE, 'Recipe'),
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -10,6 +17,7 @@ class Draft(models.Model):
     )
     target_type = models.CharField(
         max_length=50,
+        choices=TARGET_TYPE_CHOICES,
         help_text="Type of entity (e.g., 'story', 'recipe')"
     )
     target_id = models.CharField(

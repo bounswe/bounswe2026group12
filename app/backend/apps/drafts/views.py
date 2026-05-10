@@ -18,26 +18,15 @@ class DraftViewSet(viewsets.ModelViewSet):
         """
         Upsert a draft: update if exists, otherwise create.
         """
-        target_type = request.data.get('target_type')
-        target_id = request.data.get('target_id')
-        data = request.data.get('data')
-
-        if not target_type or data is None:
-            return Response(
-                {"detail": "target_type and data are required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Normalize target_id for the lookup
-        # Empty string or explicit null should be treated as None
-        if target_id == "" or target_id == "null":
-            target_id = None
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
 
         draft, created = Draft.objects.update_or_create(
             user=request.user,
-            target_type=target_type,
-            target_id=target_id,
-            defaults={'data': data}
+            target_type=validated_data['target_type'],
+            target_id=validated_data.get('target_id'),
+            defaults={'data': validated_data['data']}
         )
 
         serializer = self.get_serializer(draft)
