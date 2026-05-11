@@ -1,12 +1,18 @@
 from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution,
+    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext,
 )
+
+class RecipeCulturalContextInline(admin.StackedInline):
+    model = RecipeCulturalContext
+    extra = 0
+    can_delete = True
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'created_at', 'is_published')
+    inlines = [RecipeCulturalContextInline]
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):

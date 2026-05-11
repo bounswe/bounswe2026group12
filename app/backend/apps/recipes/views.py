@@ -96,7 +96,7 @@ def apply_recipe_filters(qs, params):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
-    queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
+    queryset = Recipe.objects.select_related('region', 'author', 'cultural_context').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
         'dietary_tags', 'event_tags', 'religions',
         'heritage_memberships__heritage_group',
