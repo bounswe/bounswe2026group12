@@ -63,3 +63,31 @@ describe('storyService — new functions', () => {
     expect(apiClient.delete).toHaveBeenCalledWith('/api/stories/7/');
   });
 });
+
+describe('publishStory / unpublishStory', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('publishStory POSTs to /api/stories/:id/publish/ and returns data', async () => {
+    apiClient.post.mockResolvedValue({ data: { id: 5, is_published: true } });
+    const result = await storyService.publishStory(5);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/stories/5/publish/');
+    expect(result).toEqual({ id: 5, is_published: true });
+  });
+
+  it('unpublishStory POSTs to /api/stories/:id/unpublish/ and returns data', async () => {
+    apiClient.post.mockResolvedValue({ data: { id: 5, is_published: false } });
+    const result = await storyService.unpublishStory(5);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/stories/5/unpublish/');
+    expect(result).toEqual({ id: 5, is_published: false });
+  });
+
+  it('publishStory propagates API errors', async () => {
+    apiClient.post.mockRejectedValue(new Error('boom'));
+    await expect(storyService.publishStory(5)).rejects.toThrow('boom');
+  });
+
+  it('unpublishStory propagates API errors', async () => {
+    apiClient.post.mockRejectedValue(new Error('boom'));
+    await expect(storyService.unpublishStory(5)).rejects.toThrow('boom');
+  });
+});

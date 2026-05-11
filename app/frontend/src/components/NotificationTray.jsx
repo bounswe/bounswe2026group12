@@ -26,7 +26,7 @@ function getNotificationText(notification) {
 }
 
 export default function NotificationTray() {
-  const { notifications, unreadCount, loading, error, markRead } = useContext(NotificationContext);
+  const { notifications, unreadCount, loading, error, markRead, markAllRead } = useContext(NotificationContext);
   const [open, setOpen] = useState(false);
   const trayRef = useRef(null);
 
@@ -60,6 +60,15 @@ export default function NotificationTray() {
         <section className="notification-panel" aria-label="Notification list">
           <header className="notification-header">
             <h2>Notifications</h2>
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                className="notification-mark-all"
+                onClick={() => markAllRead()}
+              >
+                Mark all read
+              </button>
+            )}
           </header>
 
           {loading && <p className="notification-status">Loading…</p>}

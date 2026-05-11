@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchMapRegionContent } from '../services/mapService';
+import { fetchRegionStories } from '../services/culturalContentService';
 import './FloatingCulturalPrompt.css';
 
 const PROMPTS = [
@@ -98,10 +98,10 @@ export default function FloatingCulturalPrompt({ regions }) {
     setModalOpen(true);
     setStoriesLoading(true);
     setStoriesError(false);
-    fetchMapRegionContent(region.id)
+    fetchRegionStories(region.id)
       .then((items) => {
         if (isMountedRef.current) {
-          setStories(items.filter((i) => i.content_type === 'story'));
+          setStories(items);
         }
       })
       .catch(() => { if (isMountedRef.current) setStoriesError(true); })

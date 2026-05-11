@@ -136,8 +136,7 @@ export default function RecipeCreatePage() {
     return Object.keys(e).length === 0;
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function submit(publish) {
     if (!validate()) {
       document.getElementById('error-summary')?.focus();
       return;
@@ -149,7 +148,7 @@ export default function RecipeCreatePage() {
       description,
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
-      is_published: true,
+      is_published: publish,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -167,10 +166,13 @@ export default function RecipeCreatePage() {
       }
       clearDraft();
       isDirty.current = false;
-      showToast('Recipe published!', 'success');
+      showToast(publish ? 'Recipe published!' : 'Draft saved!', 'success');
       setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
     } catch {
-      showToast('Failed to publish recipe. Please try again.', 'error');
+      showToast(
+        publish ? 'Failed to publish recipe. Please try again.' : 'Failed to save draft. Please try again.',
+        'error'
+      );
     }
   }
 
@@ -208,7 +210,7 @@ export default function RecipeCreatePage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={(e) => { e.preventDefault(); submit(true); }} noValidate>
 
         {/* ── Step 1: Basic info ── */}
         <section className="form-step">
@@ -365,11 +367,22 @@ export default function RecipeCreatePage() {
         </section>
 
         <div className="recipe-form-actions">
-          <button type="submit" className="btn btn-primary publish-btn">
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => submit(false)}
+          >
+            Save as draft
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary publish-btn"
+            onClick={() => submit(true)}
+          >
             Publish Recipe
           </button>
           <p className="publish-note">
-            Your recipe will be visible to everyone after publishing.
+            Drafts stay private to you. Published recipes are visible to everyone.
           </p>
         </div>
       </form>

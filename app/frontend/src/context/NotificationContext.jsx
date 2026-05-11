@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './AuthContext';
-import { fetchNotifications, markNotificationAsRead } from '../services/notificationService';
+import { fetchNotifications, markAllAsRead, markNotificationAsRead } from '../services/notificationService';
 
 export const NotificationContext = createContext({
   notifications: [],
@@ -9,6 +9,7 @@ export const NotificationContext = createContext({
   error: '',
   refreshNotifications: async () => {},
   markRead: async () => {},
+  markAllRead: async () => {},
 });
 
 export function NotificationProvider({ children }) {
@@ -53,6 +54,15 @@ export function NotificationProvider({ children }) {
     }
   }, [notifications]);
 
+  const markAllRead = useCallback(async () => {
+    setNotifications((prev) => prev.map((n) => (n.isRead ? n : { ...n, isRead: true })));
+    try {
+      await markAllAsRead();
+    } catch {
+      // swallow — UI will be re-fetched on next mount
+    }
+  }, []);
+
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.isRead).length,
     [notifications]
@@ -66,8 +76,9 @@ export function NotificationProvider({ children }) {
       error,
       refreshNotifications,
       markRead,
+      markAllRead,
     }),
-    [notifications, unreadCount, loading, error, refreshNotifications, markRead]
+    [notifications, unreadCount, loading, error, refreshNotifications, markRead, markAllRead]
   );
 
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;

@@ -3,18 +3,17 @@ import { getMockSubstitutes } from '../mocks/substitutions';
 
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === 'true';
 
+const GROUPS = ['ingredient', 'flavor', 'texture', 'chemical'];
+
 export async function fetchSubstitutes(ingredientId, ingredientName) {
   if (USE_MOCK) return getMockSubstitutes(ingredientName);
   const response = await apiClient.get(`/api/ingredients/${ingredientId}/substitutes/`);
-  return response.data;
-}
-
-export async function checkIngredient(recipeId, ingredientId) {
-  if (USE_MOCK) return;
-  await apiClient.post(`/api/recipes/${recipeId}/check-ingredient/`, { ingredient: ingredientId });
-}
-
-export async function uncheckIngredient(recipeId, ingredientId) {
-  if (USE_MOCK) return;
-  await apiClient.delete(`/api/recipes/${recipeId}/check-ingredient/${ingredientId}/`);
+  const grouped = response.data;
+  if (Array.isArray(grouped)) return grouped; // tolerate legacy array shape
+  return GROUPS.flatMap((group) =>
+    (Array.isArray(grouped?.[group]) ? grouped[group] : []).map((item) => ({
+      ...item,
+      match_type: group,
+    })),
+  );
 }
