@@ -6,8 +6,8 @@
   z-index: 900;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: fit-content;
+  align-items: stretch;
+  width: 300px;
 }
 
 /* ── Tab bar (always visible) ────────────────────────────────── */
@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  width: fit-content;
+  width: 100%;
   height: 44px;
   padding: 0 1rem;
   background: var(--color-surface-dark, #3d1500);
@@ -40,6 +40,7 @@
 .chat-tray-label {
   font-size: 0.88rem;
   font-weight: 600;
+  flex: 1;
   text-align: left;
 }
 
@@ -75,7 +76,7 @@
 
 /* ── Panel ───────────────────────────────────────────────────── */
 .chat-tray-panel {
-  width: 300px;
+  width: 100%;
   background: var(--color-surface, #FAF7EF);
   border: 1px solid var(--color-border);
   border-bottom: none;
