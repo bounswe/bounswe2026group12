@@ -1,0 +1,474 @@
+{
+  "Aegean": {
+    "latitude": 38.4192,
+    "longitude": 27.1287,
+    "bbox_north": 39.5,
+    "bbox_south": 37.0,
+    "bbox_east": 28.5,
+    "bbox_west": 26.0
+  },
+  "Anatolian": {
+    "latitude": 39.0,
+    "longitude": 35.5,
+    "bbox_north": 42.5,
+    "bbox_south": 35.5,
+    "bbox_east": 39.0,
+    "bbox_west": 32.0
+  },
+  "Black Sea": {
+    "latitude": 41.5,
+    "longitude": 35.0,
+    "bbox_north": 44.0,
+    "bbox_south": 39.0,
+    "bbox_east": 37.5,
+    "bbox_west": 32.5
+  },
+  "Marmara": {
+    "latitude": 40.8,
+    "longitude": 28.5,
+    "bbox_north": 42.3,
+    "bbox_south": 39.3,
+    "bbox_east": 30.0,
+    "bbox_west": 27.0
+  },
+  "Mediterranean": {
+    "latitude": 35.0,
+    "longitude": 18.0,
+    "bbox_north": 41.0,
+    "bbox_south": 29.0,
+    "bbox_east": 24.0,
+    "bbox_west": 12.0
+  },
+  "Southeastern Anatolia": {
+    "latitude": 37.1,
+    "longitude": 38.8,
+    "bbox_north": 39.1,
+    "bbox_south": 35.1,
+    "bbox_east": 40.8,
+    "bbox_west": 36.8
+  },
+  "Levantine": {
+    "latitude": 33.8547,
+    "longitude": 35.8623,
+    "bbox_north": 36.8547,
+    "bbox_south": 30.8547,
+    "bbox_east": 38.8623,
+    "bbox_west": 32.8623
+  },
+  "Persian": {
+    "latitude": 32.4279,
+    "longitude": 53.688,
+    "bbox_north": 38.4279,
+    "bbox_south": 26.4279,
+    "bbox_east": 59.688,
+    "bbox_west": 47.688
+  },
+  "Arabian": {
+    "latitude": 24.0,
+    "longitude": 45.0,
+    "bbox_north": 32.0,
+    "bbox_south": 16.0,
+    "bbox_east": 53.0,
+    "bbox_west": 37.0
+  },
+  "Balkan": {
+    "latitude": 42.0,
+    "longitude": 22.0,
+    "bbox_north": 46.0,
+    "bbox_south": 38.0,
+    "bbox_east": 26.0,
+    "bbox_west": 18.0
+  },
+  "Caucasian": {
+    "latitude": 42.0,
+    "longitude": 44.0,
+    "bbox_north": 45.0,
+    "bbox_south": 39.0,
+    "bbox_east": 47.0,
+    "bbox_west": 41.0
+  },
+  "Indian": {
+    "latitude": 20.5937,
+    "longitude": 78.9629,
+    "bbox_north": 28.5937,
+    "bbox_south": 12.5937,
+    "bbox_east": 86.9629,
+    "bbox_west": 70.9629
+  },
+  "Japanese": {
+    "latitude": 36.2048,
+    "longitude": 138.2529,
+    "bbox_north": 42.2048,
+    "bbox_south": 30.2048,
+    "bbox_east": 144.2529,
+    "bbox_west": 132.2529
+  },
+  "Chinese": {
+    "latitude": 35.8617,
+    "longitude": 104.1954,
+    "bbox_north": 45.8617,
+    "bbox_south": 25.8617,
+    "bbox_east": 114.1954,
+    "bbox_west": 94.1954
+  },
+  "Korean": {
+    "latitude": 36.5651,
+    "longitude": 127.9785,
+    "bbox_north": 39.0651,
+    "bbox_south": 34.0651,
+    "bbox_east": 130.4785,
+    "bbox_west": 125.4785
+  },
+  "French": {
+    "latitude": 46.2276,
+    "longitude": 2.2137,
+    "bbox_north": 50.2276,
+    "bbox_south": 42.2276,
+    "bbox_east": 6.2137,
+    "bbox_west": -1.7863
+  },
+  "Italian": {
+    "latitude": 41.8719,
+    "longitude": 12.5674,
+    "bbox_north": 45.8719,
+    "bbox_south": 37.8719,
+    "bbox_east": 16.5674,
+    "bbox_west": 8.5674
+  },
+  "Iberian": {
+    "latitude": 40.4637,
+    "longitude": -3.7492,
+    "bbox_north": 45.4637,
+    "bbox_south": 35.4637,
+    "bbox_east": 1.2508,
+    "bbox_west": -8.7492
+  },
+  "Nordic": {
+    "latitude": 60.472,
+    "longitude": 8.4689,
+    "bbox_north": 68.472,
+    "bbox_south": 52.472,
+    "bbox_east": 16.4689,
+    "bbox_west": 0.4689
+  },
+  "Central European": {
+    "latitude": 49.0,
+    "longitude": 16.0,
+    "bbox_north": 53.0,
+    "bbox_south": 45.0,
+    "bbox_east": 20.0,
+    "bbox_west": 12.0
+  },
+  "Eastern European": {
+    "latitude": 50.0,
+    "longitude": 30.0,
+    "bbox_north": 56.0,
+    "bbox_south": 44.0,
+    "bbox_east": 36.0,
+    "bbox_west": 24.0
+  },
+  "British Isles": {
+    "latitude": 54.6,
+    "longitude": -3.0,
+    "bbox_north": 58.6,
+    "bbox_south": 50.6,
+    "bbox_east": 1.0,
+    "bbox_west": -7.0
+  },
+  "North African": {
+    "latitude": 28.0339,
+    "longitude": 1.6596,
+    "bbox_north": 38.0339,
+    "bbox_south": 18.0339,
+    "bbox_east": 11.6596,
+    "bbox_west": -8.3404
+  },
+  "West African": {
+    "latitude": 10.0,
+    "longitude": -3.0,
+    "bbox_north": 18.0,
+    "bbox_south": 2.0,
+    "bbox_east": 5.0,
+    "bbox_west": -11.0
+  },
+  "East African": {
+    "latitude": 2.0,
+    "longitude": 38.0,
+    "bbox_north": 10.0,
+    "bbox_south": -6.0,
+    "bbox_east": 46.0,
+    "bbox_west": 30.0
+  },
+  "Caribbean": {
+    "latitude": 21.4691,
+    "longitude": -78.6569,
+    "bbox_north": 27.4691,
+    "bbox_south": 15.4691,
+    "bbox_east": -72.6569,
+    "bbox_west": -84.6569
+  },
+  "Central American": {
+    "latitude": 14.0,
+    "longitude": -88.0,
+    "bbox_north": 19.0,
+    "bbox_south": 9.0,
+    "bbox_east": -83.0,
+    "bbox_west": -93.0
+  },
+  "North American": {
+    "latitude": 40.0,
+    "longitude": -100.0,
+    "bbox_north": 55.0,
+    "bbox_south": 25.0,
+    "bbox_east": -85.0,
+    "bbox_west": -115.0
+  },
+  "South American": {
+    "latitude": -15.0,
+    "longitude": -60.0,
+    "bbox_north": 0.0,
+    "bbox_south": -30.0,
+    "bbox_east": -45.0,
+    "bbox_west": -75.0
+  },
+  "Southeast Asian": {
+    "latitude": 5.0,
+    "longitude": 110.0,
+    "bbox_north": 15.0,
+    "bbox_south": -5.0,
+    "bbox_east": 120.0,
+    "bbox_west": 100.0
+  },
+  "Central Asian": {
+    "latitude": 45.0,
+    "longitude": 65.0,
+    "bbox_north": 53.0,
+    "bbox_south": 37.0,
+    "bbox_east": 73.0,
+    "bbox_west": 57.0
+  },
+  "Oceanian": {
+    "latitude": -25.0,
+    "longitude": 140.0,
+    "bbox_north": -10.0,
+    "bbox_south": -40.0,
+    "bbox_east": 155.0,
+    "bbox_west": 125.0
+  },
+  "Argentina": {
+    "latitude": -38.4161,
+    "longitude": -63.6167,
+    "bbox_north": -30.4161,
+    "bbox_south": -46.4161,
+    "bbox_east": -55.6167,
+    "bbox_west": -71.6167
+  },
+  "Australia": {
+    "latitude": -25.2744,
+    "longitude": 133.7751,
+    "bbox_north": -13.2744,
+    "bbox_south": -37.2744,
+    "bbox_east": 145.7751,
+    "bbox_west": 121.7751
+  },
+  "Brazil": {
+    "latitude": -14.235,
+    "longitude": -51.9253,
+    "bbox_north": -2.235,
+    "bbox_south": -26.235,
+    "bbox_east": -39.9253,
+    "bbox_west": -63.9253
+  },
+  "China": {
+    "latitude": 35.8617,
+    "longitude": 104.1954,
+    "bbox_north": 45.8617,
+    "bbox_south": 25.8617,
+    "bbox_east": 114.1954,
+    "bbox_west": 94.1954
+  },
+  "El Salvador": {
+    "latitude": 13.7942,
+    "longitude": -88.8965,
+    "bbox_north": 15.2942,
+    "bbox_south": 12.2942,
+    "bbox_east": -87.3965,
+    "bbox_west": -90.3965
+  },
+  "Ethiopia": {
+    "latitude": 9.145,
+    "longitude": 40.4897,
+    "bbox_north": 14.145,
+    "bbox_south": 4.145,
+    "bbox_east": 45.4897,
+    "bbox_west": 35.4897
+  },
+  "France": {
+    "latitude": 46.2276,
+    "longitude": 2.2137,
+    "bbox_north": 50.2276,
+    "bbox_south": 42.2276,
+    "bbox_east": 6.2137,
+    "bbox_west": -1.7863
+  },
+  "Germany": {
+    "latitude": 51.1657,
+    "longitude": 10.4515,
+    "bbox_north": 55.1657,
+    "bbox_south": 47.1657,
+    "bbox_east": 14.4515,
+    "bbox_west": 6.4515
+  },
+  "Ghana": {
+    "latitude": 7.9465,
+    "longitude": -1.0232,
+    "bbox_north": 10.9465,
+    "bbox_south": 4.9465,
+    "bbox_east": 1.9768,
+    "bbox_west": -4.0232
+  },
+  "Greece": {
+    "latitude": 39.0742,
+    "longitude": 23.0,
+    "bbox_north": 42.5742,
+    "bbox_south": 35.5742,
+    "bbox_east": 26.5,
+    "bbox_west": 19.5
+  },
+  "Hungary": {
+    "latitude": 47.1625,
+    "longitude": 19.5033,
+    "bbox_north": 49.6625,
+    "bbox_south": 44.6625,
+    "bbox_east": 22.0033,
+    "bbox_west": 17.0033
+  },
+  "Jamaica": {
+    "latitude": 18.1096,
+    "longitude": -77.2975,
+    "bbox_north": 19.6096,
+    "bbox_south": 16.6096,
+    "bbox_east": -75.7975,
+    "bbox_west": -78.7975
+  },
+  "Kyrgyzstan": {
+    "latitude": 41.2044,
+    "longitude": 74.7661,
+    "bbox_north": 44.2044,
+    "bbox_south": 38.2044,
+    "bbox_east": 77.7661,
+    "bbox_west": 71.7661
+  },
+  "Morocco": {
+    "latitude": 31.7917,
+    "longitude": -7.0926,
+    "bbox_north": 36.7917,
+    "bbox_south": 26.7917,
+    "bbox_east": -2.0926,
+    "bbox_west": -12.0926
+  },
+  "Nigeria": {
+    "latitude": 9.082,
+    "longitude": 8.6753,
+    "bbox_north": 14.082,
+    "bbox_south": 4.082,
+    "bbox_east": 13.6753,
+    "bbox_west": 3.6753
+  },
+  "Peru": {
+    "latitude": -9.19,
+    "longitude": -75.0152,
+    "bbox_north": -2.19,
+    "bbox_south": -16.19,
+    "bbox_east": -68.0152,
+    "bbox_west": -82.0152
+  },
+  "Poland": {
+    "latitude": 51.9194,
+    "longitude": 19.1451,
+    "bbox_north": 55.4194,
+    "bbox_south": 48.4194,
+    "bbox_east": 22.6451,
+    "bbox_west": 15.6451
+  },
+  "Portugal": {
+    "latitude": 39.3999,
+    "longitude": -8.2245,
+    "bbox_north": 41.8999,
+    "bbox_south": 36.8999,
+    "bbox_east": -5.7245,
+    "bbox_west": -10.7245
+  },
+  "Russia": {
+    "latitude": 61.524,
+    "longitude": 90.0,
+    "bbox_north": 81.524,
+    "bbox_south": 41.524,
+    "bbox_east": 110.0,
+    "bbox_west": 70.0
+  },
+  "Saudi Arabia": {
+    "latitude": 23.8859,
+    "longitude": 45.0792,
+    "bbox_north": 30.8859,
+    "bbox_south": 16.8859,
+    "bbox_east": 52.0792,
+    "bbox_west": 38.0792
+  },
+  "South Korea": {
+    "latitude": 35.9078,
+    "longitude": 127.7669,
+    "bbox_north": 37.9078,
+    "bbox_south": 33.9078,
+    "bbox_east": 129.7669,
+    "bbox_west": 125.7669
+  },
+  "Spain": {
+    "latitude": 40.4637,
+    "longitude": -3.7492,
+    "bbox_north": 45.4637,
+    "bbox_south": 35.4637,
+    "bbox_east": 1.2508,
+    "bbox_west": -8.7492
+  },
+  "Thailand": {
+    "latitude": 15.87,
+    "longitude": 100.9925,
+    "bbox_north": 20.87,
+    "bbox_south": 10.87,
+    "bbox_east": 105.9925,
+    "bbox_west": 95.9925
+  },
+  "Trinidad and Tobago": {
+    "latitude": 10.6918,
+    "longitude": -61.2225,
+    "bbox_north": 11.6918,
+    "bbox_south": 9.6918,
+    "bbox_east": -60.2225,
+    "bbox_west": -62.2225
+  },
+  "United Kingdom": {
+    "latitude": 54.0,
+    "longitude": -2.5,
+    "bbox_north": 58.0,
+    "bbox_south": 50.0,
+    "bbox_east": 1.5,
+    "bbox_west": -6.5
+  },
+  "Uzbekistan": {
+    "latitude": 41.3775,
+    "longitude": 64.5853,
+    "bbox_north": 45.3775,
+    "bbox_south": 37.3775,
+    "bbox_east": 68.5853,
+    "bbox_west": 60.5853
+  },
+  "Vietnam": {
+    "latitude": 14.0583,
+    "longitude": 108.2772,
+    "bbox_north": 20.0583,
+    "bbox_south": 8.0583,
+    "bbox_east": 114.2772,
+    "bbox_west": 102.2772
+  }
+}
