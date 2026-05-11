@@ -190,20 +190,33 @@ class RecipeSerializer(serializers.ModelSerializer):
     story_count = serializers.IntegerField(read_only=True, default=0)
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
+    heritage_group = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = [
             'id', 'public_id', 'title', 'description', 'steps', 'image', 'video',
             'region', 'region_name', 'author', 'author_username', 'qa_enabled',
-            'is_published', 'created_at', 'updated_at',
+            'is_published', 'is_heritage', 'heritage_notes',
+            'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'story_count',
             'rank_score', 'rank_reason',
+            'heritage_group',
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
+
+    def get_heritage_group(self, obj):
+        # Most recent membership wins. The GenericRelation prefetch covers
+        # this in bulk so we don't fan out per row.
+        memberships = list(obj.heritage_memberships.all())
+        if not memberships:
+            return None
+        memberships.sort(key=lambda m: m.created_at, reverse=True)
+        group = memberships[0].heritage_group
+        return {'id': group.id, 'name': group.name}
 
     def get_rank_score(self, obj):
         return getattr(obj, 'rank_score', 0)

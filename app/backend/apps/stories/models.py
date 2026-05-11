@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
@@ -21,6 +22,14 @@ class Story(models.Model):
     can be tagged independently of a linked recipe. If `region` is null but
     `linked_recipe` exists, the map API will fall back to the recipe's region.
     """
+
+    class StoryType(models.TextChoices):
+        TRADITIONAL = "traditional", "Traditional"
+        HISTORICAL = "historical", "Historical"
+        FAMILY = "family", "Family"
+        FESTIVE = "festive", "Festive"
+        PERSONAL = "personal", "Personal"
+
     public_id = models.CharField(
         max_length=26,
         unique=True,
@@ -51,7 +60,20 @@ class Story(models.Model):
         help_text='Geographic/cultural region for map discovery. Falls back to linked_recipe.region if null.',
     )
     language = models.CharField(max_length=10, blank=True, default='en')
+    story_type = models.CharField(
+        max_length=20,
+        choices=StoryType.choices,
+        blank=True,
+        null=True,
+    )
     is_published = models.BooleanField(default=False)
+    # Reverse generic relation to HeritageGroupMembership (#499). Virtual
+    # field; no extra column on Story. Used for prefetch and serializer
+    # lookup of the story's heritage group.
+    heritage_memberships = GenericRelation(
+        'heritage.HeritageGroupMembership',
+        related_query_name='story',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

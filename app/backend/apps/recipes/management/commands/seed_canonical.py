@@ -1,12 +1,16 @@
 import json
+from decimal import Decimal
 from pathlib import Path
 
+from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.contrib.auth import get_user_model
 
+MEDIA_DIR = Path(__file__).resolve().parents[4] / 'fixtures' / 'media'
+
 from apps.recipes.models import (
-    Recipe, RecipeIngredient, Region, Ingredient, Unit,
+    Recipe, RecipeIngredient, Region, Ingredient, IngredientSubstitution, Unit,
     DietaryTag, EventTag, Religion, Comment, Vote,
 )
 from apps.stories.models import Story, StoryRecipeLink, StoryComment, StoryVote
@@ -36,6 +40,8 @@ class Command(BaseCommand):
         fixture_path = Path(options['fixture']) if options['fixture'] else DEFAULT_FIXTURE
         data = self._load_fixture(fixture_path)
 
+        substitutions_data = data.get('ingredient_substitutions', [])
+
         if options['dry_run']:
             self.stdout.write(
                 f'DRY RUN: Would create {len(data["users"])} users, '
@@ -43,7 +49,8 @@ class Command(BaseCommand):
                 f'{len(data["stories"])} stories, '
                 f'{len(data.get("recipe_comments", []))} recipe comments, '
                 f'{len(data.get("story_comments", []))} story comments, '
-                f'{len(data["cultural_content"])} cultural content cards.'
+                f'{len(data["cultural_content"])} cultural content cards, '
+                f'{len(substitutions_data)} ingredient substitutions.'
             )
             return
 
@@ -55,10 +62,12 @@ class Command(BaseCommand):
             self._seed_recipe_comments(data.get('recipe_comments', []), users, recipes)
             self._seed_story_comments(data.get('story_comments', []), users, stories)
             cards = self._seed_cultural_content(data['cultural_content'])
+            sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
 
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(users)} users, {len(recipes)} recipes, '
-            f'{len(stories)} stories, {len(cards)} cultural content cards.'
+            f'{len(stories)} stories, {len(cards)} cultural content cards, '
+            f'{sub_created} substitutions added ({sub_skipped} already present).'
         ))
 
     def _load_fixture(self, path):
@@ -155,6 +164,15 @@ class Command(BaseCommand):
                     unit=unit,
                 )
             recipes[r['title']] = recipe
+            if r.get('image'):
+                img_path = MEDIA_DIR / 'recipes' / r['image']
+                if img_path.exists():
+                    with open(img_path, 'rb') as f:
+                        recipe.image.save(r['image'], File(f), save=True)
+                else:
+                    self.stderr.write(
+                        self.style.WARNING(f"Image not found: {img_path}")
+                    )
         return recipes
 
     def _seed_stories(self, stories_data, users, recipes):
@@ -192,6 +210,15 @@ class Command(BaseCommand):
                     story=story, recipe=recipes[title], order=order,
                 )
             stories.append(story)
+            if s.get('image'):
+                img_path = MEDIA_DIR / 'stories' / s['image']
+                if img_path.exists():
+                    with open(img_path, 'rb') as f:
+                        story.image.save(s['image'], File(f), save=True)
+                else:
+                    self.stderr.write(
+                        self.style.WARNING(f"Image not found: {img_path}")
+                    )
         return stories
 
     def _seed_recipe_comments(self, comments_data, users, recipes):
@@ -245,3 +272,42 @@ class Command(BaseCommand):
             )
             cards.append(card)
         return cards
+
+    def _seed_substitutions(self, subs_data):
+        # Idempotent restore of the canonical ingredient substitution graph.
+        # Resolves ingredients by name (created earlier by migrations or by
+        # _seed_recipes), so a wiped IngredientSubstitution table is repopulated
+        # without requiring migration 0010 to re-run.
+        if not subs_data:
+            return 0, 0
+        name_to_obj = {ing.name: ing for ing in Ingredient.objects.all()}
+        missing = set()
+        created = 0
+        skipped = 0
+        for row in subs_data:
+            from_ing = name_to_obj.get(row['from'])
+            to_ing = name_to_obj.get(row['to'])
+            if not from_ing:
+                missing.add(row['from'])
+                continue
+            if not to_ing:
+                missing.add(row['to'])
+                continue
+            _, was_created = IngredientSubstitution.objects.get_or_create(
+                from_ingredient=from_ing,
+                to_ingredient=to_ing,
+                match_type=row['match_type'],
+                defaults={
+                    'closeness': Decimal(row['closeness']),
+                    'notes': row.get('notes', ''),
+                },
+            )
+            if was_created:
+                created += 1
+            else:
+                skipped += 1
+        if missing:
+            raise CommandError(
+                f"Substitution seed references ingredients that are not seeded: {sorted(missing)}"
+            )
+        return created, skipped

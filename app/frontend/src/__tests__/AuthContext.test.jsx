@@ -1,4 +1,4 @@
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act, waitFor, renderHook } from '@testing-library/react';
 import { useContext } from 'react';
 import { AuthProvider, AuthContext } from '../context/AuthContext';
 import * as authService from '../services/authService';
@@ -24,6 +24,7 @@ describe('AuthContext', () => {
   beforeEach(() => {
     localStorage.clear();
     authService.fetchMe.mockResolvedValue({ id: 1, username: 'restored-user' });
+    authService.logoutRequest.mockResolvedValue();
     deviceTokenService.registerWebDeviceToken.mockResolvedValue({});
   });
 
@@ -106,5 +107,87 @@ describe('AuthContext', () => {
     );
     expect(screen.getByTestId('user').textContent).toBe('null');
     expect(localStorage.getItem('token')).toBeNull();
+  });
+});
+
+function useAuth() {
+  return useContext(AuthContext);
+}
+
+const wrapper = ({ children }) => <AuthProvider>{children}</AuthProvider>;
+
+describe('AuthContext refresh-token persistence', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    authService.fetchMe.mockResolvedValue({ id: 1, username: 'restored-user' });
+    authService.logoutRequest.mockResolvedValue();
+    deviceTokenService.registerWebDeviceToken.mockResolvedValue({});
+  });
+
+  afterEach(() => { jest.clearAllMocks(); });
+
+  it('stores refresh token from login() in localStorage', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-1', 'refresh-1');
+    });
+    expect(localStorage.getItem('refresh_token')).toBe('refresh-1');
+  });
+
+  it('clears refresh token on logout()', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-1', 'refresh-1');
+    });
+    act(() => { result.current.logout(); });
+    expect(localStorage.getItem('refresh_token')).toBeNull();
+  });
+
+  it('initializes refresh token from localStorage on mount', () => {
+    localStorage.setItem('token', 'access-x');
+    localStorage.setItem('refresh_token', 'refresh-x');
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    expect(result.current.refreshToken).toBe('refresh-x');
+  });
+});
+
+describe('AuthContext logout — backend coordination', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    authService.fetchMe.mockResolvedValue({ id: 1, username: 'restored-user' });
+    authService.logoutRequest.mockResolvedValue();
+    deviceTokenService.registerWebDeviceToken.mockResolvedValue({});
+  });
+
+  afterEach(() => { jest.clearAllMocks(); });
+
+  it('calls logoutRequest with the current refresh token on logout', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-1', 'refresh-1');
+    });
+    act(() => { result.current.logout(); });
+    expect(authService.logoutRequest).toHaveBeenCalledWith('refresh-1');
+  });
+
+  it('still clears local state when logoutRequest rejects', () => {
+    authService.logoutRequest.mockRejectedValue(new Error('network down'));
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-1', 'refresh-1');
+    });
+    act(() => { result.current.logout(); });
+    expect(result.current.user).toBeNull();
+    expect(result.current.token).toBeNull();
+    expect(result.current.refreshToken).toBeNull();
+  });
+
+  it('does not call logoutRequest when there is no refresh token', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-1', null);
+    });
+    act(() => { result.current.logout(); });
+    expect(authService.logoutRequest).not.toHaveBeenCalled();
   });
 });

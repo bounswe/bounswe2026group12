@@ -40,7 +40,7 @@ export default function LoginScreen({ navigation }: Props) {
     setSubmitting(true);
     try {
       const data = await loginRequest(email, password);
-      await login(data.user, data.access);
+      await login(data.user, data.access, data.refresh);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 16, fontWeight: '600', marginBottom: 6, color: tokens.colors.text },
   input: {
     borderWidth: 2,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 12,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     ...shadows.md,
   },
   primaryButtonPressed: { opacity: 0.88 },

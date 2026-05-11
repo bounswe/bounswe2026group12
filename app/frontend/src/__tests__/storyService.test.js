@@ -2,7 +2,7 @@ import * as storyService from '../services/storyService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
-  apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn() },
+  apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
 }));
 
 beforeEach(() => jest.clearAllMocks());
@@ -55,5 +55,39 @@ describe('storyService — new functions', () => {
     const result = await storyService.updateStory(2, payload);
     expect(apiClient.patch).toHaveBeenCalledWith('/api/stories/2/', payload);
     expect(result).toEqual({ id: 2, title: 'Updated' });
+  });
+
+  it('deleteStory DELETEs /api/stories/:id/', async () => {
+    apiClient.delete.mockResolvedValue({ status: 204 });
+    await storyService.deleteStory(7);
+    expect(apiClient.delete).toHaveBeenCalledWith('/api/stories/7/');
+  });
+});
+
+describe('publishStory / unpublishStory', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('publishStory POSTs to /api/stories/:id/publish/ and returns data', async () => {
+    apiClient.post.mockResolvedValue({ data: { id: 5, is_published: true } });
+    const result = await storyService.publishStory(5);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/stories/5/publish/');
+    expect(result).toEqual({ id: 5, is_published: true });
+  });
+
+  it('unpublishStory POSTs to /api/stories/:id/unpublish/ and returns data', async () => {
+    apiClient.post.mockResolvedValue({ data: { id: 5, is_published: false } });
+    const result = await storyService.unpublishStory(5);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/stories/5/unpublish/');
+    expect(result).toEqual({ id: 5, is_published: false });
+  });
+
+  it('publishStory propagates API errors', async () => {
+    apiClient.post.mockRejectedValue(new Error('boom'));
+    await expect(storyService.publishStory(5)).rejects.toThrow('boom');
+  });
+
+  it('unpublishStory propagates API errors', async () => {
+    apiClient.post.mockRejectedValue(new Error('boom'));
+    await expect(storyService.unpublishStory(5)).rejects.toThrow('boom');
   });
 });

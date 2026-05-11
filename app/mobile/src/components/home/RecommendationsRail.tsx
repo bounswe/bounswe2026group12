@@ -1,7 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { shadows, tokens } from '../../theme';
 import { RankReasonBadge } from '../personalization/RankReasonBadge';
 import type { RecommendationItem } from '../../services/recommendationsService';
+import type { RootStackParamList } from '../../navigation/types';
 
 type Props = {
   items: RecommendationItem[];
@@ -9,6 +12,7 @@ type Props = {
 };
 
 export function RecommendationsRail({ items, onItemPress }: Props) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   if (items.length === 0) return null;
 
   return (
@@ -58,7 +62,20 @@ export function RecommendationsRail({ items, onItemPress }: Props) {
               ) : null}
               <View style={styles.metaRow}>
                 <Text style={styles.kind}>{item.kind === 'recipe' ? 'Recipe' : 'Story'}</Text>
-                {item.region ? <Text style={styles.region}>· {item.region}</Text> : null}
+                {item.region ? (
+                  <Pressable
+                    onPress={(e) => {
+                      e.stopPropagation?.();
+                      navigation.navigate('Search', { region: item.region as string });
+                    }}
+                    style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
+                    accessibilityRole="link"
+                    accessibilityLabel={`Browse ${item.region} content`}
+                    hitSlop={10}
+                  >
+                    <Text style={styles.regionPillText}>{item.region}</Text>
+                  </Pressable>
+                ) : null}
               </View>
               <RankReasonBadge reason={item.rankReason} style={styles.badge} />
             </View>
@@ -78,7 +95,7 @@ const styles = StyleSheet.create({
     color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
   },
-  hint: { fontSize: 13, color: tokens.colors.primaryTint, fontWeight: '800' },
+  hint: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '800' },
   list: { gap: 12, paddingRight: 16 },
   card: {
     width: 240,
@@ -99,6 +116,14 @@ const styles = StyleSheet.create({
   cardSnippet: { fontSize: 12, color: tokens.colors.textMuted, lineHeight: 16 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kind: { fontSize: 11, color: tokens.colors.textMuted, fontWeight: '800', textTransform: 'uppercase' },
-  region: { fontSize: 11, color: tokens.colors.textMuted, fontWeight: '700' },
+  regionPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  regionPillText: { fontSize: 11, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   badge: { marginTop: 4 },
 });

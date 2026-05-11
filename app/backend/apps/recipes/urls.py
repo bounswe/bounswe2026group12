@@ -7,6 +7,7 @@ from .moderation_views import (
 from .views import (
     RecipeViewSet, IngredientViewSet, UnitViewSet, RegionViewSet, CommentViewSet,
     DietaryTagViewSet, EventTagViewSet, ReligionViewSet, ConvertView,
+    CheckedIngredientsView,
 )
 
 router = DefaultRouter()
@@ -21,6 +22,11 @@ router.register(r'religions', ReligionViewSet, basename='religion')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path(
+        'recipes/<str:recipe_id>/checked-ingredients/',
+        CheckedIngredientsView.as_view(),
+        name='recipe-checked-ingredients',
+    ),
     path('convert/', ConvertView.as_view(), name='convert'),
     path(
         'moderation/lookups/',

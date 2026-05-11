@@ -8,8 +8,8 @@ type Props = {
 
 export function LoadingView({ message = 'Loading…' }: Props) {
   return (
-    <View style={styles.container} accessibilityRole="progressbar">
-      <ActivityIndicator size="small" color={tokens.colors.primary} />
+    <View style={styles.container} accessibilityRole="progressbar" accessibilityLabel={message}>
+      <ActivityIndicator size="small" color={tokens.colors.surfaceDark} accessibilityLabel="Loading" />
       <Text style={styles.text}>{message}</Text>
     </View>
   );

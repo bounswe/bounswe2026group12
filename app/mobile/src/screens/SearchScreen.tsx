@@ -47,6 +47,10 @@ export default function SearchScreen({ navigation, route }: Props) {
   const [dietExclude, setDietExclude] = useState<string[]>([]);
   const [eventInclude, setEventInclude] = useState<string[]>([]);
   const [eventExclude, setEventExclude] = useState<string[]>([]);
+  /** Bumped by the Retry button so the search effect re-runs even when the
+   * query/filters haven't changed (`setQuery(q => q)` was a noop because
+   * React bails out on identical values). */
+  const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -137,7 +141,7 @@ export default function SearchScreen({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [query, region, filtersKey, hasActiveFilters]);
+  }, [query, region, filtersKey, hasActiveFilters, retryToken]);
 
   const selectedRegionLabel =
     REGIONS.find((r) => r.value === region)?.label ?? 'All regions';
@@ -262,7 +266,7 @@ export default function SearchScreen({ navigation, route }: Props) {
                 title="Search failed"
                 message={error}
                 glyph="!"
-                actions={[{ label: 'Retry', onPress: () => setQuery((q) => q) }]}
+                actions={[{ label: 'Retry', onPress: () => setRetryToken((t) => t + 1) }]}
               />
             ) : isPristine ? (
               <EmptyState
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 2,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,

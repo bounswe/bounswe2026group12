@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -39,6 +39,18 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
   );
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  /** Pending post-save navigation timer; cleared on unmount so a quick back
+   * press doesn't get bounced forward to RecipeDetail after the screen has gone. */
+  const navTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (navTimerRef.current) {
+        clearTimeout(navTimerRef.current);
+        navTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -58,6 +70,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
   const [remoteVideoUrl, setRemoteVideoUrl] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const applyRecipe = useCallback((recipe: RecipeDetail) => {
     setTitle(recipe.title ?? '');
@@ -177,12 +190,12 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
 
   function submit() {
     setAttemptedSubmit(true);
-    if (!isValid) return;
+    if (!isValid || submitting) return;
 
+    setSubmitting(true);
     const jsonBody = buildRecipePatchJsonBody({
       title,
       description,
-      region,
       qaEnabled,
       rows,
     });
@@ -204,9 +217,14 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           await updateRecipeById(id, buildRecipeVideoOnlyFormData(localVideo));
         }
         showToast('Recipe updated!', 'success');
-        setTimeout(() => navigation.navigate('RecipeDetail', { id }), 1500);
+        navTimerRef.current = setTimeout(() => {
+          navTimerRef.current = null;
+          navigation.navigate('RecipeDetail', { id });
+        }, 1500);
       } catch {
         showToast('Failed to save changes. Please try again.', 'error');
+      } finally {
+        setSubmitting(false);
       }
     })();
   }
@@ -322,12 +340,15 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           <Text style={styles.sectionTitle}>Region</Text>
           <TextInput
             value={region}
-            onChangeText={setRegion}
             placeholder="Region"
             placeholderTextColor="#94a3b8"
-            style={styles.input}
-            accessibilityLabel="Recipe region"
+            style={[styles.input, { opacity: 0.7 }]}
+            editable={false}
+            accessibilityLabel="Recipe region (read-only)"
           />
+          <Text style={styles.videoHint}>
+            Region cannot be changed from this screen yet. The original region is preserved.
+          </Text>
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
@@ -386,11 +407,16 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
 
         <Pressable
           onPress={submit}
-          style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+          disabled={submitting}
+          style={({ pressed }) => [
+            styles.primaryButton,
+            pressed && styles.buttonPressed,
+            submitting && { opacity: 0.7 },
+          ]}
           accessibilityRole="button"
           accessibilityLabel="Save recipe changes"
         >
-          <Text style={styles.primaryButtonText}>Save changes</Text>
+          <Text style={styles.primaryButtonText}>{submitting ? 'Saving…' : 'Save changes'}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

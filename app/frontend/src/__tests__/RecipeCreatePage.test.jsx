@@ -95,9 +95,37 @@ describe('RecipeCreatePage', () => {
     await waitFor(() =>
       expect(screen.getByText(/recipe published/i)).toBeInTheDocument()
     );
-    expect(recipeService.createRecipe).toHaveBeenCalled();
+    expect(recipeService.createRecipe).toHaveBeenCalledWith(
+      expect.objectContaining({ is_published: true })
+    );
     // Verify navigation happens after the delay
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/recipes/1'), { timeout: 2000 });
+  });
+
+  it('calls createRecipe with is_published: false when "Save as draft" is clicked', async () => {
+    recipeService.createRecipe.mockResolvedValue({ id: 2 });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Draft Recipe' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'Work in progress.' } });
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    await waitFor(() =>
+      expect(screen.getByText(/draft saved/i)).toBeInTheDocument()
+    );
+    expect(recipeService.createRecipe).toHaveBeenCalledWith(
+      expect.objectContaining({ is_published: false })
+    );
   });
 
   it('shows error toast when API call fails', async () => {

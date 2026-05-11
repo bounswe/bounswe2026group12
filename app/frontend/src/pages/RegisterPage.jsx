@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { registerRequest } from '../services/authService';
 import { extractApiError } from '../services/api';
@@ -8,11 +8,14 @@ import './RegisterPage.css';
 export default function RegisterPage() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
+
+  const animationClass = location.state?.from === 'login' ? 'auth-enter-right' : 'auth-enter-left';
 
   function validate() {
     const errs = {};
@@ -33,7 +36,7 @@ export default function RegisterPage() {
     setApiError('');
     try {
       const data = await registerRequest(username, email, password);
-      login(data.user, data.access);
+      login(data.user, data.access, data.refresh);
       navigate('/onboarding');
     } catch (err) {
       setApiError(extractApiError(err, 'Registration failed. Please try again.'));
@@ -41,7 +44,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="page-card auth-page">
+    <main className={`page-card auth-page ${animationClass}`}>
       <h1 className="auth-heading">Register</h1>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
@@ -77,7 +80,7 @@ export default function RegisterPage() {
         {apiError && <p className="api-error">{apiError}</p>}
         <button type="submit" className="btn btn-primary auth-submit">Register</button>
       </form>
-      <p className="auth-footer">Already have an account? <Link to="/login">Log In</Link></p>
+      <p className="auth-footer">Already have an account? <Link to="/login" state={{ from: 'register' }}>Log In</Link></p>
     </main>
   );
 }

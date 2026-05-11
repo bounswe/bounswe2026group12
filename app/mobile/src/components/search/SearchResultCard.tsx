@@ -88,9 +88,9 @@ const styles = StyleSheet.create({
   kind: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '800', textTransform: 'uppercase' },
   dot: { width: 4, height: 4, borderRadius: 4, backgroundColor: tokens.colors.border },
   tag: {
-    backgroundColor: tokens.colors.primarySubtle,
+    backgroundColor: tokens.colors.bg,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 8,

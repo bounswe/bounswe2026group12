@@ -98,7 +98,32 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/recipe updated/i)).toBeInTheDocument()
     );
-    expect(recipeService.updateRecipe).toHaveBeenCalledWith('1', expect.objectContaining({ title: 'Baklava' }));
+    expect(recipeService.updateRecipe).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({ title: 'Baklava', is_published: true })
+    );
+  });
+
+  it('calls updateRecipe with is_published: false when "Save as draft" is clicked', async () => {
+    recipeService.updateRecipe.mockResolvedValue({ id: 1 });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    await waitFor(() =>
+      expect(screen.getByText(/draft saved/i)).toBeInTheDocument()
+    );
+    expect(recipeService.updateRecipe).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({ is_published: false })
+    );
+  });
+
+  it('shows "Publish" as the primary button when the recipe is a draft', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({ ...mockRecipe, is_published: false });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    expect(screen.getByRole('button', { name: /^publish$/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /save changes/i })).not.toBeInTheDocument();
   });
 
   it('shows error toast when API call fails', async () => {
@@ -119,11 +144,18 @@ describe('RecipeEditPage', () => {
     );
   });
 
-  it('shows unauthorized message when logged-in user is not the author', async () => {
-    renderPage({ id: 99, username: 'otherUser' });
-    await waitFor(() =>
-      expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
+  it('redirects non-authors to the detail page', async () => {
+    render(
+      <AuthContext.Provider value={{ user: { id: 99, username: 'visitor' }, token: 'tok', login: jest.fn(), logout: jest.fn(), loading: false }}>
+        <MemoryRouter initialEntries={['/recipes/1/edit']}>
+          <Routes>
+            <Route path="/recipes/:id/edit" element={<RecipeEditPage />} />
+            <Route path="/recipes/:id" element={<div>Detail Page</div>} />
+          </Routes>
+        </MemoryRouter>
+      </AuthContext.Provider>,
     );
+    await waitFor(() => expect(screen.getByText('Detail Page')).toBeInTheDocument());
   });
 
   it('renders a thumbnail upload field', async () => {

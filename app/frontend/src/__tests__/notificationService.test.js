@@ -1,4 +1,4 @@
-import { fetchNotifications, markNotificationAsRead, registerDeviceToken } from '../services/notificationService';
+import { fetchNotifications, markAllAsRead, markNotificationAsRead, registerDeviceToken } from '../services/notificationService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
@@ -27,24 +27,21 @@ describe('notificationService', () => {
     expect(result[0]).toEqual(expect.objectContaining({ id: 1, isRead: false, message: 'hello' }));
   });
 
-  test('markNotificationAsRead prefers PATCH', async () => {
-    apiClient.patch.mockResolvedValueOnce({
-      data: { id: 4, message: 'updated', is_read: true, created_at: '2026-01-01T10:00:00Z' },
-    });
-    const updated = await markNotificationAsRead(4);
-    expect(apiClient.patch).toHaveBeenCalledWith('/api/notifications/4/read/');
-    expect(apiClient.post).not.toHaveBeenCalled();
-    expect(updated.isRead).toBe(true);
-  });
-
-  test('markNotificationAsRead falls back to POST if PATCH not allowed', async () => {
-    apiClient.patch.mockRejectedValueOnce({ response: { status: 405 } });
+  test('markNotificationAsRead POSTs once and does not call PATCH', async () => {
     apiClient.post.mockResolvedValueOnce({
       data: { id: 7, message: 'updated', is_read: true, created_at: '2026-01-01T10:00:00Z' },
     });
     const updated = await markNotificationAsRead(7);
+    expect(apiClient.post).toHaveBeenCalledTimes(1);
     expect(apiClient.post).toHaveBeenCalledWith('/api/notifications/7/read/');
+    expect(apiClient.patch).not.toHaveBeenCalled();
     expect(updated.isRead).toBe(true);
+  });
+
+  test('markAllAsRead POSTs to /api/notifications/read-all/', async () => {
+    apiClient.post.mockResolvedValueOnce({ data: {} });
+    await markAllAsRead();
+    expect(apiClient.post).toHaveBeenCalledWith('/api/notifications/read-all/');
   });
 
   test('registerDeviceToken posts token payload', async () => {

@@ -18,7 +18,7 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution,
+    IngredientSubstitution, IngredientCheckOff, RecipeIngredient,
 )
 from .serializers import (
     ConvertRequestSerializer,
@@ -83,6 +83,11 @@ def apply_content_filters(qs, params):
         neg = _iexact_or(field, _csv_param(params, f'{param_name}_exclude'))
         if neg is not None:
             qs = qs.exclude(neg)
+
+    author_id = params.get('author')
+    if author_id:
+        qs = qs.filter(author_id=author_id)
+
     return qs.distinct()
 
 # Backward compat alias
@@ -94,6 +99,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
         'dietary_tags', 'event_tags', 'religions',
+        'heritage_memberships__heritage_group',
     ).annotate(
         story_count=models.Count('story_links', filter=models.Q(story_links__story__is_published=True))
     ).all()
@@ -373,8 +379,16 @@ class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
 
 
 class ConvertView(APIView):
-    """POST /api/convert/ — public unit conversion endpoint (#376)."""
+    """POST /api/convert/ public unit conversion endpoint (#376, #503).
 
+    Anonymous and authenticated users both hit the same code path. The view is
+    explicitly auth-free: an empty authentication_classes list tells DRF not to
+    even attempt JWT/session resolution, and AllowAny documents the intent at
+    the permission layer. The custom JWTAuthenticationMiddleware also exempts
+    this path from its blanket unsafe-method block (see apps.common.middleware).
+    """
+
+    authentication_classes = []
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -416,3 +430,72 @@ class ConvertView(APIView):
             'to_unit': data['to_unit'],
             'ingredient_id': ingredient_id,
         })
+
+
+class CheckedIngredientsView(APIView):
+    """GET/POST /api/recipes/<recipe_id>/checked-ingredients/ (#529).
+
+    Server-persisted cooking-mode check-off state. GET returns the list of
+    ingredient ids the calling user has checked for this recipe. POST is an
+    idempotent toggle keyed on (user, recipe, ingredient) and returns the
+    canonical list after applying the change so the client can reconcile
+    without a second round-trip.
+
+    recipe_id accepts either the numeric pk or the ULID public_id, mirroring
+    RecipeViewSet.get_object().
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def _get_recipe(self, recipe_id):
+        lookup = {'public_id': recipe_id} if is_ulid(recipe_id) else {'pk': recipe_id}
+        return get_object_or_404(Recipe, **lookup)
+
+    def _checked_ids(self, user, recipe):
+        return list(
+            IngredientCheckOff.objects
+            .filter(user=user, recipe=recipe)
+            .order_by('ingredient_id')
+            .values_list('ingredient_id', flat=True)
+        )
+
+    def get(self, request, recipe_id):
+        recipe = self._get_recipe(recipe_id)
+        return Response(self._checked_ids(request.user, recipe))
+
+    def post(self, request, recipe_id):
+        recipe = self._get_recipe(recipe_id)
+
+        ingredient_id = request.data.get('ingredient_id')
+        checked = request.data.get('checked')
+
+        if not isinstance(ingredient_id, int) or isinstance(ingredient_id, bool):
+            return Response(
+                {'detail': 'ingredient_id must be an integer.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not isinstance(checked, bool):
+            return Response(
+                {'detail': 'checked must be a boolean.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        in_recipe = RecipeIngredient.objects.filter(
+            recipe=recipe, ingredient_id=ingredient_id,
+        ).exists()
+        if not in_recipe:
+            return Response(
+                {'detail': 'Ingredient is not part of this recipe.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if checked:
+            IngredientCheckOff.objects.get_or_create(
+                user=request.user, recipe=recipe, ingredient_id=ingredient_id,
+            )
+        else:
+            IngredientCheckOff.objects.filter(
+                user=request.user, recipe=recipe, ingredient_id=ingredient_id,
+            ).delete()
+
+        return Response(self._checked_ids(request.user, recipe))

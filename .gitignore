@@ -14,3 +14,10 @@ app/frontend/.env.production
 .vscode/
 .idea/
 *.swp
+
+# Coverage artifacts
+app/backend/.coverage
+app/backend/htmlcov/
+app/backend/coverage_baseline.txt
+.coverage
+htmlcov/

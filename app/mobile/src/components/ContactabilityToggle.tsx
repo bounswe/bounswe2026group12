@@ -23,12 +23,19 @@ export function ContactabilityToggle() {
     setError(null);
     setSaving(true);
     const previous = enabled;
-    await updateUser({ ...user, is_contactable: next });
     try {
+      // Optimistic local update is INSIDE the try so an AsyncStorage failure
+      // (rare but real on low-storage devices) is caught instead of becoming
+      // an unhandled promise rejection that crashes the toggle.
+      await updateUser({ ...user, is_contactable: next });
       const updated = await updateMe({ is_contactable: next });
       await updateUser({ ...user, ...updated });
     } catch (e) {
-      await updateUser({ ...user, is_contactable: previous });
+      try {
+        await updateUser({ ...user, is_contactable: previous });
+      } catch {
+        // best-effort revert; the error toast below still surfaces the issue
+      }
       setError(e instanceof Error ? e.message : 'Could not update messaging preference.');
     } finally {
       setSaving(false);
@@ -57,7 +64,7 @@ export function ContactabilityToggle() {
         {saving ? 'Updating…' : enabled ? 'Allow new threads' : 'Block new threads'}
       </Text>
       {error ? (
-        <Pressable onPress={() => setError(null)} hitSlop={6} accessibilityRole="button">
+        <Pressable onPress={() => setError(null)} hitSlop={10} accessibilityRole="button">
           <Text style={styles.error}>{error} (tap to dismiss)</Text>
         </Pressable>
       ) : null}

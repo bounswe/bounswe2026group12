@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import EventDetailScreen from '../screens/EventDetailScreen';
 import ExploreScreen from '../screens/ExploreScreen';
+import CulturalCalendarScreen from '../screens/CulturalCalendarScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -110,6 +111,11 @@ export function PublicStackNavigator() {
         name="EventDetail"
         component={EventDetailScreen}
         options={{ title: 'Event' }}
+      />
+      <Stack.Screen
+        name="CulturalCalendar"
+        component={CulturalCalendarScreen}
+        options={{ title: 'Calendar' }}
       />
     </Stack.Navigator>
   );

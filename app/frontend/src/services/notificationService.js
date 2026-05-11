@@ -40,14 +40,12 @@ export async function markNotificationAsRead(notificationId) {
     const item = mockNotifications.find((n) => n.id === notificationId);
     return normalize({ ...item, is_read: true });
   }
-  try {
-    const response = await apiClient.patch(`/api/notifications/${notificationId}/read/`);
-    return normalize(response.data);
-  } catch (err) {
-    if (err?.response?.status !== 405) throw err;
-    const response = await apiClient.post(`/api/notifications/${notificationId}/read/`);
-    return normalize(response.data);
-  }
+  const response = await apiClient.post(`/api/notifications/${notificationId}/read/`);
+  return normalize(response.data);
+}
+
+export async function markAllAsRead() {
+  await apiClient.post('/api/notifications/read-all/');
 }
 
 export async function registerDeviceToken(token, platform = 'web') {

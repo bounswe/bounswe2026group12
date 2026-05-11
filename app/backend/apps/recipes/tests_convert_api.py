@@ -1,6 +1,8 @@
 """Tests for POST /api/convert/."""
+import json
 from decimal import Decimal
 
+from django.test import Client
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -124,3 +126,26 @@ class ConvertApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Decimal(response.data['amount']), Decimal('0.5'))
+
+    def test_convert_allows_anonymous(self):
+        # Regression for #503. APIClient sets request._force_auth_user even
+        # when no force_authenticate() is called, which makes the custom
+        # JWTAuthenticationMiddleware short-circuit and skip its 401 enforcement
+        # branch. Use the plain django.test.Client so the middleware runs the
+        # same path it does in production for a logged-out browser.
+        plain_client = Client()
+        response = plain_client.post(
+            self.url,
+            data=json.dumps({
+                'amount': '100',
+                'from_unit': 'g',
+                'to_unit': 'oz',
+            }),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body['from_unit'], 'g')
+        self.assertEqual(body['to_unit'], 'oz')
+        self.assertEqual(Decimal(body['amount']), Decimal('3.5274'))

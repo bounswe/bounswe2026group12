@@ -23,8 +23,15 @@ export default function EventDetailPage() {
   }, [eventId]);
 
   if (loading) return <p className="page-status">Loading…</p>;
-  if (error) return <p className="page-status page-error">{error}</p>;
-  if (!event) return null;
+  if (error || !event) {
+    return (
+      <main className="page-card event-detail">
+        <h1>Event not found</h1>
+        <p>We couldn't load that event. It may have been removed.</p>
+        <Link to="/explore" className="btn btn-outline btn-sm">Back to Explore</Link>
+      </main>
+    );
+  }
 
   const items = tab === 'all'
     ? event.featured

@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import FloatingCulturalPrompt from '../components/FloatingCulturalPrompt';
-import * as mapService from '../services/mapService';
+import * as culturalContentService from '../services/culturalContentService';
 
-jest.mock('../services/mapService');
+jest.mock('../services/culturalContentService');
 
 const REGIONS = [
   { id: 1, name: 'Aegean' },
@@ -12,7 +12,7 @@ const REGIONS = [
 
 beforeEach(() => {
   sessionStorage.clear();
-  mapService.fetchMapRegionContent.mockResolvedValue([
+  culturalContentService.fetchRegionStories.mockResolvedValue([
     { id: 10, content_type: 'story', title: 'Tea Ritual', body: 'Long long body text here', author_username: 'ali' },
   ]);
 });

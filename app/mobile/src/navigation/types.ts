@@ -22,6 +22,7 @@ export type RootStackParamList = {
   MapDiscovery: undefined;
   Explore: undefined;
   EventDetail: { eventId: number; eventName: string };
+  CulturalCalendar: undefined;
 };
 
 declare global {

@@ -1,10 +1,23 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
 from .moderation_views import (
     CulturalTagModerationActionView,
     CulturalTagModerationQueueView,
 )
-from .views import DailyCulturalContentView
+from .views import (
+    CulturalEventRecipeViewSet,
+    CulturalEventViewSet,
+    DailyCulturalContentView,
+)
+
+router = DefaultRouter()
+router.register(r'cultural-events', CulturalEventViewSet, basename='cultural-event')
+router.register(
+    r'cultural-event-recipes',
+    CulturalEventRecipeViewSet,
+    basename='cultural-event-recipe',
+)
 
 urlpatterns = [
     path('cultural-content/daily/', DailyCulturalContentView.as_view(), name='daily_cultural_content'),
@@ -23,4 +36,5 @@ urlpatterns = [
         CulturalTagModerationActionView.as_view(action='reject'),
         name='cultural-tag-moderation-reject',
     ),
+    path('', include(router.urls)),
 ]

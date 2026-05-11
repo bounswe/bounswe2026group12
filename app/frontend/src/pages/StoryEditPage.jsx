@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchStory, updateStory } from '../services/storyService';
 import { fetchRecipes } from '../services/recipeService';
@@ -72,21 +72,21 @@ export default function StoryEditPage() {
     return Object.keys(e).length === 0;
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function submit(publish) {
     if (!validate()) return;
 
     const formData = new FormData();
     formData.append('title', title);
     formData.append('body', body);
     formData.append('language', language);
+    formData.append('is_published', publish ? 'true' : 'false');
     if (linkedRecipe) formData.append('linked_recipe', linkedRecipe.id);
     if (image) formData.append('image', image);
 
     try {
       await updateStory(id, formData);
       clearDraft();
-      showToast('Story updated!', 'success');
+      showToast(publish ? 'Story updated!' : 'Draft saved!', 'success');
       if (navTimerRef.current) clearTimeout(navTimerRef.current);
       navTimerRef.current = setTimeout(() => navigate(`/stories/${id}`), 1500);
     } catch {
@@ -104,8 +104,9 @@ export default function StoryEditPage() {
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
   const storyAuthorId = story?.author && typeof story.author === 'object' ? story.author.id : story?.author;
-  if (!user || (story && storyAuthorId != null && user.id !== storyAuthorId)) {
-    return <p className="page-status page-error">You are not authorized to edit this story.</p>;
+  const isAuthor = user && story && storyAuthorId != null && user.id === storyAuthorId;
+  if (!isAuthor) {
+    return <Navigate to={`/stories/${id}`} replace />;
   }
 
   const filteredRecipes = recipeSearch.trim()
@@ -122,7 +123,7 @@ export default function StoryEditPage() {
         onRestore={handleRestore}
         onDiscard={clearDraft}
       />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => { e.preventDefault(); submit(true); }}>
         <div className="form-group">
           <label htmlFor="story-title">Title</label>
           <input
@@ -209,7 +210,20 @@ export default function StoryEditPage() {
         </section>
 
         <div className="story-form-actions">
-          <button type="submit" className="btn btn-primary">Save Changes</button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => submit(false)}
+          >
+            Save as draft
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => submit(true)}
+          >
+            {story && story.is_published ? 'Save Changes' : 'Publish'}
+          </button>
         </div>
       </form>
       <Toast message={toast.message} type={toast.type} />

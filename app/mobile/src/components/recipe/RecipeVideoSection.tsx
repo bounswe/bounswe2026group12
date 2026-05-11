@@ -1,3 +1,4 @@
+import { ResizeMode, Video } from 'expo-av';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { InlineFieldError } from './InlineFieldError';
@@ -33,7 +34,7 @@ export function RecipeVideoSection({
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Video</Text>
+      <Text style={styles.sectionTitle}>{requireSelection ? 'Video' : 'Video (optional)'}</Text>
 
       {hasRemoteOnly ? (
         <Text style={styles.videoHint}>
@@ -53,19 +54,44 @@ export function RecipeVideoSection({
       </Pressable>
 
       {localVideo ? (
-        <View style={styles.videoMeta}>
-          <Text style={styles.videoLine} numberOfLines={1}>
-            {localVideo.fileName ?? localVideo.uri}
-          </Text>
-          <Pressable
-            onPress={onClearLocal}
-            accessibilityRole="button"
-            accessibilityLabel="Remove selected video"
-          >
-            <Text style={styles.removeText}>Remove video</Text>
-          </Pressable>
+        <>
+          <View style={styles.mediaWrap} accessibilityLabel="Recipe video preview">
+            <Video
+              style={styles.mediaVideo}
+              source={{ uri: localVideo.uri }}
+              useNativeControls
+              resizeMode={ResizeMode.CONTAIN}
+              isLooping={false}
+            />
+          </View>
+          <View style={styles.videoMeta}>
+            <Text style={styles.videoLine} numberOfLines={1}>
+              {localVideo.fileName ?? localVideo.uri}
+            </Text>
+            <Pressable
+              onPress={onClearLocal}
+              accessibilityRole="button"
+              accessibilityLabel="Remove selected video"
+            >
+              <Text style={styles.removeText}>Remove video</Text>
+            </Pressable>
+          </View>
+        </>
+      ) : hasRemoteOnly ? (
+        <View style={styles.mediaWrap} accessibilityLabel="Recipe video preview">
+          <Video
+            style={styles.mediaVideo}
+            source={{ uri: remoteVideoUrl as string }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping={false}
+          />
         </View>
-      ) : null}
+      ) : (
+        <View style={styles.mediaPlaceholder} accessibilityLabel="No video selected">
+          <Text style={styles.mediaPlaceholderText}>No video selected</Text>
+        </View>
+      )}
 
       {attemptedSubmit && requireSelection ? <InlineFieldError message={errorMessage} /> : null}
     </View>

@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { recipeFormStyles as form } from '../components/recipe/recipeFormStyles';
+import { RegionPicker } from '../components/pickers/RegionPicker';
 import { RecipeLinkPicker, type RecipeLink } from '../components/story/RecipeLinkPicker';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -31,6 +32,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
+  const [regionId, setRegionId] = useState<number | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
@@ -76,7 +78,8 @@ export default function StoryCreateScreen({ navigation }: Props) {
           body: body.trim(),
           language,
           is_published: true,
-          linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
+          linked_recipe_id: linkedRecipe ? Number(linkedRecipe.id) : null,
+          region: regionId,
         });
         if (imageUri) {
           await updateStoryImageById(String(created.id), { uri: imageUri });
@@ -181,6 +184,18 @@ export default function StoryCreateScreen({ navigation }: Props) {
           </View>
 
           <View style={form.section}>
+            <Text style={form.sectionTitle}>Region (optional)</Text>
+            <RegionPicker
+              value={regionId}
+              onChange={(next) => setRegionId(next ? next.id : null)}
+            />
+            <Text style={form.videoHint}>
+              Tag the story with a region so it shows up on the map. If left empty, the linked
+              recipe&apos;s region (if any) will be used as a fallback.
+            </Text>
+          </View>
+
+          <View style={form.section}>
             <RecipeLinkPicker
               value={linkedRecipe}
               onChange={setLinkedRecipe}
@@ -223,15 +238,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     backgroundColor: 'transparent',
   },
-  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.primary },
+  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.surfaceDark },
   langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.text },
   langTextActive: { color: tokens.colors.text },
   thumbButton: {
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: 999,
     paddingVertical: 12,
     paddingHorizontal: 14,

@@ -1,16 +1,20 @@
-import { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchStory } from '../services/storyService';
+import { fetchStory, deleteStory, publishStory, unpublishStory } from '../services/storyService';
 import './StoryDetailPage.css';
 
 export default function StoryDetailPage() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [ownershipError, setOwnershipError] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const [togglingPublish, setTogglingPublish] = useState(false);
+  const [publishError, setPublishError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -21,50 +25,83 @@ export default function StoryDetailPage() {
     return () => { cancelled = true; };
   }, [id]);
 
-  useEffect(() => {
-    setOwnershipError('');
-  }, [story?.id]);
+  const storyAuthorId = story && (story.author && typeof story.author === 'object' ? story.author.id : story.author);
+  const isAuthor = user && storyAuthorId != null && user.id === storyAuthorId;
+
+  const handleDelete = useCallback(async () => {
+    if (deleting || !story) return;
+    if (!window.confirm('Delete this story? This cannot be undone.')) return;
+    setDeleting(true);
+    try {
+      await deleteStory(story.id);
+      navigate('/stories');
+    } catch {
+      setDeleteError('Could not delete story.');
+      setDeleting(false);
+    }
+  }, [deleting, navigate, story]);
+
+  const handleTogglePublish = useCallback(async () => {
+    if (togglingPublish || !story) return;
+    setTogglingPublish(true);
+    setPublishError('');
+    try {
+      const updated = story.is_published
+        ? await unpublishStory(story.id)
+        : await publishStory(story.id);
+      setStory((prev) => ({ ...prev, ...updated }));
+    } catch {
+      setPublishError(
+        story.is_published ? 'Could not unpublish story.' : 'Could not publish story.'
+      );
+    } finally {
+      setTogglingPublish(false);
+    }
+  }, [togglingPublish, story]);
 
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!story) return null;
 
-  const storyAuthorId = story.author && typeof story.author === 'object' ? story.author.id : story.author;
-  const isAuthor = user && storyAuthorId != null && user.id === storyAuthorId;
-
-  function handleEditClick() {
-    setOwnershipError('You can only edit your own stories.');
-  }
-
   return (
     <main className="page-card story-detail">
       <div className="story-detail-header">
         <h1 className="story-title">{story.title}</h1>
-        {user && (
-          isAuthor
-            ? (
-              <Link
-                to={`/stories/${story.id}/edit`}
-                className="btn btn-outline btn-sm"
-                aria-label="Edit Story"
-              >
-                Edit Story
-              </Link>
-            )
-            : (
-              <button
-                className="btn btn-outline btn-sm"
-                onClick={handleEditClick}
-                aria-label="Edit Story"
-              >
-                Edit Story
-              </button>
-            )
+        {isAuthor && (
+          <div className="story-detail-actions">
+            <Link
+              to={`/stories/${story.id}/edit`}
+              className="btn btn-outline btn-sm"
+              aria-label="Edit Story"
+            >
+              Edit Story
+            </Link>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleTogglePublish}
+              disabled={togglingPublish}
+            >
+              {togglingPublish ? '…' : story.is_published ? 'Unpublish' : 'Publish'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger btn-sm"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+          </div>
         )}
       </div>
 
-      {ownershipError && (
-        <p className="story-ownership-error">{ownershipError}</p>
+      {isAuthor && deleteError && (
+        <p className="story-detail-error" role="alert">{deleteError}</p>
+      )}
+
+      {isAuthor && publishError && (
+        <p className="story-detail-error" role="alert">{publishError}</p>
       )}
 
       {(story.author?.username || story.author_username) && (

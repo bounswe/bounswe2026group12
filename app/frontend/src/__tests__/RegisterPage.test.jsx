@@ -54,7 +54,7 @@ describe('RegisterPage', () => {
   });
 
   test('calls registerRequest and login() on valid submit', async () => {
-    authService.registerRequest.mockResolvedValueOnce({ access: 'tok', user: { username: 'alice' } });
+    authService.registerRequest.mockResolvedValueOnce({ access: 'tok', refresh: 'ref', user: { username: 'alice' } });
     renderRegister();
     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'alice' } });
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@b.com' } });
@@ -63,7 +63,27 @@ describe('RegisterPage', () => {
     await waitFor(() =>
       expect(authService.registerRequest).toHaveBeenCalledWith('alice', 'a@b.com', 'secret')
     );
-    expect(mockLogin).toHaveBeenCalledWith({ username: 'alice' }, 'tok');
+    expect(mockLogin).toHaveBeenCalledWith({ username: 'alice' }, 'tok', 'ref');
+  });
+
+  test('passes refresh token from register response to AuthContext.login()', async () => {
+    authService.registerRequest.mockResolvedValueOnce({
+      user: { id: 1, username: 'x' },
+      access: 'access-token',
+      refresh: 'refresh-token',
+    });
+    renderRegister();
+    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'x' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@b.c' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'pw' } });
+    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith(
+        { id: 1, username: 'x' },
+        'access-token',
+        'refresh-token',
+      );
+    });
   });
 
   test('shows error message when registerRequest fails', async () => {

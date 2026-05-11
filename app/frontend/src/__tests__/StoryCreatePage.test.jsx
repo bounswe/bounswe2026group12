@@ -69,6 +69,20 @@ describe('StoryCreatePage', () => {
     await waitFor(() => {
       expect(storyService.createStory).toHaveBeenCalled();
     });
+    const [fd] = storyService.createStory.mock.calls[0];
+    expect(fd.get('is_published')).toBe('true');
+  });
+
+  it('submits with is_published=false when "Save as draft" is clicked', async () => {
+    renderPage();
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Draft Story' } });
+    fireEvent.change(screen.getByLabelText(/body/i), { target: { value: 'Work in progress.' } });
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    await waitFor(() => {
+      expect(storyService.createStory).toHaveBeenCalled();
+    });
+    const [fd] = storyService.createStory.mock.calls[0];
+    expect(fd.get('is_published')).toBe('false');
   });
 
   it('navigates to story detail page after successful submission', async () => {

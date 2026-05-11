@@ -81,11 +81,32 @@ function normalizeRecipeDetail(data: RecipeDetail & Record<string, unknown>): Re
         }
       : undefined;
 
+  // Backend sends `region` as the FK pk (integer) and the human label as
+  // `region_name`. Normalise to the friendly name so callers can render it
+  // directly without showing the raw id.
+  const reg = data.region;
+  const regionLabel =
+    typeof reg === 'string'
+      ? reg
+      : reg && typeof reg === 'object' && 'name' in reg && typeof (reg as { name: unknown }).name === 'string'
+        ? (reg as { name: string }).name
+        : typeof data.region_name === 'string'
+          ? data.region_name
+          : undefined;
+  const regionId =
+    typeof reg === 'number'
+      ? reg
+      : reg && typeof reg === 'object' && 'id' in reg && typeof (reg as { id: unknown }).id === 'number'
+        ? (reg as { id: number }).id
+        : null;
+
   return {
     ...data,
     ingredients: normalizeRecipeIngredients(data.ingredients),
     image: typeof data.image === 'string' ? data.image : null,
     author,
+    region: regionLabel,
+    region_id: regionId,
   };
 }
 

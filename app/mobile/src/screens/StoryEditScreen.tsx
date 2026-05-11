@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { recipeFormStyles as form } from '../components/recipe/recipeFormStyles';
+import { RegionPicker } from '../components/pickers/RegionPicker';
 import { RecipeLinkPicker, type RecipeLink } from '../components/story/RecipeLinkPicker';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
@@ -38,8 +39,13 @@ export default function StoryEditScreen({ route, navigation }: Props) {
   const [body, setBody] = useState('');
   const [language, setLanguage] = useState<StoryLanguage>('en');
   const [linkedRecipe, setLinkedRecipe] = useState<RecipeLink | null>(null);
+  const [regionId, setRegionId] = useState<number | null>(null);
+  const [regionLabel, setRegionLabel] = useState<string | null>(null);
   const [published, setPublished] = useState(true);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  /** Remote URL of the image when the story was loaded; used to detect whether
+   * the user picked a new local file or is still showing the server image. */
+  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(null);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -59,6 +65,9 @@ export default function StoryEditScreen({ route, navigation }: Props) {
     }
     setPublished(story.is_published !== false);
     setImageUri(story.image ?? null);
+    setInitialImageUrl(story.image ?? null);
+    setRegionId(story.region_id ?? null);
+    setRegionLabel(story.region ?? null);
   }, []);
 
   async function pickImage() {
@@ -129,10 +138,15 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           title: title.trim(),
           body: body.trim(),
           language,
-          linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
+          linked_recipe_id: linkedRecipe ? Number(linkedRecipe.id) : null,
           is_published: published,
+          region: regionId,
         });
-        if (imageUri) {
+        // Only upload when the user picked a NEW local file. The remote URL
+        // loaded from the server stays as `imageUri` until they pick something,
+        // and re-uploading that URL as if it were a local file used to corrupt
+        // the image / fail on Android.
+        if (imageUri && imageUri !== initialImageUrl) {
           await updateStoryImageById(String(id), { uri: imageUri });
         }
         showToast('Story updated!', 'success');
@@ -304,6 +318,22 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           </View>
 
           <View style={form.section}>
+            <Text style={form.sectionTitle}>Region (optional)</Text>
+            <RegionPicker
+              value={regionId}
+              fallbackLabel={regionLabel}
+              onChange={(next) => {
+                setRegionId(next ? next.id : null);
+                setRegionLabel(next ? next.name : null);
+              }}
+            />
+            <Text style={form.videoHint}>
+              Tag the story with a region so it shows up on the map. If left empty, the linked
+              recipe&apos;s region (if any) will be used as a fallback.
+            </Text>
+          </View>
+
+          <View style={form.section}>
             <RecipeLinkPicker
               value={linkedRecipe}
               onChange={setLinkedRecipe}
@@ -346,15 +376,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     backgroundColor: 'transparent',
   },
-  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.primary },
+  langPillActive: { backgroundColor: tokens.colors.accentGreen, borderColor: tokens.colors.surfaceDark },
   langText: { fontSize: 14, fontWeight: '700', color: tokens.colors.text },
   langTextActive: { color: tokens.colors.text },
   thumbButton: {
     borderWidth: 2,
-    borderColor: tokens.colors.primary,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: 999,
     paddingVertical: 12,
     paddingHorizontal: 14,

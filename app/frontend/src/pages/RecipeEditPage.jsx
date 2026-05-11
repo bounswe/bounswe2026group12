@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
 import Toast from '../components/Toast';
@@ -143,8 +143,7 @@ export default function RecipeEditPage() {
     return Object.keys(e).length === 0;
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function submit(publish) {
     if (!validate()) return;
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
@@ -153,7 +152,7 @@ export default function RecipeEditPage() {
       description,
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
-      is_published: true,
+      is_published: publish,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -172,7 +171,7 @@ export default function RecipeEditPage() {
       }
 
       clearDraft();
-      showToast('Recipe updated!', 'success');
+      showToast(publish ? 'Recipe updated!' : 'Draft saved!', 'success');
       setTimeout(() => navigate(`/recipes/${id}`), 1500);
     } catch {
       showToast('Failed to save changes. Please try again.', 'error');
@@ -182,7 +181,7 @@ export default function RecipeEditPage() {
   if (loading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
   if (recipe && user && user.id !== recipe.author) {
-    return <p className="page-status page-error">You are not authorized to edit this recipe.</p>;
+    return <Navigate to={`/recipes/${id}`} replace />;
   }
 
   return (
@@ -193,7 +192,7 @@ export default function RecipeEditPage() {
         onRestore={handleRestore}
         onDiscard={clearDraft}
       />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => { e.preventDefault(); submit(true); }}>
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
@@ -287,7 +286,20 @@ export default function RecipeEditPage() {
         </section>
 
         <div className="recipe-form-actions">
-          <button type="submit" className="btn btn-primary">Save Changes</button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => submit(false)}
+          >
+            Save as draft
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => submit(true)}
+          >
+            {recipe && recipe.is_published ? 'Save Changes' : 'Publish'}
+          </button>
         </div>
       </form>
 

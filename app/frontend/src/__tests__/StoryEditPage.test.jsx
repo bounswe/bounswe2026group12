@@ -24,6 +24,7 @@ const mockStory = {
   language: 'en',
   author: { id: 3, username: 'eren' },
   linked_recipe: null,
+  is_published: true,
 };
 
 function renderPage(authUser = authorUser) {
@@ -63,18 +64,25 @@ describe('StoryEditPage', () => {
     expect(screen.getByDisplayValue('Some body text.')).toBeInTheDocument();
   });
 
-  it('shows unauthorized error when non-author accesses edit', async () => {
-    renderPage(otherUser);
-    await waitFor(() =>
-      expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
+  it('redirects non-authors to the detail page', async () => {
+    render(
+      <AuthContext.Provider value={{ user: { id: 99, username: 'visitor' }, token: 'tok', login: jest.fn(), logout: jest.fn(), loading: false }}>
+        <MemoryRouter initialEntries={['/stories/1/edit']}>
+          <Routes>
+            <Route path="/stories/:id/edit" element={<StoryEditPage />} />
+            <Route path="/stories/:id" element={<div>Story Detail</div>} />
+          </Routes>
+        </MemoryRouter>
+      </AuthContext.Provider>,
     );
+    await waitFor(() => expect(screen.getByText('Story Detail')).toBeInTheDocument());
   });
 
   it('shows title required error on empty submit', async () => {
     renderPage();
     await waitFor(() => screen.getByDisplayValue("Grandma's Kitchen"));
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: '' } });
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
     expect(screen.getByText(/title is required/i)).toBeInTheDocument();
   });
 
@@ -82,18 +90,40 @@ describe('StoryEditPage', () => {
     storyService.updateStory.mockResolvedValue({ id: 1 });
     renderPage();
     await waitFor(() => screen.getByDisplayValue("Grandma's Kitchen"));
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
     await waitFor(() =>
       expect(screen.getByText(/story updated/i)).toBeInTheDocument()
     );
     expect(storyService.updateStory).toHaveBeenCalled();
+    const [, fd] = storyService.updateStory.mock.calls[0];
+    expect(fd.get('is_published')).toBe('true');
+  });
+
+  it('calls updateStory with is_published=false when "Save as draft" is clicked', async () => {
+    storyService.updateStory.mockResolvedValue({ id: 1 });
+    renderPage();
+    await waitFor(() => screen.getByDisplayValue("Grandma's Kitchen"));
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    await waitFor(() =>
+      expect(screen.getByText(/draft saved/i)).toBeInTheDocument()
+    );
+    const [, fd] = storyService.updateStory.mock.calls[0];
+    expect(fd.get('is_published')).toBe('false');
+  });
+
+  it('shows "Publish" as the primary button when the story is a draft', async () => {
+    storyService.fetchStory.mockResolvedValue({ ...mockStory, is_published: false });
+    renderPage();
+    await waitFor(() => screen.getByDisplayValue("Grandma's Kitchen"));
+    expect(screen.getByRole('button', { name: /^publish$/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /save changes/i })).not.toBeInTheDocument();
   });
 
   it('shows error toast when updateStory fails', async () => {
     storyService.updateStory.mockRejectedValue(new Error('fail'));
     renderPage();
     await waitFor(() => screen.getByDisplayValue("Grandma's Kitchen"));
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
     await waitFor(() =>
       expect(screen.getByText(/failed to save/i)).toBeInTheDocument()
     );

@@ -293,3 +293,141 @@ class StoryImageAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data['image'])
         self.assertIn('stories/images/', response.data['image'])
+
+
+class StoryTypeAPITest(APITestCase):
+    """Tests for Story.story_type field (#565)."""
+
+    VALID_CHOICES = ['traditional', 'historical', 'family', 'festive', 'personal']
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="typer@example.com", username="typer", password="Pass123!"
+        )
+        self.list_url = reverse('story-list')
+
+    def test_existing_story_without_story_type_serializes_null(self):
+        story = Story.objects.create(
+            title="Legacy", body="No type", author=self.user, is_published=True
+        )
+        response = self.client.get(reverse('story-detail', kwargs={'pk': story.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('story_type', response.data)
+        self.assertIsNone(response.data['story_type'])
+
+    def test_create_with_each_valid_story_type(self):
+        self.client.force_authenticate(user=self.user)
+        for choice in self.VALID_CHOICES:
+            response = self.client.post(self.list_url, {
+                "title": f"Story {choice}",
+                "body": f"Body for {choice}",
+                "story_type": choice,
+            })
+            self.assertEqual(
+                response.status_code, status.HTTP_201_CREATED,
+                f"Expected 201 for story_type={choice}, got {response.status_code}: {response.data}"
+            )
+            self.assertEqual(response.data['story_type'], choice)
+
+            # Round-trip via detail
+            detail = self.client.get(reverse('story-detail', kwargs={'pk': response.data['id']}))
+            self.assertEqual(detail.status_code, status.HTTP_200_OK)
+            self.assertEqual(detail.data['story_type'], choice)
+
+    def test_create_with_invalid_story_type_returns_400(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.list_url, {
+            "title": "Bad type",
+            "body": "Should reject",
+            "story_type": "not_a_real_type",
+        })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('story_type', response.data)
+
+    def test_patch_sets_and_clears_story_type(self):
+        self.client.force_authenticate(user=self.user)
+        story = Story.objects.create(
+            title="Patchable", body="Will toggle type", author=self.user, is_published=True
+        )
+        url = reverse('story-detail', kwargs={'pk': story.id})
+
+        set_response = self.client.patch(url, {"story_type": "family"}, format='json')
+        self.assertEqual(set_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(set_response.data['story_type'], "family")
+
+        clear_response = self.client.patch(url, {"story_type": None}, format='json')
+        self.assertEqual(clear_response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(clear_response.data['story_type'])
+
+    def test_list_filter_returns_only_matching_story_type(self):
+        Story.objects.create(
+            title="Trad 1", body="x", author=self.user,
+            story_type="traditional", is_published=True,
+        )
+        Story.objects.create(
+            title="Trad 2", body="y", author=self.user,
+            story_type="traditional", is_published=True,
+        )
+        Story.objects.create(
+            title="Family 1", body="z", author=self.user,
+            story_type="family", is_published=True,
+        )
+        Story.objects.create(
+            title="Untyped", body="n", author=self.user, is_published=True,
+        )
+
+        response = self.client.get(self.list_url, {"story_type": "traditional"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        titles = sorted(s['title'] for s in results)
+        self.assertEqual(titles, ["Trad 1", "Trad 2"])
+        for item in results:
+            self.assertEqual(item['story_type'], "traditional")
+
+    def test_list_filter_with_invalid_value_returns_empty(self):
+        Story.objects.create(
+            title="Trad 1", body="x", author=self.user,
+            story_type="traditional", is_published=True,
+        )
+        response = self.client.get(self.list_url, {"story_type": "not_a_real_type"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        self.assertEqual(list(results), [])
+
+class StoryAuthorFilterTest(APITestCase):
+    """GET /api/stories/?author=<id> filtering tests."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user1 = User.objects.create_user(
+            email='sauthor1@example.com', username='sauthor1', password='Pass123!'
+        )
+        cls.user2 = User.objects.create_user(
+            email='sauthor2@example.com', username='sauthor2', password='Pass123!'
+        )
+
+        Story.objects.create(
+            title='Story 1', body='By author 1', author=cls.user1, is_published=True
+        )
+        Story.objects.create(
+            title='Story 2', body='By author 1 again', author=cls.user1, is_published=True
+        )
+        Story.objects.create(
+            title='Story 3', body='By author 2', author=cls.user2, is_published=True
+        )
+        cls.url = reverse('story-list')
+
+    def test_filter_by_author_user1(self):
+        response = self.client.get(self.url, {'author': self.user1.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        self.assertEqual(len(results), 2)
+        titles = sorted(r['title'] for r in results)
+        self.assertEqual(titles, ['Story 1', 'Story 2'])
+
+    def test_filter_by_author_user2(self):
+        response = self.client.get(self.url, {'author': self.user2.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['title'], 'Story 3')

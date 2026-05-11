@@ -1,14 +1,19 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import RecipeDetailPage from '../pages/RecipeDetailPage';
 import * as recipeService from '../services/recipeService';
 import * as searchService from '../services/searchService';
 import * as commentService from '../services/commentService';
+import * as checkOffService from '../services/checkOffService';
+import * as ingredientService from '../services/ingredientService';
 
 jest.mock('../services/recipeService');
 jest.mock('../services/searchService');
 jest.mock('../services/commentService');
+jest.mock('../services/checkOffService');
+jest.mock('../services/ingredientService');
 
 const mockRecipe = {
   id: 1,
@@ -45,6 +50,9 @@ beforeEach(() => {
     { id: 2, name: 'Mediterranean' },
   ]);
   commentService.fetchCommentsForRecipe.mockResolvedValue([]);
+  checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+  checkOffService.toggleCheckedIngredient.mockResolvedValue([]);
+  ingredientService.fetchSubstitutes.mockResolvedValue([]);
 });
 
 describe('RecipeDetailPage', () => {
@@ -133,13 +141,155 @@ describe('RecipeDetailPage', () => {
     expect(screen.getByRole('heading', { name: /q&a and comments/i })).toBeInTheDocument();
   });
 
-  it('shows disabled messaging button when author is not contactable', async () => {
-    recipeService.fetchRecipe.mockResolvedValue({
-      ...mockRecipe,
-      author_is_contactable: false,
-    });
+  it('always renders an enabled Message button for non-authors', async () => {
     renderPage('1', { id: 99, username: 'other' });
     await waitFor(() => screen.getByText('Baklava'));
-    expect(screen.getByRole('button', { name: /messaging disabled by author/i })).toBeDisabled();
+    const msgBtn = screen.getByRole('button', { name: /message @eren/i });
+    expect(msgBtn).toBeInTheDocument();
+    expect(msgBtn).not.toBeDisabled();
+  });
+
+  describe('delete flow', () => {
+    beforeEach(() => {
+      recipeService.deleteRecipe = jest.fn().mockResolvedValue({ status: 204 });
+    });
+
+    it('shows a Delete button only to the author', async () => {
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+    });
+
+    it('does not show a Delete button to non-authors', async () => {
+      renderPage('1', { id: 99, username: 'someone' });
+      await waitFor(() => screen.getByText('Baklava'));
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+    });
+
+    it('confirms, deletes, and navigates to /recipes on success', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(confirmSpy).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(recipeService.deleteRecipe).toHaveBeenCalledWith(1);
+      });
+      confirmSpy.mockRestore();
+    });
+
+    it('does nothing when the user cancels the confirm', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(false);
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(recipeService.deleteRecipe).not.toHaveBeenCalled();
+      confirmSpy.mockRestore();
+    });
+
+    it('disables the Delete button while a delete request is in flight', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      let resolveDelete;
+      recipeService.deleteRecipe = jest.fn(
+        () => new Promise((resolve) => { resolveDelete = resolve; })
+      );
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      const deleteBtn = screen.getByRole('button', { name: /delete/i });
+      await userEvent.click(deleteBtn);
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /deleting/i })).toBeDisabled();
+      });
+      resolveDelete({ status: 204 });
+      confirmSpy.mockRestore();
+    });
+
+    it('shows an inline error if delete fails and keeps the recipe rendered', async () => {
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      recipeService.deleteRecipe = jest.fn().mockRejectedValue(new Error('boom'));
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(screen.getByRole('button', { name: /delete/i }));
+      await waitFor(() => {
+        expect(screen.getByText(/could not delete recipe/i)).toBeInTheDocument();
+      });
+      // Recipe content still visible — not replaced by error
+      expect(screen.getByText('Baklava')).toBeInTheDocument();
+      expect(screen.getByText('A sweet pastry.')).toBeInTheDocument();
+      confirmSpy.mockRestore();
+    });
+  });
+
+  describe('ingredient check-off persistence', () => {
+    beforeEach(() => {
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+      checkOffService.toggleCheckedIngredient.mockResolvedValue([]);
+    });
+
+    it('does not render ingredient checkboxes for anonymous users', async () => {
+      renderPage('1', null);
+      await waitFor(() => screen.getByText('Baklava'));
+      expect(screen.queryByRole('checkbox', { name: /mark .* as available/i })).not.toBeInTheDocument();
+      expect(checkOffService.fetchCheckedIngredients).not.toHaveBeenCalled();
+    });
+
+    it('fetches the canonical checked set on mount for a logged-in user', async () => {
+      // mockRecipe.ingredients[0].ingredient === 1
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([1]);
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => {
+        expect(checkOffService.fetchCheckedIngredients).toHaveBeenCalledWith('1');
+      });
+      await waitFor(() => {
+        const checkbox = screen.getByRole('checkbox', { name: /mark phyllo dough as available/i });
+        expect(checkbox).toBeChecked();
+      });
+    });
+
+    it('optimistically toggles and reconciles with the canonical list from the server', async () => {
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+      checkOffService.toggleCheckedIngredient.mockResolvedValue([1]);
+      renderPage('1', { id: 3, username: 'eren' });
+      const checkbox = await screen.findByRole('checkbox', { name: /mark phyllo dough as available/i });
+      expect(checkbox).not.toBeChecked();
+      await userEvent.click(checkbox);
+      await waitFor(() => {
+        expect(checkOffService.toggleCheckedIngredient).toHaveBeenCalledWith('1', 1, true);
+      });
+      await waitFor(() => {
+        expect(checkbox).toBeChecked();
+      });
+    });
+
+    it('reverts the optimistic toggle when the server rejects it', async () => {
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+      checkOffService.toggleCheckedIngredient.mockRejectedValue(new Error('500'));
+      renderPage('1', { id: 3, username: 'eren' });
+      const checkbox = await screen.findByRole('checkbox', { name: /mark phyllo dough as available/i });
+      await userEvent.click(checkbox);
+      await waitFor(() => {
+        expect(checkbox).not.toBeChecked();
+      });
+    });
+  });
+
+  describe('substitute panel', () => {
+    it('renders match-type chips with friendly labels (e.g. "Flavor", not "flavor" or "Flavor Match")', async () => {
+      ingredientService.fetchSubstitutes.mockResolvedValue([
+        { id: 9, name: 'Tofu', match_type: 'flavor' },
+      ]);
+      renderPage('1', { id: 99, username: 'someone' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(
+        screen.getByRole('button', { name: /find substitutes for phyllo dough/i }),
+      );
+      await waitFor(() => {
+        expect(screen.getByText('Tofu')).toBeInTheDocument();
+      });
+      expect(ingredientService.fetchSubstitutes).toHaveBeenCalledWith(1, 'Phyllo dough');
+      expect(screen.getByText('Flavor')).toBeInTheDocument();
+      expect(screen.queryByText('Flavor Match')).not.toBeInTheDocument();
+      expect(screen.queryByText('flavor')).not.toBeInTheDocument();
+    });
   });
 });

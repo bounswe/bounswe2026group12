@@ -125,7 +125,7 @@ export default function MapPage() {
               )}
 
               <Link
-                to={`/search?region=${selected.id}`}
+                to={`/search?region=${encodeURIComponent(selected.name)}`}
                 className="btn btn-primary btn-sm map-panel-cta"
               >
                 See all from {selected.name}

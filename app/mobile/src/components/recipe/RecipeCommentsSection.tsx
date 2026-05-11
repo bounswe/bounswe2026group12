@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import {
   deleteComment,
   fetchCommentsForRecipe,
@@ -41,6 +42,7 @@ function formatTime(iso: string): string {
 
 export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
   const { user, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -99,7 +101,12 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
         onPress: async () => {
           try {
             await deleteComment(id);
-            setComments((prev) => prev.filter((c) => c.id !== id && c.parent_comment !== id));
+            // Only drop the target comment. The backend doesn't cascade to
+            // replies, so removing them from local state too would create a
+            // mirage — they'd vanish from the UI and reappear on the next
+            // reload. Replies remain visible (orphaned) until backend cascade
+            // lands or they're individually deleted.
+            setComments((prev) => prev.filter((c) => c.id !== id));
           } catch (e) {
             Alert.alert('Delete failed', e instanceof Error ? e.message : 'Try again.');
           }
@@ -126,6 +133,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
           c.id === id ? { ...c, has_voted: target.has_voted, helpful_count: target.helpful_count } : c,
         ),
       );
+      showToast('Could not save your vote. Please try again.', 'error');
     } finally {
       setVotePendingIds((prev) => prev.filter((x) => x !== id));
     }
@@ -169,17 +177,24 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
           ) : null}
           {replyTarget ? (
             <View style={styles.replyBanner}>
-              <Text style={styles.replyBannerText} numberOfLines={1}>
-                Replying to {replyTarget.author_username}
-              </Text>
-              <Pressable
-                onPress={() => setReplyTo(null)}
-                hitSlop={6}
-                accessibilityRole="button"
-                accessibilityLabel="Cancel reply"
-              >
-                <Text style={styles.replyBannerCancel}>Cancel</Text>
-              </Pressable>
+              <View style={styles.replyBannerHeader}>
+                <Text style={styles.replyBannerText} numberOfLines={1}>
+                  Replying to {replyTarget.author_username}
+                </Text>
+                <Pressable
+                  onPress={() => setReplyTo(null)}
+                  hitSlop={10}
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancel reply"
+                >
+                  <Text style={styles.replyBannerCancel}>Cancel</Text>
+                </Pressable>
+              </View>
+              {replyTarget.body ? (
+                <Text style={styles.replyBannerBody} numberOfLines={2}>
+                  {replyTarget.body}
+                </Text>
+              ) : null}
             </View>
           ) : null}
           <TextInput
@@ -219,7 +234,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
 
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator color={tokens.colors.primary} />
+          <ActivityIndicator color={tokens.colors.surfaceDark} />
         </View>
       ) : loadError ? (
         <View style={styles.errorBanner}>
@@ -287,7 +302,7 @@ function CommentNodeView({
         <Pressable
           onPress={() => onToggleVote(node.id)}
           disabled={!isAuthenticated || votePending}
-          hitSlop={6}
+          hitSlop={10}
           accessibilityRole="button"
           accessibilityState={{ selected: node.has_voted, disabled: !isAuthenticated || votePending }}
           accessibilityLabel={node.has_voted ? 'Unmark helpful' : 'Mark helpful'}
@@ -308,7 +323,7 @@ function CommentNodeView({
         {isAuthenticated && depth === 0 ? (
           <Pressable
             onPress={() => onReply(node.id)}
-            hitSlop={6}
+            hitSlop={10}
             accessibilityRole="button"
             accessibilityLabel={`Reply to ${node.author_username}`}
           >
@@ -318,7 +333,7 @@ function CommentNodeView({
         {canDelete ? (
           <Pressable
             onPress={() => onDelete(node.id)}
-            hitSlop={6}
+            hitSlop={10}
             accessibilityRole="button"
             accessibilityLabel="Delete comment"
           >
@@ -348,7 +363,7 @@ function CommentNodeView({
 }
 
 const styles = StyleSheet.create({
-  section: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.primaryTint, gap: 12 },
+  section: { marginTop: 28, paddingTop: 16, borderTopWidth: 1, borderTopColor: tokens.colors.surfaceDark, gap: 12 },
   heading: { fontSize: 18, fontWeight: '800', color: tokens.colors.text, fontFamily: tokens.typography.display.fontFamily },
   qaHint: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic' },
   composer: {
@@ -374,21 +389,32 @@ const styles = StyleSheet.create({
   typeText: { fontSize: 13, fontWeight: '700', color: tokens.colors.text },
   typeTextActive: { color: tokens.colors.textOnDark },
   replyBanner: {
+    padding: 10,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.colors.bg,
+    borderLeftWidth: 4,
+    borderLeftColor: tokens.colors.surfaceDark,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: tokens.colors.surfaceDark,
+    borderRightColor: tokens.colors.surfaceDark,
+    borderBottomColor: tokens.colors.surfaceDark,
+    gap: 6,
+  },
+  replyBannerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 8,
-    borderRadius: tokens.radius.md,
-    backgroundColor: tokens.colors.primarySubtle,
-    borderWidth: 1,
-    borderColor: tokens.colors.primaryBorder,
+    gap: 8,
   },
-  replyBannerText: { flex: 1, fontSize: 13, fontWeight: '700', color: tokens.colors.primary },
-  replyBannerCancel: { fontSize: 13, fontWeight: '800', color: tokens.colors.primary, marginLeft: 8 },
+  replyBannerText: { flex: 1, fontSize: 13, fontWeight: '800', color: tokens.colors.text },
+  replyBannerCancel: { fontSize: 13, fontWeight: '800', color: tokens.colors.text, marginLeft: 8, textDecorationLine: 'underline' },
+  replyBannerBody: { fontSize: 13, color: tokens.colors.textMuted, fontStyle: 'italic', lineHeight: 18 },
   input: {
     minHeight: 70,
     borderWidth: 1.5,
-    borderColor: tokens.colors.primaryBorder,
+    borderColor: tokens.colors.surfaceDark,
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -411,7 +437,7 @@ const styles = StyleSheet.create({
   signInHint: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
   errorBanner: { gap: 6, paddingVertical: 8 },
   errorText: { color: '#991b1b', fontSize: 13, fontWeight: '700' },
-  retryText: { color: tokens.colors.primary, fontWeight: '800' },
+  retryText: { color: tokens.colors.text, fontWeight: '800', textDecorationLine: 'underline' },
   emptyText: { fontSize: 14, color: tokens.colors.textMuted, fontStyle: 'italic' },
   centered: { paddingVertical: 16, alignItems: 'center' },
   list: { gap: 12 },
