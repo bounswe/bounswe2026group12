@@ -16,6 +16,8 @@ export type AuthUser = {
 
 export type AuthSuccess = {
   access: string;
+  /** Refresh token. Real backend returns it; mock leaves it undefined. */
+  refresh?: string;
   user: AuthUser;
 };
 

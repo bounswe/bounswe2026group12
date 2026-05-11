@@ -40,7 +40,7 @@ export default function LoginScreen({ navigation }: Props) {
     setSubmitting(true);
     try {
       const data = await loginRequest(email, password);
-      await login(data.user, data.access);
+      await login(data.user, data.access, data.refresh);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
