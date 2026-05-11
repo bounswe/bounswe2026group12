@@ -10,6 +10,7 @@ import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubstitutesSheet';
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
+import { EndangeredHeritageSection } from '../components/heritage/EndangeredHeritageSection';
 import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import { DidYouKnowSection } from '../components/cultural/DidYouKnowSection';
@@ -480,6 +481,11 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               ) : null}
             </View>
           ) : null}
+
+          <EndangeredHeritageSection
+            status={recipe.heritage_status}
+            notes={recipe.endangered_notes ?? []}
+          />
 
           <DidYouKnowSection facts={culturalFacts} />
 

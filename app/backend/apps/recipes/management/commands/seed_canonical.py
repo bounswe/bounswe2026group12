@@ -21,7 +21,7 @@ from apps.recipes.models import (
     DietaryTag, EventTag, Religion, Comment, Vote, EndangeredNote,
     RecipeCulturalContext, IngredientRoute
 )
-from apps.stories.models import Story, StoryRecipeLink
+from apps.stories.models import Story, StoryRecipeLink, StoryComment, StoryVote
 
 User = get_user_model()
 
@@ -56,6 +56,8 @@ class Command(BaseCommand):
                 f'DRY RUN: Would create {len(data["users"])} users, '
                 f'{len(data["recipes"])} recipes, '
                 f'{len(data["stories"])} stories, '
+                f'{len(data.get("recipe_comments", []))} recipe comments, '
+                f'{len(data.get("story_comments", []))} story comments, '
                 f'{len(data["cultural_content"])} cultural content cards, '
                 f'{len(substitutions_data)} ingredient substitutions, '
                 f'{len(heritage_groups)} heritage groups, '
@@ -69,6 +71,8 @@ class Command(BaseCommand):
             users = self._seed_users(data['users'])
             recipes = self._seed_recipes(data['recipes'], users)
             stories = self._seed_stories(data['stories'], users, recipes)
+            self._seed_recipe_comments(data.get('recipe_comments', []), users, recipes)
+            self._seed_story_comments(data.get('story_comments', []), users, stories)
             cards = self._seed_cultural_content(data['cultural_content'])
             sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
             heritage_stats = self._seed_heritage(heritage_data, recipes, stories)
@@ -106,6 +110,8 @@ class Command(BaseCommand):
         CulturalEvent.objects.all().delete()
         Notification.objects.all().delete()
         DeviceToken.objects.all().delete()
+        StoryVote.objects.all().delete()
+        StoryComment.objects.all().delete()
         StoryRecipeLink.objects.all().delete()
         Story.objects.all().delete()
         Vote.objects.all().delete()
@@ -174,6 +180,9 @@ class Command(BaseCommand):
                 recipe.religions.set(
                     self._resolve_many(Religion, r['religions'])
                 )
+            if r.get('steps'):
+                recipe.steps = r['steps']
+                recipe.save(update_fields=['steps'])
             for ing in r.get('ingredients', []):
                 ingredient, _ = Ingredient.objects.get_or_create(
                     name=ing['name'],
@@ -265,6 +274,42 @@ class Command(BaseCommand):
                         self.style.WARNING(f"Image not found: {img_path}")
                     )
         return stories
+
+    def _seed_recipe_comments(self, comments_data, users, recipes):
+        """Seed recipe comments/questions with optional nested replies."""
+        id_map = {}
+        for c in comments_data:
+            recipe = recipes.get(c['recipe'])
+            if not recipe:
+                raise CommandError(f"recipe_comments: recipe '{c['recipe']}' not found.")
+            parent = id_map.get(c.get('parent_ref')) if c.get('parent_ref') else None
+            comment = Comment.objects.create(
+                recipe=recipe,
+                author=users[c['author']],
+                body=c['body'],
+                type=c.get('type', 'COMMENT'),
+                parent_comment=parent,
+            )
+            if c.get('ref'):
+                id_map[c['ref']] = comment
+
+    def _seed_story_comments(self, comments_data, users, stories):
+        """Seed story comments/questions with optional nested replies."""
+        id_map = {}
+        for c in comments_data:
+            story = stories.get(c['story'])
+            if not story:
+                raise CommandError(f"story_comments: story '{c['story']}' not found.")
+            parent = id_map.get(c.get('parent_ref')) if c.get('parent_ref') else None
+            comment = StoryComment.objects.create(
+                story=story,
+                author=users[c['author']],
+                body=c['body'],
+                type=c.get('type', 'COMMENT'),
+                parent_comment=parent,
+            )
+            if c.get('ref'):
+                id_map[c['ref']] = comment
 
     def _seed_cultural_content(self, cards_data):
         cards = []

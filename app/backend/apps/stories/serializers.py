@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Story, StoryRecipeLink
+from .models import Story, StoryRecipeLink, StoryComment, StoryVote
 from apps.recipes.models import DietaryTag, EventTag, Religion
 from apps.recipes.serializers import (
     DietaryTagLookupSerializer, EventTagLookupSerializer, ReligionLookupSerializer
@@ -184,8 +184,37 @@ class StorySerializer(serializers.ModelSerializer):
             recipe_ids = multi_ids
         elif single_id is not None:
             recipe_ids = [single_id]
-        
+
         # Replace existing links
         story.recipe_links.all().delete()
         for i, rid in enumerate(recipe_ids):
             StoryRecipeLink.objects.create(story=story, recipe_id=rid, order=i)
+
+
+class StoryCommentSerializer(serializers.ModelSerializer):
+    author_username = serializers.ReadOnlyField(source='author.username')
+    helpful_count = serializers.IntegerField(read_only=True, default=0)
+    has_voted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = StoryComment
+        fields = [
+            'id', 'story', 'author', 'author_username', 'parent_comment',
+            'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted',
+        ]
+        read_only_fields = ['story', 'author', 'created_at', 'updated_at']
+
+    def get_has_voted(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if hasattr(obj, 'user_has_voted'):
+                return obj.user_has_voted
+            return obj.votes.filter(user=request.user).exists()
+        return False
+
+    def validate(self, attrs):
+        parent = attrs.get('parent_comment')
+        story = self.context.get('story')
+        if parent and story and parent.story_id != story.id:
+            raise serializers.ValidationError({'parent_comment': 'Must belong to the same story.'})
+        return attrs

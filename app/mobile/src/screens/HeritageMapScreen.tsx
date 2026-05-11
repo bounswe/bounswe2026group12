@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout, Marker, Polyline } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MapZoomControls } from '../components/map/MapZoomControls';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { fetchHeritageGroup, type HeritageGroupDetail } from '../services/heritageService';
@@ -197,6 +198,8 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
           ))}
         </MapView>
 
+        <MapZoomControls mapRef={mapRef} style={styles.zoomControls} />
+
         <View style={styles.legend} pointerEvents="none">
           <Text style={styles.legendTitle}>{group.name}</Text>
           <Text style={styles.legendBody}>
@@ -280,4 +283,5 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   legendBody: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '700' },
+  zoomControls: { top: 90 },
 });
