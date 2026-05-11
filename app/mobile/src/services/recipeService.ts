@@ -93,6 +93,12 @@ function normalizeRecipeDetail(data: RecipeDetail & Record<string, unknown>): Re
         : typeof data.region_name === 'string'
           ? data.region_name
           : undefined;
+  const regionId =
+    typeof reg === 'number'
+      ? reg
+      : reg && typeof reg === 'object' && 'id' in reg && typeof (reg as { id: unknown }).id === 'number'
+        ? (reg as { id: number }).id
+        : null;
 
   return {
     ...data,
@@ -100,6 +106,7 @@ function normalizeRecipeDetail(data: RecipeDetail & Record<string, unknown>): Re
     image: typeof data.image === 'string' ? data.image : null,
     author,
     region: regionLabel,
+    region_id: regionId,
   };
 }
 
