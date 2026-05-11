@@ -7,11 +7,13 @@ import * as recipeService from '../services/recipeService';
 import * as searchService from '../services/searchService';
 import * as commentService from '../services/commentService';
 import * as checkOffService from '../services/checkOffService';
+import * as ingredientService from '../services/ingredientService';
 
 jest.mock('../services/recipeService');
 jest.mock('../services/searchService');
 jest.mock('../services/commentService');
 jest.mock('../services/checkOffService');
+jest.mock('../services/ingredientService');
 
 const mockRecipe = {
   id: 1,
@@ -50,6 +52,7 @@ beforeEach(() => {
   commentService.fetchCommentsForRecipe.mockResolvedValue([]);
   checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
   checkOffService.toggleCheckedIngredient.mockResolvedValue([]);
+  ingredientService.fetchSubstitutes.mockResolvedValue([]);
 });
 
 describe('RecipeDetailPage', () => {
@@ -269,6 +272,26 @@ describe('RecipeDetailPage', () => {
       await waitFor(() => {
         expect(checkbox).not.toBeChecked();
       });
+    });
+  });
+
+  describe('substitute panel', () => {
+    it('renders match-type chips with friendly labels (e.g. "Flavor", not "flavor" or "Flavor Match")', async () => {
+      ingredientService.fetchSubstitutes.mockResolvedValue([
+        { id: 9, name: 'Tofu', match_type: 'flavor' },
+      ]);
+      renderPage('1', { id: 99, username: 'someone' });
+      await waitFor(() => screen.getByText('Baklava'));
+      await userEvent.click(
+        screen.getByRole('button', { name: /find substitutes for phyllo dough/i }),
+      );
+      await waitFor(() => {
+        expect(screen.getByText('Tofu')).toBeInTheDocument();
+      });
+      expect(ingredientService.fetchSubstitutes).toHaveBeenCalledWith(1, 'Phyllo dough');
+      expect(screen.getByText('Flavor')).toBeInTheDocument();
+      expect(screen.queryByText('Flavor Match')).not.toBeInTheDocument();
+      expect(screen.queryByText('flavor')).not.toBeInTheDocument();
     });
   });
 });

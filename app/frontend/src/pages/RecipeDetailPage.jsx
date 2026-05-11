@@ -9,8 +9,10 @@ import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import './RecipeDetailPage.css';
 
 const MATCH_TYPE_LABELS = {
-  'Flavor Match': { label: 'Flavor', cls: 'chip-flavor' },
-  'Texture Match': { label: 'Texture', cls: 'chip-texture' },
+  ingredient: { label: 'Similar', cls: 'chip-ingredient' },
+  flavor: { label: 'Flavor', cls: 'chip-flavor' },
+  texture: { label: 'Texture', cls: 'chip-texture' },
+  chemical: { label: 'Chemical', cls: 'chip-chemical' },
 };
 
 function MatchChip({ type }) {
