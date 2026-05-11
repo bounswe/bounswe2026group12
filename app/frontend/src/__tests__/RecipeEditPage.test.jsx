@@ -119,11 +119,18 @@ describe('RecipeEditPage', () => {
     );
   });
 
-  it('shows unauthorized message when logged-in user is not the author', async () => {
-    renderPage({ id: 99, username: 'otherUser' });
-    await waitFor(() =>
-      expect(screen.getByText(/not authorized/i)).toBeInTheDocument()
+  it('redirects non-authors to the detail page', async () => {
+    render(
+      <AuthContext.Provider value={{ user: { id: 99, username: 'visitor' }, token: 'tok', login: jest.fn(), logout: jest.fn(), loading: false }}>
+        <MemoryRouter initialEntries={['/recipes/1/edit']}>
+          <Routes>
+            <Route path="/recipes/:id/edit" element={<RecipeEditPage />} />
+            <Route path="/recipes/:id" element={<div>Detail Page</div>} />
+          </Routes>
+        </MemoryRouter>
+      </AuthContext.Provider>,
     );
+    await waitFor(() => expect(screen.getByText('Detail Page')).toBeInTheDocument());
   });
 
   it('renders a thumbnail upload field', async () => {

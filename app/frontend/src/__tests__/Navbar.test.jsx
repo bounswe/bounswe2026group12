@@ -68,4 +68,11 @@ describe('Navbar', () => {
     renderNavbar();
     expect(screen.getByRole('link', { name: /^stories$/i })).toBeInTheDocument();
   });
+
+  it('exposes a Profile link to /profile inside the user dropdown', () => {
+    renderNavbar({ id: 1, username: 'eren' });
+    fireEvent.click(screen.getByRole('button', { name: /@eren/i }));
+    const link = screen.getByRole('link', { name: /^profile$/i });
+    expect(link).toHaveAttribute('href', '/profile');
+  });
 });

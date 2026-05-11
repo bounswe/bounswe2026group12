@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchModerationQueue, approveTag, rejectTag } from '../services/moderationService';
 import './ModerationPage.css';
@@ -27,6 +27,7 @@ export default function ModerationPage() {
 
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
+    if (!user.is_staff) { setLoading(false); return; }
     fetchModerationQueue()
       .then(setQueue)
       .finally(() => setLoading(false));
@@ -49,6 +50,10 @@ export default function ModerationPage() {
     acc[s] = queue.filter((t) => t.status === s).length;
     return acc;
   }, {});
+
+  if (user && !user.is_staff) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) return <p className="page-status">Loading…</p>;
 

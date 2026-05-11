@@ -77,6 +77,13 @@ export default function Navbar() {
                 {menuOpen && (
                   <div className="navbar-dropdown" role="menu">
                     <Link
+                      to="/profile"
+                      className="navbar-dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
                       to="/recipes/new"
                       className="navbar-dropdown-item"
                       onClick={() => setMenuOpen(false)}

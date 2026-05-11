@@ -34,7 +34,7 @@ export default function LoginPage() {
     setApiError('');
     try {
       const data = await loginRequest(email, password);
-      login(data.user, data.access);
+      login(data.user, data.access, data.refresh);
       navigate('/');
     } catch (err) {
       setApiError(extractApiError(err, 'Invalid email or password.'));

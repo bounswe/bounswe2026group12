@@ -45,13 +45,32 @@ describe('LoginPage', () => {
   });
 
   test('calls loginRequest and login() on valid submit', async () => {
-    authService.loginRequest.mockResolvedValueOnce({ access: 'tok', user: { username: 'alice' } });
+    authService.loginRequest.mockResolvedValueOnce({ access: 'tok', refresh: 'ref', user: { username: 'alice' } });
     renderLogin();
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'secret' } });
     fireEvent.click(screen.getByRole('button', { name: /log in/i }));
     await waitFor(() => expect(authService.loginRequest).toHaveBeenCalledWith('a@b.com', 'secret'));
-    expect(mockLogin).toHaveBeenCalledWith({ username: 'alice' }, 'tok');
+    expect(mockLogin).toHaveBeenCalledWith({ username: 'alice' }, 'tok', 'ref');
+  });
+
+  test('passes refresh token from login response to AuthContext.login()', async () => {
+    authService.loginRequest.mockResolvedValueOnce({
+      user: { id: 1, username: 'x' },
+      access: 'access-token',
+      refresh: 'refresh-token',
+    });
+    renderLogin();
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@b.c' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'pw' } });
+    fireEvent.click(screen.getByRole('button', { name: /log in/i }));
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith(
+        { id: 1, username: 'x' },
+        'access-token',
+        'refresh-token',
+      );
+    });
   });
 
   test('shows error message when loginRequest fails', async () => {

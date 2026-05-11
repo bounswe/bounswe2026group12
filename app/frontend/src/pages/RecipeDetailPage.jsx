@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchRecipe } from '../services/recipeService';
+import { fetchRecipe, deleteRecipe } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
 import { fetchSubstitutes, checkIngredient, uncheckIngredient } from '../services/ingredientService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
@@ -27,6 +27,8 @@ export default function RecipeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [useConverted, setUseConverted] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   // #372 — ingredient check-off
   const [checked, setChecked] = useState(new Set());
@@ -84,6 +86,19 @@ export default function RecipeDetailPage() {
     setAppliedSubs((prev) => { const n = { ...prev }; delete n[ingredientId]; return n; });
   }, []);
 
+  const handleDelete = useCallback(async () => {
+    if (deleting) return;
+    if (!window.confirm('Delete this recipe? This cannot be undone.')) return;
+    setDeleting(true);
+    try {
+      await deleteRecipe(recipe.id);
+      navigate('/recipes');
+    } catch {
+      setDeleteError('Could not delete recipe.');
+      setDeleting(false);
+    }
+  }, [deleting, navigate, recipe]);
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!recipe) return null;
@@ -125,6 +140,19 @@ export default function RecipeDetailPage() {
             <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">
               Edit
             </Link>
+          )}
+          {isAuthor && (
+            <button
+              type="button"
+              className="btn btn-danger btn-sm"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+          )}
+          {isAuthor && deleteError && (
+            <p className="recipe-detail-error" role="alert">{deleteError}</p>
           )}
           {user && !isAuthor && recipe.author_username && (
             authorContactable ? (
@@ -251,6 +279,7 @@ export default function RecipeDetailPage() {
                           key={s.id}
                           className="sub-option"
                           role="option"
+                          aria-selected={false}
                           onClick={() => applySub(ri.ingredient, s)}
                         >
                           <span className="sub-option-name">{s.name}</span>

@@ -18,6 +18,7 @@ import StoryEditPage from './pages/StoryEditPage';
 import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
+import ProfilePage from './pages/ProfilePage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
 import EventDetailPage from './pages/EventDetailPage';
@@ -109,6 +110,10 @@ export default function App() {
           <Route
             path="/onboarding"
             element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/profile"
+            element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
           />
           <Route
             path="/admin/moderation"

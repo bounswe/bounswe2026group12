@@ -27,6 +27,11 @@ export async function updateRecipe(id, formData) {
   return response.data;
 }
 
+export async function deleteRecipe(id) {
+  if (USE_MOCK) return { status: 204 };
+  return apiClient.delete(`/api/recipes/${id}/`);
+}
+
 let _ingredientsPromise = null;
 let _unitsPromise = null;
 

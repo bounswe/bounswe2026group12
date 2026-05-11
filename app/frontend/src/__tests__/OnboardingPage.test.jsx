@@ -78,5 +78,25 @@ describe('OnboardingPage', () => {
     expect(mockUpdateUser).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
+
+  it('keeps Finish disabled until at least one selection in each step', () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    expect(screen.getByRole('button', { name: /finish/i })).toBeDisabled();
+  });
+
+  it('enables Finish once every step has at least one selection', () => {
+    renderPage();
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+    expect(screen.getByRole('button', { name: /finish/i })).not.toBeDisabled();
+  });
 });
 

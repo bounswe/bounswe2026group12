@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchThreads, createThread } from '../services/messageService';
-import ContactabilityToggle from '../components/ContactabilityToggle';
 import { extractApiError } from '../services/api';
 import './InboxPage.css';
 
@@ -16,7 +15,7 @@ function formatDate(iso) {
 }
 
 export default function InboxPage() {
-  const { user, updateUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -66,7 +65,6 @@ export default function InboxPage() {
   return (
     <main className="page-card inbox-page">
       <h1 className="inbox-title">Inbox</h1>
-      {user && <ContactabilityToggle user={user} onUserUpdated={updateUser} />}
 
       {isCompose && (
         <section className="inbox-compose">
