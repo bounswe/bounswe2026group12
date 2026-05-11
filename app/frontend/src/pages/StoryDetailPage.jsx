@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchStory, deleteStory } from '../services/storyService';
+import { fetchStory, deleteStory, publishStory, unpublishStory } from '../services/storyService';
 import './StoryDetailPage.css';
 
 export default function StoryDetailPage() {
@@ -13,6 +13,8 @@ export default function StoryDetailPage() {
   const [error, setError] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [togglingPublish, setTogglingPublish] = useState(false);
+  const [publishError, setPublishError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -39,6 +41,24 @@ export default function StoryDetailPage() {
     }
   }, [deleting, navigate, story]);
 
+  const handleTogglePublish = useCallback(async () => {
+    if (togglingPublish || !story) return;
+    setTogglingPublish(true);
+    setPublishError('');
+    try {
+      const updated = story.is_published
+        ? await unpublishStory(story.id)
+        : await publishStory(story.id);
+      setStory((prev) => ({ ...prev, ...updated }));
+    } catch {
+      setPublishError(
+        story.is_published ? 'Could not unpublish story.' : 'Could not publish story.'
+      );
+    } finally {
+      setTogglingPublish(false);
+    }
+  }, [togglingPublish, story]);
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
   if (!story) return null;
@@ -58,6 +78,14 @@ export default function StoryDetailPage() {
             </Link>
             <button
               type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleTogglePublish}
+              disabled={togglingPublish}
+            >
+              {togglingPublish ? '…' : story.is_published ? 'Unpublish' : 'Publish'}
+            </button>
+            <button
+              type="button"
               className="btn btn-danger btn-sm"
               onClick={handleDelete}
               disabled={deleting}
@@ -70,6 +98,10 @@ export default function StoryDetailPage() {
 
       {isAuthor && deleteError && (
         <p className="story-detail-error" role="alert">{deleteError}</p>
+      )}
+
+      {isAuthor && publishError && (
+        <p className="story-detail-error" role="alert">{publishError}</p>
       )}
 
       {(story.author?.username || story.author_username) && (

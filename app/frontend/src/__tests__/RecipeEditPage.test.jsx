@@ -98,7 +98,32 @@ describe('RecipeEditPage', () => {
     await waitFor(() =>
       expect(screen.getByText(/recipe updated/i)).toBeInTheDocument()
     );
-    expect(recipeService.updateRecipe).toHaveBeenCalledWith('1', expect.objectContaining({ title: 'Baklava' }));
+    expect(recipeService.updateRecipe).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({ title: 'Baklava', is_published: true })
+    );
+  });
+
+  it('calls updateRecipe with is_published: false when "Save as draft" is clicked', async () => {
+    recipeService.updateRecipe.mockResolvedValue({ id: 1 });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    await waitFor(() =>
+      expect(screen.getByText(/draft saved/i)).toBeInTheDocument()
+    );
+    expect(recipeService.updateRecipe).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({ is_published: false })
+    );
+  });
+
+  it('shows "Publish" as the primary button when the recipe is a draft', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({ ...mockRecipe, is_published: false });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    expect(screen.getByRole('button', { name: /^publish$/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /save changes/i })).not.toBeInTheDocument();
   });
 
   it('shows error toast when API call fails', async () => {

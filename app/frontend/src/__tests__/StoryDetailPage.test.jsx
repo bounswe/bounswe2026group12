@@ -188,4 +188,78 @@ describe('StoryDetailPage', () => {
       confirmSpy.mockRestore();
     });
   });
+
+  describe('publish/unpublish flow', () => {
+    beforeEach(() => {
+      storyService.publishStory = jest.fn();
+      storyService.unpublishStory = jest.fn();
+    });
+
+    it('shows "Unpublish" for the author when the story is published', async () => {
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByRole('heading', { level: 1 }));
+      expect(screen.getByRole('button', { name: /^unpublish$/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^publish$/i })).not.toBeInTheDocument();
+    });
+
+    it('shows "Publish" for the author when the story is a draft', async () => {
+      storyService.fetchStory.mockResolvedValue({ ...mockStory, is_published: false });
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByRole('heading', { level: 1 }));
+      expect(screen.getByRole('button', { name: /^publish$/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^unpublish$/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT show publish/unpublish control to non-authors', async () => {
+      renderPage('1', { id: 99, username: 'visitor' });
+      await waitFor(() => screen.getByRole('heading', { level: 1 }));
+      expect(screen.queryByRole('button', { name: /^unpublish$/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^publish$/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT show publish/unpublish control when unauthenticated', async () => {
+      renderPage('1', null);
+      await waitFor(() => screen.getByRole('heading', { level: 1 }));
+      expect(screen.queryByRole('button', { name: /^unpublish$/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^publish$/i })).not.toBeInTheDocument();
+    });
+
+    it('clicking "Unpublish" calls unpublishStory and flips the control to "Publish"', async () => {
+      storyService.unpublishStory.mockResolvedValue({ ...mockStory, is_published: false });
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByRole('button', { name: /^unpublish$/i }));
+      await userEvent.click(screen.getByRole('button', { name: /^unpublish$/i }));
+      await waitFor(() => {
+        expect(storyService.unpublishStory).toHaveBeenCalledWith(1);
+      });
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /^publish$/i })).toBeInTheDocument();
+      });
+    });
+
+    it('clicking "Publish" calls publishStory and flips the control to "Unpublish"', async () => {
+      storyService.fetchStory.mockResolvedValue({ ...mockStory, is_published: false });
+      storyService.publishStory.mockResolvedValue({ ...mockStory, is_published: true });
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByRole('button', { name: /^publish$/i }));
+      await userEvent.click(screen.getByRole('button', { name: /^publish$/i }));
+      await waitFor(() => {
+        expect(storyService.publishStory).toHaveBeenCalledWith(1);
+      });
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /^unpublish$/i })).toBeInTheDocument();
+      });
+    });
+
+    it('shows an inline error if publish fails', async () => {
+      storyService.fetchStory.mockResolvedValue({ ...mockStory, is_published: false });
+      storyService.publishStory.mockRejectedValue(new Error('boom'));
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => screen.getByRole('button', { name: /^publish$/i }));
+      await userEvent.click(screen.getByRole('button', { name: /^publish$/i }));
+      await waitFor(() => {
+        expect(screen.getByText(/could not publish story/i)).toBeInTheDocument();
+      });
+    });
+  });
 });

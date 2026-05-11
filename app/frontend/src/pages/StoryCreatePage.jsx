@@ -50,25 +50,27 @@ export default function StoryCreatePage() {
     return Object.keys(e).length === 0;
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function submit(publish) {
     if (!validate()) return;
 
     const formData = new FormData();
     formData.append('title', title);
     formData.append('body', body);
     formData.append('language', language);
-    formData.append('is_published', 'true');
+    formData.append('is_published', publish ? 'true' : 'false');
     if (linkedRecipe) formData.append('linked_recipe', linkedRecipe.id);
     if (image) formData.append('image', image);
 
     try {
       const created = await createStory(formData);
       clearDraft();
-      showToast('Story published!', 'success');
+      showToast(publish ? 'Story published!' : 'Draft saved!', 'success');
       navigate(`/stories/${created.id}`);
     } catch {
-      showToast('Failed to publish story. Please try again.', 'error');
+      showToast(
+        publish ? 'Failed to publish story. Please try again.' : 'Failed to save draft. Please try again.',
+        'error'
+      );
     }
   }
 
@@ -86,7 +88,7 @@ export default function StoryCreatePage() {
         onRestore={handleRestore}
         onDiscard={clearDraft}
       />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => { e.preventDefault(); submit(true); }}>
         <div className="form-group">
           <label htmlFor="story-title">Title</label>
           <input
@@ -173,7 +175,20 @@ export default function StoryCreatePage() {
         </section>
 
         <div className="story-form-actions">
-          <button type="submit" className="btn btn-primary">Publish Story</button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => submit(false)}
+          >
+            Save as draft
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => submit(true)}
+          >
+            Publish Story
+          </button>
         </div>
       </form>
 

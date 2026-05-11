@@ -30,3 +30,21 @@ export async function deleteStory(id) {
   if (USE_MOCK) return { status: 204 };
   return apiClient.delete(`/api/stories/${id}/`);
 }
+
+export async function publishStory(id) {
+  if (USE_MOCK) {
+    const story = await fetchStory(id);
+    return { ...story, is_published: true };
+  }
+  const response = await apiClient.post(`/api/stories/${id}/publish/`);
+  return response.data;
+}
+
+export async function unpublishStory(id) {
+  if (USE_MOCK) {
+    const story = await fetchStory(id);
+    return { ...story, is_published: false };
+  }
+  const response = await apiClient.post(`/api/stories/${id}/unpublish/`);
+  return response.data;
+}
