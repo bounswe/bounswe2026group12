@@ -13,6 +13,7 @@ REGIONS = [
     "Levantine",
     "Persian",
     "Arabian",
+    "Saudi Arabia",
     # Europe
     "Balkan",
     "Central European",
@@ -22,6 +23,15 @@ REGIONS = [
     "Italian",
     "Nordic",
     "British Isles",
+    "France",
+    "Germany",
+    "Greece",
+    "Hungary",
+    "Poland",
+    "Portugal",
+    "Russia",
+    "Spain",
+    "United Kingdom",
     # Asia
     "Central Asian",
     "Chinese",
@@ -29,17 +39,34 @@ REGIONS = [
     "Japanese",
     "Korean",
     "Southeast Asian",
+    "China",
+    "South Korea",
+    "Thailand",
+    "Vietnam",
+    "Kyrgyzstan",
+    "Uzbekistan",
     # Africa
     "East African",
     "North African",
     "West African",
+    "Ethiopia",
+    "Ghana",
+    "Morocco",
+    "Nigeria",
     # Americas
     "Caribbean",
     "Central American",
     "North American",
     "South American",
+    "Argentina",
+    "Brazil",
+    "El Salvador",
+    "Jamaica",
+    "Peru",
+    "Trinidad and Tobago",
     # Oceania
     "Oceanian",
+    "Australia",
 ]
 
 
