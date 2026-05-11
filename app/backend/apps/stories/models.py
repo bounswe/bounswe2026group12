@@ -57,3 +57,41 @@ class Story(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class StoryComment(models.Model):
+    """Comment or Question on a Story, mirroring apps.recipes.models.Comment."""
+    COMMENT_TYPES = (
+        ('COMMENT', 'Comment'),
+        ('QUESTION', 'Question'),
+    )
+
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='story_comments'
+    )
+    parent_comment = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies'
+    )
+    body = models.TextField()
+    type = models.CharField(max_length=10, choices=COMMENT_TYPES, default='COMMENT')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.get_type_display()} by {self.author.username} on {self.story.title}"
+
+
+class StoryVote(models.Model):
+    """Vote on a StoryComment indicating it was helpful."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='story_votes'
+    )
+    comment = models.ForeignKey(StoryComment, on_delete=models.CASCADE, related_name='votes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'comment')
+
+    def __str__(self):
+        return f"Vote by {self.user.username} on StoryComment {self.comment.id}"

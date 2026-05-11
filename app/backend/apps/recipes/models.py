@@ -130,6 +130,7 @@ class Recipe(models.Model):
     )
     title = models.CharField(max_length=255)
     description = models.TextField()
+    steps = models.JSONField(default=list, blank=True)
     image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)
     video = models.FileField(upload_to='recipes/videos/', null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='recipes')
