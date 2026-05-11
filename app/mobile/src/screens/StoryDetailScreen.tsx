@@ -211,7 +211,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 12,
     paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
   },
-  editLinkText: { fontSize: 16, color: tokens.colors.text, fontWeight: '800' },
+  editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
 });
