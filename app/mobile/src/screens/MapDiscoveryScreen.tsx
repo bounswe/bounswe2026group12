@@ -101,6 +101,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
         ) : null}
 
         <RegionDetailSheet
+          regionId={focused?.id ?? null}
           regionName={focused?.name ?? null}
           onDismiss={() => setFocused(null)}
           onItemPress={(kind, id) => {
