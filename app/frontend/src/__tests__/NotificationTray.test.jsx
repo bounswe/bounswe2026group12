@@ -11,6 +11,7 @@ function renderTray(overrides = {}) {
     error: '',
     refreshNotifications: jest.fn(),
     markRead: jest.fn(),
+    markAllRead: jest.fn(),
     ...overrides,
   };
   const utils = render(
@@ -91,6 +92,33 @@ describe('NotificationTray', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
     expect(screen.getByRole('link', { name: /system notice/i })).toHaveAttribute('href', '/inbox');
+  });
+
+  it('renders a "Mark all read" button when unreadCount > 0 and invokes context.markAllRead on click', () => {
+    const markAllRead = jest.fn();
+    renderTray({
+      notifications: [
+        {
+          id: 1,
+          message: 'unread one',
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+      unreadCount: 1,
+      markAllRead,
+    });
+    fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+    const markAllBtn = screen.getByRole('button', { name: /mark all read/i });
+    expect(markAllBtn).toBeInTheDocument();
+    fireEvent.click(markAllBtn);
+    expect(markAllRead).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not render the "Mark all read" button when unreadCount is 0', () => {
+    renderTray({ unreadCount: 0 });
+    fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+    expect(screen.queryByRole('button', { name: /mark all read/i })).toBeNull();
   });
 
   it('calls markRead(id) and closes the panel when a notification is clicked', () => {

@@ -89,6 +89,26 @@ describe('NotificationContext', () => {
     expect(notificationService.markNotificationAsRead).not.toHaveBeenCalled();
   });
 
+  it('markAllRead() calls the service and zeros unreadCount optimistically', async () => {
+    notificationService.fetchNotifications.mockResolvedValue([
+      { id: 1, message: 'a', isRead: false, createdAt: '2026-01-01T00:00:00Z' },
+      { id: 2, message: 'b', isRead: false, createdAt: '2026-01-01T00:00:00Z' },
+      { id: 3, message: 'c', isRead: true, createdAt: '2026-01-01T00:00:00Z' },
+    ]);
+    notificationService.markAllAsRead.mockResolvedValue(undefined);
+    const { result } = renderHook(() => useNotifications(), {
+      wrapper: makeWrapper('tok'),
+    });
+    await waitFor(() => expect(result.current.notifications).toHaveLength(3));
+    expect(result.current.unreadCount).toBe(2);
+    await act(async () => {
+      await result.current.markAllRead();
+    });
+    expect(notificationService.markAllAsRead).toHaveBeenCalledTimes(1);
+    expect(result.current.unreadCount).toBe(0);
+    expect(result.current.notifications.every((n) => n.isRead)).toBe(true);
+  });
+
   it('sets error and clears loading when fetch rejects', async () => {
     notificationService.fetchNotifications.mockRejectedValue(new Error('boom'));
     const { result } = renderHook(() => useNotifications(), {

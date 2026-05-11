@@ -50,6 +50,10 @@ export async function markNotificationAsRead(notificationId) {
   }
 }
 
+export async function markAllAsRead() {
+  await apiClient.post('/api/notifications/read-all/');
+}
+
 export async function registerDeviceToken(token, platform = 'web') {
   if (!token) return null;
   if (USE_MOCK) return { id: 1, token, platform };

@@ -61,6 +61,11 @@ export async function sendMessage(threadId, body) {
   };
 }
 
+export async function markThreadRead(threadId) {
+  if (USE_MOCK) return;
+  await apiClient.post(`/api/threads/${threadId}/read/`);
+}
+
 export async function createThread({ toUserId, toUsername, recipeId, recipeTitle, body }) {
   if (USE_MOCK) return mockCreateThread({ toUserId, toUsername, recipeId, recipeTitle, body });
   const res = await apiClient.post('/api/threads/', {

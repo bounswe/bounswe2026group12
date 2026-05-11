@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchMessages, sendMessage } from '../services/messageService';
+import { fetchMessages, sendMessage, markThreadRead } from '../services/messageService';
 import './ThreadPage.css';
 
 function formatTime(iso) {
@@ -28,7 +28,10 @@ export default function ThreadPage() {
   useEffect(() => {
     let cancelled = false;
     fetchMessages(threadId)
-      .then((data) => { if (!cancelled) setMessages(data); })
+      .then((data) => {
+        if (!cancelled) setMessages(data);
+        markThreadRead(threadId).catch(() => {});
+      })
       .catch(() => { if (!cancelled) setError('Could not load messages.'); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };

@@ -55,6 +55,7 @@ function renderPage(threadId = '10', user = authedUser) {
 beforeEach(() => {
   jest.clearAllMocks();
   messageService.fetchMessages.mockResolvedValue(mockMessages);
+  messageService.markThreadRead.mockResolvedValue(undefined);
 });
 
 describe('ThreadPage', () => {
@@ -156,5 +157,14 @@ describe('ThreadPage', () => {
     renderPage();
     await screen.findByText('Hi back from me');
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
+  });
+
+  it('calls markThreadRead with the URL threadId after messages load', async () => {
+    renderPage('123');
+    await screen.findByText('Hi from Alice');
+    await waitFor(() => {
+      expect(messageService.markThreadRead).toHaveBeenCalledWith('123');
+    });
+    expect(messageService.markThreadRead).toHaveBeenCalledTimes(1);
   });
 });

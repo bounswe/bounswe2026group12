@@ -1,4 +1,4 @@
-import { fetchNotifications, markNotificationAsRead, registerDeviceToken } from '../services/notificationService';
+import { fetchNotifications, markAllAsRead, markNotificationAsRead, registerDeviceToken } from '../services/notificationService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
@@ -45,6 +45,12 @@ describe('notificationService', () => {
     const updated = await markNotificationAsRead(7);
     expect(apiClient.post).toHaveBeenCalledWith('/api/notifications/7/read/');
     expect(updated.isRead).toBe(true);
+  });
+
+  test('markAllAsRead POSTs to /api/notifications/read-all/', async () => {
+    apiClient.post.mockResolvedValueOnce({ data: {} });
+    await markAllAsRead();
+    expect(apiClient.post).toHaveBeenCalledWith('/api/notifications/read-all/');
   });
 
   test('registerDeviceToken posts token payload', async () => {

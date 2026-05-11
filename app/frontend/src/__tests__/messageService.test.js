@@ -4,6 +4,7 @@ import {
   fetchMessages,
   sendMessage,
   createThread,
+  markThreadRead,
 } from '../services/messageService';
 
 jest.mock('../services/api', () => ({
@@ -143,5 +144,13 @@ describe('createThread', () => {
     });
     const result = await createThread({ toUserId: 5, toUsername: 'fallback' });
     expect(result.otherUser.username).toBe('fallback');
+  });
+});
+
+describe('markThreadRead', () => {
+  it('POSTs to /api/threads/:id/read/ with no body', async () => {
+    apiClient.post.mockResolvedValue({ data: {} });
+    await markThreadRead(42);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/threads/42/read/');
   });
 });
