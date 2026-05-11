@@ -10,6 +10,7 @@ const TAG_TYPE_LABELS = {
   region: { label: 'Region', cls: 'tag-region' },
   event: { label: 'Event', cls: 'tag-event' },
   tradition: { label: 'Tradition', cls: 'tag-tradition' },
+  religion: { label: 'Religion', cls: 'tag-religion' },
 };
 
 function formatDate(iso) {
@@ -24,6 +25,7 @@ export default function ModerationPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('pending');
   const [processing, setProcessing] = useState(null);
+  const [rejectReasons, setRejectReasons] = useState({});
 
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
@@ -33,13 +35,20 @@ export default function ModerationPage() {
       .finally(() => setLoading(false));
   }, [user, navigate]);
 
-  const handle = async (id, action) => {
+  const handle = async (typeKey, id, action, reason = '') => {
     setProcessing(id);
     try {
-      if (action === 'approve') await approveTag(id);
-      else await rejectTag(id);
+      if (action === 'approve') await approveTag(typeKey, id);
+      else await rejectTag(typeKey, id, reason);
       const updated = await fetchModerationQueue();
       setQueue(updated);
+      if (action === 'reject') {
+        setRejectReasons((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }
     } finally {
       setProcessing(null);
     }
@@ -103,14 +112,24 @@ export default function ModerationPage() {
                     <button
                       className="btn btn-sm mod-btn-approve"
                       disabled={processing === item.id}
-                      onClick={() => handle(item.id, 'approve')}
+                      onClick={() => handle(item.tag_type, item.id, 'approve')}
                     >
                       Approve
                     </button>
+                    <input
+                      type="text"
+                      className="mod-reject-reason"
+                      placeholder="Reason (optional)"
+                      value={rejectReasons[item.id] || ''}
+                      onChange={(e) =>
+                        setRejectReasons((prev) => ({ ...prev, [item.id]: e.target.value }))
+                      }
+                      aria-label={`Reject reason for ${item.tag}`}
+                    />
                     <button
                       className="btn btn-sm mod-btn-reject"
                       disabled={processing === item.id}
-                      onClick={() => handle(item.id, 'reject')}
+                      onClick={() => handle(item.tag_type, item.id, 'reject', rejectReasons[item.id] || '')}
                     >
                       Reject
                     </button>
