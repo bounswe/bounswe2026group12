@@ -75,4 +75,10 @@ describe('Navbar', () => {
     const link = screen.getByRole('link', { name: /^profile$/i });
     expect(link).toHaveAttribute('href', '/profile');
   });
+
+  it('renders a Calendar link to /calendar', () => {
+    renderNavbar();
+    const link = screen.getByRole('link', { name: /calendar/i });
+    expect(link).toHaveAttribute('href', '/calendar');
+  });
 });

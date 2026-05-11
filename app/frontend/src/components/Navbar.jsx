@@ -56,6 +56,14 @@ export default function Navbar() {
               <p className="navbar-hover-desc">Find cultural food events and experiences near you</p>
             </div>
           </div>
+          <div className="navbar-browse-link-wrap">
+            <NavLink to="/calendar" className="navbar-link">Calendar</NavLink>
+            <div className="navbar-hover-card">
+              <span className="navbar-hover-icon">📅</span>
+              <strong className="navbar-hover-title">Calendar</strong>
+              <p className="navbar-hover-desc">Trace which dishes belong to which seasons, rituals, and feast days</p>
+            </div>
+          </div>
         </div>
         <div className="navbar-links">
           {user ? (
