@@ -5,6 +5,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
+import { MapZoomControls } from '../components/map/MapZoomControls';
 import {
   fetchRegionRecipes,
   type RegionRecipesPayload,
@@ -141,6 +142,8 @@ export default function RegionMapDetailScreen({ route, navigation }: Props) {
           ))}
         </MapView>
 
+        <MapZoomControls mapRef={mapRef} style={styles.zoomControls} />
+
         <View style={styles.headerOverlay} pointerEvents="none">
           <View style={styles.headerCard}>
             <Text style={styles.headerTitle}>{regionName}</Text>
@@ -228,6 +231,9 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
   },
+  /** Stacked below the header card (which sits at top:16) so the zoom
+   * controls don't overlap the region name. */
+  zoomControls: { top: 90 },
   headerCard: {
     padding: 12,
     borderRadius: tokens.radius.lg,
