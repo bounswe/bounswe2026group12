@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
-    DietaryTag, EventTag, Religion, IngredientSubstitution, IngredientRoute,
+    DietaryTag, EventTag, Religion, IngredientSubstitution, IngredientRoute, EndangeredNote,
 )
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class RegionSubmissionSerializer(serializers.ModelSerializer):
 class IngredientLookupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'heritage_status']
 
 class NamedSubmissionSerializer(serializers.ModelSerializer):
     duplicate_message = 'This name already exists.'
@@ -180,6 +180,14 @@ class RecipeIngredientWriteSerializer(serializers.Serializer):
             raise serializers.ValidationError("Amount must be a positive number.")
         return value
 
+class EndangeredNoteSerializer(serializers.ModelSerializer):
+    """Sourced note attached to a recipe's endangered-heritage status (#524)."""
+
+    class Meta:
+        model = EndangeredNote
+        fields = ['id', 'recipe', 'text', 'source_url', 'created_at']
+        read_only_fields = ['id', 'recipe', 'created_at']
+
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
     region_name = serializers.ReadOnlyField(source='region.name')
@@ -204,13 +212,15 @@ class RecipeSerializer(serializers.ModelSerializer):
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
     heritage_group = serializers.SerializerMethodField()
+    endangered_notes = EndangeredNoteSerializer(many=True, read_only=True)
 
     class Meta:
         model = Recipe
         fields = [
             'id', 'public_id', 'title', 'description', 'image', 'video',
-            'region', 'region_name', 'author', 'author_username', 'qa_enabled',
-            'is_published', 'is_heritage', 'heritage_notes',
+            'region', 'region_name', 'latitude', 'longitude',
+            'author', 'author_username', 'qa_enabled',
+            'is_published', 'is_heritage', 'heritage_notes', 'heritage_status',
             'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'religions',
@@ -218,6 +228,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'story_count',
             'rank_score', 'rank_reason',
             'heritage_group',
+            'endangered_notes',
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
 

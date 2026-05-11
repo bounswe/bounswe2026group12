@@ -100,7 +100,12 @@ export default function OnboardingScreen({ navigation }: Props) {
   };
 
   const handleSkip = async () => {
-    await AsyncStorage.setItem(SKIP_FLAG, 'true');
+    try {
+      await AsyncStorage.setItem(SKIP_FLAG, 'true');
+    } catch {
+      // AsyncStorage can fail on low-storage devices; we still want the user
+      // out of the onboarding flow either way. Falling through to popToTop.
+    }
     navigation.popToTop();
   };
 

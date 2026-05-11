@@ -89,6 +89,12 @@ def apply_content_filters(qs, params):
     if author_id:
         qs = qs.filter(author_id=author_id)
 
+    # Endangered Heritage Tags (#524): filter by heritage_status when the model
+    # carries the field (Recipe does; Story does not).
+    heritage_status = params.get('heritage_status')
+    if heritage_status and hasattr(qs.model, 'heritage_status'):
+        qs = qs.filter(heritage_status=heritage_status)
+
     return qs.distinct()
 
 # Backward compat alias
@@ -101,6 +107,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
         'dietary_tags', 'event_tags', 'religions',
         'heritage_memberships__heritage_group',
+        'endangered_notes',
     ).annotate(
         story_count=models.Count('story_links', filter=models.Q(story_links__story__is_published=True))
     ).all()
@@ -284,6 +291,16 @@ class IngredientViewSet(ModeratedLookupViewSet):
             return [permissions.AllowAny()]
         return super().get_permissions()
 
+    def get_queryset(self):
+        # Endangered Heritage Tags (#524): ?heritage_status=endangered on the
+        # ingredients list. Layers on top of the moderation filtering in the
+        # parent's get_queryset.
+        queryset = super().get_queryset()
+        heritage_status = self.request.query_params.get('heritage_status')
+        if heritage_status:
+            queryset = queryset.filter(heritage_status=heritage_status)
+        return queryset
+
     @action(detail=True, methods=['get'], url_path='substitutes')
     def substitutes(self, request, pk=None):
         """Return categorized, ranked substitution suggestions for an approved ingredient."""
@@ -350,6 +367,43 @@ class RegionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     queryset = Region.objects.all().order_by(Lower('name'), 'id')
     serializer_class = RegionSubmissionSerializer
     lookup_serializer_class = RegionSerializer
+
+    def get_permissions(self):
+        # The parent's get_permissions hardcodes IsAdminUser for any action
+        # outside list/retrieve/create, which would lock down the read-only
+        # `recipes` action. Treat it like list/retrieve.
+        if self.action == 'recipes':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+
+    @action(detail=True, methods=['get'], url_path='recipes')
+    def recipes(self, request, pk=None):
+        """Split a region's recipes into located (has lat+lng) and unlocated.
+
+        Backs the zoom-to-region map view (#464 / #662): the located list
+        becomes per-recipe pins, the unlocated list becomes the "without a
+        location" bar. Both lists are ordered newest first.
+        """
+        region = get_object_or_404(Region, pk=pk, is_approved=True)
+        recipes = region.recipes.select_related('author').order_by('-created_at')
+
+        located, unlocated = [], []
+        for recipe in recipes:
+            base = {
+                'id': recipe.id,
+                'title': recipe.title,
+                'author_username': recipe.author.username,
+            }
+            if recipe.latitude is not None and recipe.longitude is not None:
+                located.append({
+                    **base,
+                    'latitude': recipe.latitude,
+                    'longitude': recipe.longitude,
+                })
+            else:
+                unlocated.append(base)
+
+        return Response({'located': located, 'unlocated': unlocated})
 
 class DietaryTagViewSet(ModeratedLookupViewSet):
     """ViewSet for list/submission of dietary tags (M4-15)."""
