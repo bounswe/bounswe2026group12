@@ -2,7 +2,13 @@ import { createContext, useContext, useEffect, useState, useCallback, useRef } f
 import { AuthContext } from './AuthContext';
 import { fetchThreads, markThreadRead } from '../services/messageService';
 
-export const ChatContext = createContext(null);
+export const ChatContext = createContext({
+  threads: [],
+  totalUnread: 0,
+  loading: false,
+  markRead: () => {},
+  refresh: () => {},
+});
 
 export function ChatProvider({ children }) {
   const { user } = useContext(AuthContext);
