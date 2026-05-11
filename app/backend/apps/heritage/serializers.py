@@ -1,6 +1,20 @@
 from rest_framework import serializers
 
-from .models import HeritageGroup
+from apps.recipes.models import Region
+
+from .models import CulturalFact, HeritageGroup, HeritageJourneyStep
+
+
+class HeritageJourneyStepSerializer(serializers.ModelSerializer):
+    """Read/write shape for an ordered journey step under a heritage group."""
+
+    class Meta:
+        model = HeritageJourneyStep
+        fields = [
+            'id', 'heritage_group', 'order', 'location', 'story', 'era',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['created_at', 'updated_at']
 
 
 class HeritageGroupListSerializer(serializers.ModelSerializer):
@@ -23,10 +37,15 @@ class HeritageGroupDetailSerializer(serializers.ModelSerializer):
     """Detail shape: full group + resolved members from Recipe and Story."""
 
     members = serializers.SerializerMethodField()
+    journey_steps = serializers.SerializerMethodField()
 
     class Meta:
         model = HeritageGroup
-        fields = ['id', 'name', 'description', 'members']
+        fields = ['id', 'name', 'description', 'members', 'journey_steps']
+
+    def get_journey_steps(self, obj):
+        steps = obj.journey_steps.all().order_by('order')
+        return HeritageJourneyStepSerializer(steps, many=True).data
 
     def get_members(self, obj):
         memberships = list(
@@ -73,3 +92,52 @@ class HeritageGroupDetailSerializer(serializers.ModelSerializer):
                 'longitude': region.longitude if region else None,
             })
         return members
+
+
+class _CulturalFactHeritageGroupNested(serializers.ModelSerializer):
+    class Meta:
+        model = HeritageGroup
+        fields = ['id', 'name']
+
+
+class CulturalFactSerializer(serializers.ModelSerializer):
+    """Read shape nests the heritage group and region as {id, name} pairs;
+    writes accept plain primary key ids on those fields.
+    """
+
+    heritage_group = serializers.PrimaryKeyRelatedField(
+        queryset=HeritageGroup.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+    region = serializers.PrimaryKeyRelatedField(
+        queryset=Region.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = CulturalFact
+        fields = [
+            'id',
+            'heritage_group',
+            'region',
+            'text',
+            'source_url',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['heritage_group'] = (
+            {'id': instance.heritage_group.id, 'name': instance.heritage_group.name}
+            if instance.heritage_group_id
+            else None
+        )
+        data['region'] = (
+            {'id': instance.region.id, 'name': instance.region.name}
+            if instance.region_id
+            else None
+        )
+        return data
