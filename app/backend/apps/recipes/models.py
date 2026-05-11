@@ -199,6 +199,40 @@ class IngredientSubstitution(models.Model):
     def __str__(self):
         return f"{self.from_ingredient} → {self.to_ingredient} ({self.match_type})"
 
+class IngredientRoute(models.Model):
+    """Ordered migration waypoints for an ingredient's spread across the world (#523).
+
+    Backs the "Ingredient Migration Routes" map overlay (#506, web #514, mobile
+    #513): an animated polyline connecting historical waypoints in chronological
+    order, e.g. tomato Andes → 1500s Spain → 1600s Italy → 1700s Ottoman Empire.
+
+    Modeled as a ForeignKey rather than a OneToOneField: a single ingredient may
+    later carry more than one named route (distinct trade paths), and a FK keeps
+    that open without a schema change. The seed data ships one route per
+    ingredient.
+
+    `waypoints` is an ordered list of dicts shaped like:
+        {"lat": <float>, "lng": <float>, "era": "<string>", "label": "<string>"}
+    where `era` is a human-readable period ("Pre-Columbian Andes", "1500s Spain")
+    and `label` names the place. Order is significant: it is the draw order of
+    the polyline.
+    """
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        related_name='migration_routes',
+    )
+    waypoints = models.JSONField(
+        default=list,
+        blank=True,
+        help_text='Ordered list of {lat, lng, era, label} dicts; draw order of the polyline.',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Migration route for {self.ingredient} ({len(self.waypoints)} waypoints)"
+
 class IngredientCheckOff(models.Model):
     """Server-persisted ingredient check-off per (user, recipe, ingredient) (#529).
 

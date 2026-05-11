@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution,
+    DietaryTag, EventTag, IngredientSubstitution, IngredientRoute,
 )
 
 @admin.register(Recipe)
@@ -61,3 +61,13 @@ class IngredientSubstitutionAdmin(admin.ModelAdmin):
     list_display = ('from_ingredient', 'to_ingredient', 'match_type', 'closeness')
     list_filter = ('match_type',)
     search_fields = ('from_ingredient__name', 'to_ingredient__name')
+
+@admin.register(IngredientRoute)
+class IngredientRouteAdmin(admin.ModelAdmin):
+    list_display = ('ingredient', 'waypoint_count', 'updated_at')
+    list_select_related = ('ingredient',)
+    search_fields = ('ingredient__name',)
+
+    @admin.display(description='Waypoints')
+    def waypoint_count(self, obj):
+        return len(obj.waypoints or [])

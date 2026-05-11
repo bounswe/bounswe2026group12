@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
-    DietaryTag, EventTag, Religion, IngredientSubstitution,
+    DietaryTag, EventTag, Religion, IngredientSubstitution, IngredientRoute,
 )
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -85,6 +85,19 @@ class IngredientSerializer(NamedSubmissionSerializer):
         model = Ingredient
         fields = '__all__'
         read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
+
+class IngredientRouteSerializer(serializers.ModelSerializer):
+    """Read/write serializer for ingredient migration routes (#523).
+
+    `ingredient_name` is denormalized so the map overlay can label a route
+    without a second request.
+    """
+    ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
+
+    class Meta:
+        model = IngredientRoute
+        fields = ['id', 'ingredient', 'ingredient_name', 'waypoints', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 class UnitLookupSerializer(serializers.ModelSerializer):
     class Meta:

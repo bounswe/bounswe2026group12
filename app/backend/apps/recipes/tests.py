@@ -1,7 +1,8 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+from django.core.management import call_command
 from django.urls import reverse
-from .models import Recipe, Region, Ingredient, Unit, RecipeIngredient
+from .models import Recipe, Region, Ingredient, Unit, RecipeIngredient, IngredientRoute
 from apps.stories.models import Story
 from apps.common.ids import ULID_REGEX
 from django.contrib.auth import get_user_model
@@ -441,3 +442,92 @@ class RecipeHeritageFieldsAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.data['is_heritage'])
         self.assertEqual(response.data['heritage_notes'], "")
+
+
+class IngredientRouteAPITest(APITestCase):
+    """Issue #523: IngredientRoute model + API."""
+
+    def setUp(self):
+        self.tomato, _ = Ingredient.objects.get_or_create(name="Tomato", defaults={'is_approved': True})
+        self.coffee, _ = Ingredient.objects.get_or_create(name="Coffee", defaults={'is_approved': True})
+        self.tomato_route = IngredientRoute.objects.create(
+            ingredient=self.tomato,
+            waypoints=[
+                {'lat': -13.16, 'lng': -72.55, 'era': 'Pre-Columbian Andes', 'label': 'Andes (Peru)'},
+                {'lat': 40.42, 'lng': -3.70, 'era': '1500s Spain', 'label': 'Seville'},
+            ],
+        )
+        self.coffee_route = IngredientRoute.objects.create(
+            ingredient=self.coffee,
+            waypoints=[{'lat': 7.68, 'lng': 36.83, 'era': 'Origin', 'label': 'Kaffa, Ethiopia'}],
+        )
+        self.list_url = reverse('ingredient-route-list')
+        self.admin = User.objects.create_user(
+            email="route_admin@example.com", username="route_admin",
+            password="SecurePass123!", is_staff=True,
+        )
+
+    @staticmethod
+    def _results(response):
+        # The ingredient-route list endpoint is unpaginated, so response.data
+        # is a plain list; tolerate a paginated envelope too just in case.
+        if isinstance(response.data, dict) and 'results' in response.data:
+            return response.data['results']
+        return response.data
+
+    def test_list_is_public(self):
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = self._results(response)
+        self.assertEqual(len(results), 2)
+
+    def test_detail_returns_waypoints_and_ingredient_name(self):
+        url = reverse('ingredient-route-detail', kwargs={'pk': self.tomato_route.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['ingredient'], self.tomato.id)
+        self.assertEqual(response.data['ingredient_name'], "Tomato")
+        self.assertEqual(len(response.data['waypoints']), 2)
+        self.assertEqual(response.data['waypoints'][0]['label'], "Andes (Peru)")
+
+    def test_filter_by_ingredient(self):
+        response = self.client.get(self.list_url, {'ingredient': self.coffee.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = self._results(response)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['ingredient'], self.coffee.id)
+
+    def test_anonymous_cannot_create(self):
+        response = self.client.post(self.list_url, {
+            'ingredient': self.tomato.id, 'waypoints': [],
+        }, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_admin_can_create(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post(self.list_url, {
+            'ingredient': self.coffee.id,
+            'waypoints': [{'lat': 13.96, 'lng': 44.17, 'era': '15th century', 'label': 'Mocha, Yemen'}],
+        }, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(IngredientRoute.objects.filter(ingredient=self.coffee).count(), 2)
+
+
+class SeedIngredientRoutesCommandTest(APITestCase):
+    """Issue #523: seed_ingredient_routes management command."""
+
+    def test_command_seeds_ten_routes_and_is_idempotent(self):
+        call_command('seed_ingredient_routes')
+        self.assertEqual(IngredientRoute.objects.count(), 10)
+        for route in IngredientRoute.objects.all():
+            self.assertGreaterEqual(len(route.waypoints), 2)
+
+        call_command('seed_ingredient_routes')
+        self.assertEqual(IngredientRoute.objects.count(), 10)
+
+    def test_seeded_ingredients_exist_and_approved(self):
+        call_command('seed_ingredient_routes')
+        for name in ['Tomato', 'Potato', 'Chili Pepper', 'Coffee', 'Sugar',
+                     'Rice', 'Wheat', 'Cinnamon', 'Chocolate', 'Corn']:
+            ingredient = Ingredient.objects.get(name=name)
+            self.assertTrue(ingredient.migration_routes.exists())

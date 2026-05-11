@@ -5,14 +5,15 @@ from .moderation_views import (
     LookupModerationQueueView,
 )
 from .views import (
-    RecipeViewSet, IngredientViewSet, UnitViewSet, RegionViewSet, CommentViewSet,
-    DietaryTagViewSet, EventTagViewSet, ReligionViewSet, ConvertView,
-    CheckedIngredientsView,
+    RecipeViewSet, IngredientViewSet, IngredientRouteViewSet, UnitViewSet,
+    RegionViewSet, CommentViewSet, DietaryTagViewSet, EventTagViewSet,
+    ReligionViewSet, ConvertView, CheckedIngredientsView,
 )
 
 router = DefaultRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipe')
 router.register(r'ingredients', IngredientViewSet, basename='ingredient')
+router.register(r'ingredient-routes', IngredientRouteViewSet, basename='ingredient-route')
 router.register(r'units', UnitViewSet, basename='unit')
 router.register(r'regions', RegionViewSet, basename='region')
 router.register(r'comments', CommentViewSet, basename='comment')

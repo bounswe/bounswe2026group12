@@ -18,11 +18,12 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution, IngredientCheckOff, RecipeIngredient,
+    IngredientSubstitution, IngredientCheckOff, IngredientRoute, RecipeIngredient,
 )
 from .serializers import (
     ConvertRequestSerializer,
     IngredientLookupSerializer,
+    IngredientRouteSerializer,
     IngredientSerializer,
     IngredientSubstituteSerializer,
     RecipeSerializer,
@@ -306,6 +307,32 @@ class IngredientViewSet(ModeratedLookupViewSet):
             'ingredient': {'id': source.id, 'name': source.name},
             **grouped,
         })
+
+class IngredientRouteViewSet(viewsets.ModelViewSet):
+    """Ingredient migration routes (#523).
+
+    Read for everyone (anonymous included); create/update/delete is admin-only,
+    matching the read-public / admin-CRUD pattern used by ModeratedLookupViewSet.
+    Supports `?ingredient=<id>` to fetch the route(s) for a single ingredient.
+    """
+    queryset = (
+        IngredientRoute.objects
+        .select_related('ingredient')
+        .order_by(Lower('ingredient__name'), 'id')
+    )
+    serializer_class = IngredientRouteSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        ingredient_id = self.request.query_params.get('ingredient')
+        if ingredient_id:
+            queryset = queryset.filter(ingredient_id=ingredient_id)
+        return queryset
 
 class UnitViewSet(ModeratedLookupViewSet):
     """ViewSet for list and management of Units."""
