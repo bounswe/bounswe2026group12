@@ -1,6 +1,6 @@
 import type { StoryDetail } from '../types/story';
 import { parseAuthorId } from '../utils/parseAuthorId';
-import { apiGetJson, apiPatchFormData, apiPatchJson } from './httpClient';
+import { apiGetJson, apiPatchFormData, apiPatchJson, nextPagePath } from './httpClient';
 
 /** Same endpoint as web `fetchStory` (`GET /api/stories/:id/`). */
 export async function fetchStoryById(id: string): Promise<StoryDetail> {
@@ -67,16 +67,53 @@ function unwrapStoriesPayload(data: unknown): any[] {
  * DRF-paginated `{results}` envelope. Returns the API objects untouched so
  * callers can read `author`, `linked_recipe`, `image`, etc. directly.
  */
-export async function fetchStoriesList(): Promise<any[]> {
-  const data = await apiGetJson<unknown>(`/api/stories/`);
-  return unwrapStoriesPayload(data);
+export async function fetchStoriesList(filter?: { author?: number | string }): Promise<any[]> {
+  const initialParams = new URLSearchParams();
+  if (filter?.author != null) initialParams.set('author', String(filter.author));
+  const initialQs = initialParams.toString();
+  const collected: any[] = [];
+  let path: string | null = `/api/stories/${initialQs ? `?${initialQs}` : ''}`;
+  while (path) {
+    const data = await apiGetJson<unknown>(path);
+    if (Array.isArray(data)) {
+      collected.push(...data);
+      break;
+    }
+    if (data && typeof data === 'object' && Array.isArray((data as { results?: unknown }).results)) {
+      collected.push(...((data as { results: any[] }).results));
+      path = nextPagePath((data as { next?: string | null }).next);
+    } else {
+      break;
+    }
+  }
+  return collected;
 }
 
 /** Stories where `linked_recipe` matches the given recipe id. Filters client-side. */
+/** Walk every page of `/api/stories/` and keep only the rows whose linked
+ * recipe matches `recipeId`. The list endpoint is paginated, so stopping at
+ * page 1 (the previous behaviour) silently dropped stories whose linked
+ * recipe lived on later pages. Backend doesn't expose a `?linked_recipe=`
+ * filter yet, so we still match client-side — but at least across the
+ * whole catalogue, not just the first slice. */
 export async function fetchStoriesForRecipe(recipeId: string | number): Promise<StoryListItem[]> {
-  const data = await apiGetJson<unknown>(`/api/stories/`);
   const target = String(recipeId);
-  return unwrapStoriesPayload(data).map(pickListItem).filter((s) => s.linkedRecipeId === target);
+  const collected: any[] = [];
+  let path: string | null = `/api/stories/`;
+  while (path) {
+    const data = await apiGetJson<unknown>(path);
+    if (Array.isArray(data)) {
+      collected.push(...data);
+      break;
+    }
+    if (data && typeof data === 'object' && Array.isArray((data as { results?: unknown }).results)) {
+      collected.push(...((data as { results: any[] }).results));
+      path = nextPagePath((data as { next?: string | null }).next);
+    } else {
+      break;
+    }
+  }
+  return collected.map(pickListItem).filter((s) => s.linkedRecipeId === target);
 }
 
 function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): StoryDetail {
