@@ -3,6 +3,21 @@ from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
 
+
+class HeritageStatus(models.TextChoices):
+    """Endangered-heritage tag for dishes and ingredients (#524, parent #507).
+
+    NONE       no special heritage status (default).
+    ENDANGERED at risk of being lost.
+    PRESERVED  actively kept alive.
+    REVIVED    brought back after near-loss.
+    """
+    NONE = 'none', 'None'
+    ENDANGERED = 'endangered', 'Endangered'
+    PRESERVED = 'preserved', 'Preserved'
+    REVIVED = 'revived', 'Revived'
+
+
 class CulturalModerationMixin(models.Model):
     """Audit fields for moderated lookup submissions.
 
@@ -84,6 +99,10 @@ class Ingredient(CulturalModerationMixin, models.Model):
         null=True, blank=True,
         help_text='g per ml. Required for mass to volume conversions. See apps/recipes/conversions/references.md for cited sources.',
     )
+    heritage_status = models.CharField(
+        max_length=16, choices=HeritageStatus.choices, default=HeritageStatus.NONE,
+        help_text='Endangered-heritage tag (#524).',
+    )
 
     def __str__(self):
         return self.name
@@ -134,11 +153,21 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)
     video = models.FileField(upload_to='recipes/videos/', null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='recipes')
+    # Optional per-recipe map coordinates (#662). Recipes without coordinates
+    # are valid; they surface in the "unlocated" list of the zoom-to-region view
+    # (#464). Region map bounds reuse the existing Region.bbox_* fields above
+    # (Option A from #662); no new Region field is needed here.
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     is_heritage = models.BooleanField(default=False)
     heritage_notes = models.TextField(blank=True, default='')
+    heritage_status = models.CharField(
+        max_length=16, choices=HeritageStatus.choices, default=HeritageStatus.NONE,
+        help_text='Endangered-heritage tag (#524).',
+    )
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
@@ -154,6 +183,21 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+class EndangeredNote(models.Model):
+    """Sourced note explaining a recipe's endangered-heritage status (#524).
+
+    Surfaces under the amber heritage badge on web (#520) and mobile (#526).
+    Each note carries free text plus an optional source link backing the claim.
+    Part of #507.
+    """
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='endangered_notes')
+    text = models.TextField()
+    source_url = models.URLField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Endangered note on {self.recipe.title}"
 
 class RecipeIngredient(models.Model):
     """Through model linking recipes and ingredients with amounts and units."""

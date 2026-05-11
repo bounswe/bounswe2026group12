@@ -96,50 +96,61 @@ export default function SearchScreen({ navigation, route }: Props) {
       setLoading(false);
       return;
     }
+    // Debounce keystrokes: while the user is typing fast, hold the request
+    // back 350ms so a 7-character word fires a single API call instead of 7.
+    // `cancelled` still cancels any in-flight request when the next effect
+    // run fires. `retryToken` bumps work through the same delay; a single
+    // 350ms wait on Retry is fine.
     let cancelled = false;
-    setLoading(true);
-    setError(null);
     const filters: SearchFilters = {
       diet: dietInclude,
       diet_exclude: dietExclude,
       event: eventInclude,
       event_exclude: eventExclude,
     };
-    void (async () => {
-      try {
-        const data = await search(q, region.trim() || undefined, filters);
-        if (cancelled) return;
-        setResults(data);
 
-        // Mobile-only enhancement: hydrate story thumbnails by fetching story details (cached).
-        const candidates = data
-          .filter((r) => r.kind === 'story' && !r.thumbnail)
-          .slice(0, 8);
-        const cache = storyThumbCacheRef.current;
-        await Promise.allSettled(
-          candidates.map(async (item) => {
-            if (cache.has(item.id)) return;
-            const story = await fetchStoryById(item.id);
-            const url = story.image ?? null;
-            cache.set(item.id, url);
-          }),
-        );
-        if (cancelled) return;
-        setResults((prev) =>
-          prev.map((r) => {
-            if (r.kind !== 'story' || r.thumbnail) return r;
-            const url = cache.get(r.id);
-            return url ? { ...r, thumbnail: url } : r;
-          }),
-        );
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Search failed');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
+    const timer = setTimeout(() => {
+      if (cancelled) return;
+      setLoading(true);
+      setError(null);
+      void (async () => {
+        try {
+          const data = await search(q, region.trim() || undefined, filters);
+          if (cancelled) return;
+          setResults(data);
+
+          // Mobile-only enhancement: hydrate story thumbnails by fetching story details (cached).
+          const candidates = data
+            .filter((r) => r.kind === 'story' && !r.thumbnail)
+            .slice(0, 8);
+          const cache = storyThumbCacheRef.current;
+          await Promise.allSettled(
+            candidates.map(async (item) => {
+              if (cache.has(item.id)) return;
+              const story = await fetchStoryById(item.id);
+              const url = story.image ?? null;
+              cache.set(item.id, url);
+            }),
+          );
+          if (cancelled) return;
+          setResults((prev) =>
+            prev.map((r) => {
+              if (r.kind !== 'story' || r.thumbnail) return r;
+              const url = cache.get(r.id);
+              return url ? { ...r, thumbnail: url } : r;
+            }),
+          );
+        } catch (e) {
+          if (!cancelled) setError(e instanceof Error ? e.message : 'Search failed');
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+      })();
+    }, 350);
+
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
   }, [query, region, filtersKey, hasActiveFilters, retryToken]);
 

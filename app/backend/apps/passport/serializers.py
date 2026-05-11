@@ -1,27 +1,78 @@
 from rest_framework import serializers
 
-from .models import CulturalPassport
+from . import services
+from .models import CulturalPassport, PassportEvent, Stamp, UserQuest
+
+# Re-exported so callers (and the existing #583 tests) can import the canonical
+# level name table from here. Defined in services.py alongside the thresholds.
+LEVEL_NAMES = services.LEVEL_NAMES
 
 
-# Stable level -> display name mapping. Keep in sync with #587 when the real
-# level/points logic lands. Frontend reads `stats.level_name` for the header
-# label so the keys here must not be renamed without coordination.
-LEVEL_NAMES = {
-    1: 'Curious Traveler',
-    2: 'Eager Explorer',
-    3: 'Cultural Scout',
-    4: 'Heritage Steward',
-    5: 'Culinary Sage',
-    6: 'Grand Storykeeper',
-}
+class StampSerializer(serializers.ModelSerializer):
+    source_recipe = serializers.PrimaryKeyRelatedField(read_only=True)
+    source_story = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Stamp
+        fields = [
+            'id', 'culture', 'category', 'rarity', 'earned_at',
+            'source_recipe', 'source_story',
+        ]
+
+
+class PassportEventSerializer(serializers.ModelSerializer):
+    related_recipe = serializers.PrimaryKeyRelatedField(read_only=True)
+    related_story = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = PassportEvent
+        fields = [
+            'id', 'event_type', 'description', 'timestamp',
+            'related_recipe', 'related_story', 'stamp_rarity',
+        ]
+
+
+class QuestProgressSerializer(serializers.Serializer):
+    """Serializes the plain dicts returned by services.quests_with_progress."""
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    category = serializers.CharField()
+    target_count = serializers.IntegerField()
+    reward_type = serializers.CharField()
+    reward_value = serializers.CharField()
+    is_event_quest = serializers.BooleanField()
+    event_start = serializers.DateTimeField(allow_null=True)
+    event_end = serializers.DateTimeField(allow_null=True)
+    progress = serializers.IntegerField()
+    completed_at = serializers.DateTimeField(allow_null=True)
+    reward_claimed = serializers.BooleanField()
+
+
+class UserQuestSerializer(serializers.ModelSerializer):
+    """Used for the "newly completed quests" list in action responses."""
+
+    name = serializers.CharField(source='quest.name', read_only=True)
+    category = serializers.CharField(source='quest.category', read_only=True)
+    target_count = serializers.IntegerField(source='quest.target_count', read_only=True)
+    reward_type = serializers.CharField(source='quest.reward_type', read_only=True)
+    reward_value = serializers.CharField(source='quest.reward_value', read_only=True)
+
+    class Meta:
+        model = UserQuest
+        fields = [
+            'id', 'name', 'category', 'target_count', 'reward_type',
+            'reward_value', 'progress', 'completed_at', 'reward_claimed',
+        ]
 
 
 class CulturalPassportSerializer(serializers.ModelSerializer):
     """Public passport payload for GET /api/users/<username>/passport/ (#583).
 
-    Response shape is stable even when downstream tables (Stamp #584,
-    Quest #586, Timeline #588) and real points logic (#587) are not in place
-    yet. Frontend can ship against this contract today.
+    The section keys are stable. `stamps`, `culture_summaries`, `timeline` and
+    `active_quests` are now backed by the Stamp/Quest/PassportEvent tables;
+    visitor mode includes all of them.
     """
 
     stats = serializers.SerializerMethodField()
@@ -44,30 +95,22 @@ class CulturalPassportSerializer(serializers.ModelSerializer):
         ]
 
     def get_stats(self, obj):
-        # TODO(#587): replace zeros with real counts once the tracking
-        # relations (recipes_tried, stories_saved, heritage_shared,
-        # cultures_count) exist. For now we return stable zeros so the
-        # frontend can render the section.
-        return {
-            'cultures_count': 0,
-            'recipes_tried': 0,
-            'stories_saved': 0,
-            'heritage_shared': 0,
-            'level_name': LEVEL_NAMES.get(obj.level, 'Curious Traveler'),
-        }
+        stats = services.passport_stats(obj.user)
+        stats['level_name'] = LEVEL_NAMES.get(obj.level, LEVEL_NAMES[1])
+        return stats
 
     def get_stamps(self, obj):
-        # TODO(#584): return earned Stamp records once the model lands.
-        return []
+        stamps = Stamp.objects.filter(user=obj.user)
+        return StampSerializer(stamps, many=True).data
 
     def get_culture_summaries(self, obj):
-        # TODO(#587): aggregate per-culture activity once tracking exists.
-        return []
+        return services.culture_summaries(obj.user)
 
     def get_timeline(self, obj):
-        # TODO(#588): return TimelineEvent records once the model lands.
-        return []
+        events = PassportEvent.objects.filter(user=obj.user)[:50]
+        return PassportEventSerializer(events, many=True).data
 
     def get_active_quests(self, obj):
-        # TODO(#586): return active Quest records once the model lands.
-        return []
+        return QuestProgressSerializer(
+            services.quests_with_progress(obj.user), many=True,
+        ).data

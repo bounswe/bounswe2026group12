@@ -25,7 +25,7 @@ const LANGS: { label: string; value: StoryLanguage }[] = [
 ];
 
 export default function StoryCreateScreen({ navigation }: Props) {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isReady } = useAuth();
   const { showToast } = useToast();
 
   const [title, setTitle] = useState('');
@@ -95,6 +95,37 @@ export default function StoryCreateScreen({ navigation }: Props) {
         setSubmitting(false);
       }
     })();
+  }
+
+  if (isReady && !isAuthenticated) {
+    return (
+      <SafeAreaView style={form.safe} edges={['top', 'left', 'right']}>
+        <View style={form.authGate}>
+          <Text style={form.authGateHeading} accessibilityRole="header">
+            Sign in to share a story
+          </Text>
+          <Text style={form.authGateBody}>
+            Log in to publish stories — your drafts, comments, and saves all live under your account.
+          </Text>
+          <Pressable
+            onPress={() => navigation.navigate('Login')}
+            style={({ pressed }) => [form.primaryButton, pressed && form.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Go to log in"
+          >
+            <Text style={form.primaryButtonText}>Log In</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('Register')}
+            style={({ pressed }) => [form.secondaryButton, pressed && form.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Go to register"
+          >
+            <Text style={form.secondaryButtonText}>Register</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (

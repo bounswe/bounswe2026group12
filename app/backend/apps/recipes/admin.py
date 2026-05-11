@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext,
+    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext, EndangeredNote,
 )
 
 class RecipeCulturalContextInline(admin.StackedInline):
@@ -9,15 +9,22 @@ class RecipeCulturalContextInline(admin.StackedInline):
     extra = 0
     can_delete = True
 
+
+class EndangeredNoteInline(admin.TabularInline):
+    model = EndangeredNote
+    extra = 0
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at', 'is_published')
-    inlines = [RecipeCulturalContextInline]
+    list_display = ('title', 'author', 'created_at', 'is_published', 'heritage_status')
+    list_filter = ('heritage_status', 'is_published')
+    inlines = [RecipeCulturalContextInline, EndangeredNoteInline]
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_approved', 'density_g_per_ml')
-    list_filter = ('is_approved',)
+    list_display = ('name', 'is_approved', 'density_g_per_ml', 'heritage_status')
+    list_filter = ('is_approved', 'heritage_status')
     search_fields = ('name',)
 
 @admin.register(Unit)
@@ -67,3 +74,8 @@ class IngredientSubstitutionAdmin(admin.ModelAdmin):
     list_display = ('from_ingredient', 'to_ingredient', 'match_type', 'closeness')
     list_filter = ('match_type',)
     search_fields = ('from_ingredient__name', 'to_ingredient__name')
+
+@admin.register(EndangeredNote)
+class EndangeredNoteAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'source_url', 'created_at')
+    search_fields = ('recipe__title', 'text')

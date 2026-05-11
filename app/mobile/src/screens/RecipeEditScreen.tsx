@@ -114,19 +114,45 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     };
   }, [id, reloadToken, user, applyRecipe, isReady, isAuthenticated]);
 
+  // Mirrors RecipeCreateScreen validation (#689) so edit and create reject
+  // the same invalid payloads. Previously edit was permissive — only checked
+  // title + numeric amount — letting users save recipes without descriptions
+  // or with bare ingredient rows.
   const validation = useMemo(() => {
-    const e: { title?: string; amount?: string } = {};
-    if (!title.trim()) e.title = 'Title is required.';
-    for (const row of rows) {
-      if (row.amount.trim() !== '' && !isPositiveNumberString(row.amount.trim())) {
-        e.amount = 'Amount must be a positive number.';
-        break;
-      }
-    }
-    return e;
-  }, [title, rows]);
+    const next: {
+      title?: string;
+      description?: string;
+      rows?: Record<string, { amount?: string; ingredient?: string; unit?: string }>;
+      rowsTop?: string;
+    } = {};
 
-  const isValid = !validation.title && !validation.amount;
+    if (!title.trim()) next.title = 'Title is required.';
+    if (!description.trim()) next.description = 'Description is required.';
+
+    if (!rows.length) {
+      next.rowsTop = 'Add at least one ingredient.';
+    } else {
+      const rowErrors: NonNullable<typeof next.rows> = {};
+      for (const row of rows) {
+        const re: { amount?: string; ingredient?: string; unit?: string } = {};
+        if (!row.amount.trim()) re.amount = 'Amount is required.';
+        else if (!isPositiveNumberString(row.amount.trim()))
+          re.amount = 'Enter a positive number.';
+        if (!row.ingredient.name.trim()) re.ingredient = 'Choose an ingredient.';
+        if (!row.unit.name.trim()) re.unit = 'Choose a unit.';
+        if (re.amount || re.ingredient || re.unit) rowErrors[row.key] = re;
+      }
+      if (Object.keys(rowErrors).length) next.rows = rowErrors;
+    }
+
+    return next;
+  }, [title, description, rows]);
+
+  const isValid =
+    !validation.title &&
+    !validation.description &&
+    !validation.rowsTop &&
+    (!validation.rows || Object.keys(validation.rows).length === 0);
 
   async function pickVideo() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -330,10 +356,14 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
             onChangeText={setDescription}
             placeholder="Description"
             placeholderTextColor="#94a3b8"
-            style={styles.textArea}
+            style={[
+              styles.textArea,
+              attemptedSubmit && !!validation.description && styles.inputError,
+            ]}
             multiline
             accessibilityLabel="Recipe description"
           />
+          {attemptedSubmit ? <InlineFieldError message={validation.description} /> : null}
         </View>
 
         <View style={styles.section}>
@@ -367,10 +397,10 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           onAddRow={addRow}
           onRemoveRow={removeRow}
           onUpdateRow={updateRow}
-          attemptedSubmit={false}
+          attemptedSubmit={attemptedSubmit}
+          rowsTopError={validation.rowsTop}
+          rowErrors={validation.rows}
         />
-
-        {attemptedSubmit ? <InlineFieldError message={validation.amount} /> : null}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Thumbnail image (optional)</Text>
@@ -402,7 +432,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           onClearLocal={() => setLocalVideo(null)}
           remoteVideoUrl={remoteVideoUrl}
           requireSelection={false}
-          attemptedSubmit={false}
+          attemptedSubmit={attemptedSubmit}
         />
 
         <Pressable
