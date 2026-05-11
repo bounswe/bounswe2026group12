@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
-    EndangeredNote, RecipeCulturalContext, IngredientRoute
+    EndangeredNote, RecipeCulturalContext, IngredientRoute, Bookmark
 )
 
 
@@ -214,6 +214,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     rank_reason = serializers.SerializerMethodField()
     heritage_group = serializers.SerializerMethodField()
     cultural_context = RecipeCulturalContextSerializer(required=False, allow_null=True)
+    is_bookmarked = serializers.BooleanField(read_only=True, allow_null=True)
+    bookmark_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = Recipe
@@ -229,7 +231,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'story_count',
             'rank_score', 'rank_reason',
             'heritage_group', 'endangered_notes',
-            'cultural_context'
+            'cultural_context', 'is_bookmarked', 'bookmark_count'
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
 

@@ -28,16 +28,21 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    bookmark_count = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             'id', 'email', 'username', 'bio', 'region', 'preferred_language', 'role', 'created_at',
             'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
-            'is_contactable',
+            'is_contactable', 'bookmark_count',
         ]
         read_only_fields = [
             'id', 'email', 'username', 'role', 'created_at',
         ]
+
+    def get_bookmark_count(self, obj):
+        return obj.bookmarks.count()
 
 
 class PublicUserSerializer(serializers.ModelSerializer):

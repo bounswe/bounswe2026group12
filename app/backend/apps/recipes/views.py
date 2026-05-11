@@ -18,7 +18,7 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute,
+    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute, Bookmark
 )
 from .serializers import (
     ConvertRequestSerializer,
@@ -57,7 +57,7 @@ def _iexact_or(field_or_fields, values):
     return reduce(operator.or_, queries)
 
 
-def apply_content_filters(qs, params):
+def apply_content_filters(qs, params, user=None):
     """Apply rich filters (M4-15 / #346 / M5-20 / #386) across culture, event, diet, ingredient axes.
 
     Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
@@ -99,13 +99,21 @@ def apply_content_filters(qs, params):
             elif hasattr(qs.model, 'recipe_links'):
                 # For stories, match via linked recipes
                 qs = qs.filter(recipe_links__recipe__heritage_status__in=statuses)
+    # Bookmark filter (#706)
+    bookmarked = params.get('bookmarked')
+    if bookmarked == 'true' and user and user.is_authenticated:
+        if qs.model == Recipe:
+            qs = qs.filter(bookmarks__user=user)
+        elif hasattr(qs.model, 'recipe_links'):
+            # For stories, match if any linked recipe is bookmarked
+            qs = qs.filter(recipe_links__recipe__bookmarks__user=user)
 
 
     return qs.distinct()
 
 # Backward compat alias
-def apply_recipe_filters(qs, params):
-    return apply_content_filters(qs, params)
+def apply_recipe_filters(qs, params, user=None):
+    return apply_content_filters(qs, params, user=user)
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
@@ -132,8 +140,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        user = self.request.user
+
+        # Annotate total bookmark count for the recipe
+        qs = qs.annotate(bookmark_count=models.Count('bookmarks', distinct=True))
+
+        if user.is_authenticated:
+            # Annotate whether the current user has bookmarked this recipe
+            qs = qs.annotate(
+                is_bookmarked=models.Exists(
+                    Bookmark.objects.filter(recipe=models.OuterRef('pk'), user=user)
+                )
+            )
+
         if self.action == 'list':
-            qs = apply_recipe_filters(qs, self.request.query_params)
+            qs = apply_recipe_filters(qs, self.request.query_params, user=user)
         return qs
 
     def list(self, request, *args, **kwargs):
@@ -198,6 +219,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 serializer.save(author=request.user, recipe=recipe)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def bookmark(self, request, pk=None):
+        """Idempotent toggle for recipe bookmarks (#706)."""
+        recipe = self.get_object()
+        bookmark, created = Bookmark.objects.get_or_create(user=request.user, recipe=recipe)
+        
+        if not created:
+            bookmark.delete()
+            is_bookmarked = False
+        else:
+            is_bookmarked = True
+            
+        # Get updated count
+        count = recipe.bookmarks.count()
+        
+        return Response({
+            'is_bookmarked': is_bookmarked,
+            'bookmark_count': count
+        }, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
 
 class ModeratedLookupViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
@@ -292,7 +333,7 @@ class IngredientViewSet(ModeratedLookupViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         if self.action == 'list':
-            qs = apply_content_filters(qs, self.request.query_params)
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
         return qs
 
     def get_permissions(self):
@@ -302,12 +343,6 @@ class IngredientViewSet(ModeratedLookupViewSet):
         if self.action == 'substitutes':
             return [permissions.AllowAny()]
         return super().get_permissions()
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.action == 'list':
-            qs = apply_content_filters(qs, self.request.query_params)
-        return qs
 
     @action(detail=True, methods=['get'], url_path='substitutes')
     def substitutes(self, request, pk=None):
@@ -393,17 +428,35 @@ class DietaryTagViewSet(ModeratedLookupViewSet):
     serializer_class = DietaryTagSerializer
     lookup_serializer_class = DietaryTagLookupSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
+
 class EventTagViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     """ViewSet for list/submission of event tags (M4-15, #391)."""
     queryset = EventTag.objects.all().order_by(Lower('name'), 'id')
     serializer_class = EventTagSerializer
     lookup_serializer_class = EventTagLookupSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
+
 class ReligionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     """ViewSet for list/submission of religions (M5-20, #391)."""
     queryset = Religion.objects.all().order_by(Lower('name'), 'id')
     serializer_class = ReligionSerializer
     lookup_serializer_class = ReligionLookupSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
 
 class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """ViewSet for deleting and interacting with comments."""
