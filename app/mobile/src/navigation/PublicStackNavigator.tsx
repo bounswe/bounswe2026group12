@@ -3,6 +3,7 @@ import EventDetailScreen from '../screens/EventDetailScreen';
 import ExploreScreen from '../screens/ExploreScreen';
 import HeritageMapScreen from '../screens/HeritageMapScreen';
 import HeritageScreen from '../screens/HeritageScreen';
+import IngredientMigrationMapScreen from '../screens/IngredientMigrationMapScreen';
 import CulturalCalendarScreen from '../screens/CulturalCalendarScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
@@ -134,6 +135,11 @@ export function PublicStackNavigator() {
         name="RegionMapDetail"
         component={RegionMapDetailScreen}
         options={{ title: 'Region' }}
+      />
+      <Stack.Screen
+        name="IngredientMigrationMap"
+        component={IngredientMigrationMapScreen}
+        options={{ title: 'Migration routes' }}
       />
     </Stack.Navigator>
   );
