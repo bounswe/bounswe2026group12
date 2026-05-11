@@ -25,6 +25,7 @@ export type RootStackParamList = {
   Heritage: { heritageGroupId: number };
   HeritageMap: { heritageGroupId: number };
   CulturalCalendar: undefined;
+  RegionMapDetail: { regionId: number; regionName: string };
 };
 
 declare global {

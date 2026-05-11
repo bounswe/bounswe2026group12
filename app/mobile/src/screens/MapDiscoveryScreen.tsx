@@ -84,7 +84,16 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
               pinColor={focused?.id === pin.id ? accent.accent : tokens.colors.accentMustard}
               onPress={(e) => {
                 e.stopPropagation?.();
+                // Track for theme highlight, then dive into the zoomed
+                // per-recipe map (#464). The old `RegionDetailSheet` flow
+                // (recipes/stories overview) stays available below in case
+                // we ever want to bring it back; for now the spatial drill-in
+                // is the primary path.
                 setFocused(pin);
+                navigation.navigate('RegionMapDetail', {
+                  regionId: pin.id,
+                  regionName: pin.name,
+                });
               }}
             />
           ))}
