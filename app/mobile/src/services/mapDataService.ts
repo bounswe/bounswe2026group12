@@ -10,13 +10,13 @@ export type RegionPin = {
 
 export type RegionOption = { id: number; name: string };
 
-type RawRegion = { id: number | string; name: string };
-
-/** Lightweight region list for pickers (id + name only). */
-export async function fetchRegions(): Promise<RegionOption[]> {
-  const data = await apiGetJson<unknown>('/api/regions/');
-  return unwrapList<RawRegion>(data).map((r) => ({ id: Number(r.id), name: r.name }));
-}
+type RawRegion = {
+  id: number | string;
+  name: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  content_count?: { recipes?: number; stories?: number; cultural_content?: number };
+};
 
 function unwrapList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
@@ -26,34 +26,40 @@ function unwrapList<T>(data: unknown): T[] {
   return [];
 }
 
-async function countRecipesForRegion(name: string): Promise<number> {
-  try {
-    const params = new URLSearchParams({ region: name });
-    const data = await apiGetJson<unknown>(`/api/recipes/?${params.toString()}`);
-    const list = unwrapList<unknown>(data);
-    return list.length;
-  } catch {
-    return 0;
-  }
+/** Lightweight region list for pickers (id + name only). */
+export async function fetchRegions(): Promise<RegionOption[]> {
+  const data = await apiGetJson<unknown>('/api/regions/');
+  return unwrapList<RawRegion>(data).map((r) => ({ id: Number(r.id), name: r.name }));
 }
 
 /**
- * Returns only regions we know how to plot. Unknown ones are dropped — they'll
- * surface again when `regionGeo.COORDS` learns their coordinates (or when the
- * backend exposes lat/lng directly).
+ * Returns regions to plot on the map. Uses the map index endpoint
+ * (`/api/map/regions/?geo_only=false`) so we get the recipe count and any
+ * seeded lat/lng in a single request, instead of fetching every region from
+ * the lookup CRUD endpoint and firing one extra `?region=<name>` count call
+ * per pin (the old N+1 waterfall in #620).
+ *
+ * Backend lat/lng are preferred when populated; otherwise we fall back to the
+ * hardcoded `regionGeo.COORDS` table. Regions with neither are dropped — they
+ * surface again once either side learns their coordinates.
  */
 export async function fetchRegionPins(): Promise<RegionPin[]> {
-  const data = await apiGetJson<unknown>('/api/regions/');
+  const data = await apiGetJson<unknown>('/api/map/regions/?geo_only=false');
   const regions = unwrapList<RawRegion>(data);
 
-  const plottable = regions
-    .map((r) => {
-      const coords = coordsForRegion(r.name);
-      if (!coords) return null;
-      return { id: Number(r.id), name: r.name, coords };
-    })
-    .filter((r): r is { id: number; name: string; coords: LatLng } => r !== null);
-
-  const counts = await Promise.all(plottable.map((r) => countRecipesForRegion(r.name)));
-  return plottable.map((r, idx) => ({ ...r, recipeCount: counts[idx] }));
+  const pins: RegionPin[] = [];
+  for (const r of regions) {
+    const lat = typeof r.latitude === 'number' ? r.latitude : null;
+    const lng = typeof r.longitude === 'number' ? r.longitude : null;
+    const coords: LatLng | null =
+      lat != null && lng != null ? { latitude: lat, longitude: lng } : coordsForRegion(r.name);
+    if (!coords) continue;
+    pins.push({
+      id: Number(r.id),
+      name: r.name,
+      coords,
+      recipeCount: r.content_count?.recipes ?? 0,
+    });
+  }
+  return pins;
 }

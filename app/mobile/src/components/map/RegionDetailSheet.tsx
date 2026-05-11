@@ -6,13 +6,15 @@ import { shadows, tokens, useTheme } from '../../theme';
 type Tab = 'recipes' | 'stories';
 
 type Props = {
-  /** Region name to load content for. Null/undefined hides the sheet. */
+  /** Region PK to load content for. Null/undefined hides the sheet. */
+  regionId: number | null;
+  /** Region display name for header/a11y labels. */
   regionName: string | null;
   onDismiss: () => void;
   onItemPress: (kind: Tab, id: string) => void;
 };
 
-export function RegionDetailSheet({ regionName, onDismiss, onItemPress }: Props) {
+export function RegionDetailSheet({ regionId, regionName, onDismiss, onItemPress }: Props) {
   const { accent } = useTheme();
   const [content, setContent] = useState<RegionContent | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,7 +22,7 @@ export function RegionDetailSheet({ regionName, onDismiss, onItemPress }: Props)
   const [tab, setTab] = useState<Tab>('recipes');
 
   useEffect(() => {
-    if (!regionName) {
+    if (regionId == null) {
       setContent(null);
       setError(null);
       return;
@@ -29,7 +31,7 @@ export function RegionDetailSheet({ regionName, onDismiss, onItemPress }: Props)
     setLoading(true);
     setError(null);
     setTab('recipes');
-    fetchRegionContent(regionName)
+    fetchRegionContent(regionId)
       .then((res) => {
         if (!cancelled) setContent(res);
       })
@@ -42,9 +44,9 @@ export function RegionDetailSheet({ regionName, onDismiss, onItemPress }: Props)
     return () => {
       cancelled = true;
     };
-  }, [regionName]);
+  }, [regionId]);
 
-  const visible = regionName != null;
+  const visible = regionId != null;
   const items = tab === 'recipes' ? (content?.recipes ?? []) : (content?.stories ?? []);
 
   return (
