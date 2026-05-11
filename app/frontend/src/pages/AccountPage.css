@@ -1,0 +1,90 @@
+.account-page {
+  max-width: 640px;
+}
+
+.account-page-header {
+  margin-bottom: 2rem;
+}
+
+.account-page-header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-text);
+  margin: 0 0 0.25rem;
+}
+
+.account-page-sub {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.account-section {
+  margin-bottom: 1.75rem;
+}
+
+.account-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.6rem;
+}
+
+.account-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.account-chip input[type="checkbox"] {
+  display: none;
+}
+
+.account-chip:hover {
+  border-color: var(--color-primary);
+}
+
+.account-chip-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.account-chip-readonly {
+  cursor: default;
+  background: var(--color-surface-alt, #f2ede3);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.account-empty {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.account-error {
+  color: #c53030;
+  font-size: 0.88rem;
+  margin: 0.5rem 0;
+}
+
+.account-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
