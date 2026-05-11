@@ -14,6 +14,8 @@ export type RecipeDetail = {
   title: string;
   description?: string;
   region?: string;
+  /** Region FK pk surfaced for filtered queries (e.g. cultural facts by region). */
+  region_id?: number | null;
   image?: string | null;
   video?: string | null;
   /** Normalized to `{ id, username }`; raw API may send `author` as user pk only. */

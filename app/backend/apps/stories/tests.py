@@ -393,3 +393,41 @@ class StoryTypeAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.data.get('results', response.data)
         self.assertEqual(list(results), [])
+
+class StoryAuthorFilterTest(APITestCase):
+    """GET /api/stories/?author=<id> filtering tests."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user1 = User.objects.create_user(
+            email='sauthor1@example.com', username='sauthor1', password='Pass123!'
+        )
+        cls.user2 = User.objects.create_user(
+            email='sauthor2@example.com', username='sauthor2', password='Pass123!'
+        )
+
+        Story.objects.create(
+            title='Story 1', body='By author 1', author=cls.user1, is_published=True
+        )
+        Story.objects.create(
+            title='Story 2', body='By author 1 again', author=cls.user1, is_published=True
+        )
+        Story.objects.create(
+            title='Story 3', body='By author 2', author=cls.user2, is_published=True
+        )
+        cls.url = reverse('story-list')
+
+    def test_filter_by_author_user1(self):
+        response = self.client.get(self.url, {'author': self.user1.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        self.assertEqual(len(results), 2)
+        titles = sorted(r['title'] for r in results)
+        self.assertEqual(titles, ['Story 1', 'Story 2'])
+
+    def test_filter_by_author_user2(self):
+        response = self.client.get(self.url, {'author': self.user2.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['title'], 'Story 3')

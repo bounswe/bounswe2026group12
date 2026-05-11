@@ -119,6 +119,19 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.exploreArrow}>→</Text>
         </Pressable>
 
+        <Pressable
+          onPress={() => navigation.navigate('CulturalCalendar')}
+          style={({ pressed }) => [styles.calendarEntry, pressed && styles.exploreEntryPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Open seasonal and ritual calendar"
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.calendarTitle}>Seasonal &amp; ritual calendar</Text>
+            <Text style={styles.calendarSubtitle}>Festivals, feasts, and the dishes shared around them</Text>
+          </View>
+          <Text style={styles.calendarArrow}>→</Text>
+        </Pressable>
+
         <DailyCulturalSection items={daily} />
 
         <RecommendationsRail items={recommendations} onItemPress={onRecommendationPress} />
@@ -343,6 +356,22 @@ const styles = StyleSheet.create({
   exploreTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.textOnDark },
   exploreSubtitle: { fontSize: 12, color: tokens.colors.textOnDark, marginTop: 2, opacity: 0.85 },
   exploreArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.textOnDark },
+  calendarEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.accentMustard,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    marginBottom: 14,
+    ...shadows.md,
+  },
+  calendarTitle: { fontSize: 16, fontWeight: '800', color: tokens.colors.surfaceDark },
+  calendarSubtitle: { fontSize: 12, color: tokens.colors.surfaceDark, marginTop: 2, opacity: 0.85 },
+  calendarArrow: { fontSize: 22, fontWeight: '900', color: tokens.colors.surfaceDark },
   searchInput: {
     borderWidth: 2,
     borderColor: tokens.colors.surfaceDark,

@@ -29,8 +29,8 @@ class LookupApiTests(APITestCase):
         self.assertEqual(
             filtered,
             [
-                {'id': self.apple.id, 'name': 'Apple'},
-                {'id': self.banana.id, 'name': 'banana'},
+                {'id': self.apple.id, 'name': 'Apple', 'heritage_status': 'none'},
+                {'id': self.banana.id, 'name': 'banana', 'heritage_status': 'none'},
             ],
         )
 

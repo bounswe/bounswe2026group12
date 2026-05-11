@@ -12,6 +12,8 @@ import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubst
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
 import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
+import { DidYouKnowSection } from '../components/cultural/DidYouKnowSection';
+import { fetchCulturalFactsByRegion, type CulturalFact } from '../services/culturalFactService';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import { fetchRecipeById } from '../services/recipeService';
@@ -38,6 +40,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [convertingLoading, setConvertingLoading] = useState(false);
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [showShoppingList, setShowShoppingList] = useState(false);
+  const [culturalFacts, setCulturalFacts] = useState<CulturalFact[]>([]);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -138,6 +141,25 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
       cancelled = true;
     };
   }, [id, isAuthenticated, reloadToken]);
+
+  useEffect(() => {
+    const regionId = recipe?.region_id;
+    if (regionId == null) {
+      setCulturalFacts([]);
+      return;
+    }
+    let cancelled = false;
+    fetchCulturalFactsByRegion(regionId)
+      .then((facts) => {
+        if (!cancelled) setCulturalFacts(facts);
+      })
+      .catch(() => {
+        if (!cancelled) setCulturalFacts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [recipe?.region_id]);
 
   const onToggleChecked = async (ingredientId: number) => {
     if (!isAuthenticated) return;
@@ -458,6 +480,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               ) : null}
             </View>
           ) : null}
+
+          <DidYouKnowSection facts={culturalFacts} />
 
           <RecipeCommentsSection recipeId={id} qaEnabled={recipe.qa_enabled !== false} />
 

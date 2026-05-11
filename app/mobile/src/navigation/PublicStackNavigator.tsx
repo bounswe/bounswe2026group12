@@ -3,6 +3,7 @@ import EventDetailScreen from '../screens/EventDetailScreen';
 import ExploreScreen from '../screens/ExploreScreen';
 import HeritageMapScreen from '../screens/HeritageMapScreen';
 import HeritageScreen from '../screens/HeritageScreen';
+import CulturalCalendarScreen from '../screens/CulturalCalendarScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -122,6 +123,11 @@ export function PublicStackNavigator() {
         name="HeritageMap"
         component={HeritageMapScreen}
         options={{ title: 'Heritage Map' }}
+      />
+      <Stack.Screen
+        name="CulturalCalendar"
+        component={CulturalCalendarScreen}
+        options={{ title: 'Calendar' }}
       />
     </Stack.Navigator>
   );

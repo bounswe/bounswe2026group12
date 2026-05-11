@@ -441,6 +441,107 @@ class ContactabilityProfileTest(APITestCase):
         self.assertTrue(self.user.is_contactable)
 
 
+class ProfileFieldEditTest(APITestCase):
+    """Tests for editing basic profile fields via PATCH /api/users/me/ (#659)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='profile@example.com', username='profileuser', password='StrongPass123!',
+            bio='old bio', region='Aegean', preferred_language='en',
+        )
+        response = self.client.post(
+            '/api/auth/login/', {"email": "profile@example.com", "password": "StrongPass123!"}
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["access"]}')
+
+    def test_patch_updates_profile_fields(self):
+        payload = {
+            'username': 'newhandle',
+            'bio': 'new bio text',
+            'region': 'Black Sea',
+            'preferred_language': 'tr',
+        }
+        response = self.client.patch('/api/users/me/', payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field, expected in payload.items():
+            self.assertEqual(response.data[field], expected)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'newhandle')
+        self.assertEqual(self.user.bio, 'new bio text')
+        self.assertEqual(self.user.region, 'Black Sea')
+        self.assertEqual(self.user.preferred_language, 'tr')
+
+    def test_patch_partial_profile_update(self):
+        response = self.client.patch('/api/users/me/', {'bio': 'just the bio'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.bio, 'just the bio')
+        self.assertEqual(self.user.username, 'profileuser')
+        self.assertEqual(self.user.region, 'Aegean')
+
+    def test_patch_taken_username_returns_400(self):
+        User.objects.create_user(
+            email='other@example.com', username='takenname', password='StrongPass123!'
+        )
+        response = self.client.patch('/api/users/me/', {'username': 'takenname'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', response.data)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'profileuser')
+
+    def test_patch_taken_username_case_insensitive_returns_400(self):
+        User.objects.create_user(
+            email='other@example.com', username='TakenName', password='StrongPass123!'
+        )
+        response = self.client.patch('/api/users/me/', {'username': 'takenname'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', response.data)
+
+    def test_patch_same_username_is_allowed(self):
+        response = self.client.patch('/api/users/me/', {'username': 'profileuser'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'profileuser')
+
+    def test_patch_does_not_allow_privilege_escalation(self):
+        response = self.client.patch(
+            '/api/users/me/',
+            {
+                'email': 'hijack@example.com',
+                'role': 'admin',
+                'is_staff': True,
+                'is_superuser': True,
+                'bio': 'still updates',
+            },
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'profile@example.com')
+        self.assertEqual(self.user.role, User.Role.USER)
+        self.assertFalse(self.user.is_staff)
+        self.assertFalse(self.user.is_superuser)
+        self.assertEqual(self.user.bio, 'still updates')
+
+    def test_patch_profile_fields_unauthenticated_rejected(self):
+        self.client.credentials()
+        response = self.client.patch('/api/users/me/', {'bio': 'nope'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_patch_preserves_cultural_and_contactability_behavior(self):
+        response = self.client.patch(
+            '/api/users/me/',
+            {'cultural_interests': ['Fermentation'], 'is_contactable': False},
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['cultural_interests'], ['Fermentation'])
+        self.assertFalse(response.data['is_contactable'])
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.cultural_interests, ['Fermentation'])
+        self.assertFalse(self.user.is_contactable)
+
+
 class TokenRefreshTest(APITestCase):
     """Tests for POST /api/auth/token/refresh/ (Issue #405)."""
 

@@ -1,6 +1,6 @@
 import type { StoryDetail } from '../types/story';
 import { parseAuthorId } from '../utils/parseAuthorId';
-import { apiGetJson, apiPatchFormData, apiPatchJson } from './httpClient';
+import { apiGetJson, apiPatchFormData, apiPatchJson, nextPagePath } from './httpClient';
 
 /** Same endpoint as web `fetchStory` (`GET /api/stories/:id/`). */
 export async function fetchStoryById(id: string): Promise<StoryDetail> {
@@ -67,9 +67,26 @@ function unwrapStoriesPayload(data: unknown): any[] {
  * DRF-paginated `{results}` envelope. Returns the API objects untouched so
  * callers can read `author`, `linked_recipe`, `image`, etc. directly.
  */
-export async function fetchStoriesList(): Promise<any[]> {
-  const data = await apiGetJson<unknown>(`/api/stories/`);
-  return unwrapStoriesPayload(data);
+export async function fetchStoriesList(filter?: { author?: number | string }): Promise<any[]> {
+  const initialParams = new URLSearchParams();
+  if (filter?.author != null) initialParams.set('author', String(filter.author));
+  const initialQs = initialParams.toString();
+  const collected: any[] = [];
+  let path: string | null = `/api/stories/${initialQs ? `?${initialQs}` : ''}`;
+  while (path) {
+    const data = await apiGetJson<unknown>(path);
+    if (Array.isArray(data)) {
+      collected.push(...data);
+      break;
+    }
+    if (data && typeof data === 'object' && Array.isArray((data as { results?: unknown }).results)) {
+      collected.push(...((data as { results: any[] }).results));
+      path = nextPagePath((data as { next?: string | null }).next);
+    } else {
+      break;
+    }
+  }
+  return collected;
 }
 
 /** Stories where `linked_recipe` matches the given recipe id. Filters client-side. */

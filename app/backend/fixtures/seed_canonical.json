@@ -7,10 +7,21 @@
       "bio": "Elder cook from Trabzon sharing Black Sea traditions with the next generation.",
       "region": "Black Sea",
       "preferred_language": "en",
-      "cultural_interests": ["Turkish cuisine", "Black Sea traditions"],
-      "regional_ties": ["Black Sea", "Marmara"],
-      "religious_preferences": ["Islam"],
-      "event_interests": ["Wedding", "Religious Holiday"]
+      "cultural_interests": [
+        "Turkish cuisine",
+        "Black Sea traditions"
+      ],
+      "regional_ties": [
+        "Black Sea",
+        "Marmara"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
     },
     {
       "username": "mehmet",
@@ -19,10 +30,21 @@
       "bio": "Istanbul-based food blogger exploring cross-regional Turkish cuisine.",
       "region": "Marmara",
       "preferred_language": "en",
-      "cultural_interests": ["Turkish cuisine", "street food", "food history"],
-      "regional_ties": ["Marmara", "Aegean", "Anatolian"],
+      "cultural_interests": [
+        "Turkish cuisine",
+        "street food",
+        "food history"
+      ],
+      "regional_ties": [
+        "Marmara",
+        "Aegean",
+        "Anatolian"
+      ],
       "religious_preferences": [],
-      "event_interests": ["Birthday", "Anniversary"]
+      "event_interests": [
+        "Birthday",
+        "Anniversary"
+      ]
     },
     {
       "username": "elif",
@@ -31,10 +53,18 @@
       "bio": "Aegean home cook passionate about olive oil and vegetarian Mediterranean dishes.",
       "region": "Aegean",
       "preferred_language": "en",
-      "cultural_interests": ["Aegean cuisine", "olive oil cooking", "vegetarian"],
-      "regional_ties": ["Aegean"],
+      "cultural_interests": [
+        "Aegean cuisine",
+        "olive oil cooking",
+        "vegetarian"
+      ],
+      "regional_ties": [
+        "Aegean"
+      ],
       "religious_preferences": [],
-      "event_interests": ["Birthday"]
+      "event_interests": [
+        "Birthday"
+      ]
     },
     {
       "username": "fatma",
@@ -43,10 +73,21 @@
       "bio": "Spice specialist from Gaziantep keeping southeastern Turkish traditions alive.",
       "region": "Southeastern Anatolia",
       "preferred_language": "en",
-      "cultural_interests": ["Turkish cuisine", "spice blending", "southeastern traditions"],
-      "regional_ties": ["Southeastern Anatolia"],
-      "religious_preferences": ["Islam"],
-      "event_interests": ["Wedding", "Religious Holiday"]
+      "cultural_interests": [
+        "Turkish cuisine",
+        "spice blending",
+        "southeastern traditions"
+      ],
+      "regional_ties": [
+        "Southeastern Anatolia"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
     },
     {
       "username": "emily",
@@ -55,10 +96,20 @@
       "bio": "American exchange student in Istanbul discovering Turkish food culture.",
       "region": "North American",
       "preferred_language": "en",
-      "cultural_interests": ["world cuisines", "cultural exchange"],
-      "regional_ties": ["North American"],
-      "religious_preferences": ["Christianity"],
-      "event_interests": ["Birthday", "Graduation"]
+      "cultural_interests": [
+        "world cuisines",
+        "cultural exchange"
+      ],
+      "regional_ties": [
+        "North American"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Birthday",
+        "Graduation"
+      ]
     },
     {
       "username": "sarah",
@@ -67,10 +118,20 @@
       "bio": "Irish-American home baker preserving family baking traditions across generations.",
       "region": "North American",
       "preferred_language": "en",
-      "cultural_interests": ["baking", "Irish heritage", "family recipes"],
-      "regional_ties": ["North American"],
-      "religious_preferences": ["Christianity"],
-      "event_interests": ["Religious Holiday"]
+      "cultural_interests": [
+        "baking",
+        "Irish heritage",
+        "family recipes"
+      ],
+      "regional_ties": [
+        "North American"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
     },
     {
       "username": "dimitris",
@@ -79,10 +140,20 @@
       "bio": "Greek taverna cook from Athens sharing generations of Mediterranean recipes.",
       "region": "Balkan",
       "preferred_language": "en",
-      "cultural_interests": ["Greek cuisine", "Mediterranean diet", "taverna culture"],
-      "regional_ties": ["Balkan"],
-      "religious_preferences": ["Christianity"],
-      "event_interests": ["Religious Holiday"]
+      "cultural_interests": [
+        "Greek cuisine",
+        "Mediterranean diet",
+        "taverna culture"
+      ],
+      "regional_ties": [
+        "Balkan"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
     },
     {
       "username": "lars",
@@ -91,8 +162,14 @@
       "bio": "Swedish food historian researching culinary connections between cultures.",
       "region": "Nordic",
       "preferred_language": "en",
-      "cultural_interests": ["food history", "Nordic cuisine", "cross-cultural cooking"],
-      "regional_ties": ["Nordic"],
+      "cultural_interests": [
+        "food history",
+        "Nordic cuisine",
+        "cross-cultural cooking"
+      ],
+      "regional_ties": [
+        "Nordic"
+      ],
       "religious_preferences": [],
       "event_interests": []
     },
@@ -103,10 +180,21 @@
       "bio": "Lebanese home cook celebrating the communal traditions of Levantine cuisine.",
       "region": "Levantine",
       "preferred_language": "en",
-      "cultural_interests": ["Levantine cuisine", "mezze culture", "family cooking"],
-      "regional_ties": ["Levantine"],
-      "religious_preferences": ["Islam"],
-      "event_interests": ["Wedding", "Religious Holiday"]
+      "cultural_interests": [
+        "Levantine cuisine",
+        "mezze culture",
+        "family cooking"
+      ],
+      "regional_ties": [
+        "Levantine"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
     },
     {
       "username": "priya",
@@ -115,10 +203,21 @@
       "bio": "Indian spice enthusiast exploring the intersections of Ayurveda and daily cooking.",
       "region": "Indian",
       "preferred_language": "en",
-      "cultural_interests": ["Indian cuisine", "spices", "Ayurveda", "vegetarian"],
-      "regional_ties": ["Indian"],
-      "religious_preferences": ["Hinduism"],
-      "event_interests": ["Religious Holiday"]
+      "cultural_interests": [
+        "Indian cuisine",
+        "spices",
+        "Ayurveda",
+        "vegetarian"
+      ],
+      "regional_ties": [
+        "Indian"
+      ],
+      "religious_preferences": [
+        "Hinduism"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
     },
     {
       "username": "yuki",
@@ -127,9 +226,17 @@
       "bio": "Japanese fermentation hobbyist fascinated by the living cultures in traditional food.",
       "region": "Japanese",
       "preferred_language": "en",
-      "cultural_interests": ["Japanese cuisine", "fermentation", "washoku"],
-      "regional_ties": ["Japanese"],
-      "religious_preferences": ["Buddhism"],
+      "cultural_interests": [
+        "Japanese cuisine",
+        "fermentation",
+        "washoku"
+      ],
+      "regional_ties": [
+        "Japanese"
+      ],
+      "religious_preferences": [
+        "Buddhism"
+      ],
       "event_interests": []
     },
     {
@@ -139,10 +246,540 @@
       "bio": "Italian grandmother keeping the Sunday ragu tradition alive for her grandchildren.",
       "region": "Italian",
       "preferred_language": "en",
-      "cultural_interests": ["Italian cuisine", "family traditions", "pasta"],
-      "regional_ties": ["Italian"],
-      "religious_preferences": ["Christianity"],
-      "event_interests": ["Religious Holiday"]
+      "cultural_interests": [
+        "Italian cuisine",
+        "family traditions",
+        "pasta"
+      ],
+      "regional_ties": [
+        "Italian"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "amir",
+      "email": "amir@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Tehran chef specializing in traditional Persian stews and rice dishes. He takes pride in preserving the art of tahdig and slow-cooked khoresh.",
+      "region": "Persian",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Persian cuisine",
+        "rice dishes",
+        "stew traditions"
+      ],
+      "regional_ties": [
+        "Persian"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "rashid",
+      "email": "rashid@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Saudi home cook preserving Bedouin recipes and hospitality traditions. He believes that every meal should honor the ancient values of generosity and community.",
+      "region": "Arabian",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Arabian cuisine",
+        "Bedouin traditions",
+        "hospitality culture"
+      ],
+      "regional_ties": [
+        "Arabian"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "wei",
+      "email": "wei@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Sichuan cooking enthusiast and food writer based in Chengdu. He documents the fiery, numbing flavors of Sichuan cuisine and their cultural roots.",
+      "region": "Chinese",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Chinese cuisine",
+        "Sichuan cooking",
+        "food writing"
+      ],
+      "regional_ties": [
+        "Chinese"
+      ],
+      "religious_preferences": [
+        "Buddhism"
+      ],
+      "event_interests": [
+        "Birthday",
+        "Anniversary"
+      ]
+    },
+    {
+      "username": "jimin",
+      "email": "jimin@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Seoul street food lover documenting traditional Korean flavors and their modern interpretations. He explores the intersection of fermentation and everyday Korean cooking.",
+      "region": "Korean",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Korean cuisine",
+        "street food",
+        "fermentation"
+      ],
+      "regional_ties": [
+        "Korean"
+      ],
+      "religious_preferences": [
+        "Buddhism"
+      ],
+      "event_interests": [
+        "Birthday"
+      ]
+    },
+    {
+      "username": "linh",
+      "email": "linh@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Vietnamese home cook from Hanoi sharing pho and street food traditions with her family and neighbors. She believes the broth is the soul of Vietnamese cooking.",
+      "region": "Southeast Asian",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Vietnamese cuisine",
+        "pho",
+        "street food"
+      ],
+      "regional_ties": [
+        "Southeast Asian"
+      ],
+      "religious_preferences": [
+        "Buddhism"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "amina",
+      "email": "amina@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Moroccan grandmother teaching tagine and couscous traditions in Marrakech. She keeps the spice blends of her ancestors alive through patient, hands-on instruction.",
+      "region": "North African",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "North African cuisine",
+        "tagine",
+        "couscous",
+        "spice blending"
+      ],
+      "regional_ties": [
+        "North African"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "kwame",
+      "email": "kwame@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Ghanaian chef celebrating West African cuisine and jollof rice culture. He uses food as a medium to tell the stories of his community and heritage.",
+      "region": "West African",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "West African cuisine",
+        "jollof rice",
+        "community cooking"
+      ],
+      "regional_ties": [
+        "West African"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Birthday"
+      ]
+    },
+    {
+      "username": "zara",
+      "email": "zara@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Ethiopian coffee ceremony host and injera maker from Addis Ababa. She shares the deep social rituals that surround food and drink in Ethiopian culture.",
+      "region": "East African",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Ethiopian cuisine",
+        "coffee ceremony",
+        "injera",
+        "East African traditions"
+      ],
+      "regional_ties": [
+        "East African"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "marcus",
+      "email": "marcus@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Jamaican jerk master and food educator preserving Maroon cooking traditions. He teaches that jerk seasoning is a philosophy of patience and fire, not just a recipe.",
+      "region": "Caribbean",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Caribbean cuisine",
+        "jerk cooking",
+        "Maroon traditions"
+      ],
+      "regional_ties": [
+        "Caribbean"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Birthday",
+        "Anniversary"
+      ]
+    },
+    {
+      "username": "camila",
+      "email": "camila@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Argentine home cook keeping asado and empanada traditions alive for her extended family. For her, cooking at the grill is both a Sunday ritual and an act of love.",
+      "region": "South American",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Argentine cuisine",
+        "asado",
+        "empanadas",
+        "South American traditions"
+      ],
+      "regional_ties": [
+        "South American"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Birthday"
+      ]
+    },
+    {
+      "username": "rosa",
+      "email": "rosa@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Salvadoran pupusa maker and food storyteller from San Salvador. She documents how pupusas carry the memory of family, region, and identity across generations.",
+      "region": "Central American",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Central American cuisine",
+        "pupusas",
+        "Salvadoran traditions"
+      ],
+      "regional_ties": [
+        "Central American"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "pierre",
+      "email": "pierre@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Lyon-based bistro chef and food philosopher exploring French culinary heritage. He believes that the best French cooking happens in homes and neighborhood bistros, not grand restaurants.",
+      "region": "French",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "French cuisine",
+        "bistro culture",
+        "culinary heritage"
+      ],
+      "regional_ties": [
+        "French"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Anniversary"
+      ]
+    },
+    {
+      "username": "isabel",
+      "email": "isabel@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Portuguese fishing village cook from the Algarve preserving coastal recipes. She documents the simple, honest cooking of her community centered around the sea.",
+      "region": "Iberian",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Portuguese cuisine",
+        "coastal cooking",
+        "seafood traditions"
+      ],
+      "regional_ties": [
+        "Iberian"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "oliver",
+      "email": "oliver@example.com",
+      "password": "StrongPassword123!",
+      "bio": "London pub food historian and home cook fascinated by the evolution of British comfort food. He traces how pies, stews, and roasts tell the story of the British Isles.",
+      "region": "British Isles",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "British cuisine",
+        "pub food",
+        "food history"
+      ],
+      "regional_ties": [
+        "British Isles"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Birthday"
+      ]
+    },
+    {
+      "username": "hans",
+      "email": "hans@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Viennese cook preserving Austro-Hungarian pastry and goulash traditions. He sees the kitchen as a living archive of Central Europe's complex culinary history.",
+      "region": "Central European",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Austrian cuisine",
+        "pastry",
+        "Central European traditions",
+        "goulash"
+      ],
+      "regional_ties": [
+        "Central European"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday",
+        "Anniversary"
+      ]
+    },
+    {
+      "username": "katarina",
+      "email": "katarina@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Polish grandmother keeping pierogi and borscht traditions alive for her grandchildren in Warsaw. She teaches that dough-making is the most important skill a cook can learn.",
+      "region": "Eastern European",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Polish cuisine",
+        "pierogi",
+        "Eastern European traditions"
+      ],
+      "regional_ties": [
+        "Eastern European"
+      ],
+      "religious_preferences": [
+        "Christianity"
+      ],
+      "event_interests": [
+        "Religious Holiday",
+        "Wedding"
+      ]
+    },
+    {
+      "username": "aliya",
+      "email": "aliya@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Uzbek plov specialist from Tashkent and silk road food enthusiast. She explores how centuries of trade shaped the rich, layered flavors of Central Asian cuisine.",
+      "region": "Central Asian",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Uzbek cuisine",
+        "plov",
+        "Silk Road food history",
+        "Central Asian traditions"
+      ],
+      "regional_ties": [
+        "Central Asian"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "jack",
+      "email": "jack@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Australian barbecue and bush tucker enthusiast from Melbourne. He is passionate about combining indigenous ingredients with modern Australian cooking techniques.",
+      "region": "Oceanian",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Australian cuisine",
+        "barbecue",
+        "bush tucker",
+        "indigenous ingredients"
+      ],
+      "regional_ties": [
+        "Oceanian"
+      ],
+      "religious_preferences": [],
+      "event_interests": [
+        "Birthday",
+        "Anniversary"
+      ]
+    },
+    {
+      "username": "sofia",
+      "email": "sofia@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Mediterranean diet advocate and olive oil specialist from Crete. She shares research and recipes that connect ancient Mediterranean traditions to modern health and well-being.",
+      "region": "Mediterranean",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Mediterranean diet",
+        "olive oil",
+        "Cretan cuisine"
+      ],
+      "regional_ties": [
+        "Mediterranean"
+      ],
+      "religious_preferences": [],
+      "event_interests": []
+    },
+    {
+      "username": "chen",
+      "email": "chen@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Cantonese dim sum expert from Guangzhou with decades of experience in the art of yum cha. He documents the rituals and recipes of a cuisine built on precision and care.",
+      "region": "Chinese",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Cantonese cuisine",
+        "dim sum",
+        "yum cha traditions"
+      ],
+      "regional_ties": [
+        "Chinese"
+      ],
+      "religious_preferences": [
+        "Buddhism"
+      ],
+      "event_interests": [
+        "Birthday",
+        "Wedding"
+      ]
+    },
+    {
+      "username": "nadia",
+      "email": "nadia@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Tunisian couscous and harissa specialist passionate about preserving the bold flavors of North African cuisine. She teaches traditional recipes that have been in her family for generations.",
+      "region": "North African",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Tunisian cuisine",
+        "couscous",
+        "harissa",
+        "North African spices"
+      ],
+      "regional_ties": [
+        "North African"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Religious Holiday"
+      ]
+    },
+    {
+      "username": "diego",
+      "email": "diego@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Peruvian ceviche artist from Lima exploring the coastal cuisine shaped by Pacific flavors and cultural fusion. He celebrates Peru's diverse culinary heritage with every dish.",
+      "region": "South American",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Peruvian cuisine",
+        "ceviche",
+        "coastal cooking",
+        "fusion cuisine"
+      ],
+      "regional_ties": [
+        "South American"
+      ],
+      "religious_preferences": [],
+      "event_interests": [
+        "Birthday"
+      ]
+    },
+    {
+      "username": "omar",
+      "email": "omar@example.com",
+      "password": "StrongPassword123!",
+      "bio": "Syrian baker preserving ancient bread and flatbread traditions passed down through generations. He believes that breaking bread together is the oldest form of peace.",
+      "region": "Levantine",
+      "preferred_language": "en",
+      "cultural_interests": [
+        "Levantine cuisine",
+        "bread baking",
+        "Syrian traditions",
+        "flatbread"
+      ],
+      "regional_ties": [
+        "Levantine"
+      ],
+      "religious_preferences": [
+        "Islam"
+      ],
+      "event_interests": [
+        "Wedding",
+        "Religious Holiday"
+      ]
     }
   ],
   "recipes": [
@@ -152,18 +789,53 @@
       "author": "ayse",
       "region": "Black Sea",
       "is_published": true,
-      "dietary_tags": ["Halal"],
-      "event_tags": ["Wedding"],
-      "religions": ["Islam"],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
       "ingredients": [
-        {"name": "Collard Greens", "amount": "500.00", "unit": "grams"},
-        {"name": "Ground Beef", "amount": "300.00", "unit": "grams"},
-        {"name": "Rice", "amount": "150.00", "unit": "grams"},
-        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
-        {"name": "Butter", "amount": "50.00", "unit": "grams"},
-        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Pepper", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Collard Greens",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Beef",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Rice",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Butter",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Pepper",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "black_sea_sarma.jpg"
     },
     {
       "title": "Aegean Olive Oil Stuffed Grape Leaves",
@@ -171,18 +843,52 @@
       "author": "elif",
       "region": "Aegean",
       "is_published": true,
-      "dietary_tags": ["Vegan", "Vegetarian"],
+      "dietary_tags": [
+        "Vegan",
+        "Vegetarian",
+        "Dairy-Free",
+        "Gluten-Free"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Grape Leaves", "amount": "40.00", "unit": "pieces"},
-        {"name": "Rice", "amount": "200.00", "unit": "grams"},
-        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
-        {"name": "Pine Nuts", "amount": "30.00", "unit": "grams"},
-        {"name": "Olive Oil", "amount": "100.00", "unit": "ml"},
-        {"name": "Lemon", "amount": "1.00", "unit": "pieces"},
-        {"name": "Mint", "amount": "1.00", "unit": "bunch"}
-      ]
+        {
+          "name": "Grape Leaves",
+          "amount": "40.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Rice",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Pine Nuts",
+          "amount": "30.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Mint",
+          "amount": "1.00",
+          "unit": "bunch"
+        }
+      ],
+      "image": "aegean_grape_leaves.jpg"
     },
     {
       "title": "Southeastern Sarma with Pomegranate Molasses",
@@ -190,18 +896,53 @@
       "author": "fatma",
       "region": "Southeastern Anatolia",
       "is_published": true,
-      "dietary_tags": ["Halal"],
-      "event_tags": ["Wedding"],
-      "religions": ["Islam"],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
       "ingredients": [
-        {"name": "Grape Leaves", "amount": "30.00", "unit": "pieces"},
-        {"name": "Ground Lamb", "amount": "250.00", "unit": "grams"},
-        {"name": "Rice", "amount": "150.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Pomegranate Molasses", "amount": "3.00", "unit": "tablespoons"},
-        {"name": "Tomato Paste", "amount": "2.00", "unit": "tablespoons"},
-        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Grape Leaves",
+          "amount": "30.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ground Lamb",
+          "amount": "250.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Rice",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Pomegranate Molasses",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Red Pepper Flakes",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "southeastern_sarma.jpg"
     },
     {
       "title": "Greek Dolmadakia",
@@ -209,18 +950,52 @@
       "author": "dimitris",
       "region": "Balkan",
       "is_published": true,
-      "dietary_tags": ["Vegan", "Vegetarian"],
+      "dietary_tags": [
+        "Vegan",
+        "Vegetarian",
+        "Dairy-Free",
+        "Gluten-Free"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Grape Leaves", "amount": "40.00", "unit": "pieces"},
-        {"name": "Rice", "amount": "200.00", "unit": "grams"},
-        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
-        {"name": "Olive Oil", "amount": "80.00", "unit": "ml"},
-        {"name": "Lemon", "amount": "1.00", "unit": "pieces"},
-        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
-        {"name": "Mint", "amount": "1.00", "unit": "bunch"}
-      ]
+        {
+          "name": "Grape Leaves",
+          "amount": "40.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Rice",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "80.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Mint",
+          "amount": "1.00",
+          "unit": "bunch"
+        }
+      ],
+      "image": "greek_dolmadakia.jpg"
     },
     {
       "title": "Swedish Cabbage Rolls - Kaldolmar",
@@ -232,13 +1007,38 @@
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Cabbage", "amount": "1.00", "unit": "pieces"},
-        {"name": "Ground Beef", "amount": "400.00", "unit": "grams"},
-        {"name": "Rice", "amount": "100.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Cream", "amount": "100.00", "unit": "ml"},
-        {"name": "Sugar", "amount": "1.00", "unit": "tablespoons"}
-      ]
+        {
+          "name": "Cabbage",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ground Beef",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Rice",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cream",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Sugar",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        }
+      ],
+      "image": "swedish_kaldolmar.jpg"
     },
     {
       "title": "Lebanese Stuffed Grape Leaves with Lamb",
@@ -246,18 +1046,51 @@
       "author": "leila",
       "region": "Levantine",
       "is_published": true,
-      "dietary_tags": ["Halal"],
+      "dietary_tags": [
+        "Halal"
+      ],
       "event_tags": [],
-      "religions": ["Islam"],
+      "religions": [
+        "Islam"
+      ],
       "ingredients": [
-        {"name": "Grape Leaves", "amount": "40.00", "unit": "pieces"},
-        {"name": "Ground Lamb", "amount": "300.00", "unit": "grams"},
-        {"name": "Rice", "amount": "150.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Tomato", "amount": "2.00", "unit": "pieces"},
-        {"name": "Lemon", "amount": "1.00", "unit": "pieces"},
-        {"name": "Cinnamon", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Grape Leaves",
+          "amount": "40.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ground Lamb",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Rice",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cinnamon",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "lebanese_grape_leaves.jpg"
     },
     {
       "title": "Trabzon Butter Kuymak",
@@ -265,15 +1098,34 @@
       "author": "ayse",
       "region": "Black Sea",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Cornmeal", "amount": "200.00", "unit": "grams"},
-        {"name": "Butter", "amount": "100.00", "unit": "grams"},
-        {"name": "Mozzarella", "amount": "200.00", "unit": "grams"},
-        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Cornmeal",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Mozzarella",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "trabzon_kuymak.jpg"
     },
     {
       "title": "Istanbul Lahmacun",
@@ -281,18 +1133,49 @@
       "author": "mehmet",
       "region": "Marmara",
       "is_published": true,
-      "dietary_tags": ["Halal"],
+      "dietary_tags": [
+        "Halal"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Flour", "amount": "300.00", "unit": "grams"},
-        {"name": "Ground Lamb", "amount": "250.00", "unit": "grams"},
-        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
-        {"name": "Tomato", "amount": "2.00", "unit": "pieces"},
-        {"name": "Green Pepper", "amount": "2.00", "unit": "pieces"},
-        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
-        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Flour",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Lamb",
+          "amount": "250.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Green Pepper",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Red Pepper Flakes",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "istanbul_lahmacun.jpg"
     },
     {
       "title": "Aegean Herb Borek",
@@ -300,16 +1183,39 @@
       "author": "elif",
       "region": "Aegean",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Phyllo Dough", "amount": "500.00", "unit": "grams"},
-        {"name": "Feta Cheese", "amount": "300.00", "unit": "grams"},
-        {"name": "Eggs", "amount": "3.00", "unit": "pieces"},
-        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
-        {"name": "Olive Oil", "amount": "50.00", "unit": "ml"}
-      ]
+        {
+          "name": "Phyllo Dough",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Feta Cheese",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        }
+      ],
+      "image": "aegean_herb_borek.jpg"
     },
     {
       "title": "Red Lentil Soup - Mercimek Corbasi",
@@ -317,18 +1223,49 @@
       "author": "mehmet",
       "region": "Marmara",
       "is_published": true,
-      "dietary_tags": ["Vegan"],
+      "dietary_tags": [
+        "Vegan"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Lentils", "amount": "300.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Potato", "amount": "1.00", "unit": "pieces"},
-        {"name": "Tomato Paste", "amount": "1.00", "unit": "tablespoons"},
-        {"name": "Olive Oil", "amount": "2.00", "unit": "tablespoons"},
-        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Lemon", "amount": "1.00", "unit": "pieces"}
-      ]
+        {
+          "name": "Lentils",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Potato",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ],
+      "image": "red_lentil_soup.jpg"
     },
     {
       "title": "Adana Kebab",
@@ -336,17 +1273,48 @@
       "author": "fatma",
       "region": "Southeastern Anatolia",
       "is_published": true,
-      "dietary_tags": ["Halal"],
-      "event_tags": ["Wedding"],
-      "religions": ["Islam"],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
       "ingredients": [
-        {"name": "Ground Lamb", "amount": "500.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Red Pepper Flakes", "amount": "2.00", "unit": "teaspoons"},
-        {"name": "Sumac", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
-        {"name": "Tomato", "amount": "2.00", "unit": "pieces"}
-      ]
+        {
+          "name": "Ground Lamb",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Red Pepper Flakes",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Sumac",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ],
+      "image": "adana_kebab.jpg"
     },
     {
       "title": "Anatolian Manti Dumplings",
@@ -354,19 +1322,56 @@
       "author": "ayse",
       "region": "Anatolian",
       "is_published": true,
-      "dietary_tags": ["Halal"],
+      "dietary_tags": [
+        "Halal"
+      ],
       "event_tags": [],
-      "religions": ["Islam"],
+      "religions": [
+        "Islam"
+      ],
       "ingredients": [
-        {"name": "Flour", "amount": "400.00", "unit": "grams"},
-        {"name": "Ground Beef", "amount": "300.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Yogurt", "amount": "200.00", "unit": "grams"},
-        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
-        {"name": "Butter", "amount": "50.00", "unit": "grams"},
-        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Mint", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Beef",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Yogurt",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Butter",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Red Pepper Flakes",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Mint",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "anatolian_manti.jpg"
     },
     {
       "title": "Traditional Irish Soda Bread",
@@ -378,11 +1383,28 @@
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Flour", "amount": "450.00", "unit": "grams"},
-        {"name": "Buttermilk", "amount": "350.00", "unit": "ml"},
-        {"name": "Baking Soda", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Flour",
+          "amount": "450.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Buttermilk",
+          "amount": "350.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Baking Soda",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "irish_soda_bread.jpg"
     },
     {
       "title": "Greek Moussaka",
@@ -394,15 +1416,48 @@
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Eggplant", "amount": "3.00", "unit": "pieces"},
-        {"name": "Ground Beef", "amount": "400.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Tomato", "amount": "3.00", "unit": "pieces"},
-        {"name": "Potato", "amount": "2.00", "unit": "pieces"},
-        {"name": "Cream", "amount": "200.00", "unit": "ml"},
-        {"name": "Eggs", "amount": "2.00", "unit": "pieces"},
-        {"name": "Cinnamon", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Eggplant",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ground Beef",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Potato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cream",
+          "amount": "200.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Eggs",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cinnamon",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "greek_moussaka.jpg"
     },
     {
       "title": "Lebanese Tabbouleh",
@@ -410,18 +1465,55 @@
       "author": "leila",
       "region": "Levantine",
       "is_published": true,
-      "dietary_tags": ["Vegan"],
-      "event_tags": [],
-      "religions": [],
+      "dietary_tags": [
+        "Vegan",
+        "Dairy-Free",
+        "Kosher"
+      ],
+      "event_tags": [
+        "Anniversary"
+      ],
+      "religions": [
+        "Judaism"
+      ],
       "ingredients": [
-        {"name": "Bulgur Wheat", "amount": "100.00", "unit": "grams"},
-        {"name": "Parsley", "amount": "3.00", "unit": "bunch"},
-        {"name": "Tomato", "amount": "3.00", "unit": "pieces"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Lemon", "amount": "2.00", "unit": "pieces"},
-        {"name": "Olive Oil", "amount": "80.00", "unit": "ml"},
-        {"name": "Mint", "amount": "1.00", "unit": "bunch"}
-      ]
+        {
+          "name": "Bulgur Wheat",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Parsley",
+          "amount": "3.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Lemon",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "80.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Mint",
+          "amount": "1.00",
+          "unit": "bunch"
+        }
+      ],
+      "image": "lebanese_tabbouleh.jpg"
     },
     {
       "title": "Lebanese Hummus",
@@ -429,17 +1521,49 @@
       "author": "leila",
       "region": "Levantine",
       "is_published": true,
-      "dietary_tags": ["Vegan"],
+      "dietary_tags": [
+        "Vegan",
+        "Dairy-Free",
+        "Gluten-Free",
+        "Kosher"
+      ],
       "event_tags": [],
-      "religions": [],
+      "religions": [
+        "Judaism"
+      ],
       "ingredients": [
-        {"name": "Chickpeas", "amount": "400.00", "unit": "grams"},
-        {"name": "Tahini", "amount": "100.00", "unit": "grams"},
-        {"name": "Lemon", "amount": "2.00", "unit": "pieces"},
-        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
-        {"name": "Olive Oil", "amount": "50.00", "unit": "ml"},
-        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Chickpeas",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tahini",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lemon",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "lebanese_hummus.jpg"
     },
     {
       "title": "Italian Sunday Ragu",
@@ -448,17 +1572,49 @@
       "region": "Italian",
       "is_published": true,
       "dietary_tags": [],
-      "event_tags": [],
+      "event_tags": [
+        "Birthday",
+        "Anniversary"
+      ],
       "religions": [],
       "ingredients": [
-        {"name": "Ground Beef", "amount": "500.00", "unit": "grams"},
-        {"name": "Tomato Paste", "amount": "3.00", "unit": "tablespoons"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Garlic", "amount": "4.00", "unit": "cloves"},
-        {"name": "Olive Oil", "amount": "50.00", "unit": "ml"},
-        {"name": "Pasta", "amount": "500.00", "unit": "grams"},
-        {"name": "Oregano", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Ground Beef",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Pasta",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Oregano",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "italian_ragu.jpg"
     },
     {
       "title": "Levantine Kibbeh",
@@ -466,17 +1622,46 @@
       "author": "leila",
       "region": "Levantine",
       "is_published": true,
-      "dietary_tags": ["Halal"],
+      "dietary_tags": [
+        "Halal"
+      ],
       "event_tags": [],
-      "religions": ["Islam"],
+      "religions": [
+        "Islam"
+      ],
       "ingredients": [
-        {"name": "Bulgur Wheat", "amount": "200.00", "unit": "grams"},
-        {"name": "Ground Lamb", "amount": "400.00", "unit": "grams"},
-        {"name": "Onion", "amount": "2.00", "unit": "pieces"},
-        {"name": "Pine Nuts", "amount": "50.00", "unit": "grams"},
-        {"name": "Cinnamon", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Bulgur Wheat",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Lamb",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Pine Nuts",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Cinnamon",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "levantine_kibbeh.jpg"
     },
     {
       "title": "Indian Dal Tadka",
@@ -484,19 +1669,57 @@
       "author": "priya",
       "region": "Indian",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
+      "dietary_tags": [
+        "Vegetarian",
+        "Gluten-Free"
+      ],
       "event_tags": [],
-      "religions": [],
+      "religions": [
+        "Hinduism"
+      ],
       "ingredients": [
-        {"name": "Lentils", "amount": "250.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Tomato", "amount": "2.00", "unit": "pieces"},
-        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
-        {"name": "Ginger", "amount": "1.00", "unit": "pieces"},
-        {"name": "Turmeric", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Butter", "amount": "30.00", "unit": "grams"}
-      ]
+        {
+          "name": "Lentils",
+          "amount": "250.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Butter",
+          "amount": "30.00",
+          "unit": "grams"
+        }
+      ],
+      "image": "indian_dal_tadka.jpg"
     },
     {
       "title": "Japanese Miso Soup",
@@ -504,15 +1727,36 @@
       "author": "yuki",
       "region": "Japanese",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
+      "dietary_tags": [
+        "Vegetarian",
+        "Dairy-Free",
+        "Gluten-Free"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Miso Paste", "amount": "3.00", "unit": "tablespoons"},
-        {"name": "Tofu", "amount": "200.00", "unit": "grams"},
-        {"name": "Seaweed", "amount": "5.00", "unit": "grams"},
-        {"name": "Green Onion", "amount": "2.00", "unit": "pieces"}
-      ]
+        {
+          "name": "Miso Paste",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Tofu",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Seaweed",
+          "amount": "5.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Green Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ],
+      "image": "japanese_miso_soup.jpg"
     },
     {
       "title": "Paneer Tikka Masala",
@@ -520,20 +1764,63 @@
       "author": "priya",
       "region": "Indian",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
-      "event_tags": [],
-      "religions": ["Hinduism"],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Hinduism"
+      ],
       "ingredients": [
-        {"name": "Paneer", "amount": "300.00", "unit": "grams"},
-        {"name": "Yogurt", "amount": "100.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Tomato", "amount": "3.00", "unit": "pieces"},
-        {"name": "Cream", "amount": "100.00", "unit": "ml"},
-        {"name": "Ginger", "amount": "1.00", "unit": "pieces"},
-        {"name": "Garlic", "amount": "3.00", "unit": "cloves"},
-        {"name": "Garam Masala", "amount": "2.00", "unit": "teaspoons"},
-        {"name": "Turmeric", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Paneer",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Yogurt",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cream",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Garam Masala",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "paneer_tikka_masala.jpg"
     },
     {
       "title": "Japanese Onigiri Rice Balls",
@@ -541,15 +1828,36 @@
       "author": "yuki",
       "region": "Japanese",
       "is_published": true,
-      "dietary_tags": ["Vegan"],
+      "dietary_tags": [
+        "Vegan",
+        "Dairy-Free",
+        "Gluten-Free"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Rice", "amount": "300.00", "unit": "grams"},
-        {"name": "Seaweed", "amount": "4.00", "unit": "pieces"},
-        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Sesame Seeds", "amount": "1.00", "unit": "tablespoons"}
-      ]
+        {
+          "name": "Rice",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Seaweed",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Sesame Seeds",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        }
+      ],
+      "image": "japanese_onigiri.jpg"
     },
     {
       "title": "Swedish Meatballs - Kottbullar",
@@ -561,14 +1869,43 @@
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Ground Beef", "amount": "400.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Cream", "amount": "100.00", "unit": "ml"},
-        {"name": "Flour", "amount": "2.00", "unit": "tablespoons"},
-        {"name": "Butter", "amount": "30.00", "unit": "grams"},
-        {"name": "Salt", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Pepper", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Ground Beef",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cream",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Flour",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Butter",
+          "amount": "30.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Pepper",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "swedish_meatballs.jpg"
     },
     {
       "title": "Baklava",
@@ -576,18 +1913,52 @@
       "author": "mehmet",
       "region": "Marmara",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
-      "event_tags": ["Religious Holiday"],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Religious Holiday",
+        "Birthday"
+      ],
       "religions": [],
       "ingredients": [
-        {"name": "Phyllo Dough", "amount": "500.00", "unit": "grams"},
-        {"name": "Pistachios", "amount": "200.00", "unit": "grams"},
-        {"name": "Walnuts", "amount": "200.00", "unit": "grams"},
-        {"name": "Butter", "amount": "250.00", "unit": "grams"},
-        {"name": "Sugar", "amount": "300.00", "unit": "grams"},
-        {"name": "Honey", "amount": "100.00", "unit": "grams"},
-        {"name": "Lemon", "amount": "1.00", "unit": "pieces"}
-      ]
+        {
+          "name": "Phyllo Dough",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Pistachios",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Walnuts",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "250.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Sugar",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Honey",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ],
+      "image": "baklava.jpg"
     },
     {
       "title": "Buttermilk Scones",
@@ -599,13 +1970,38 @@
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Flour", "amount": "350.00", "unit": "grams"},
-        {"name": "Buttermilk", "amount": "200.00", "unit": "ml"},
-        {"name": "Butter", "amount": "100.00", "unit": "grams"},
-        {"name": "Sugar", "amount": "50.00", "unit": "grams"},
-        {"name": "Eggs", "amount": "1.00", "unit": "pieces"},
-        {"name": "Baking Soda", "amount": "1.00", "unit": "teaspoons"}
-      ]
+        {
+          "name": "Flour",
+          "amount": "350.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Buttermilk",
+          "amount": "200.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Butter",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Sugar",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Baking Soda",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "buttermilk_scones.jpg"
     },
     {
       "title": "Aegean Olive Oil Cake",
@@ -613,16 +2009,2890 @@
       "author": "elif",
       "region": "Aegean",
       "is_published": true,
-      "dietary_tags": ["Vegetarian"],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
       "religions": [],
       "ingredients": [
-        {"name": "Flour", "amount": "300.00", "unit": "grams"},
-        {"name": "Olive Oil", "amount": "150.00", "unit": "ml"},
-        {"name": "Sugar", "amount": "200.00", "unit": "grams"},
-        {"name": "Eggs", "amount": "3.00", "unit": "pieces"},
-        {"name": "Yogurt", "amount": "100.00", "unit": "grams"},
-        {"name": "Lemon", "amount": "1.00", "unit": "pieces"}
+        {
+          "name": "Flour",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "150.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Sugar",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Yogurt",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ],
+      "image": "aegean_olive_oil_cake.jpg"
+    },
+    {
+      "title": "Ghormeh Sabzi",
+      "description": "Iran's national stew, a slow-cooked herb and kidney bean stew with lamb, scented with fenugreek and dried limes. It is the dish every Persian cook measures themselves against, served over saffron rice at every important occasion.",
+      "author": "amir",
+      "region": "Persian",
+      "is_published": true,
+      "image": "persian_ghormeh_sabzi.jpg",
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Lamb",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Kidney Beans",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Parsley",
+          "amount": "2.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Fenugreek Leaves",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Dried Limes",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Tahdig",
+      "description": "The golden, crispy rice crust at the bottom of the Persian pot that every cook strives to perfect. Tahdig is the most coveted part of a Persian rice dish, crunchy on the outside and fragrant with saffron.",
+      "author": "amir",
+      "region": "Persian",
+      "is_published": true,
+      "image": "persian_tahdig.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Birthday"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Basmati Rice",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Saffron",
+          "amount": "0.50",
+          "unit": "grams"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Salt",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Fesenjan",
+      "description": "A rich Persian stew of chicken or duck slow-cooked in a pomegranate and walnut sauce with deep, complex flavors. The balance of sweet, sour, and earthy makes Fesenjan one of the jewels of Persian cuisine.",
+      "author": "amir",
+      "region": "Persian",
+      "is_published": true,
+      "image": "persian_fesenjan.jpg",
+      "dietary_tags": [
+        "Halal",
+        "Gluten-Free"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": "600.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Walnuts",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Pomegranate Molasses",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Kabsa",
+      "description": "Saudi Arabia's national dish of fragrant rice cooked with meat, tomatoes, and a blend of warm spices including cardamom, cloves, and saffron. Kabsa is the centerpiece of every Arabian celebration and wedding feast.",
+      "author": "rashid",
+      "region": "Arabian",
+      "is_published": true,
+      "image": "arabian_kabsa.jpg",
+      "dietary_tags": [
+        "Halal",
+        "Gluten-Free"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": "1000.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Basmati Rice",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cardamom",
+          "amount": "5.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Saffron",
+          "amount": "0.50",
+          "unit": "grams"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Raisins",
+          "amount": "50.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Shawarma",
+      "description": "Marinated meat stacked on a vertical rotisserie and slow-roasted until caramelized, then shaved and stuffed into flatbread with garlic sauce and pickles. Shawarma is the defining street food of the Arabian Peninsula.",
+      "author": "rashid",
+      "region": "Arabian",
+      "is_published": true,
+      "image": "arabian_shawarma.jpg",
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": "600.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Flatbread",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Cumin",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Yogurt",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Kunafa",
+      "description": "A Palestinian and Levantine dessert of shredded wheat pastry soaked in sweet syrup, filled with stretchy white cheese. Served warm with orange blossom water syrup drizzled over the top.",
+      "author": "rashid",
+      "region": "Arabian",
+      "is_published": true,
+      "image": "arabian_kunafa.jpg",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Shredded Wheat",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "White Cheese",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Sugar",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Orange Blossom Water",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Pistachios",
+          "amount": "50.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Mapo Tofu",
+      "description": "A fiery Sichuan dish of silken tofu in a numbing, spicy sauce of chili bean paste, fermented black beans, and Sichuan peppercorns. The tingling, mouth-numbing sensation of mala spice is the hallmark of authentic Mapo Tofu.",
+      "author": "wei",
+      "region": "Chinese",
+      "is_published": true,
+      "image": "chinese_mapo_tofu.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Birthday"
+      ],
+      "religions": [
+        "Buddhism"
+      ],
+      "ingredients": [
+        {
+          "name": "Silken Tofu",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Chili Bean Paste",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Fermented Black Beans",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Sichuan Peppercorns",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Xiaolongbao",
+      "description": "Delicate Shanghai soup dumplings with thin pleated wrappers enclosing a pork and gelatin filling that turns into savory broth when steamed. Each dumpling must be eaten in one bite with care to preserve the precious soup inside.",
+      "author": "wei",
+      "region": "Chinese",
+      "is_published": true,
+      "image": "chinese_xiaolongbao.jpg",
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [
+        "Buddhism"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Pork",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Pork Gelatin",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Soy Sauce",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Sesame Oil",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Char Siu",
+      "description": "Cantonese barbecue pork with a sticky, caramelized glaze of soy, honey, and five-spice. Hung in the oven on hooks and basted repeatedly, char siu is the foundation of dim sum culture in Guangzhou.",
+      "author": "chen",
+      "region": "Chinese",
+      "is_published": true,
+      "image": "chinese_char_siu.jpg",
+      "dietary_tags": [
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Pork Shoulder",
+          "amount": "600.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Honey",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Soy Sauce",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Five-Spice Powder",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Hoisin Sauce",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        }
+      ]
+    },
+    {
+      "title": "Bibimbap",
+      "description": "A vibrant Korean rice bowl topped with seasoned vegetables, gochujang chili paste, and a fried egg, meant to be mixed vigorously at the table. Bibimbap is the pinnacle of Korean temple food and everyday cooking alike.",
+      "author": "jimin",
+      "region": "Korean",
+      "is_published": true,
+      "image": "korean_bibimbap.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Birthday"
+      ],
+      "religions": [
+        "Buddhism"
+      ],
+      "ingredients": [
+        {
+          "name": "Rice",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Spinach",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Carrot",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Zucchini",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Mushrooms",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Gochujang",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Sesame Oil",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Kimchi Jjigae",
+      "description": "A deeply comforting Korean stew of fermented kimchi simmered with pork belly and tofu, gaining richness the longer it cooks. Kimchi Jjigae is the quintessential cold-weather Korean home dish.",
+      "author": "jimin",
+      "region": "Korean",
+      "is_published": true,
+      "image": "korean_kimchi_jjigae.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Kimchi",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Pork Belly",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tofu",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Sesame Oil",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Bulgogi",
+      "description": "Thinly sliced beef marinated in a sweet soy and sesame sauce, then grilled over a flame or tabletop grill. Bulgogi is Korea's most famous meat dish, beloved for its tender, caramelized flavor.",
+      "author": "jimin",
+      "region": "Korean",
+      "is_published": true,
+      "image": "korean_bulgogi.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Anniversary"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Beef Sirloin",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Soy Sauce",
+          "amount": "4.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Sesame Oil",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Sugar",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Pear",
+          "amount": "0.50",
+          "unit": "pieces"
+        },
+        {
+          "name": "Green Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Pad Thai",
+      "description": "Thailand's iconic stir-fried rice noodle dish with egg, shrimp, bean sprouts, and roasted peanuts in a tamarind and fish sauce base. The finishing squeeze of lime and pinch of chili flakes makes each bowl a personal creation.",
+      "author": "linh",
+      "region": "Southeast Asian",
+      "is_published": true,
+      "image": "southeast_asian_pad_thai.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Rice Noodles",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Shrimp",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bean Sprouts",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tamarind Paste",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Fish Sauce",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Roasted Peanuts",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lime",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Pho",
+      "description": "Vietnam's soul food: a fragrant beef bone broth infused with star anise, cinnamon, and ginger, served over rice noodles with thin slices of beef and fresh herbs. The broth must simmer for hours to develop its depth.",
+      "author": "linh",
+      "region": "Southeast Asian",
+      "is_published": true,
+      "image": "southeast_asian_pho.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Buddhism"
+      ],
+      "ingredients": [
+        {
+          "name": "Beef Bones",
+          "amount": "1000.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Rice Noodles",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Star Anise",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cinnamon",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bean Sprouts",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Fresh Basil",
+          "amount": "1.00",
+          "unit": "bunch"
+        }
+      ]
+    },
+    {
+      "title": "Rendang",
+      "description": "Indonesia's legendary slow-cooked beef curry, simmered for hours in coconut milk and a complex spice paste until all the liquid is absorbed and the meat is deeply caramelized. Rendang is the world's most flavorful dry curry.",
+      "author": "linh",
+      "region": "Southeast Asian",
+      "is_published": true,
+      "image": "southeast_asian_rendang.jpg",
+      "dietary_tags": [
+        "Halal",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Beef",
+          "amount": "800.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Coconut Milk",
+          "amount": "400.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Lemongrass",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Galangal",
+          "amount": "30.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Chili",
+          "amount": "5.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        }
+      ]
+    },
+    {
+      "title": "Lamb Tagine",
+      "description": "A fragrant Moroccan slow-cooked stew of lamb, preserved lemons, and olives with warm spices like ras el hanout and saffron. The conical clay tagine creates a gentle steam that keeps the meat impossibly tender.",
+      "author": "amina",
+      "region": "North African",
+      "is_published": true,
+      "image": "north_african_tagine.jpg",
+      "dietary_tags": [
+        "Halal",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Lamb",
+          "amount": "700.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Preserved Lemon",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Olives",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ras El Hanout",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Saffron",
+          "amount": "0.50",
+          "unit": "grams"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Couscous Royal",
+      "description": "North Africa's grand Friday dish of steamed couscous topped with slow-braised lamb, merguez sausages, and vegetables in a rich harissa broth. Couscous Royal is the ultimate expression of North African communal cooking.",
+      "author": "amina",
+      "region": "North African",
+      "is_published": true,
+      "image": "north_african_couscous.jpg",
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Couscous",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lamb",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Merguez Sausage",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Zucchini",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Carrot",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Harissa",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Shakshuka",
+      "description": "Eggs poached directly in a spiced tomato and pepper sauce with cumin, paprika, and chili, served sizzling in the pan with crusty bread. Shakshuka is North Africa's most beloved brunch dish, now celebrated worldwide.",
+      "author": "nadia",
+      "region": "North African",
+      "is_published": true,
+      "image": "north_african_shakshuka.jpg",
+      "dietary_tags": [
+        "Vegetarian",
+        "Gluten-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Eggs",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bell Pepper",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Paprika",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Jollof Rice",
+      "description": "West Africa's beloved one-pot rice dish cooked in a rich tomato and pepper sauce with chicken broth and spices. The subject of fierce but joyful rivalry between Ghana and Nigeria, Jollof Rice is the heartbeat of West African celebration.",
+      "author": "kwame",
+      "region": "West African",
+      "is_published": true,
+      "image": "west_african_jollof.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Birthday",
+        "Wedding"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Long Grain Rice",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bell Pepper",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Chicken Stock",
+          "amount": "500.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Bay Leaves",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Egusi Soup",
+      "description": "A thick, hearty West African soup made with ground melon seeds, leafy greens, and assorted meats in a palm oil and tomato base. Egusi Soup is deeply tied to communal traditions and is a staple at funerals and family gatherings.",
+      "author": "kwame",
+      "region": "West African",
+      "is_published": true,
+      "image": "west_african_egusi.jpg",
+      "dietary_tags": [
+        "Gluten-Free"
+      ],
+      "event_tags": [
+        "Funeral"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Ground Egusi",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Palm Oil",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Spinach",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Beef",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Crayfish",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Fufu with Light Soup",
+      "description": "Pounded cassava and plantain mashed into a smooth, elastic dough served with a peppery light soup of chicken, tomatoes, and aromatic spices. Fufu is eaten communally, pulled and dipped by hand into the shared pot of soup.",
+      "author": "kwame",
+      "region": "West African",
+      "is_published": true,
+      "image": "west_african_fufu.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Funeral"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Cassava",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Plantain",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Scotch Bonnet Pepper",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Injera",
+      "description": "A large, spongy sourdough flatbread made from teff flour, fermented for several days to develop its distinctive tangy flavor. Injera serves as both the plate and the utensil in Ethiopian cuisine, covered with stews and eaten communally.",
+      "author": "zara",
+      "region": "East African",
+      "is_published": true,
+      "image": "east_african_injera.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Funeral"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Teff Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Water",
+          "amount": "600.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Doro Wat",
+      "description": "Ethiopia's most beloved chicken stew, slow-cooked in a deeply spiced berbere sauce with hard-boiled eggs. Doro Wat is the dish of celebrations and Orthodox Christian holidays, always served atop injera.",
+      "author": "zara",
+      "region": "East African",
+      "is_published": true,
+      "image": "east_african_doro_wat.jpg",
+      "dietary_tags": [
+        "Halal",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": "800.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Berbere Spice",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Eggs",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Ginger",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Ugali with Sukuma Wiki",
+      "description": "East Africa's staple stiff cornmeal porridge served alongside braised collard greens sauteed with onion and tomato. Ugali is the daily bread of Kenya, Tanzania, and Uganda, simple, filling, and deeply nourishing.",
+      "author": "zara",
+      "region": "East African",
+      "is_published": true,
+      "image": "east_african_ugali.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Cornmeal",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Collard Greens",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Jerk Chicken",
+      "description": "Chicken marinated in a fiery paste of scotch bonnet peppers, allspice, thyme, and garlic, then slow-cooked over pimento wood smoke. Jerk seasoning is the culinary legacy of Jamaica's Maroon people, a philosophy of patience and fire.",
+      "author": "marcus",
+      "region": "Caribbean",
+      "is_published": true,
+      "image": "caribbean_jerk_chicken.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": "1000.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Scotch Bonnet Pepper",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Allspice",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Thyme",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Soy Sauce",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Lime",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Rice and Peas",
+      "description": "Creamy coconut rice cooked with kidney beans, thyme, and scotch bonnet pepper, the essential Sunday side dish across the Caribbean. In Jamaica, it is called rice and peas even though kidney beans are used, and no Sunday dinner is complete without it.",
+      "author": "marcus",
+      "region": "Caribbean",
+      "is_published": true,
+      "image": "caribbean_rice_and_peas.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Long Grain Rice",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Kidney Beans",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Coconut Milk",
+          "amount": "400.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Thyme",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Scotch Bonnet Pepper",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "2.00",
+          "unit": "cloves"
+        }
+      ]
+    },
+    {
+      "title": "Fried Plantain",
+      "description": "Ripe plantains sliced and fried in oil until golden and caramelized, served sweet and tender as a side dish or snack. Fried plantain is the universal accompaniment to nearly every Caribbean and West African meal.",
+      "author": "marcus",
+      "region": "Caribbean",
+      "is_published": true,
+      "image": "caribbean_plantain.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Ripe Plantain",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Salt",
+          "amount": "0.50",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Empanadas",
+      "description": "Flaky hand-folded pastries stuffed with a savory filling of spiced ground beef, hard-boiled eggs, and olives, then baked or fried golden. Argentine empanadas vary by province, each region claiming its own fold pattern as a signature.",
+      "author": "camila",
+      "region": "South American",
+      "is_published": true,
+      "image": "south_american_empanadas.jpg",
+      "dietary_tags": [],
+      "event_tags": [
+        "Birthday",
+        "Graduation"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Beef",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Eggs",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Olives",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Paprika",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Butter",
+          "amount": "100.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Ceviche",
+      "description": "Fresh raw fish cured in citrus juice with aji amarillo, red onion, cilantro, and corn, one of the world's greatest cold dishes. Peruvian ceviche is defined by the leche de tigre, the intensely flavorful curing liquid that is drunk as a shot.",
+      "author": "diego",
+      "region": "South American",
+      "is_published": true,
+      "image": "south_american_ceviche.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Anniversary"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "White Fish",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lime",
+          "amount": "8.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Red Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Aji Amarillo",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cilantro",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Corn",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Feijoada",
+      "description": "Brazil's national dish of slow-cooked black beans with smoked pork, sausage, and beef, served with rice, collard greens, and orange slices to balance the richness. Feijoada is a Saturday tradition that brings families together around the table for hours.",
+      "author": "camila",
+      "region": "South American",
+      "is_published": true,
+      "image": "south_american_feijoada.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Black Beans",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Pork Ribs",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Smoked Sausage",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Beef",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Bay Leaves",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Pupusas",
+      "description": "Thick handmade corn tortillas stuffed with cheese, beans, or chicharron, cooked on a griddle and served with curtido slaw and salsa roja. Pupusas are El Salvador's national dish, a portable expression of identity and community.",
+      "author": "rosa",
+      "region": "Central American",
+      "is_published": true,
+      "image": "central_american_pupusas.jpg",
+      "dietary_tags": [
+        "Vegetarian",
+        "Gluten-Free"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Masa Harina",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "White Cheese",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Refried Beans",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Cabbage",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Vinegar",
+          "amount": "50.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Tamales",
+      "description": "Masa dough stuffed with chicken or pork in red chili sauce, wrapped in corn husks and steamed until firm. Tamales are the celebratory food of Central America, prepared communally in large batches called tamaladas during Christmas and other religious holidays.",
+      "author": "rosa",
+      "region": "Central American",
+      "is_published": true,
+      "image": "central_american_tamales.jpg",
+      "dietary_tags": [
+        "Gluten-Free"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Masa Harina",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Chicken",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ancho Chili",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Lard",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Corn Husks",
+          "amount": "30.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Chicken Stock",
+          "amount": "300.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Gallo Pinto",
+      "description": "Costa Rica and Nicaragua's beloved breakfast of rice and beans cooked together with Salsa Lizano, onion, and bell pepper. Gallo Pinto is the daily sustenance of Central America, eaten morning, noon, and night with eggs or plantain.",
+      "author": "rosa",
+      "region": "Central American",
+      "is_published": true,
+      "image": "central_american_gallo_pinto.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Rice",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Black Beans",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bell Pepper",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Cilantro",
+          "amount": "1.00",
+          "unit": "bunch"
+        }
+      ]
+    },
+    {
+      "title": "Ratatouille",
+      "description": "A Provencal summer vegetable stew of zucchini, eggplant, tomatoes, and bell peppers slowly cooked together in olive oil with herbes de Provence. Best made a day ahead, Ratatouille is a celebration of the Mediterranean growing season.",
+      "author": "pierre",
+      "region": "French",
+      "is_published": true,
+      "image": "french_ratatouille.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Anniversary"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Zucchini",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Eggplant",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bell Pepper",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "80.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Herbes de Provence",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Croissant",
+      "description": "The pinnacle of French viennoiserie, a buttery laminated dough folded and rolled dozens of times to create hundreds of flaky, honeycomb layers. A perfect croissant is at once light and rich, crisp and yielding.",
+      "author": "pierre",
+      "region": "French",
+      "is_published": true,
+      "image": "french_croissant.jpg",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Milk",
+          "amount": "300.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Yeast",
+          "amount": "7.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Sugar",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Salt",
+          "amount": "10.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Coq au Vin",
+      "description": "Chicken braised slowly in red wine with lardons, mushrooms, and pearl onions until the meat falls from the bone. Coq au Vin is the French bistro classic that demonstrates how patience and wine transform the humblest bird into an elegant meal.",
+      "author": "pierre",
+      "region": "French",
+      "is_published": true,
+      "image": "french_coq_au_vin.jpg",
+      "dietary_tags": [],
+      "event_tags": [
+        "Anniversary"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": "1200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Red Wine",
+          "amount": "750.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Bacon Lardons",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Mushrooms",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Pearl Onions",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Thyme",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Butter",
+          "amount": "50.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Paella",
+      "description": "Valencia's iconic pan-cooked rice dish with saffron, chicken, rabbit, green beans, and butter beans, cooked over an open fire until a golden crust called socarrat forms on the bottom. Paella is a Sunday ritual and a point of fierce regional pride.",
+      "author": "isabel",
+      "region": "Iberian",
+      "is_published": true,
+      "image": "iberian_paella.jpg",
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Anniversary",
+        "Wedding"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Paella Rice",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Chicken",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Saffron",
+          "amount": "0.50",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Green Beans",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "80.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Paprika",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Chicken Stock",
+          "amount": "800.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Gazpacho",
+      "description": "Andalusia's chilled raw tomato soup blended with cucumber, pepper, garlic, and olive oil, a summer staple served ice-cold. Gazpacho requires no cooking, just ripe tomatoes and good olive oil, and it captures the essence of southern Spain.",
+      "author": "isabel",
+      "region": "Iberian",
+      "is_published": true,
+      "image": "iberian_gazpacho.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Tomato",
+          "amount": "800.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Cucumber",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bell Pepper",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "2.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "60.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Sherry Vinegar",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Bacalhau a Bras",
+      "description": "Portugal's most beloved salt cod dish, shredded and cooked with matchstick potatoes and scrambled eggs, garnished with olives and parsley. Bacalhau, or salt cod, is central to Portuguese identity and Catholic tradition.",
+      "author": "isabel",
+      "region": "Iberian",
+      "is_published": true,
+      "image": "iberian_bacalhau.jpg",
+      "dietary_tags": [
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Salt Cod",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Potato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Eggs",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Olive Oil",
+          "amount": "80.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Olives",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        }
+      ]
+    },
+    {
+      "title": "Fish and Chips",
+      "description": "Beer-battered cod fried to a golden crisp alongside thick-cut potato chips, wrapped in paper and served with malt vinegar and mushy peas. Fish and chips is the defining British takeaway, a dish inseparable from British working-class identity.",
+      "author": "oliver",
+      "region": "British Isles",
+      "is_published": true,
+      "image": "british_fish_and_chips.jpg",
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Cod Fillet",
+          "amount": "600.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Potato",
+          "amount": "800.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Flour",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Beer",
+          "amount": "250.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "1000.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Malt Vinegar",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Shepherd's Pie",
+      "description": "Minced lamb cooked with vegetables and gravy, topped with a golden layer of creamy mashed potatoes and baked until the top is browned. A quintessentially British comfort dish traditionally made from Sunday roast leftovers.",
+      "author": "oliver",
+      "region": "British Isles",
+      "is_published": true,
+      "image": "british_shepherds_pie.jpg",
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Ground Lamb",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Potato",
+          "amount": "800.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Carrot",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Peas",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Milk",
+          "amount": "100.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Cream Tea Scones",
+      "description": "Light, fluffy British scones served warm with clotted cream and strawberry jam as part of the quintessential cream tea ritual. The great British debate of cream-first versus jam-first divides Cornwall and Devon to this day.",
+      "author": "oliver",
+      "region": "British Isles",
+      "is_published": true,
+      "image": "british_scones_cream.jpg",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Birthday",
+        "Graduation"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "350.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "85.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Milk",
+          "amount": "175.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Clotted Cream",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Strawberry Jam",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Baking Powder",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Sugar",
+          "amount": "50.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Wiener Schnitzel",
+      "description": "A thin veal cutlet pounded flat, breaded, and fried in clarified butter until perfectly golden and crisp. Austria's most famous dish, protected by law to contain only veal, served with a wedge of lemon and potato salad.",
+      "author": "hans",
+      "region": "Central European",
+      "is_published": true,
+      "image": "central_european_schnitzel.jpg",
+      "dietary_tags": [],
+      "event_tags": [
+        "Graduation"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Veal Cutlet",
+          "amount": "600.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Breadcrumbs",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Flour",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Clarified Butter",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lemon",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Goulash",
+      "description": "Hungary's hearty beef and paprika stew that has become a Central European staple, slow-cooked until the beef is tender and the paprika-rich broth is thick and glossy. Goulash began as a Hungarian herdsmen's dish and became the heart of Central European comfort cooking.",
+      "author": "hans",
+      "region": "Central European",
+      "is_published": true,
+      "image": "central_european_goulash.jpg",
+      "dietary_tags": [
+        "Gluten-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Beef",
+          "amount": "700.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Paprika",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Carrot",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Potato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Apple Strudel",
+      "description": "Layers of tissue-thin stretched dough wrapped around a filling of spiced apples, raisins, and cinnamon, baked golden and dusted with powdered sugar. Apfelstrudel is Austria's most celebrated pastry, a symbol of the Habsburg baking tradition.",
+      "author": "hans",
+      "region": "Central European",
+      "is_published": true,
+      "image": "central_european_strudel.jpg",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Religious Holiday",
+        "Birthday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Apple",
+          "amount": "800.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Sugar",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Raisins",
+          "amount": "80.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Cinnamon",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Breadcrumbs",
+          "amount": "50.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Borscht",
+      "description": "Eastern Europe's deep crimson beet soup, slow-cooked with cabbage, potato, and beef in a tangy, sweet broth, served with a dollop of sour cream. Borscht is the dish of remembrance across Ukraine, Poland, and Russia, often prepared for funerals and family reunions.",
+      "author": "katarina",
+      "region": "Eastern European",
+      "is_published": true,
+      "image": "eastern_european_borscht.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Funeral"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Beets",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Cabbage",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Potato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Carrot",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Pierogi",
+      "description": "Poland's beloved dumplings filled with potato and cheese, sauerkraut and mushroom, or sweet fruit, boiled and then pan-fried in butter with onion until golden. Pierogi are made communally for Christmas Eve and religious holidays across Poland.",
+      "author": "katarina",
+      "region": "Eastern European",
+      "is_published": true,
+      "image": "eastern_european_pierogi.jpg",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Potato",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "White Cheese",
+          "amount": "150.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Butter",
+          "amount": "80.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Sour Cream",
+          "amount": "100.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Blini",
+      "description": "Thin Russian buckwheat pancakes served with sour cream, smoked salmon, or caviar, traditionally eaten during Maslenitsa butter week before Lent. Blini represent the sun and the coming spring, and the ritual of making them together is inseparable from Russian Orthodox tradition.",
+      "author": "katarina",
+      "region": "Eastern European",
+      "is_published": true,
+      "image": "eastern_european_blini.jpg",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Buckwheat Flour",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Milk",
+          "amount": "400.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Eggs",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Butter",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Yeast",
+          "amount": "5.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Sugar",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Salt",
+          "amount": "0.50",
+          "unit": "teaspoons"
+        }
+      ]
+    },
+    {
+      "title": "Plov",
+      "description": "Uzbekistan's national dish of fragrant rice cooked in lamb fat with carrots, garlic heads, and slow-cooked lamb, finished with chickpeas and raisins. Plov is cooked by men in enormous cauldrons called kazans for weddings, feeding hundreds at a time.",
+      "author": "aliya",
+      "region": "Central Asian",
+      "is_published": true,
+      "image": "central_asian_plov.jpg",
+      "dietary_tags": [
+        "Halal",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Long Grain Rice",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lamb",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Carrot",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cottonseed Oil",
+          "amount": "100.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Chickpeas",
+          "amount": "100.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Raisins",
+          "amount": "50.00",
+          "unit": "grams"
+        }
+      ]
+    },
+    {
+      "title": "Lagman",
+      "description": "Central Asia's soul-warming noodle soup of hand-pulled noodles in a rich lamb and vegetable broth with peppers, tomatoes, and aromatic spices. Lagman is the dish that connects Uyghur, Uzbek, and Kazakh cooking traditions along the ancient Silk Road.",
+      "author": "aliya",
+      "region": "Central Asian",
+      "is_published": true,
+      "image": "central_asian_lagman.jpg",
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Lamb",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Bell Pepper",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "3.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "50.00",
+          "unit": "ml"
+        }
+      ]
+    },
+    {
+      "title": "Samsa",
+      "description": "Flaky baked pastries filled with minced lamb, onion, and cumin, shaped into triangles and baked in a clay tandoor oven. Samsa are the street food of Central Asian bazaars, eaten hot from the tandoor on cold mornings across Uzbekistan and Kazakhstan.",
+      "author": "aliya",
+      "region": "Central Asian",
+      "is_published": true,
+      "image": "central_asian_samsa.jpg",
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Lamb",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Butter",
+          "amount": "80.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Eggs",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Pavlova",
+      "description": "A billowing meringue shell, crisp on the outside and marshmallowy within, topped with whipped cream and fresh seasonal fruits. Claimed by both Australia and New Zealand, Pavlova is the dessert of Southern Hemisphere celebrations.",
+      "author": "jack",
+      "region": "Oceanian",
+      "is_published": true,
+      "image": "oceanian_pavlova.jpg",
+      "dietary_tags": [
+        "Vegetarian",
+        "Gluten-Free"
+      ],
+      "event_tags": [
+        "Birthday",
+        "Graduation"
+      ],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Egg Whites",
+          "amount": "4.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Sugar",
+          "amount": "220.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Cornstarch",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "White Wine Vinegar",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Heavy Cream",
+          "amount": "300.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Strawberries",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Kiwi",
+          "amount": "2.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Meat Pie",
+      "description": "A short-crust pastry filled with minced beef and gravy, baked until the pastry is golden and the filling is rich and savory. The Australian meat pie is the working person's lunch, eaten at footy matches and bakeries across the continent.",
+      "author": "jack",
+      "region": "Oceanian",
+      "is_published": true,
+      "image": "oceanian_meat_pie.jpg",
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Butter",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Beef",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "2.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Beef Stock",
+          "amount": "200.00",
+          "unit": "ml"
+        },
+        {
+          "name": "Eggs",
+          "amount": "1.00",
+          "unit": "pieces"
+        }
+      ]
+    },
+    {
+      "title": "Aloo Gobi",
+      "description": "A classic North Indian dry curry of potatoes and cauliflower cooked with turmeric, cumin, and garam masala until tender and lightly caramelized. Simple, golden, and deeply satisfying, Aloo Gobi is a staple of everyday Indian vegetarian cooking.",
+      "author": "priya",
+      "region": "Indian",
+      "is_published": true,
+      "image": "indian_aloo_gobi.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Vegetarian",
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Hinduism"
+      ],
+      "ingredients": [
+        {
+          "name": "Potato",
+          "amount": "3.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Cauliflower",
+          "amount": "500.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Tomato",
+          "amount": "2.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Turmeric",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Garam Masala",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "3.00",
+          "unit": "tablespoons"
+        }
+      ]
+    },
+    {
+      "title": "Falafel",
+      "description": "Crispy golden fritters made from ground chickpeas and fava beans mixed with herbs and spices, deep-fried until crunchy outside and soft within. Falafel is the street food of the Mediterranean and Middle East, Kosher and Vegan, beloved across cultures and religions.",
+      "author": "sofia",
+      "region": "Mediterranean",
+      "is_published": true,
+      "image": "mediterranean_falafel.jpg",
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free",
+        "Dairy-Free",
+        "Kosher"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Judaism"
+      ],
+      "ingredients": [
+        {
+          "name": "Dried Chickpeas",
+          "amount": "400.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Cilantro",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "4.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Cumin",
+          "amount": "2.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Vegetable Oil",
+          "amount": "500.00",
+          "unit": "ml"
+        }
       ]
     }
   ],
@@ -635,10 +4905,17 @@
       "region": "Black Sea",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Black Sea Collard Green Sarma"],
+      "linked_recipes": [
+        "Black Sea Collard Green Sarma"
+      ],
       "dietary_tags": [],
-      "event_tags": ["Wedding"],
-      "religions": ["Islam"]
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_black_sea_sarma.jpg"
     },
     {
       "title": "Summer Sarma in the Aegean",
@@ -648,10 +4925,15 @@
       "region": "Aegean",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Aegean Olive Oil Stuffed Grape Leaves"],
-      "dietary_tags": ["Vegetarian"],
+      "linked_recipes": [
+        "Aegean Olive Oil Stuffed Grape Leaves"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_aegean_sarma.jpg"
     },
     {
       "title": "From Anatolia to Athens: The Dolma Trail",
@@ -661,10 +4943,15 @@
       "region": "Balkan",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Greek Dolmadakia"],
-      "dietary_tags": ["Vegetarian"],
+      "linked_recipes": [
+        "Greek Dolmadakia"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_dolma_trail.jpg"
     },
     {
       "title": "How Swedish Cabbage Rolls Came from the Ottoman Empire",
@@ -674,10 +4961,14 @@
       "region": "Nordic",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Swedish Cabbage Rolls - Kaldolmar", "Swedish Meatballs - Kottbullar"],
+      "linked_recipes": [
+        "Swedish Cabbage Rolls - Kaldolmar",
+        "Swedish Meatballs - Kottbullar"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_swedish_cabbage_rolls.jpg"
     },
     {
       "title": "The Buttermilk Substitute",
@@ -687,10 +4978,13 @@
       "region": "North American",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Traditional Irish Soda Bread"],
+      "linked_recipes": [
+        "Traditional Irish Soda Bread"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_buttermilk_substitute.jpg"
     },
     {
       "title": "Sunday Borek Ritual",
@@ -700,10 +4994,15 @@
       "region": "Aegean",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Aegean Herb Borek"],
-      "dietary_tags": ["Vegetarian"],
+      "linked_recipes": [
+        "Aegean Herb Borek"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_sunday_borek.jpg"
     },
     {
       "title": "Wedding Feasts of Southeastern Turkey",
@@ -713,10 +5012,20 @@
       "region": "Southeastern Anatolia",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Adana Kebab", "Southeastern Sarma with Pomegranate Molasses"],
-      "dietary_tags": ["Halal"],
-      "event_tags": ["Wedding"],
-      "religions": ["Islam"]
+      "linked_recipes": [
+        "Adana Kebab",
+        "Southeastern Sarma with Pomegranate Molasses"
+      ],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Wedding"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_wedding_feast.jpg"
     },
     {
       "title": "Miso: A Living Ingredient",
@@ -726,10 +5035,17 @@
       "region": "Japanese",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Japanese Miso Soup"],
-      "dietary_tags": ["Vegetarian"],
+      "linked_recipes": [
+        "Japanese Miso Soup"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
       "event_tags": [],
-      "religions": ["Buddhism"]
+      "religions": [
+        "Buddhism"
+      ],
+      "image": "story_miso_living.jpg"
     },
     {
       "title": "The Spice Road to Indian Kitchens",
@@ -739,10 +5055,13 @@
       "region": "Indian",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Indian Dal Tadka"],
+      "linked_recipes": [
+        "Indian Dal Tadka"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_spice_road.jpg"
     },
     {
       "title": "My Grandmother's Manti",
@@ -752,10 +5071,15 @@
       "region": "Anatolian",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Anatolian Manti Dumplings"],
+      "linked_recipes": [
+        "Anatolian Manti Dumplings"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": ["Islam"]
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_grandmothers_manti.jpg"
     },
     {
       "title": "Italian Sundays",
@@ -765,10 +5089,15 @@
       "region": "Italian",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Italian Sunday Ragu"],
+      "linked_recipes": [
+        "Italian Sunday Ragu"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": ["Christianity"]
+      "religions": [
+        "Christianity"
+      ],
+      "image": "story_italian_sundays.jpg"
     },
     {
       "title": "Istanbul Street Food Memories",
@@ -778,10 +5107,13 @@
       "region": "Marmara",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Istanbul Lahmacun"],
+      "linked_recipes": [
+        "Istanbul Lahmacun"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_istanbul_street.jpg"
     },
     {
       "title": "A Lebanese Table Is Never Empty",
@@ -791,10 +5123,16 @@
       "region": "Levantine",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Lebanese Tabbouleh", "Lebanese Hummus"],
+      "linked_recipes": [
+        "Lebanese Tabbouleh",
+        "Lebanese Hummus"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": ["Islam"]
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_lebanese_table.jpg"
     },
     {
       "title": "Baking Across the Atlantic",
@@ -804,10 +5142,16 @@
       "region": "North American",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Traditional Irish Soda Bread", "Buttermilk Scones"],
+      "linked_recipes": [
+        "Traditional Irish Soda Bread",
+        "Buttermilk Scones"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": ["Christianity"]
+      "religions": [
+        "Christianity"
+      ],
+      "image": "story_baking_atlantic.jpg"
     },
     {
       "title": "When Yogurt Connects Continents",
@@ -817,10 +5161,14 @@
       "region": "Marmara",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Trabzon Butter Kuymak", "Indian Dal Tadka"],
+      "linked_recipes": [
+        "Trabzon Butter Kuymak",
+        "Indian Dal Tadka"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_yogurt_continents.jpg"
     },
     {
       "title": "Fermentation East and West",
@@ -830,10 +5178,635 @@
       "region": "Japanese",
       "language": "en",
       "is_published": true,
-      "linked_recipes": ["Japanese Miso Soup", "Greek Dolmadakia"],
+      "linked_recipes": [
+        "Japanese Miso Soup",
+        "Greek Dolmadakia"
+      ],
       "dietary_tags": [],
       "event_tags": [],
-      "religions": []
+      "religions": [],
+      "image": "story_fermentation.jpg"
+    },
+    {
+      "title": "Nowruz: A Table Full of Meaning",
+      "summary": "The Persian New Year table, Haft-Sin, is a feast of symbols as much as flavours.",
+      "body": "Every spring my family arranges the Haft-Sin table hours before the new year arrives. Seven items that start with the letter sin in Farsi, each carrying a wish: health, wealth, love, patience. Amir always insists on making Ghormeh Sabzi the day before so the flavours can deepen overnight.",
+      "author": "amir",
+      "region": "Persian",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Ghormeh Sabzi"
+      ],
+      "dietary_tags": [],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [],
+      "image": "story_persian_new_year.jpg"
+    },
+    {
+      "title": "The Art of Persian Tea",
+      "summary": "In Iran, tea is not a drink - it is a ritual of hospitality and slow time.",
+      "body": "The samovar sits at the centre of Iranian social life. It is always on, always ready. Guests arrive and within minutes a glass of dark amber tea appears, sweetened with nabat rock candy. My grandmother in Tehran would judge a home by the quality of its tea. Tahdig would arrive shortly after.",
+      "author": "amir",
+      "region": "Persian",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Tahdig"
+      ],
+      "dietary_tags": [
+        "Vegan"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_persian_tea.jpg"
+    },
+    {
+      "title": "Arabic Coffee and the Ethics of Hospitality",
+      "summary": "Qahwa is brewed with cardamom and poured without question.",
+      "body": "Rashid taught me that in the Gulf, Arabic coffee is a social contract. You pour for your guest before yourself. The coffee is pale gold, lightly roasted, perfumed with cardamom and sometimes saffron. Dates come alongside. When Rashid made Kabsa for a large gathering, the qahwa was always ready an hour before the rice.",
+      "author": "rashid",
+      "region": "Saudi Arabia",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Kabsa"
+      ],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_arabian_coffee.jpg"
+    },
+    {
+      "title": "Dates: The Original Fast Food of the Desert",
+      "summary": "Before energy bars and protein shakes, the date palm fed civilisations.",
+      "body": "The date palm appears in the Quran more than any other plant. For desert travellers, a handful of dates and a skin of water was enough to cross vast distances. Rashid's family always breaks the Ramadan fast with three dates and water before anything else. After the fast, the table fills with Shawarma, hummus, and salads.",
+      "author": "rashid",
+      "region": "Saudi Arabia",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Shawarma"
+      ],
+      "dietary_tags": [
+        "Halal",
+        "Vegan"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_arabian_dates.jpg"
+    },
+    {
+      "title": "Dim Sum Sunday: A Cantonese Institution",
+      "summary": "Yum cha is how Cantonese families spend Sunday mornings.",
+      "body": "Wei's earliest food memory is being carried into a roaring dim sum hall in Guangzhou at seven in the morning. Bamboo steamers stacked five high, trolleys rattling past, elderly men reading newspapers over cups of pu'er tea. The Xiaolongbao arrived last. His grandmother insisted on the proper technique: bite a small hole, drink the soup first, never squeeze from the sides.",
+      "author": "wei",
+      "region": "China",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Xiaolongbao"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_chinese_dim_sum.jpg"
+    },
+    {
+      "title": "Chinese New Year: Cooking for Luck",
+      "summary": "Every dish at New Year carries meaning - fish for abundance, dumplings for wealth.",
+      "body": "The kitchen is busiest in the days before Spring Festival. Fish must be served whole, representing a complete year. Long noodles must not be cut, symbolising long life. His aunt makes Char Siu, the red-lacquered pork filling the apartment with sweet smoke. The noise of firecrackers outside blends with the sound of chopsticks on ceramic bowls.",
+      "author": "wei",
+      "region": "China",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Char Siu"
+      ],
+      "dietary_tags": [],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [],
+      "image": "story_chinese_new_year.jpg"
+    },
+    {
+      "title": "Kimjang: The Community Work of Kimchi",
+      "summary": "Making kimchi for winter was once a neighbourhood event that lasted days.",
+      "body": "Jimin grew up in Busan watching the kimjang ritual every November. Neighbours would gather with mountains of cabbage, radishes, garlic, and gochugaru. Stories were exchanged, opinions about the right ratio of garlic to fish sauce were hotly debated. UNESCO recognised kimjang as intangible cultural heritage in 2013. Jimin still makes Kimchi Jjigae every winter from the batch his mother sends from Busan.",
+      "author": "jimin",
+      "region": "South Korea",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Kimchi Jjigae"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_korean_kimchi.jpg"
+    },
+    {
+      "title": "Seoul Street Food After Midnight",
+      "summary": "Pojangmacha tents glow orange at 2am, serving the city's night workers and night owls.",
+      "body": "After a late shift in Hongdae, Jimin always stops at the pojangmacha on the corner. Tteokbokki bubbles in red sauce, and somewhere a vendor is grilling Bulgogi over charcoal. The steam rises into the cold night air. Jimin orders the same thing every time: Bulgogi on rice with a cold Hite beer, eating standing up, watching Seoul move around him.",
+      "author": "jimin",
+      "region": "South Korea",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Bulgogi"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_korean_street.jpg"
+    },
+    {
+      "title": "The Floating Markets of Thailand",
+      "summary": "At dawn on Bangkok's waterways, boats loaded with produce and hot food navigate the canals.",
+      "body": "Linh took a long-tail boat to Damnoen Saduak market before sunrise. The smell of lemongrass and chilli hit before the dock came into view. A woman in the middle of the canal was making Pad Thai to order in a wok balanced in her boat. Linh ate it from a styrofoam container balanced on her knees. It was the best Pad Thai she had ever eaten and she never found that vendor again.",
+      "author": "linh",
+      "region": "Thailand",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Pad Thai"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_thai_market.jpg"
+    },
+    {
+      "title": "Pho at Dawn in Hanoi",
+      "summary": "The best pho in Vietnam is eaten at 6am on a plastic stool on the pavement.",
+      "body": "Linh knows the rule: pho is a morning food. The broth for a proper Pho has been simmering since the previous night over twelve hours or more. In Hanoi's Old Quarter, the best shops open at 5:30am and close when the pot is empty. Each bowl is assembled to order: noodles first, then beef, then a ladle of steaming broth, then the table condiments.",
+      "author": "linh",
+      "region": "Vietnam",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Pho"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_vietnamese_pho.jpg"
+    },
+    {
+      "title": "The Souks of Marrakech: A Spice Education",
+      "summary": "Navigating the spice market in Marrakech is a lesson in colour, scent, and bargaining.",
+      "body": "Amina navigated the souks of Marrakech with her aunt every Friday as a child. The spice sellers would call out as you passed, pressing small packets of ras el hanout into your hands. Her aunt judged a spice seller by the colour of his saffron. The Lamb Tagine at home that afternoon was always better after the market visit.",
+      "author": "amina",
+      "region": "Morocco",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Lamb Tagine"
+      ],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_moroccan_market.jpg"
+    },
+    {
+      "title": "The Ethiopian Coffee Ceremony",
+      "summary": "Buna is prepared and served in a ritual that can take over an hour.",
+      "body": "Kwame attended his first Ethiopian coffee ceremony in Addis Ababa and understood immediately why it takes so long: the ceremony is the point. Green beans are roasted, ground by hand, boiled in a clay jebena, and poured from a height into small cups. Three rounds are served: the first is strongest. Injera and wat arrived after the third cup.",
+      "author": "kwame",
+      "region": "Ethiopia",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Injera"
+      ],
+      "dietary_tags": [
+        "Vegan"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_ethiopian_coffee.jpg"
+    },
+    {
+      "title": "A Nigerian Celebration Table",
+      "summary": "Owambe parties are where Nigerian cuisine reaches its most abundant and joyful expression.",
+      "body": "Zara has attended more owambe parties than she can count. The rice is always Jollof Rice. Zara's mother makes Egusi Soup for every owambe she attends, a three-hour process she guards jealously, refusing to share the recipe until Zara was thirty. The seeds must be ground fresh; jarred egusi is an insult to the occasion.",
+      "author": "zara",
+      "region": "Nigeria",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Egusi Soup",
+        "Jollof Rice"
+      ],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [
+        "Birthday",
+        "Anniversary"
+      ],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_nigerian_feast.jpg"
+    },
+    {
+      "title": "West African Markets: Abundance in Colour",
+      "summary": "The open-air markets of West Africa are the real kitchen of the continent.",
+      "body": "Marcus spent three months travelling through West Africa researching traditional foodways. In Accra's Makola Market, he found vendors who had been selling the same ingredients from the same spot for forty years. They could tell you exactly how ripe the plantains were by the way they smelled. Marcus cooked Fufu with Light Soup that evening in a hostel kitchen, feeling briefly like he understood something.",
+      "author": "marcus",
+      "region": "Ghana",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Fufu with Light Soup"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_west_african_market.jpg"
+    },
+    {
+      "title": "Jerk and the Geography of Smoke",
+      "summary": "Jerk chicken cooked over pimento wood is an experience that cannot be replicated indoors.",
+      "body": "Camila found the jerk pit at the end of a dirt road outside Montego Bay. A large man was tending three long metal barrels converted to smokers. The smell of allspice and scotch bonnet in the smoke was overwhelming and wonderful. The Jerk Chicken was nothing like the versions she had eaten in London or New York. It required geography to exist properly.",
+      "author": "camila",
+      "region": "Jamaica",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Jerk Chicken"
+      ],
+      "dietary_tags": [
+        "Gluten-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_jamaican_jerk.jpg"
+    },
+    {
+      "title": "Caribbean Cooking: Where Continents Meet on a Plate",
+      "summary": "Caribbean food is one of the great synthesis cuisines.",
+      "body": "Rosa grew up in Trinidad eating food that she only later understood as an act of historical synthesis. Her grandmother made Rice and Peas every Sunday without exception, the kidney beans slow-cooked in coconut milk until they collapsed into the rice. Caribbean cuisine is what happens when history forces people together and they cook to survive, then to celebrate.",
+      "author": "rosa",
+      "region": "Trinidad and Tobago",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Rice and Peas"
+      ],
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_caribbean_rum.jpg"
+    },
+    {
+      "title": "The Asado: Argentina's Sacred Ritual",
+      "summary": "Sunday asado is not just a meal in Argentina - it is a social institution with rules.",
+      "body": "Diego's father ran the asado with the seriousness of a surgeon. He lit the fire with newspaper and quebracho wood, and spent three hours tending the coals before a single piece of meat touched the grill. The Empanadas arrived first while the fire settled. Eating was spread over four hours. The asado is where Diego learned the Argentine relationship with time: infinite patience for the important things.",
+      "author": "diego",
+      "region": "Argentina",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Empanadas"
+      ],
+      "dietary_tags": [],
+      "event_tags": [
+        "Birthday",
+        "Anniversary"
+      ],
+      "religions": [],
+      "image": "story_argentinian_asado.jpg"
+    },
+    {
+      "title": "Peru's Market Kitchens: Ceviche Before Noon",
+      "summary": "In Lima's markets, the best ceviche is sold from modest stalls at breakfast time.",
+      "body": "Camila arrived at Surquillo market in Lima at nine in the morning. The ceviche vendors were already at full capacity. The rule in Lima is that ceviche is a morning food. The Ceviche arrived in a heavy ceramic bowl: fish cured white by lime, crispy choclo, slices of sweet potato, a curl of red onion. The cooking had happened without heat, through chemistry alone.",
+      "author": "camila",
+      "region": "Peru",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Ceviche"
+      ],
+      "dietary_tags": [
+        "Gluten-Free",
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_peruvian_market.jpg"
+    },
+    {
+      "title": "Feijoada and the Brazilian Sense of Gathering",
+      "summary": "Feijoada is served on Saturdays because it demands time - to cook it and to recover from it.",
+      "body": "Rosa's Sao Paulo apartment barely fits twelve people but the Saturday feijoada somehow always draws that number. The black beans and smoked meats have been soaking and simmering since Friday evening. Guests arrive throughout the afternoon, eating in shifts. After eating, nobody moves quickly. Feijoada demands rest. Rosa considers this a feature, not a bug.",
+      "author": "rosa",
+      "region": "Brazil",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Feijoada"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_brazilian_feijoada.jpg"
+    },
+    {
+      "title": "Pupusas: Made by Hand, Eaten with Family",
+      "summary": "The pupusa is El Salvador's national dish - simple to describe, difficult to perfect.",
+      "body": "Marcus learned to make Pupusas in a kitchen in San Salvador from Dona Elena who had been making them since she was eight years old. The masa must be the right humidity. Dona Elena formed the pupusa in seconds with movements her hands had memorised. She laughed at Marcus's concentration and told him the secret was to stop thinking.",
+      "author": "marcus",
+      "region": "El Salvador",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Pupusas"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_salvadoran_pupusas.jpg"
+    },
+    {
+      "title": "The Boulangerie: France's Most Democratic Institution",
+      "summary": "The French bakery is open twice a day so bread arrives fresh at every meal.",
+      "body": "Pierre has lived on the same street in Lyon for forty years and has bought bread from the same boulangerie for thirty-eight of them. The Croissant at breakfast requires no accompaniment, just time and coffee. France decided bread was too important to be left entirely to market forces. He thinks about this each morning as he tears the end off a baguette before he has even left the shop.",
+      "author": "pierre",
+      "region": "France",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Croissant"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_french_boulangerie.jpg"
+    },
+    {
+      "title": "Bistrot Culture: Eating Simply, Eating Well",
+      "summary": "The French bistrot serves uncomplicated food with extraordinary attention to the fundamentals.",
+      "body": "Pierre believes the bistrot is the highest form of restaurant. No theatre, no foam, no tweezers. He ate Coq au Vin at a bistrot in the Beaujolais region on a rainy October evening and wept slightly, not from sadness but from recognition. The chicken had been braised for hours in young Beaujolais wine, the sauce dark and glossy. The owner came out to ask how it was. Pierre told him it was perfect. It was.",
+      "author": "pierre",
+      "region": "France",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Coq au Vin"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_french_bistro.jpg"
+    },
+    {
+      "title": "Tapas: The Architecture of Spanish Sociability",
+      "summary": "Tapas are not an appetiser format - they are a philosophy of eating and gathering.",
+      "body": "Isabel grew up understanding tapas as the natural structure of any evening out. You do not sit at one restaurant; you move. The portions are small so the bill stays manageable and the walking continues. Paella was the Sunday dish reserved for families and gardens. Isabel's father insists that Gazpacho must come first on hot days, cold from the fridge, eaten from a glass like a drink.",
+      "author": "isabel",
+      "region": "Spain",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Paella",
+        "Gazpacho"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_spanish_tapas.jpg"
+    },
+    {
+      "title": "Salt Cod and the Portuguese Atlantic",
+      "summary": "Bacalhau has 365 recipes in Portugal - one for every day of the year, they say.",
+      "body": "Isabel's Portuguese grandmother had a different Bacalhau recipe for every season and occasion. The fish has been a Portuguese staple since the fifteenth century. It must be soaked for at least 24 hours before cooking. Bacalhau a Bras, with shredded cod, matchstick potatoes, and eggs, was the weekday version. Isabel realised that Portuguese identity, like salt cod, required patience and multiple rinses before it revealed itself.",
+      "author": "isabel",
+      "region": "Portugal",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Bacalhau a Bras"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_portuguese_fishing.jpg"
+    },
+    {
+      "title": "The British Pub and Its Comfort Food",
+      "summary": "Pub food in Britain has evolved from embarrassing to genuinely excellent in a generation.",
+      "body": "Oliver remembers when pub food meant a sweating pasty in a heated cabinet and little else. Sometime in the 2000s something shifted. He now judges pubs by their Shepherd's Pie: the lamb must be long-braised, the mash properly buttered, the top genuinely browned. In a good pub on a winter afternoon with Shepherd's Pie, Oliver feels an uncomplicated contentment he struggles to find elsewhere.",
+      "author": "oliver",
+      "region": "United Kingdom",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Shepherd's Pie",
+        "Fish and Chips"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_british_pub.jpg"
+    },
+    {
+      "title": "Afternoon Tea: Britain's Most Exportable Ceremony",
+      "summary": "The ritual of afternoon tea remains best at home.",
+      "body": "Emily finds it amusing that the rest of the world romanticises afternoon tea while the British largely abandoned it in the 1970s. At its best, it is a genuinely civilised invention: small sandwiches, warm Cream Tea Scones with clotted cream and jam, and good tea poured into proper cups. Scones must be warm; eating a cold scone is a waste of everyone's time.",
+      "author": "emily",
+      "region": "United Kingdom",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Cream Tea Scones"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_british_tea.jpg"
+    },
+    {
+      "title": "Christmas Markets and the Food of German Winter",
+      "summary": "German Christmas markets are as much about food as they are about decoration and romance.",
+      "body": "Hans associates winter with Gluehwein and Wiener Schnitzel. The Christmas markets in his hometown of Nuremberg open on the first Sunday of Advent. The smell from a hundred metres away: mulled wine, roasted almonds, bratwurst on charcoal grills. Hans buys a Schnitzel from the same vendor every year - the pork pounded thin, the breadcrumb crust perfectly golden.",
+      "author": "hans",
+      "region": "Germany",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Wiener Schnitzel"
+      ],
+      "dietary_tags": [],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "image": "story_german_christmas.jpg"
+    },
+    {
+      "title": "Hungarian Kitchen: Paprika Is Not a Spice, It Is a Philosophy",
+      "summary": "Hungarian cooking is defined by sweet paprika - not as a garnish but as the central flavour.",
+      "body": "Katarina grew up watching her grandmother add paprika to everything. Goulash begins with onions softened in lard and then a quantity of paprika that startles visitors - several heaped tablespoons off the heat. The soup is almost orange. Apple Strudel came after the main course, the pastry stretched impossibly thin on a floured tablecloth.",
+      "author": "katarina",
+      "region": "Hungary",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Goulash",
+        "Apple Strudel"
+      ],
+      "dietary_tags": [
+        "Dairy-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_hungarian_kitchen.jpg"
+    },
+    {
+      "title": "The Russian Dacha and Summer Preserving",
+      "summary": "Russians preserve summer in jars every August - pickles, jams, mushrooms - to open in February.",
+      "body": "Nadia's family spent every August at the dacha where her grandmother presided over the preserving ritual. Every morning was foraging: mushrooms in the birch forest, berries from the garden, cucumbers from the vegetable beds. Blini were made in quantity and eaten immediately with the morning's preserves. In February, when Moscow was dark and frozen, Nadia would open a jar and understand exactly what her grandmother had been doing.",
+      "author": "nadia",
+      "region": "Russia",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Blini"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_russian_dacha.jpg"
+    },
+    {
+      "title": "Christmas Eve in Poland: The Twelve Dishes",
+      "summary": "Wigilia, the Polish Christmas Eve supper, requires twelve meatless dishes representing the apostles.",
+      "body": "Katarina's Polish-German family always argued about which Christmas tradition to follow. Her Polish grandmother won on Christmas Eve, when Wigilia was observed strictly: twelve meatless dishes eaten by candlelight after the first star appeared. The meal began with Borscht, then Pierogi filled with potato and cheese. Nobody was allowed to leave the table until all twelve courses had appeared.",
+      "author": "katarina",
+      "region": "Poland",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Pierogi",
+        "Borscht"
+      ],
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [
+        "Religious Holiday"
+      ],
+      "religions": [
+        "Christianity"
+      ],
+      "image": "story_polish_christmas.jpg"
+    },
+    {
+      "title": "The Bazaar at Samarkand",
+      "summary": "The markets of Uzbekistan have fed Silk Road travellers for two thousand years.",
+      "body": "Aliya spent a summer in Samarkand and never stopped being astonished by the bazaars. Stalls piled with dried apricots, walnuts, pomegranates. Vendors selling samsa from tandoor ovens. Plov cooked in enormous cast-iron kazan pots over open fires, the rice stained orange with carrot and rendered fat, the lamb falling apart. Aliya ate Plov every day for a week.",
+      "author": "aliya",
+      "region": "Uzbekistan",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Plov"
+      ],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_uzbek_bazaar.jpg"
+    },
+    {
+      "title": "The Silk Road: How Noodles Travelled the World",
+      "summary": "Central Asian Lagman noodles challenge the assumption that pasta is purely Italian.",
+      "body": "Aliya has followed the noodle argument for years. But standing in a Uyghur restaurant in Kashgar eating Lagman - thick hand-pulled noodles in spiced lamb broth - she suspects the question is wrong. Noodles emerged in multiple places simultaneously. The Silk Road did not carry noodles; it carried techniques, spices, and the cultural permission to exchange ideas.",
+      "author": "aliya",
+      "region": "Kyrgyzstan",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Lagman"
+      ],
+      "dietary_tags": [
+        "Halal"
+      ],
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "image": "story_silk_road_food.jpg"
+    },
+    {
+      "title": "The Australian Backyard BBQ: A National Myth",
+      "summary": "The Australian barbecue is simultaneously very real and entirely mythologised.",
+      "body": "Jack has been to enough Australian barbecues to know they are both simpler and better than the international reputation suggests. There are usually just some people, a gas barbecue, sausages, burgers, and a Meat Pie if someone remembered to bring them. What Jack loves about Australian food culture is its refusal of pretension. Nobody at a backyard barbecue is performing.",
+      "author": "jack",
+      "region": "Australia",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Meat Pie"
+      ],
+      "dietary_tags": [],
+      "event_tags": [
+        "Birthday"
+      ],
+      "religions": [],
+      "image": "story_australian_bbq.jpg"
+    },
+    {
+      "title": "The Olive Harvest: A Mediterranean September",
+      "summary": "In Greece, Turkey, and Spain, the olive harvest is the event that marks the change of seasons.",
+      "body": "Dimitris returns to his family's village in Crete every October for the olive harvest. The trees his grandfather planted are fifty years old now, their trunks twisted and silver. The harvest requires the whole extended family, nets spread under the trees. The first pressing of the new oil arrives at the kitchen table within days. Dimitris eats it on bread with nothing else. The Falafel and hummus at the family table are always dressed with the new oil.",
+      "author": "dimitris",
+      "region": "Greece",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Falafel"
+      ],
+      "dietary_tags": [
+        "Vegan",
+        "Gluten-Free"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_mediterranean_harvest.jpg"
     }
   ],
   "cultural_content": [
@@ -843,7 +5816,12 @@
       "title": "Sunday Borek Mornings",
       "body": "In Aegean homes, Sunday breakfast begins with the smell of phyllo baking before sunrise. Grandmothers roll dough by hand while the rest of the family wakes to the scent of golden, flaky borek.",
       "region": "Aegean",
-      "cultural_tags": ["Aegean", "Turkish", "breakfast", "family"]
+      "cultural_tags": [
+        "Aegean",
+        "Turkish",
+        "breakfast",
+        "family"
+      ]
     },
     {
       "slug": "dish-of-the-day-mansaf",
@@ -851,7 +5829,12 @@
       "title": "Dish of the Day: Mansaf",
       "body": "Mansaf is a Levantine festive dish of lamb slow-cooked in fermented yogurt sauce, served over saffron rice. Traditionally eaten standing, with the right hand, around a single shared platter.",
       "region": "Levantine",
-      "cultural_tags": ["Levantine", "Halal", "wedding", "communal dining"]
+      "cultural_tags": [
+        "Levantine",
+        "Halal",
+        "wedding",
+        "communal dining"
+      ]
     },
     {
       "slug": "why-lentil-soup-is-healing",
@@ -859,7 +5842,12 @@
       "title": "Why Lentil Soup is Healing",
       "body": "Across Anatolia and the Middle East, lentil soup is the first food offered to a guest with a cold or a recovering relative. The tradition predates modern medicine by centuries.",
       "region": "Anatolian",
-      "cultural_tags": ["Anatolian", "Turkish", "vegetarian", "health"]
+      "cultural_tags": [
+        "Anatolian",
+        "Turkish",
+        "vegetarian",
+        "health"
+      ]
     },
     {
       "slug": "the-coffee-reading",
@@ -867,7 +5855,11 @@
       "title": "The Coffee Reading",
       "body": "After Turkish coffee, the cup is flipped onto its saucer and the grounds are read. It is half ritual, half conversation starter, and almost never taken too seriously.",
       "region": "Marmara",
-      "cultural_tags": ["Marmara", "Turkish", "social"]
+      "cultural_tags": [
+        "Marmara",
+        "Turkish",
+        "social"
+      ]
     },
     {
       "slug": "asure-day",
@@ -875,7 +5867,13 @@
       "title": "Asure Day",
       "body": "Asure is a pudding made of wheat, beans, dried fruits, and nuts, shared with neighbors on the 10th of Muharram. Tradition says one bowl should never be eaten alone.",
       "region": "Anatolian",
-      "cultural_tags": ["Anatolian", "Turkish", "Muharram", "religious", "community"]
+      "cultural_tags": [
+        "Anatolian",
+        "Turkish",
+        "Muharram",
+        "religious",
+        "community"
+      ]
     },
     {
       "slug": "greek-mezze-tradition",
@@ -883,7 +5881,12 @@
       "title": "The Greek Mezze Tradition",
       "body": "In Greece, dining begins with a spread of small plates: olives, feta, dips, grilled vegetables. The mezze is not a course but a philosophy: meals should be shared, unhurried, and abundant.",
       "region": "Balkan",
-      "cultural_tags": ["Balkan", "Greek", "social dining", "Mediterranean"]
+      "cultural_tags": [
+        "Balkan",
+        "Greek",
+        "social dining",
+        "Mediterranean"
+      ]
     },
     {
       "slug": "japans-washoku-philosophy",
@@ -891,7 +5894,12 @@
       "title": "Japan's Washoku Philosophy",
       "body": "Washoku, traditional Japanese cuisine, emphasizes balance of five colors, five tastes, and five cooking methods in every meal. UNESCO recognized it as an Intangible Cultural Heritage in 2013.",
       "region": "Japanese",
-      "cultural_tags": ["Japanese", "balance", "UNESCO", "mindful eating"]
+      "cultural_tags": [
+        "Japanese",
+        "balance",
+        "UNESCO",
+        "mindful eating"
+      ]
     },
     {
       "slug": "indias-six-tastes",
@@ -899,7 +5907,246 @@
       "title": "India's Six Tastes",
       "body": "Ayurvedic tradition holds that every meal should include six tastes: sweet, sour, salty, bitter, pungent, and astringent. This principle shapes Indian cooking from everyday dal to elaborate festive thalis.",
       "region": "Indian",
-      "cultural_tags": ["Indian", "Ayurveda", "balance", "spices"]
+      "cultural_tags": [
+        "Indian",
+        "Ayurveda",
+        "balance",
+        "spices"
+      ]
+    },
+    {
+      "slug": "persian-rice-art",
+      "kind": "tradition",
+      "title": "The Persian Art of Rice",
+      "body": "In Iran, the quality of a cook is judged by their rice. Perfectly cooked Persian rice is fragrant, separate-grained, and crowned with tahdig — the crispy golden crust that clings to the bottom of the pot. Achieving it requires precise heat, timing, and experience passed down through generations.",
+      "region": "Persian",
+      "cultural_tags": [
+        "Persian",
+        "Iranian",
+        "rice",
+        "cooking technique"
+      ]
+    },
+    {
+      "slug": "nowruz-haft-sin",
+      "kind": "holiday",
+      "title": "Nowruz and the Haft-Sin Table",
+      "body": "Nowruz, the Persian New Year at the spring equinox, centres on the Haft-Sin table: seven items beginning with the Farsi letter sin, each symbolising a wish for the year. Wheat sprouts for rebirth, vinegar for patience, garlic for health. The table is set days in advance and remains for two weeks.",
+      "region": "Persian",
+      "cultural_tags": [
+        "Persian",
+        "Iranian",
+        "new year",
+        "tradition",
+        "spring"
+      ]
+    },
+    {
+      "slug": "arab-coffee-hospitality",
+      "kind": "tradition",
+      "title": "Arabic Coffee as Hospitality Ritual",
+      "body": "In Arabian Peninsula culture, offering qahwa — lightly roasted, cardamom-spiced coffee — is an act of honour. Refusing it is considered rude. The host pours with the right hand into small handleless cups, filling only a third to invite refills. Three cups is customary; covering the cup signals you are satisfied.",
+      "region": "Saudi Arabia",
+      "cultural_tags": [
+        "Arabian",
+        "Saudi",
+        "coffee",
+        "hospitality",
+        "Gulf"
+      ]
+    },
+    {
+      "slug": "chinese-wok-hei",
+      "kind": "fact",
+      "title": "Wok Hei: The Breath of the Wok",
+      "body": "Wok hei literally means breath of the wok in Cantonese — the smoky, caramelised flavour that comes from cooking over extremely high heat in a seasoned carbon steel wok. It is nearly impossible to replicate at home because domestic burners cannot reach the temperatures of commercial kitchen flames. It is the defining quality of great stir-fry.",
+      "region": "China",
+      "cultural_tags": [
+        "Chinese",
+        "Cantonese",
+        "cooking technique",
+        "flavour"
+      ]
+    },
+    {
+      "slug": "korean-banchan-culture",
+      "kind": "tradition",
+      "title": "Banchan: Korea's Culture of Small Dishes",
+      "body": "A Korean meal is never one dish alone. Banchan — small shared side dishes — surround the central rice bowl and soup. They are not appetisers; they are served simultaneously and eaten alongside. A humble home meal might have three banchan; a formal table might have twelve or more. Kimchi is always present.",
+      "region": "South Korea",
+      "cultural_tags": [
+        "Korean",
+        "banchan",
+        "sharing",
+        "communal eating"
+      ]
+    },
+    {
+      "slug": "vietnamese-pho-broth",
+      "kind": "fact",
+      "title": "The Science of Pho Broth",
+      "body": "A proper pho broth takes 12 to 18 hours to make. Beef bones are par-boiled and rinsed first to remove impurities, then slow-simmered with charred ginger and onion, star anise, cinnamon, cloves, and cardamom. The charring adds depth while skimming maintains clarity. The result is a broth that is simultaneously rich, fragrant, and crystal clear.",
+      "region": "Vietnam",
+      "cultural_tags": [
+        "Vietnamese",
+        "pho",
+        "broth",
+        "cooking technique"
+      ]
+    },
+    {
+      "slug": "moroccan-tagine-vessel",
+      "kind": "dish",
+      "title": "The Tagine: Pot and Dish as One",
+      "body": "The tagine is both the conical clay vessel and the slow-cooked stew made within it. The pointed lid creates a cycle of condensation, returning moisture to the ingredients and building a concentrated, aromatic sauce with minimal added liquid. This design has remained unchanged for centuries across North Africa.",
+      "region": "Morocco",
+      "cultural_tags": [
+        "Moroccan",
+        "North African",
+        "tagine",
+        "clay cooking",
+        "tradition"
+      ]
+    },
+    {
+      "slug": "ethiopian-injera-communal",
+      "kind": "tradition",
+      "title": "Injera and the Ethics of Eating Together",
+      "body": "In Ethiopian tradition, meals are served on a single large injera with stews placed on top. Everyone eats from the same plate. Gursha — placing food directly into another person's mouth — is an act of love and friendship. Eating alone is considered unfortunate; sharing food is a moral act.",
+      "region": "Ethiopia",
+      "cultural_tags": [
+        "Ethiopian",
+        "East African",
+        "injera",
+        "communal eating",
+        "sharing"
+      ]
+    },
+    {
+      "slug": "west-african-jollof-debate",
+      "kind": "fact",
+      "title": "The Great Jollof Rice Debate",
+      "body": "No food rivalry in West Africa is as spirited as the debate between Nigerian and Ghanaian jollof rice. Nigerians claim theirs is superior for its tomato depth; Ghanaians insist theirs has better smokiness from cooking over firewood. The debate has outlasted elections and crossed to the diaspora. Food scholars note the differences are real but minor. The passion is the point.",
+      "region": "Nigeria",
+      "cultural_tags": [
+        "Nigerian",
+        "Ghanaian",
+        "West African",
+        "jollof",
+        "rivalry"
+      ]
+    },
+    {
+      "slug": "caribbean-food-synthesis",
+      "kind": "fact",
+      "title": "Caribbean Cuisine: History on a Plate",
+      "body": "Caribbean cooking is one of the world's great synthesis cuisines. Indigenous Taino ingredients — cassava, sweet potato, allspice — combine with West African techniques of one-pot cooking and deep frying, Indian spicing from indenture-era migration, and European methods of preservation. Each island has its own balance. The food is inseparable from the region's painful and complex history.",
+      "region": "Jamaica",
+      "cultural_tags": [
+        "Caribbean",
+        "Jamaican",
+        "fusion",
+        "history",
+        "diaspora"
+      ]
+    },
+    {
+      "slug": "argentinian-asado-ritual",
+      "kind": "tradition",
+      "title": "The Asado: Argentina's Fire Ritual",
+      "body": "The Argentine asado is governed by unspoken rules. The asador — the one tending the fire — has unchallenged authority. Quebracho hardwood or charcoal is preferred; gas grills are tolerated but not respected. Meat goes on when the coals are white, never over flames. Cuts are served in a specific order. Rushing an asado is a social failing.",
+      "region": "Argentina",
+      "cultural_tags": [
+        "Argentine",
+        "South American",
+        "asado",
+        "barbecue",
+        "tradition"
+      ]
+    },
+    {
+      "slug": "french-terroir-concept",
+      "kind": "fact",
+      "title": "Terroir: Why Place Shapes Flavour",
+      "body": "France developed the concept of terroir — the idea that geography, soil, climate, and tradition impart unique, irreproducible qualities to food and wine. Champagne cannot legally be made outside the Champagne region. Roquefort cheese must age in the caves of Combalou. Terroir has shaped food law across Europe and beyond.",
+      "region": "France",
+      "cultural_tags": [
+        "French",
+        "terroir",
+        "geography",
+        "food law",
+        "wine"
+      ]
+    },
+    {
+      "slug": "spanish-siesta-dining",
+      "kind": "tradition",
+      "title": "Spain's Late Dining Culture",
+      "body": "Lunch in Spain begins at 2pm and may last until 4. Dinner rarely starts before 9pm in summer and 10pm is common on weekends. This is not a modern schedule — it is built around the siesta, the agricultural calendar, and a different relationship with time. Tourists who arrive at 6pm for dinner may find an empty restaurant.",
+      "region": "Spain",
+      "cultural_tags": [
+        "Spanish",
+        "dining culture",
+        "siesta",
+        "schedule",
+        "Iberian"
+      ]
+    },
+    {
+      "slug": "british-teatime-history",
+      "kind": "fact",
+      "title": "How Tea Became British",
+      "body": "Tea was not always British. It arrived from China via the Dutch in the 17th century and was initially a luxury drink of the aristocracy. The Duchess of Bedford is credited with inventing afternoon tea in the 1840s to bridge the gap between lunch and late dinner. The Industrial Revolution democratised it: a hot tea break became essential in factories and homes across the country.",
+      "region": "United Kingdom",
+      "cultural_tags": [
+        "British",
+        "tea",
+        "history",
+        "afternoon tea",
+        "tradition"
+      ]
+    },
+    {
+      "slug": "central-european-bread",
+      "kind": "fact",
+      "title": "Central European Bread: 300 Varieties",
+      "body": "Germany alone has over 300 officially recognised bread varieties, more than any other country. Central European bread culture encompasses dark rye loaves, chewy pretzels, dense pumpernickel, and delicate semolina rolls. UNESCO added German bread culture to the Intangible Cultural Heritage list in 2015. Bread here is not a side item; it is a cultural identity.",
+      "region": "Germany",
+      "cultural_tags": [
+        "German",
+        "Central European",
+        "bread",
+        "baking",
+        "heritage"
+      ]
+    },
+    {
+      "slug": "uzbek-plov-ceremony",
+      "kind": "tradition",
+      "title": "Plov as Ceremony in Uzbekistan",
+      "body": "In Uzbekistan, plov is not everyday food — it is ceremony food. Weddings, funerals, and national holidays are marked by communal plov cooked in enormous kazan pots over open wood fires, often feeding hundreds of people at once. The master cook, called an oshpaz, holds a respected social position. The recipe varies by city: Tashkent plov differs from Fergana plov in fat ratio and technique.",
+      "region": "Uzbekistan",
+      "cultural_tags": [
+        "Uzbek",
+        "Central Asian",
+        "plov",
+        "ceremony",
+        "communal cooking"
+      ]
+    },
+    {
+      "slug": "mediterranean-olive-oil",
+      "kind": "fact",
+      "title": "Olive Oil: The Mediterranean's Liquid Gold",
+      "body": "Olive trees have been cultivated in the Mediterranean for over 6,000 years. Ancient Greeks used olive oil as currency, fuel, cosmetic, and food. The UNESCO Mediterranean Diet — recognised as intangible cultural heritage — places olive oil at its centre. Extra-virgin olive oil, the product of first cold-pressing, retains polyphenols and flavour that refined oils lose.",
+      "region": "Greece",
+      "cultural_tags": [
+        "Mediterranean",
+        "Greek",
+        "olive oil",
+        "heritage",
+        "health"
+      ]
     }
   ],
   "ingredient_substitutions": [
