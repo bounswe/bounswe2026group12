@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MapZoomControls } from '../components/map/MapZoomControls';
 import { RegionDetailSheet } from '../components/map/RegionDetailSheet';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
@@ -20,6 +21,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const { accent, setFocusedRegion } = useTheme();
+  const mapRef = useRef<MapView | null>(null);
 
   useEffect(() => {
     setFocusedRegion(focused?.name ?? null);
@@ -70,6 +72,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <View style={styles.fill}>
         <MapView
+          ref={mapRef}
           style={styles.map}
           initialRegion={INITIAL_MAP_REGION}
           onPress={() => setFocused(null)}
@@ -84,11 +87,22 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
               pinColor={focused?.id === pin.id ? accent.accent : tokens.colors.accentMustard}
               onPress={(e) => {
                 e.stopPropagation?.();
+                // Track for theme highlight, then dive into the zoomed
+                // per-recipe map (#464). The old `RegionDetailSheet` flow
+                // (recipes/stories overview) stays available below in case
+                // we ever want to bring it back; for now the spatial drill-in
+                // is the primary path.
                 setFocused(pin);
+                navigation.navigate('RegionMapDetail', {
+                  regionId: pin.id,
+                  regionName: pin.name,
+                });
               }}
             />
           ))}
         </MapView>
+
+        <MapZoomControls mapRef={mapRef} />
 
         {!focused ? (
           <View style={styles.hintWrap} pointerEvents="none">
