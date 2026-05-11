@@ -2,8 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.recipes.models import Ingredient
-from .models import IngredientRoute
+from .models import Ingredient, IngredientRoute
 
 
 class IngredientRouteAPITests(APITestCase):

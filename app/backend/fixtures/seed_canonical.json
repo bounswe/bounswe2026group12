@@ -6623,5 +6623,25 @@
         "Kimchi Jjigae"
       ]
     }
+  ],
+  "ingredient_routes": [
+    {
+      "ingredient": "Tomato",
+      "waypoints": [
+        {"lat": -9.19, "lng": -75.01, "era": "Ancestral", "label": "Andes (Peru)"},
+        {"lat": 19.43, "lng": -99.13, "era": "Pre-Columbian", "label": "Mexico (Aztecs)"},
+        {"lat": 40.41, "lng": -3.70, "era": "1540s", "label": "Spain"},
+        {"lat": 41.90, "lng": 12.49, "era": "1600s", "label": "Italy (Pomodoro)"},
+        {"lat": 41.01, "lng": 28.97, "era": "1800s", "label": "Istanbul (Ottoman)"}
+      ]
+    },
+    {
+      "ingredient": "Lentils",
+      "waypoints": [
+        {"lat": 37.00, "lng": 38.00, "era": "Ancient (Neolithic)", "label": "Fertile Crescent"},
+        {"lat": 30.00, "lng": 31.00, "era": "3000 BC", "label": "Ancient Egypt"},
+        {"lat": 41.00, "lng": 29.00, "era": "Ottoman Era", "label": "Anatolia / Istanbul"}
+      ]
+    }
   ]
 }

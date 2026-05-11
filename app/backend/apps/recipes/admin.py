@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
     DietaryTag, EventTag, IngredientSubstitution, EndangeredNote,
-    RecipeCulturalContext
+    RecipeCulturalContext, IngredientRoute
 )
 
 
@@ -80,4 +80,16 @@ class EndangeredNoteAdmin(admin.ModelAdmin):
 class RecipeCulturalContextAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'identity_note', 'memory_note')
     search_fields = ('recipe__title', 'identity_note', 'memory_note')
+
+
+@admin.register(IngredientRoute)
+class IngredientRouteAdmin(admin.ModelAdmin):
+    list_display = ('ingredient', 'waypoint_count', 'created_at')
+    search_fields = ('ingredient__name',)
+    list_filter = ('created_at',)
+
+    def waypoint_count(self, obj):
+        return len(obj.waypoints) if isinstance(obj.waypoints, list) else 0
+
+    waypoint_count.short_description = 'Waypoints'
 

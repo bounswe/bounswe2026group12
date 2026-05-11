@@ -18,7 +18,7 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution, IngredientCheckOff, RecipeIngredient,
+    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute,
 )
 from .serializers import (
     ConvertRequestSerializer,
@@ -37,6 +37,7 @@ from .serializers import (
     EventTagSerializer,
     ReligionLookupSerializer,
     ReligionSerializer,
+    IngredientRouteSerializer,
 )
 
 
@@ -561,3 +562,27 @@ class CheckedIngredientsView(APIView):
             ).delete()
 
         return Response(self._checked_ids(request.user, recipe))
+
+
+class IngredientRouteViewSet(viewsets.ModelViewSet):
+    """CRUD for ingredient migration routes (#506).
+
+    Public reads for map animations; staff-only writes for curation.
+    Supports filtering by ingredient_id. Part of the heritage feature set
+    but lives in apps/recipes to stay next to the Ingredient model.
+    """
+
+    queryset = IngredientRoute.objects.select_related('ingredient')
+    serializer_class = IngredientRouteSerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        ingredient_id = self.request.query_params.get('ingredient')
+        if ingredient_id:
+            qs = qs.filter(ingredient_id=ingredient_id)
+        return qs

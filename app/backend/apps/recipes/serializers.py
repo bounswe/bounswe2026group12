@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
-    EndangeredNote, RecipeCulturalContext
+    EndangeredNote, RecipeCulturalContext, IngredientRoute
 )
 
 
@@ -352,3 +352,17 @@ class IngredientSubstituteSerializer(serializers.Serializer):
     name = serializers.CharField(source='to_ingredient.name', read_only=True)
     closeness = serializers.DecimalField(max_digits=3, decimal_places=2, read_only=True)
     notes = serializers.CharField(read_only=True)
+
+
+class IngredientRouteSerializer(serializers.ModelSerializer):
+    """Read/write shape for ingredient migration routes."""
+
+    ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
+
+    class Meta:
+        model = IngredientRoute
+        fields = [
+            'id', 'ingredient', 'ingredient_name', 'waypoints',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']

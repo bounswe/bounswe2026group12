@@ -19,7 +19,7 @@ from apps.notifications.models import Notification, DeviceToken
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, IngredientSubstitution, Unit,
     DietaryTag, EventTag, Religion, Comment, Vote, EndangeredNote,
-    RecipeCulturalContext
+    RecipeCulturalContext, IngredientRoute
 )
 from apps.stories.models import Story, StoryRecipeLink
 
@@ -49,6 +49,7 @@ class Command(BaseCommand):
         heritage_data = data.get('heritage', {})
         heritage_groups = heritage_data.get('groups', [])
         cultural_events_data = data.get('cultural_events', [])
+        ingredient_routes_data = data.get('ingredient_routes', [])
 
         if options['dry_run']:
             self.stdout.write(
@@ -58,7 +59,8 @@ class Command(BaseCommand):
                 f'{len(data["cultural_content"])} cultural content cards, '
                 f'{len(substitutions_data)} ingredient substitutions, '
                 f'{len(heritage_groups)} heritage groups, '
-                f'{len(cultural_events_data)} cultural events.'
+                f'{len(cultural_events_data)} cultural events, '
+                f'{len(ingredient_routes_data)} ingredient routes.'
             )
             return
 
@@ -71,6 +73,7 @@ class Command(BaseCommand):
             sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
             heritage_stats = self._seed_heritage(heritage_data, recipes, stories)
             event_stats = self._seed_cultural_events(cultural_events_data, recipes)
+            route_stats = self._seed_ingredient_routes(ingredient_routes_data)
 
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(users)} users, {len(recipes)} recipes, '
@@ -81,7 +84,8 @@ class Command(BaseCommand):
             f'{heritage_stats["steps"]} journey steps, '
             f'{heritage_stats["facts"]} cultural facts), '
             f'{event_stats["events"]} cultural events '
-            f'({event_stats["links"]} recipe links).'
+            f'({event_stats["links"]} recipe links), '
+            f'{route_stats} ingredient migration routes.'
         ))
 
     def _load_fixture(self, path):
@@ -109,6 +113,7 @@ class Command(BaseCommand):
         RecipeIngredient.objects.all().delete()
         RecipeCulturalContext.objects.all().delete()
         Recipe.objects.all().delete()
+        IngredientRoute.objects.all().delete()
         Message.objects.all().delete()
         ThreadParticipant.objects.all().delete()
         Thread.objects.all().delete()
@@ -426,3 +431,16 @@ class Command(BaseCommand):
                 f"Substitution seed references ingredients that are not seeded: {sorted(missing)}"
             )
         return created, skipped
+
+    def _seed_ingredient_routes(self, routes_data):
+        if not routes_data:
+            return 0
+        count = 0
+        for row in routes_data:
+            ingredient = self._resolve(Ingredient, row['ingredient'])
+            IngredientRoute.objects.create(
+                ingredient=ingredient,
+                waypoints=row['waypoints'],
+            )
+            count += 1
+        return count
