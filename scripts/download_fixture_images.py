@@ -113,6 +113,8 @@ RECIPE_QUERIES = {
     "oceanian_meat_pie.jpg": "australian meat pie",
     "mediterranean_falafel.jpg": "falafel chickpea fried",
     "indian_aloo_gobi.jpg": "aloo gobi indian cauliflower potato curry",
+    "tarhana_soup.jpg": "turkish tarhana soup traditional",
+    "mesir_paste.jpg": "turkish mesir macunu paste",
 }
 
 STORY_QUERIES = {

@@ -10,7 +10,6 @@ import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubstitutesSheet';
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
-import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
 import { DidYouKnowSection } from '../components/cultural/DidYouKnowSection';
 import { fetchCulturalFactsByRegion, type CulturalFact } from '../services/culturalFactService';
@@ -513,17 +512,6 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               </View>
             )}
           </View>
-
-          {recipe.heritage_group ? (
-            <HeritageBadge
-              groupName={recipe.heritage_group.name}
-              onPress={() =>
-                navigation.navigate('Heritage', {
-                  heritageGroupId: recipe.heritage_group!.id,
-                })
-              }
-            />
-          ) : null}
         </View>
       </ScrollView>
 

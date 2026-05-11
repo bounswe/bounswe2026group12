@@ -3,12 +3,13 @@ from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import CulturalFact, HeritageGroup, HeritageJourneyStep
+from .models import CulturalFact, HeritageGroup, HeritageJourneyStep, IngredientRoute
 from .serializers import (
     CulturalFactSerializer,
     HeritageGroupDetailSerializer,
     HeritageGroupListSerializer,
     HeritageJourneyStepSerializer,
+    IngredientRouteSerializer,
 )
 
 
@@ -89,3 +90,27 @@ class CulturalFactViewSet(viewsets.ModelViewSet):
         if fact is None:
             return Response(status=404)
         return Response(self.get_serializer(fact).data)
+
+
+
+class IngredientRouteViewSet(viewsets.ModelViewSet):
+    """CRUD for ingredient migration routes.
+
+    Public reads for map animations; staff-only writes for curation.
+    Supports filtering by ingredient_id.
+    """
+
+    queryset = IngredientRoute.objects.select_related('ingredient')
+    serializer_class = IngredientRouteSerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        ingredient_id = self.request.query_params.get('ingredient')
+        if ingredient_id:
+            qs = qs.filter(ingredient_id=ingredient_id)
+        return qs

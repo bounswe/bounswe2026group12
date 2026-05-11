@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
-    DietaryTag, EventTag, Religion, IngredientSubstitution, EndangeredNote,
+    DietaryTag, EventTag, Religion, IngredientSubstitution,
+    EndangeredNote, RecipeCulturalContext
 )
+
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,7 +85,10 @@ class IngredientSerializer(NamedSubmissionSerializer):
 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'is_approved', 'heritage_status', 'density_g_per_ml',
+            'submitted_by', 'submitted_at', 'reviewed_by', 'reviewed_at', 'rejection_reason'
+        ]
         read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
 
 class UnitLookupSerializer(serializers.ModelSerializer):
@@ -175,6 +180,14 @@ class EndangeredNoteSerializer(serializers.ModelSerializer):
         fields = ['id', 'recipe', 'text', 'source_url', 'created_at']
         read_only_fields = ['id', 'recipe', 'created_at']
 
+class RecipeCulturalContextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeCulturalContext
+        fields = [
+            'identity_note', 'memory_note', 'migration_note', 'ritual_note',
+            'commensality_note', 'terroir_note', 'craft_note'
+        ]
+
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
     region_name = serializers.ReadOnlyField(source='region.name')
@@ -183,6 +196,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
     event_tags = EventTagLookupSerializer(many=True, read_only=True)
     religions = ReligionLookupSerializer(many=True, read_only=True)
+    endangered_notes = EndangeredNoteSerializer(many=True, read_only=True)
     dietary_tag_ids = serializers.PrimaryKeyRelatedField(
         queryset=DietaryTag.objects.all(), source='dietary_tags',
         many=True, write_only=True, required=False,
@@ -199,7 +213,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
     heritage_group = serializers.SerializerMethodField()
-    endangered_notes = EndangeredNoteSerializer(many=True, read_only=True)
+    cultural_context = RecipeCulturalContextSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Recipe
@@ -214,10 +228,11 @@ class RecipeSerializer(serializers.ModelSerializer):
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'story_count',
             'rank_score', 'rank_reason',
-            'heritage_group',
-            'endangered_notes',
+            'heritage_group', 'endangered_notes',
+            'cultural_context'
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
+
 
     def get_heritage_group(self, obj):
         # Most recent membership wins. The GenericRelation prefetch covers
@@ -246,6 +261,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
         religions = validated_data.pop('religions', None)
+        cultural_context_data = validated_data.pop('cultural_context', None)
         recipe = Recipe.objects.create(**validated_data)
         for item in ingredients_data:
             RecipeIngredient.objects.create(
@@ -260,6 +276,10 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.event_tags.set(event_tags)
         if religions is not None:
             recipe.religions.set(religions)
+
+        if cultural_context_data:
+            RecipeCulturalContext.objects.create(recipe=recipe, **cultural_context_data)
+
         return recipe
 
     def update(self, instance, validated_data):
@@ -267,6 +287,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
         religions = validated_data.pop('religions', None)
+        cultural_context_data = validated_data.pop('cultural_context', None)
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -285,6 +307,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.event_tags.set(event_tags)
         if religions is not None:
             instance.religions.set(religions)
+
+        if cultural_context_data is not None:
+            RecipeCulturalContext.objects.update_or_create(
+                recipe=instance,
+                defaults=cultural_context_data
+            )
+
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):

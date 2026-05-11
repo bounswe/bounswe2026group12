@@ -88,11 +88,17 @@ def apply_content_filters(qs, params):
     if author_id:
         qs = qs.filter(author_id=author_id)
 
-    # Endangered Heritage Tags (#524): filter by heritage_status when the model
-    # carries the field (Recipe does; Story does not).
+    # Heritage status filter (M5-20 / #507 / #524)
     heritage_status = params.get('heritage_status')
-    if heritage_status and hasattr(qs.model, 'heritage_status'):
-        qs = qs.filter(heritage_status=heritage_status)
+    if heritage_status:
+        statuses = [s.strip() for s in heritage_status.split(',') if s.strip()]
+        if statuses:
+            if hasattr(qs.model, 'heritage_status'):
+                qs = qs.filter(heritage_status__in=statuses)
+            elif hasattr(qs.model, 'recipe_links'):
+                # For stories, match via linked recipes
+                qs = qs.filter(recipe_links__recipe__heritage_status__in=statuses)
+
 
     return qs.distinct()
 
@@ -282,6 +288,12 @@ class IngredientViewSet(ModeratedLookupViewSet):
     serializer_class = IngredientSerializer
     lookup_serializer_class = IngredientLookupSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params)
+        return qs
+
     def get_permissions(self):
         # The parent's get_permissions hardcodes IsAdminUser for any action
         # outside list/retrieve/create. Honor the @action's permission_classes
@@ -291,14 +303,10 @@ class IngredientViewSet(ModeratedLookupViewSet):
         return super().get_permissions()
 
     def get_queryset(self):
-        # Endangered Heritage Tags (#524): ?heritage_status=endangered on the
-        # ingredients list. Layers on top of the moderation filtering in the
-        # parent's get_queryset.
-        queryset = super().get_queryset()
-        heritage_status = self.request.query_params.get('heritage_status')
-        if heritage_status:
-            queryset = queryset.filter(heritage_status=heritage_status)
-        return queryset
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params)
+        return qs
 
     @action(detail=True, methods=['get'], url_path='substitutes')
     def substitutes(self, request, pk=None):

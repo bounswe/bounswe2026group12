@@ -90,6 +90,7 @@ class Region(CulturalModerationMixin, models.Model):
     def __str__(self):
         return self.name
 
+
 class Ingredient(CulturalModerationMixin, models.Model):
     """Ingredient model for reuse across recipes. User-submittable, moderated (#361)."""
     name = models.CharField(max_length=200, unique=True)
@@ -198,6 +199,7 @@ class EndangeredNote(models.Model):
 
     def __str__(self):
         return f"Endangered note on {self.recipe.title}"
+
 
 class RecipeIngredient(models.Model):
     """Through model linking recipes and ingredients with amounts and units."""
@@ -312,3 +314,22 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Vote by {self.user.username} on Comment {self.comment.id}"
+
+class RecipeCulturalContext(models.Model):
+    """Optional cultural story fields for recipes (#509)."""
+    recipe = models.OneToOneField(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='cultural_context',
+        help_text='The recipe this cultural context belongs to.'
+    )
+    identity_note = models.TextField(blank=True, default='', help_text='Why This Dish Matters (Identity connection)')
+    memory_note = models.TextField(blank=True, default='', help_text='Personal memory')
+    migration_note = models.TextField(blank=True, default='', help_text='Migration/diaspora story (Where It Came From)')
+    ritual_note = models.TextField(blank=True, default='', help_text="Ritual/seasonal context (When It's Made)")
+    commensality_note = models.TextField(blank=True, default='', help_text='Table culture (How It\'s Shared)')
+    terroir_note = models.TextField(blank=True, default='', help_text='Terroir/geography (Taste of Place)')
+    craft_note = models.TextField(blank=True, default='', help_text='Skill/mastery (The Craft)')
+
+    def __str__(self):
+        return f"Cultural Context for {self.recipe.title}"

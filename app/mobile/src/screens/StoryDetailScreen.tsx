@@ -2,7 +2,6 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { LinkedRecipePreviewCard } from '../components/story/LinkedRecipePreviewCard';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
@@ -146,17 +145,6 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
               <Text style={styles.noLinked}>No recipe is linked to the story.</Text>
             )}
           </View>
-
-          {story.heritage_group ? (
-            <HeritageBadge
-              groupName={story.heritage_group.name}
-              onPress={() =>
-                navigation.navigate('Heritage', {
-                  heritageGroupId: story.heritage_group!.id,
-                })
-              }
-            />
-          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>

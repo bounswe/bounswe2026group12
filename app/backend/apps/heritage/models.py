@@ -77,6 +77,7 @@ class HeritageJourneyStep(models.Model):
         return f'{self.heritage_group} #{self.order} {self.location}'
 
 
+
 class CulturalFact(models.Model):
     """A short cultural context fact surfaced as a "Did You Know?" card.
 
@@ -110,3 +111,27 @@ class CulturalFact(models.Model):
 
     def __str__(self):
         return self.text[:60]
+
+
+class IngredientRoute(models.Model):
+    """Chronological movement of an ingredient across the world (#506).
+
+    Used for animated migration maps. Each route is tied to a specific
+    Ingredient and contains a list of waypoints (location, era, coords).
+    """
+
+    ingredient = models.ForeignKey(
+        'recipes.Ingredient',
+        on_delete=models.CASCADE,
+        related_name='migration_routes',
+    )
+    # waypoints: list of objects like [{"lat": 1.2, "lng": 3.4, "era": "1500s", "label": "Spain"}]
+    waypoints = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['ingredient']
+
+    def __str__(self):
+        return f"Migration route for {self.ingredient.name}"

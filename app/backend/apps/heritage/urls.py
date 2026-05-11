@@ -5,6 +5,7 @@ from .views import (
     CulturalFactViewSet,
     HeritageGroupViewSet,
     HeritageJourneyStepViewSet,
+    IngredientRouteViewSet,
 )
 
 router = DefaultRouter()
@@ -15,6 +16,11 @@ router.register(
     basename='heritage-journey-step',
 )
 router.register(r'cultural-facts', CulturalFactViewSet, basename='cultural-fact')
+router.register(
+    r'ingredient-routes',
+    IngredientRouteViewSet,
+    basename='ingredient-route',
+)
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -1,9 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
-import { FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LoadingView } from '../components/ui/LoadingView';
+import { useEffect, useMemo, useState } from 'react';
 import { shadows, tokens } from '../theme';
 import { fetchRecipesList } from '../services/recipeService';
 import { fetchStoriesList } from '../services/storyService';
@@ -26,53 +24,37 @@ export default function HomeScreen({ navigation }: Props) {
   const [daily, setDaily] = useState<DailyCulturalCard[]>([]);
   const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
-  /** True only on the initial mount fetch — drives the full-screen LoadingView. */
-  const [initialLoading, setInitialLoading] = useState(true);
-  /** True during pull-to-refresh and focus-refresh re-fetches (no LoadingView, just spinner). */
-  const [refreshing, setRefreshing] = useState(false);
-  /** Tracks whether the initial fetch has completed so focus-refresh doesn't fire twice on first mount. */
-  const hasFetchedOnceRef = useRef(false);
-
-  const loadFeed = useCallback(async (opts: { isRefresh?: boolean } = {}) => {
-    if (opts.isRefresh) setRefreshing(true);
-    try {
-      const [storyData, recipeData, dailyData, recsData] = await Promise.all([
-        fetchStoriesList(),
-        fetchRecipesList(),
-        fetchDailyCultural(),
-        fetchRecommendations('feed', 10).catch(() => [] as RecommendationItem[]),
-      ]);
-      setStories(Array.isArray(storyData) ? storyData : []);
-      setRecipes(Array.isArray(recipeData) ? recipeData : []);
-      setDaily(Array.isArray(dailyData) ? dailyData : []);
-      setRecommendations(Array.isArray(recsData) ? recsData : []);
-      setLoadError(null);
-    } catch (e) {
-      setStories([]);
-      setRecipes([]);
-      setDaily([]);
-      setRecommendations([]);
-      setLoadError(e instanceof Error ? e.message : 'Could not load feed.');
-    } finally {
-      setInitialLoading(false);
-      setRefreshing(false);
-      hasFetchedOnceRef.current = true;
-    }
-  }, []);
 
   useEffect(() => {
-    void loadFeed();
-  }, [loadFeed]);
-
-  // Re-fetch when the user returns to the tab (e.g. after creating a recipe
-  // on the Share tab). Skip the very first focus event since the mount effect
-  // already kicked off that fetch.
-  useFocusEffect(
-    useCallback(() => {
-      if (!hasFetchedOnceRef.current) return;
-      void loadFeed({ isRefresh: true });
-    }, [loadFeed]),
-  );
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [storyData, recipeData, dailyData, recsData] = await Promise.all([
+          fetchStoriesList(),
+          fetchRecipesList(),
+          fetchDailyCultural(),
+          fetchRecommendations('feed', 10).catch(() => [] as RecommendationItem[]),
+        ]);
+        if (cancelled) return;
+        setStories(Array.isArray(storyData) ? storyData : []);
+        setRecipes(Array.isArray(recipeData) ? recipeData : []);
+        setDaily(Array.isArray(dailyData) ? dailyData : []);
+        setRecommendations(Array.isArray(recsData) ? recsData : []);
+        setLoadError(null);
+      } catch (e) {
+        if (!cancelled) {
+          setStories([]);
+          setRecipes([]);
+          setDaily([]);
+          setRecommendations([]);
+          setLoadError(e instanceof Error ? e.message : 'Could not load feed.');
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const onRecommendationPress = (item: RecommendationItem) => {
     if (item.kind === 'recipe') {
@@ -82,29 +64,9 @@ export default function HomeScreen({ navigation }: Props) {
     }
   };
 
-  if (initialLoading) {
-    return (
-      <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-        <View style={styles.centered}>
-          <LoadingView message="Loading feed…" />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void loadFeed({ isRefresh: true })}
-            tintColor={tokens.colors.surfaceDark}
-          />
-        }
-      >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {loadError ? (
           <View style={styles.errorBanner} accessibilityLabel="Feed load error">
             <Text style={styles.errorText}>{loadError}</Text>
@@ -335,7 +297,6 @@ export default function HomeScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: tokens.colors.bg },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   container: { padding: 16, paddingBottom: 28 },
   errorBanner: {
     paddingVertical: 10,

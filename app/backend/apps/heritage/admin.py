@@ -6,6 +6,7 @@ from .models import (
     HeritageGroup,
     HeritageGroupMembership,
     HeritageJourneyStep,
+    IngredientRoute,
 )
 
 
@@ -100,3 +101,15 @@ class CulturalFactAdmin(admin.ModelAdmin):
         return text[:80] + ('...' if len(text) > 80 else '')
 
     text_preview.short_description = 'Text'
+
+
+@admin.register(IngredientRoute)
+class IngredientRouteAdmin(admin.ModelAdmin):
+    list_display = ('ingredient', 'waypoint_count', 'created_at')
+    search_fields = ('ingredient__name',)
+    list_filter = ('created_at',)
+
+    def waypoint_count(self, obj):
+        return len(obj.waypoints) if isinstance(obj.waypoints, list) else 0
+
+    waypoint_count.short_description = 'Waypoints'

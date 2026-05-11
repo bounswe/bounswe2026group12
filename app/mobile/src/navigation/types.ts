@@ -22,8 +22,6 @@ export type RootStackParamList = {
   MapDiscovery: undefined;
   Explore: undefined;
   EventDetail: { eventId: number; eventName: string };
-  Heritage: { heritageGroupId: number };
-  HeritageMap: { heritageGroupId: number };
   CulturalCalendar: undefined;
 };
 

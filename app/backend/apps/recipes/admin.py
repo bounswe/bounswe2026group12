@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
     DietaryTag, EventTag, IngredientSubstitution, EndangeredNote,
+    RecipeCulturalContext
 )
 
 
@@ -12,8 +13,8 @@ class EndangeredNoteInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at', 'is_published', 'heritage_status')
-    list_filter = ('heritage_status', 'is_published')
+    list_display = ('title', 'author', 'created_at', 'is_published', 'is_heritage', 'heritage_status')
+    list_filter = ('is_published', 'is_heritage', 'heritage_status')
     inlines = [EndangeredNoteInline]
 
 @admin.register(Ingredient)
@@ -74,3 +75,9 @@ class IngredientSubstitutionAdmin(admin.ModelAdmin):
 class EndangeredNoteAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'source_url', 'created_at')
     search_fields = ('recipe__title', 'text')
+
+@admin.register(RecipeCulturalContext)
+class RecipeCulturalContextAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'identity_note', 'memory_note')
+    search_fields = ('recipe__title', 'identity_note', 'memory_note')
+
