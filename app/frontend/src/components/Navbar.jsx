@@ -112,13 +112,6 @@ export default function Navbar() {
                     >
                       New Story
                     </Link>
-                    <Link
-                      to="/inbox"
-                      className="navbar-dropdown-item"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      Inbox
-                    </Link>
                     <div className="navbar-dropdown-divider" />
                     <button
                       className="navbar-dropdown-item navbar-dropdown-logout"
