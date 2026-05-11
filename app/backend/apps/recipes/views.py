@@ -83,6 +83,11 @@ def apply_content_filters(qs, params):
         neg = _iexact_or(field, _csv_param(params, f'{param_name}_exclude'))
         if neg is not None:
             qs = qs.exclude(neg)
+
+    author_id = params.get('author')
+    if author_id:
+        qs = qs.filter(author_id=author_id)
+
     return qs.distinct()
 
 # Backward compat alias

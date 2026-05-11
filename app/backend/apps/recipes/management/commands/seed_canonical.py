@@ -2,9 +2,12 @@ import json
 from decimal import Decimal
 from pathlib import Path
 
+from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.contrib.auth import get_user_model
+
+MEDIA_DIR = Path(__file__).resolve().parents[4] / 'fixtures' / 'media'
 
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, IngredientSubstitution, Unit,
@@ -152,6 +155,15 @@ class Command(BaseCommand):
                     unit=unit,
                 )
             recipes[r['title']] = recipe
+            if r.get('image'):
+                img_path = MEDIA_DIR / 'recipes' / r['image']
+                if img_path.exists():
+                    with open(img_path, 'rb') as f:
+                        recipe.image.save(r['image'], File(f), save=True)
+                else:
+                    self.stderr.write(
+                        self.style.WARNING(f"Image not found: {img_path}")
+                    )
         return recipes
 
     def _seed_stories(self, stories_data, users, recipes):
@@ -189,6 +201,15 @@ class Command(BaseCommand):
                     story=story, recipe=recipes[title], order=order,
                 )
             stories.append(story)
+            if s.get('image'):
+                img_path = MEDIA_DIR / 'stories' / s['image']
+                if img_path.exists():
+                    with open(img_path, 'rb') as f:
+                        story.image.save(s['image'], File(f), save=True)
+                else:
+                    self.stderr.write(
+                        self.style.WARNING(f"Image not found: {img_path}")
+                    )
         return stories
 
     def _seed_cultural_content(self, cards_data):
