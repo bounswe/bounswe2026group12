@@ -6,6 +6,7 @@ import { fetchRegions } from '../services/searchService';
 import { fetchSubstitutes } from '../services/ingredientService';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
+import HeritageBadge from '../components/HeritageBadge';
 import './RecipeDetailPage.css';
 
 const MATCH_TYPE_LABELS = {
@@ -345,6 +346,8 @@ export default function RecipeDetailPage() {
           </div>
         )}
       </section>
+
+      {recipe.heritage_group && <HeritageBadge heritageGroup={recipe.heritage_group} />}
 
       <RecipeCommentsSection
         recipeId={recipe.id}

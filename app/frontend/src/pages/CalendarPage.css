@@ -1,0 +1,226 @@
+.calendar-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.calendar-title {
+  margin-bottom: 0.3rem;
+}
+
+.calendar-subtitle {
+  margin: 0 0 1.5rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.97rem;
+}
+
+.calendar-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.calendar-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.calendar-filter-group label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.calendar-filter-group select {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.9rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-month {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.calendar-movable {
+  border-color: rgba(196, 82, 30, 0.3);
+  background: rgba(196, 82, 30, 0.03);
+}
+
+.calendar-month-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.65rem 1rem;
+  background: var(--color-surface-alt, #f2ede3);
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.calendar-empty {
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.calendar-event-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.calendar-event-card:last-child {
+  border-bottom: none;
+}
+
+.calendar-event-card:hover,
+.calendar-event-card.selected {
+  background: rgba(196, 82, 30, 0.06);
+}
+
+.calendar-event-top {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.calendar-event-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #f0e4d0;
+  color: #b85c2a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.calendar-event-badge.lunar {
+  background: #1e1a2e;
+  color: #c9b8f0;
+}
+
+.calendar-event-name {
+  font-size: 0.92rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.calendar-event-region {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.calendar-lunar-subline {
+  margin: 0.25rem 0 0 2.15rem;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.calendar-lunar-subline.movable {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+/* Detail panel */
+.calendar-detail {
+  background: var(--color-surface-alt, #f2ede3);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.2rem 1.4rem;
+  margin-top: 0.5rem;
+}
+
+.calendar-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
+.calendar-detail-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.calendar-detail-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+.calendar-detail-region {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  margin: 0 0 0.6rem 0;
+}
+
+.calendar-detail-desc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0 0 0.8rem 0;
+}
+
+.calendar-detail-recipes h3 {
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.calendar-detail-recipes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.calendar-detail-recipes a {
+  font-size: 0.9rem;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.calendar-detail-recipes a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .calendar-grid {
+    grid-template-columns: 1fr;
+  }
+}

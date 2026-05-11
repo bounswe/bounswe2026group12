@@ -1,0 +1,294 @@
+.heritage-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.heritage-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.heritage-header-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.heritage-title {
+  margin: 0 0 0.3rem 0;
+}
+
+.heritage-desc {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.97rem;
+  line-height: 1.55;
+}
+
+.heritage-map-btn {
+  margin-bottom: 1.2rem;
+}
+
+/* Map */
+.heritage-map-wrap {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: flex-start;
+}
+
+.heritage-leaflet-map {
+  flex: 1;
+  height: 340px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  min-width: 0;
+}
+
+.heritage-map-panel {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.heritage-map-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.9rem 1rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.heritage-map-panel-header h3 {
+  margin: 0 0 0.15rem 0;
+  font-size: 1rem;
+}
+
+.heritage-map-panel-sub {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.heritage-panel-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  padding: 0;
+  line-height: 1;
+}
+
+.heritage-map-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.heritage-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.12s;
+}
+
+.heritage-panel-item:hover {
+  background: rgba(196, 82, 30, 0.07);
+}
+
+.heritage-panel-icon {
+  flex-shrink: 0;
+}
+
+/* Content grid */
+.heritage-content {
+  margin-bottom: 2rem;
+}
+
+.heritage-content h2 {
+  margin-bottom: 1rem;
+}
+
+.heritage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.heritage-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  background: var(--color-surface-alt, #f2ede3);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.heritage-card:hover {
+  border-color: var(--color-primary);
+  background: rgba(196, 82, 30, 0.04);
+}
+
+.heritage-card-type {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.heritage-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.heritage-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.heritage-card-meta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Journey — #515 */
+.heritage-journey {
+  margin-bottom: 2rem;
+}
+
+.heritage-journey h2 {
+  margin-bottom: 1.2rem;
+}
+
+.heritage-journey-steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.heritage-journey-step {
+  display: flex;
+  gap: 1rem;
+}
+
+.heritage-journey-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.heritage-journey-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.heritage-journey-line {
+  flex: 1;
+  width: 2px;
+  background: var(--color-border);
+  margin: 4px 0;
+  min-height: 24px;
+}
+
+.heritage-journey-body {
+  padding-bottom: 1.4rem;
+  flex: 1;
+}
+
+.heritage-journey-location {
+  font-weight: 600;
+  font-size: 0.97rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.heritage-journey-era {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+}
+
+.heritage-journey-story {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+/* Did You Know — #517 */
+.heritage-facts {
+  margin-bottom: 1rem;
+}
+
+.heritage-facts h2 {
+  margin-bottom: 1rem;
+}
+
+.heritage-facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.heritage-fact-card {
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(196, 82, 30, 0.05);
+  border: 1px solid rgba(196, 82, 30, 0.2);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.heritage-fact-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.heritage-fact-body p {
+  margin: 0 0 0.3rem 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.heritage-fact-source {
+  font-size: 0.78rem;
+  color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .heritage-map-wrap {
+    flex-direction: column;
+  }
+  .heritage-map-panel {
+    width: 100%;
+  }
+  .heritage-leaflet-map {
+    height: 260px;
+  }
+}

@@ -1,0 +1,48 @@
+.heritage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: linear-gradient(135deg, #3d1500 0%, #6b2a0a 100%);
+  color: #f5e6c8;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  text-decoration: none;
+  margin-top: 1.5rem;
+  transition: opacity 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.heritage-badge:hover {
+  opacity: 0.88;
+}
+
+.heritage-badge-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.heritage-badge-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.1rem;
+}
+
+.heritage-badge-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+.heritage-badge-name {
+  font-size: 0.97rem;
+  font-weight: 600;
+}
+
+.heritage-badge-arrow {
+  font-size: 1rem;
+  opacity: 0.6;
+  flex-shrink: 0;
+}

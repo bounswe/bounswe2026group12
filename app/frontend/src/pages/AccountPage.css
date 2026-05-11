@@ -1,0 +1,140 @@
+.account-page {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.account-title {
+  margin-bottom: 1.4rem;
+}
+
+.account-info {
+  background: var(--color-surface-alt, #f2ede3);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.account-info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.account-info-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  min-width: 72px;
+}
+
+.account-info-value {
+  font-size: 1rem;
+  color: var(--color-text, #1a1a1a);
+}
+
+.account-prefs-heading {
+  font-size: 1.05rem;
+  margin-bottom: 1.2rem;
+}
+
+.account-pref-section {
+  margin-bottom: 1.6rem;
+}
+
+.account-pref-title {
+  font-size: 0.97rem;
+  margin-bottom: 0.25rem;
+}
+
+.account-pref-desc {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem 0;
+}
+
+.account-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.38rem 0.75rem;
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.account-chip input {
+  accent-color: var(--color-primary);
+}
+
+.account-chip-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint, rgba(196, 82, 30, 0.08));
+}
+
+.account-prefs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.account-prefs-header .account-prefs-heading {
+  margin-bottom: 0;
+}
+
+.account-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.account-tag {
+  display: inline-block;
+  background: var(--color-primary-tint, rgba(196, 82, 30, 0.08));
+  border: 1px solid rgba(196, 82, 30, 0.25);
+  color: var(--color-primary);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.account-tags-empty {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.account-error {
+  color: var(--color-error, #c0392b);
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.account-saved {
+  color: #2e7d32;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.account-actions {
+  margin-top: 1rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 0.6rem;
+}

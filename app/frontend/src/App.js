@@ -19,6 +19,9 @@ import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
 import ProfilePage from './pages/ProfilePage';
+import AccountPage from './pages/AccountPage';
+import HeritagePage from './pages/HeritagePage';
+import CalendarPage from './pages/CalendarPage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
 import EventDetailPage from './pages/EventDetailPage';
@@ -116,9 +119,16 @@ export default function App() {
             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
           />
           <Route
+            path="/account"
+            element={<ProtectedRoute><AccountPage /></ProtectedRoute>}
+          />
+          <Route
             path="/admin/moderation"
             element={<ProtectedRoute><ModerationPage /></ProtectedRoute>}
           />
+
+          <Route path="/heritage/:id" element={<HeritagePage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
