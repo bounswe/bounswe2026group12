@@ -324,6 +324,43 @@ class RegionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     serializer_class = RegionSubmissionSerializer
     lookup_serializer_class = RegionSerializer
 
+    def get_permissions(self):
+        # The parent's get_permissions hardcodes IsAdminUser for any action
+        # outside list/retrieve/create, which would lock down the read-only
+        # `recipes` action. Treat it like list/retrieve.
+        if self.action == 'recipes':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+
+    @action(detail=True, methods=['get'], url_path='recipes')
+    def recipes(self, request, pk=None):
+        """Split a region's recipes into located (has lat+lng) and unlocated.
+
+        Backs the zoom-to-region map view (#464 / #662): the located list
+        becomes per-recipe pins, the unlocated list becomes the "without a
+        location" bar. Both lists are ordered newest first.
+        """
+        region = get_object_or_404(Region, pk=pk, is_approved=True)
+        recipes = region.recipes.select_related('author').order_by('-created_at')
+
+        located, unlocated = [], []
+        for recipe in recipes:
+            base = {
+                'id': recipe.id,
+                'title': recipe.title,
+                'author_username': recipe.author.username,
+            }
+            if recipe.latitude is not None and recipe.longitude is not None:
+                located.append({
+                    **base,
+                    'latitude': recipe.latitude,
+                    'longitude': recipe.longitude,
+                })
+            else:
+                unlocated.append(base)
+
+        return Response({'located': located, 'unlocated': unlocated})
+
 class DietaryTagViewSet(ModeratedLookupViewSet):
     """ViewSet for list/submission of dietary tags (M4-15)."""
     queryset = DietaryTag.objects.all().order_by(Lower('name'), 'id')

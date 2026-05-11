@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
@@ -441,3 +443,149 @@ class RecipeHeritageFieldsAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.data['is_heritage'])
         self.assertEqual(response.data['heritage_notes'], "")
+
+
+class ZoomToRegionCoordsAPITest(APITestCase):
+    """Tests for zoom-to-region coordinates (#662).
+
+    Recipe gains nullable latitude/longitude; Region exposes its existing
+    bbox_* bounds; GET /api/regions/<id>/recipes/ partitions a region's
+    recipes into located vs unlocated for the zoom-to-region map (#464).
+    """
+
+    def setUp(self):
+        self.author = User.objects.create_user(
+            email="zoom_author@example.com",
+            username="zoom_author",
+            password="StrongPass123!",
+        )
+        self.region = Region.objects.create(
+            name="Pontic Coast",
+            is_approved=True,
+            latitude=41.0,
+            longitude=39.7,
+            bbox_north=42.1,
+            bbox_south=40.3,
+            bbox_east=42.5,
+            bbox_west=36.0,
+        )
+        self.located = Recipe.objects.create(
+            title="Trabzon Sarma",
+            description="Collard rolls.",
+            region=self.region,
+            author=self.author,
+            is_published=True,
+            latitude=Decimal("41.000000"),
+            longitude=Decimal("39.716700"),
+        )
+        self.unlocated = Recipe.objects.create(
+            title="Black Sea Anchovy Pilaf",
+            description="Hamsi pilav.",
+            region=self.region,
+            author=self.author,
+            is_published=True,
+        )
+
+    def test_recipe_detail_includes_null_coordinates(self):
+        url = reverse('recipe-detail', kwargs={'pk': self.unlocated.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data['latitude'])
+        self.assertIsNone(response.data['longitude'])
+
+    def test_recipe_detail_includes_set_coordinates(self):
+        url = reverse('recipe-detail', kwargs={'pk': self.located.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Decimal(str(response.data['latitude'])), Decimal("41.000000"))
+        self.assertEqual(Decimal(str(response.data['longitude'])), Decimal("39.716700"))
+
+    def test_recipe_region_list_includes_coordinates(self):
+        response = self.client.get(reverse('recipe-list'), {'region': 'Pontic Coast'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        by_id = {r['id']: r for r in results}
+        self.assertIn('latitude', by_id[self.located.id])
+        self.assertIn('longitude', by_id[self.located.id])
+        self.assertEqual(
+            Decimal(str(by_id[self.located.id]['latitude'])), Decimal("41.000000")
+        )
+        self.assertIsNone(by_id[self.unlocated.id]['latitude'])
+        self.assertIsNone(by_id[self.unlocated.id]['longitude'])
+
+    def test_region_detail_includes_bbox(self):
+        url = reverse('region-detail', kwargs={'pk': self.region.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for key in ('bbox_north', 'bbox_south', 'bbox_east', 'bbox_west', 'latitude', 'longitude'):
+            self.assertIn(key, response.data)
+        self.assertEqual(response.data['bbox_north'], 42.1)
+        self.assertEqual(response.data['bbox_west'], 36.0)
+
+    def test_region_recipes_endpoint_partitions(self):
+        url = reverse('region-recipes', kwargs={'pk': self.region.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        located_ids = [r['id'] for r in response.data['located']]
+        unlocated_ids = [r['id'] for r in response.data['unlocated']]
+        self.assertEqual(located_ids, [self.located.id])
+        self.assertEqual(unlocated_ids, [self.unlocated.id])
+
+        located_entry = response.data['located'][0]
+        self.assertEqual(located_entry['title'], "Trabzon Sarma")
+        self.assertEqual(located_entry['author_username'], "zoom_author")
+        self.assertEqual(Decimal(str(located_entry['latitude'])), Decimal("41.000000"))
+        self.assertEqual(Decimal(str(located_entry['longitude'])), Decimal("39.716700"))
+
+        unlocated_entry = response.data['unlocated'][0]
+        self.assertEqual(unlocated_entry['title'], "Black Sea Anchovy Pilaf")
+        self.assertEqual(unlocated_entry['author_username'], "zoom_author")
+        self.assertNotIn('latitude', unlocated_entry)
+        self.assertNotIn('longitude', unlocated_entry)
+
+    def test_region_recipes_endpoint_partial_coordinates_are_unlocated(self):
+        half = Recipe.objects.create(
+            title="Half Located",
+            description="Only latitude set.",
+            region=self.region,
+            author=self.author,
+            latitude=Decimal("41.000000"),
+        )
+        url = reverse('region-recipes', kwargs={'pk': self.region.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(half.id, [r['id'] for r in response.data['unlocated']])
+        self.assertNotIn(half.id, [r['id'] for r in response.data['located']])
+
+    def test_region_recipes_endpoint_empty_region(self):
+        empty = Region.objects.create(name="Empty Land", is_approved=True)
+        url = reverse('region-recipes', kwargs={'pk': empty.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'located': [], 'unlocated': []})
+
+    def test_region_recipes_endpoint_unknown_region_404(self):
+        url = reverse('region-recipes', kwargs={'pk': 999999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_recipe_with_coordinates_round_trips(self):
+        self.client.force_authenticate(user=self.author)
+        ingredient, _ = Ingredient.objects.get_or_create(
+            name="Cornmeal", defaults={"is_approved": True}
+        )
+        data = {
+            "title": "Muhlama",
+            "description": "Cheese fondue from the highlands.",
+            "region": self.region.id,
+            "latitude": "40.916700",
+            "longitude": "39.083300",
+            "ingredients_write": [
+                {"ingredient": ingredient.id, "amount": "1.00"}
+            ],
+        }
+        response = self.client.post(reverse('recipe-list'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        recipe = Recipe.objects.get(pk=response.data['id'])
+        self.assertEqual(recipe.latitude, Decimal("40.916700"))
+        self.assertEqual(recipe.longitude, Decimal("39.083300"))
