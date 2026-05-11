@@ -3,7 +3,7 @@ from decimal import Decimal
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from .models import Recipe, Region, Ingredient, Unit, RecipeIngredient
+from .models import Recipe, Region, Ingredient, Unit, RecipeIngredient, EndangeredNote
 from apps.stories.models import Story
 from apps.common.ids import ULID_REGEX
 from django.contrib.auth import get_user_model
@@ -589,3 +589,142 @@ class ZoomToRegionCoordsAPITest(APITestCase):
         recipe = Recipe.objects.get(pk=response.data['id'])
         self.assertEqual(recipe.latitude, Decimal("40.916700"))
         self.assertEqual(recipe.longitude, Decimal("39.083300"))
+
+
+class EndangeredHeritageTagsAPITest(APITestCase):
+    """Tests for heritage_status and EndangeredNote (#524, parent #507).
+
+    Backs the amber heritage badge and the filtered listing on web (#520) and
+    mobile (#526).
+    """
+
+    def setUp(self):
+        self.author = User.objects.create_user(
+            email="endangered_author@example.com",
+            username="endangered_author",
+            password="StrongPass123!",
+        )
+        self.region, _ = Region.objects.get_or_create(name="Cappadocia")
+        self.ingredient, _ = Ingredient.objects.get_or_create(
+            name="Einkorn", defaults={"is_approved": True}
+        )
+        self.unit, _ = Unit.objects.get_or_create(
+            name="handfuls", defaults={"is_approved": True}
+        )
+        self.list_url = reverse('recipe-list')
+        self.client.force_authenticate(user=self.author)
+
+    def _payload(self, **overrides):
+        data = {
+            "title": "Testi Kebabi",
+            "description": "Slow-cooked stew sealed in a clay pot.",
+            "region": self.region.id,
+            "ingredients_write": [
+                {"ingredient": self.ingredient.id, "amount": "3.00", "unit": self.unit.id}
+            ],
+        }
+        data.update(overrides)
+        return data
+
+    def test_recipe_heritage_status_defaults_to_none(self):
+        recipe = Recipe.objects.create(
+            title="Plain Stew", description="Nothing special.", author=self.author,
+        )
+        self.assertEqual(recipe.heritage_status, 'none')
+        url = reverse('recipe-detail', kwargs={'pk': recipe.id})
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['heritage_status'], 'none')
+
+    def test_create_recipe_with_heritage_status_round_trips(self):
+        response = self.client.post(
+            self.list_url, self._payload(heritage_status='endangered'), format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['heritage_status'], 'endangered')
+        recipe = Recipe.objects.get(pk=response.data['id'])
+        self.assertEqual(recipe.heritage_status, 'endangered')
+
+    def test_patch_recipe_heritage_status(self):
+        create_resp = self.client.post(self.list_url, self._payload(), format='json')
+        self.assertEqual(create_resp.status_code, status.HTTP_201_CREATED)
+        recipe_id = create_resp.data['id']
+        self.assertEqual(create_resp.data['heritage_status'], 'none')
+        detail_url = reverse('recipe-detail', kwargs={'pk': recipe_id})
+        patch_resp = self.client.patch(detail_url, {"heritage_status": "revived"}, format='json')
+        self.assertEqual(patch_resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(patch_resp.data['heritage_status'], 'revived')
+        self.assertEqual(Recipe.objects.get(pk=recipe_id).heritage_status, 'revived')
+
+    def test_filter_recipes_by_heritage_status(self):
+        endangered = Recipe.objects.create(
+            title="Endangered Dish", description="At risk.", author=self.author,
+            is_published=True, heritage_status='endangered',
+        )
+        Recipe.objects.create(
+            title="Ordinary Dish", description="Common.", author=self.author,
+            is_published=True, heritage_status='none',
+        )
+        Recipe.objects.create(
+            title="Revived Dish", description="Brought back.", author=self.author,
+            is_published=True, heritage_status='revived',
+        )
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.list_url, {'heritage_status': 'endangered'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        titles = {r['title'] for r in results}
+        self.assertIn("Endangered Dish", titles)
+        self.assertNotIn("Ordinary Dish", titles)
+        self.assertNotIn("Revived Dish", titles)
+        self.assertTrue(all(r['heritage_status'] == 'endangered' for r in results))
+        self.assertTrue(any(r['id'] == endangered.id for r in results))
+
+    def test_ingredient_heritage_status_default_and_filter(self):
+        plain = Ingredient.objects.create(name="Common Salt", is_approved=True)
+        self.assertEqual(plain.heritage_status, 'none')
+        rare = Ingredient.objects.create(
+            name="Mahaleb Cherry", is_approved=True, heritage_status='endangered',
+        )
+        list_url = reverse('ingredient-list')
+        self.client.force_authenticate(user=None)
+        response = self.client.get(list_url, {'heritage_status': 'endangered'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data['results'] if isinstance(response.data, dict) else response.data
+        names = {r['name'] for r in results}
+        self.assertIn("Mahaleb Cherry", names)
+        self.assertNotIn("Common Salt", names)
+        self.assertTrue(all(r['heritage_status'] == 'endangered' for r in results))
+        self.assertTrue(any(r['id'] == rare.id for r in results))
+
+    def test_endangered_note_appears_in_recipe_detail(self):
+        recipe = Recipe.objects.create(
+            title="Topik", description="Armenian chickpea appetizer.", author=self.author,
+            is_published=True, heritage_status='endangered',
+        )
+        EndangeredNote.objects.create(
+            recipe=recipe,
+            text="Only a handful of cooks still prepare it traditionally.",
+            source_url="https://example.org/topik",
+        )
+        url = reverse('recipe-detail', kwargs={'pk': recipe.id})
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['endangered_notes']), 1)
+        note = response.data['endangered_notes'][0]
+        self.assertEqual(note['text'], "Only a handful of cooks still prepare it traditionally.")
+        self.assertEqual(note['source_url'], "https://example.org/topik")
+        self.assertEqual(note['recipe'], recipe.id)
+
+    def test_recipe_detail_has_empty_notes_by_default(self):
+        recipe = Recipe.objects.create(
+            title="No Notes", description="Nothing attached.", author=self.author,
+            is_published=True,
+        )
+        url = reverse('recipe-detail', kwargs={'pk': recipe.id})
+        self.client.force_authenticate(user=None)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['endangered_notes'], [])
