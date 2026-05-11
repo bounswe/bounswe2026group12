@@ -157,7 +157,10 @@ export async function updateStoryById(
     title: string;
     body: string;
     language: string;
-    linked_recipe: number | null;
+    /** Backend canonical field is `linked_recipe_id`. Sending it directly so
+     * we don't depend on the legacy `linked_recipe` → `linked_recipe_id`
+     * shim in `StorySerializer.to_internal_value`. */
+    linked_recipe_id: number | null;
     is_published: boolean;
     region?: number | null;
   },

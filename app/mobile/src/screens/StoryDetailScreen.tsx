@@ -94,7 +94,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
               style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
               accessibilityRole="link"
               accessibilityLabel={`Browse ${story.region} content`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.regionPillText}>{story.region}</Text>
             </Pressable>
@@ -110,7 +110,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
               style={({ pressed }) => [styles.authorPill, pressed && { opacity: 0.85 }]}
               accessibilityRole="link"
               accessibilityLabel={`Open profile of ${authorObj.username}`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.authorPillText}>By {authorObj.username}</Text>
             </Pressable>

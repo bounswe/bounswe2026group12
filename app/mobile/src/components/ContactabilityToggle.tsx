@@ -64,7 +64,7 @@ export function ContactabilityToggle() {
         {saving ? 'Updating…' : enabled ? 'Allow new threads' : 'Block new threads'}
       </Text>
       {error ? (
-        <Pressable onPress={() => setError(null)} hitSlop={6} accessibilityRole="button">
+        <Pressable onPress={() => setError(null)} hitSlop={10} accessibilityRole="button">
           <Text style={styles.error}>{error} (tap to dismiss)</Text>
         </Pressable>
       ) : null}

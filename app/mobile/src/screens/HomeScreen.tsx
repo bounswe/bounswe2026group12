@@ -242,7 +242,7 @@ export default function HomeScreen({ navigation }: Props) {
                       style={({ pressed }) => [styles.authorPress, pressed && styles.pressed]}
                       accessibilityRole="link"
                       accessibilityLabel={`Open profile of ${authorUsername}`}
-                      hitSlop={6}
+                      hitSlop={10}
                     >
                       <Text style={styles.authorLink} numberOfLines={1}>
                         By {authorUsername}

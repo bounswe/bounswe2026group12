@@ -79,6 +79,10 @@ export default function OnboardingScreen({ navigation }: Props) {
   const current = STEPS[stepIndex];
   const progress = Math.round(((stepIndex + 1) / STEPS.length) * 100);
 
+  // Onboarding is intentionally lenient: users may skip without selecting
+  // anything on any step. The product preference is to lower the friction of
+  // signup; empty preferences are valid and culture cards still surface
+  // useful content without explicit picks.
   const isComplete = useMemo(
     () => STEPS.every((step) => Array.isArray(values[step.key])),
     [values],
