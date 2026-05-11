@@ -97,6 +97,40 @@ export default function HeritageScreen({ route, navigation }: Props) {
               <Text style={styles.mapCtaText}>Show heritage map →</Text>
             </Pressable>
 
+            {group.journey_steps.length > 0 ? (
+              <View style={styles.journeySection} accessibilityLabel="Heritage journey timeline">
+                <Text style={styles.sectionHeading}>Journey through time</Text>
+                <View style={styles.timeline}>
+                  {group.journey_steps
+                    .slice()
+                    .sort((a, b) => a.order - b.order)
+                    .map((step, idx, arr) => (
+                      <View key={`step-${step.id}`} style={styles.timelineRow}>
+                        <View style={styles.timelineSpine}>
+                          <View style={styles.timelineDot}>
+                            <Text style={styles.timelineDotText}>{step.order}</Text>
+                          </View>
+                          {idx < arr.length - 1 ? <View style={styles.timelineLine} /> : null}
+                        </View>
+                        <View style={styles.timelineBody}>
+                          <View style={styles.timelineMeta}>
+                            {step.era ? (
+                              <View style={styles.eraPill}>
+                                <Text style={styles.eraPillText}>{step.era}</Text>
+                              </View>
+                            ) : null}
+                            <Text style={styles.timelineLocation} numberOfLines={1}>
+                              {step.location}
+                            </Text>
+                          </View>
+                          <Text style={styles.timelineStory}>{step.story}</Text>
+                        </View>
+                      </View>
+                    ))}
+                </View>
+              </View>
+            ) : null}
+
             <Text style={styles.sectionHeading}>
               Recipes &amp; stories in this heritage ({group.members.length})
             </Text>
@@ -216,4 +250,57 @@ const styles = StyleSheet.create({
   memberAuthor: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '700' },
   memberArrow: { fontSize: 18, fontWeight: '900', color: tokens.colors.surfaceDark },
   pressed: { opacity: 0.85 },
+  journeySection: { gap: 12, marginTop: 6 },
+  timeline: { gap: 0 },
+  timelineRow: { flexDirection: 'row', gap: 14, paddingBottom: 4 },
+  timelineSpine: { alignItems: 'center', width: 36 },
+  timelineDot: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: tokens.colors.surfaceDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: tokens.colors.accentMustard,
+  },
+  timelineDotText: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: tokens.colors.accentMustard,
+  },
+  timelineLine: {
+    flex: 1,
+    width: 2,
+    backgroundColor: tokens.colors.surfaceDark,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  timelineBody: { flex: 1, paddingBottom: 18, gap: 6 },
+  timelineMeta: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
+  eraPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentMustard,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  eraPillText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: tokens.colors.surfaceDark,
+    letterSpacing: 0.4,
+  },
+  timelineLocation: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  timelineStory: {
+    fontSize: 13,
+    color: tokens.colors.text,
+    lineHeight: 19,
+  },
 });
