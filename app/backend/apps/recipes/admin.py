@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext, EndangeredNote,
+    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext,
+    EndangeredNote, IngredientRoute,
 )
 
 class RecipeCulturalContextInline(admin.StackedInline):
@@ -17,8 +18,8 @@ class EndangeredNoteInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at', 'is_published', 'heritage_status')
-    list_filter = ('heritage_status', 'is_published')
+    list_display = ('title', 'author', 'created_at', 'is_published', 'is_heritage', 'heritage_status')
+    list_filter = ('is_published', 'is_heritage', 'heritage_status')
     inlines = [RecipeCulturalContextInline, EndangeredNoteInline]
 
 @admin.register(Ingredient)
@@ -79,3 +80,21 @@ class IngredientSubstitutionAdmin(admin.ModelAdmin):
 class EndangeredNoteAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'source_url', 'created_at')
     search_fields = ('recipe__title', 'text')
+
+@admin.register(RecipeCulturalContext)
+class RecipeCulturalContextAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'identity_note', 'memory_note')
+    search_fields = ('recipe__title', 'identity_note', 'memory_note')
+
+
+@admin.register(IngredientRoute)
+class IngredientRouteAdmin(admin.ModelAdmin):
+    list_display = ('ingredient', 'waypoint_count', 'created_at')
+    search_fields = ('ingredient__name',)
+    list_filter = ('created_at',)
+
+    def waypoint_count(self, obj):
+        return len(obj.waypoints) if isinstance(obj.waypoints, list) else 0
+
+    waypoint_count.short_description = 'Waypoints'
+

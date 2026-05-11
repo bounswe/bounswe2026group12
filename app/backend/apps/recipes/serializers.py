@@ -2,8 +2,9 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
-    RecipeCulturalContext, EndangeredNote,
+    EndangeredNote, RecipeCulturalContext, IngredientRoute,
 )
+
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -84,7 +85,10 @@ class IngredientSerializer(NamedSubmissionSerializer):
 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'is_approved', 'heritage_status', 'density_g_per_ml',
+            'submitted_by', 'submitted_at', 'reviewed_by', 'reviewed_at', 'rejection_reason'
+        ]
         read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
 
 class UnitLookupSerializer(serializers.ModelSerializer):
@@ -185,6 +189,14 @@ class EndangeredNoteSerializer(serializers.ModelSerializer):
         fields = ['id', 'recipe', 'text', 'source_url', 'created_at']
         read_only_fields = ['id', 'recipe', 'created_at']
 
+class RecipeCulturalContextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeCulturalContext
+        fields = [
+            'identity_note', 'memory_note', 'migration_note', 'ritual_note',
+            'commensality_note', 'terroir_note', 'craft_note'
+        ]
+
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
     region_name = serializers.ReadOnlyField(source='region.name')
@@ -193,6 +205,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
     event_tags = EventTagLookupSerializer(many=True, read_only=True)
     religions = ReligionLookupSerializer(many=True, read_only=True)
+    endangered_notes = EndangeredNoteSerializer(many=True, read_only=True)
     dietary_tag_ids = serializers.PrimaryKeyRelatedField(
         queryset=DietaryTag.objects.all(), source='dietary_tags',
         many=True, write_only=True, required=False,
@@ -210,7 +223,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
     heritage_group = serializers.SerializerMethodField()
-    endangered_notes = EndangeredNoteSerializer(many=True, read_only=True)
+    cultural_context = RecipeCulturalContextSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Recipe
@@ -226,10 +239,10 @@ class RecipeSerializer(serializers.ModelSerializer):
             'cultural_context',
             'story_count',
             'rank_score', 'rank_reason',
-            'heritage_group',
-            'endangered_notes',
+            'heritage_group', 'endangered_notes',
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
+
 
     def get_heritage_group(self, obj):
         # Most recent membership wins. The GenericRelation prefetch covers
@@ -353,3 +366,17 @@ class IngredientSubstituteSerializer(serializers.Serializer):
     name = serializers.CharField(source='to_ingredient.name', read_only=True)
     closeness = serializers.DecimalField(max_digits=3, decimal_places=2, read_only=True)
     notes = serializers.CharField(read_only=True)
+
+
+class IngredientRouteSerializer(serializers.ModelSerializer):
+    """Read/write shape for ingredient migration routes."""
+
+    ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
+
+    class Meta:
+        model = IngredientRoute
+        fields = [
+            'id', 'ingredient', 'ingredient_name', 'waypoints',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']

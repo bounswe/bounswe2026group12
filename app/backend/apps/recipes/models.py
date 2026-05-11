@@ -90,6 +90,7 @@ class Region(CulturalModerationMixin, models.Model):
     def __str__(self):
         return self.name
 
+
 class Ingredient(CulturalModerationMixin, models.Model):
     """Ingredient model for reuse across recipes. User-submittable, moderated (#361)."""
     name = models.CharField(max_length=200, unique=True)
@@ -199,6 +200,7 @@ class EndangeredNote(models.Model):
 
     def __str__(self):
         return f"Endangered note on {self.recipe.title}"
+
 
 class RecipeIngredient(models.Model):
     """Through model linking recipes and ingredients with amounts and units."""
@@ -316,7 +318,7 @@ class Vote(models.Model):
 
 
 class RecipeCulturalContext(models.Model):
-    """Beyond the Recipe — seven optional narrative notes about a dish (#521).
+    """Beyond the Recipe, seven optional narrative notes about a dish (#521).
 
     Backs the "Cultural Story" section on recipe detail (web #516, mobile #525)
     and is part of #509. One row per recipe; every note defaults to an empty
@@ -335,3 +337,27 @@ class RecipeCulturalContext(models.Model):
 
     def __str__(self):
         return f"Cultural context for {self.recipe.title}"
+
+
+class IngredientRoute(models.Model):
+    """Chronological movement of an ingredient across the world (#506).
+
+    Used for animated migration maps. Each route is tied to a specific
+    Ingredient and contains a list of waypoints (location, era, coords).
+    """
+
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        related_name='migration_routes',
+    )
+    # waypoints: list of objects like [{"lat": 1.2, "lng": 3.4, "era": "1500s", "label": "Spain"}]
+    waypoints = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['ingredient']
+
+    def __str__(self):
+        return f"Migration route for {self.ingredient.name}"

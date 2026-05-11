@@ -100,3 +100,5 @@ class CulturalFactAdmin(admin.ModelAdmin):
         return text[:80] + ('...' if len(text) > 80 else '')
 
     text_preview.short_description = 'Text'
+
+

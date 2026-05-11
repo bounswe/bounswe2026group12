@@ -77,6 +77,7 @@ class HeritageJourneyStep(models.Model):
         return f'{self.heritage_group} #{self.order} {self.location}'
 
 
+
 class CulturalFact(models.Model):
     """A short cultural context fact surfaced as a "Did You Know?" card.
 
@@ -110,3 +111,5 @@ class CulturalFact(models.Model):
 
     def __str__(self):
         return self.text[:60]
+
+

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.recipes.models import Region
+from apps.recipes.models import Region, Ingredient
 
 from .models import CulturalFact, HeritageGroup, HeritageJourneyStep
 
