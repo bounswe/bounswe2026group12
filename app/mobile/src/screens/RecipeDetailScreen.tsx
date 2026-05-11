@@ -112,7 +112,13 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [showConverted, recipe, convertedByLine]);
+    // Intentionally omit `convertedByLine`: keeping it in deps caused the
+    // effect to re-run after every batch result and produce a flicker /
+    // wasted render cycle. We only need the effect to fire when the toggle
+    // or the recipe itself changes; the inner `missing` filter still uses
+    // the current state via closure capture.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showConverted, recipe]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -222,7 +228,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
               accessibilityRole="link"
               accessibilityLabel={`Browse ${recipe.region} recipes`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.regionPillText}>{recipe.region}</Text>
             </Pressable>
@@ -238,7 +244,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               style={({ pressed }) => [styles.authorPill, pressed && { opacity: 0.85 }]}
               accessibilityRole="link"
               accessibilityLabel={`Open profile of ${authorObj.username}`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.authorPillText}>By {authorObj.username}</Text>
             </Pressable>

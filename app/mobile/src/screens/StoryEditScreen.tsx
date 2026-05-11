@@ -138,7 +138,7 @@ export default function StoryEditScreen({ route, navigation }: Props) {
           title: title.trim(),
           body: body.trim(),
           language,
-          linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
+          linked_recipe_id: linkedRecipe ? Number(linkedRecipe.id) : null,
           is_published: published,
           region: regionId,
         });

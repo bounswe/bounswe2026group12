@@ -78,7 +78,7 @@ export default function StoryCreateScreen({ navigation }: Props) {
           body: body.trim(),
           language,
           is_published: true,
-          linked_recipe: linkedRecipe ? Number(linkedRecipe.id) : null,
+          linked_recipe_id: linkedRecipe ? Number(linkedRecipe.id) : null,
           region: regionId,
         });
         if (imageUri) {

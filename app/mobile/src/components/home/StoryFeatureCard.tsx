@@ -59,7 +59,7 @@ export function StoryFeatureCard({
               style={({ pressed }) => [styles.pill, pressed && styles.pressed]}
               accessibilityRole="link"
               accessibilityLabel={`Open profile of ${authorUsername}`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.pillText}>By {authorUsername}</Text>
             </Pressable>
@@ -70,7 +70,7 @@ export function StoryFeatureCard({
               style={({ pressed }) => [styles.recipePill, pressed && styles.pressed]}
               accessibilityRole="link"
               accessibilityLabel={`Open linked recipe ${recipeTitle}`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.recipePillText} numberOfLines={1}>
                 Recipe: {recipeTitle}

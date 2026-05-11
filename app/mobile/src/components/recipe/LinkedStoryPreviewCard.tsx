@@ -51,7 +51,7 @@ export function LinkedStoryPreviewCard({
               style={({ pressed }) => [styles.authorPill, pressed && styles.authorPillPressed]}
               accessibilityRole="link"
               accessibilityLabel={`Open profile of ${authorUsername}`}
-              hitSlop={6}
+              hitSlop={10}
             >
               <Text style={styles.authorPillText} numberOfLines={1}>
                 By {authorUsername}

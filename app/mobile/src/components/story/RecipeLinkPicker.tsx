@@ -35,25 +35,32 @@ export function RecipeLinkPicker({ value, onChange, fetchRecipes, currentUserId 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<ListItem[]>([]);
-
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
-      const list = await fetchRecipes();
-      setItems(list);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not load recipes.');
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
     if (!open) return;
-    void load();
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchRecipes()
+      .then((list) => {
+        if (!cancelled) setItems(list);
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : 'Could not load recipes.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // fetchRecipes is intentionally captured at mount; deps would re-run the
+    // effect on every parent render and cause flicker.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, retryToken]);
 
   const filtered = useMemo(() => {
     const q = normalize(query);
@@ -119,7 +126,7 @@ export function RecipeLinkPicker({ value, onChange, fetchRecipes, currentUserId 
             />
 
             {loading ? <LoadingView message="Loading recipes…" /> : null}
-            {!loading && error ? <ErrorView message={error} onRetry={() => void load()} /> : null}
+            {!loading && error ? <ErrorView message={error} onRetry={() => setRetryToken((t) => t + 1)} /> : null}
 
             {!loading && !error ? (
               <FlatList

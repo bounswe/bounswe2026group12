@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -39,6 +39,18 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
   );
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  /** Pending post-save navigation timer; cleared on unmount so a quick back
+   * press doesn't get bounced forward to RecipeDetail after the screen has gone. */
+  const navTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (navTimerRef.current) {
+        clearTimeout(navTimerRef.current);
+        navTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -205,7 +217,10 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           await updateRecipeById(id, buildRecipeVideoOnlyFormData(localVideo));
         }
         showToast('Recipe updated!', 'success');
-        setTimeout(() => navigation.navigate('RecipeDetail', { id }), 1500);
+        navTimerRef.current = setTimeout(() => {
+          navTimerRef.current = null;
+          navigation.navigate('RecipeDetail', { id });
+        }, 1500);
       } catch {
         showToast('Failed to save changes. Please try again.', 'error');
       } finally {

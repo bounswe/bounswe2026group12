@@ -175,7 +175,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
                 </Text>
                 <Pressable
                   onPress={() => setReplyTo(null)}
-                  hitSlop={6}
+                  hitSlop={10}
                   accessibilityRole="button"
                   accessibilityLabel="Cancel reply"
                 >
@@ -294,7 +294,7 @@ function CommentNodeView({
         <Pressable
           onPress={() => onToggleVote(node.id)}
           disabled={!isAuthenticated || votePending}
-          hitSlop={6}
+          hitSlop={10}
           accessibilityRole="button"
           accessibilityState={{ selected: node.has_voted, disabled: !isAuthenticated || votePending }}
           accessibilityLabel={node.has_voted ? 'Unmark helpful' : 'Mark helpful'}
@@ -315,7 +315,7 @@ function CommentNodeView({
         {isAuthenticated && depth === 0 ? (
           <Pressable
             onPress={() => onReply(node.id)}
-            hitSlop={6}
+            hitSlop={10}
             accessibilityRole="button"
             accessibilityLabel={`Reply to ${node.author_username}`}
           >
@@ -325,7 +325,7 @@ function CommentNodeView({
         {canDelete ? (
           <Pressable
             onPress={() => onDelete(node.id)}
-            hitSlop={6}
+            hitSlop={10}
             accessibilityRole="button"
             accessibilityLabel="Delete comment"
           >
