@@ -79,7 +79,11 @@ export default function Navbar() {
                   <span className="navbar-avatar">
                     {user.username[0].toUpperCase()}
                   </span>
-                  <span className="navbar-username">@{user.username}</span>
+                  <Link
+                    to={`/users/${user.username}`}
+                    className="navbar-username"
+                    onClick={(e) => e.stopPropagation()}
+                  >@{user.username}</Link>
                   <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
                 </button>
                 {menuOpen && (
