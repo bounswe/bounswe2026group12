@@ -27,4 +27,13 @@ export type RecipeDetail = {
   rank_reason?: string | null;
   /** Heritage group surfaced by backend serializer when the recipe is grouped. */
   heritage_group?: { id: number; name: string } | null;
+  /** Endangered-heritage status (#507/#524): one of 'none' | 'endangered' | 'preserved' | 'revived'. */
+  heritage_status?: 'none' | 'endangered' | 'preserved' | 'revived' | string | null;
+  /** Sourced notes attached to a recipe's endangered-heritage status. */
+  endangered_notes?: Array<{
+    id: number;
+    text: string;
+    source_url: string;
+    created_at?: string;
+  }>;
 };
