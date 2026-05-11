@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("recipes", "0024_add_recipe_cultural_context"),
+        ("recipes", "0025_merge_20260511_2152"),
     ]
 
     operations = [

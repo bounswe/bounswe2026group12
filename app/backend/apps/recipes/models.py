@@ -316,24 +316,27 @@ class Vote(models.Model):
     def __str__(self):
         return f"Vote by {self.user.username} on Comment {self.comment.id}"
 
+
 class RecipeCulturalContext(models.Model):
-    """Optional cultural story fields for recipes (#509)."""
+    """Beyond the Recipe, seven optional narrative notes about a dish (#521).
+
+    Backs the "Cultural Story" section on recipe detail (web #516, mobile #525)
+    and is part of #509. One row per recipe; every note defaults to an empty
+    string so a recipe with no story still serializes cleanly.
+    """
     recipe = models.OneToOneField(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='cultural_context',
-        help_text='The recipe this cultural context belongs to.'
+        Recipe, on_delete=models.CASCADE, related_name='cultural_context',
     )
-    identity_note = models.TextField(blank=True, default='', help_text='Why This Dish Matters (Identity connection)')
-    memory_note = models.TextField(blank=True, default='', help_text='Personal memory')
-    migration_note = models.TextField(blank=True, default='', help_text='Migration/diaspora story (Where It Came From)')
-    ritual_note = models.TextField(blank=True, default='', help_text="Ritual/seasonal context (When It's Made)")
-    commensality_note = models.TextField(blank=True, default='', help_text='Table culture (How It\'s Shared)')
-    terroir_note = models.TextField(blank=True, default='', help_text='Terroir/geography (Taste of Place)')
-    craft_note = models.TextField(blank=True, default='', help_text='Skill/mastery (The Craft)')
+    identity_note = models.TextField(blank=True, default='', help_text='Why this dish matters.')
+    memory_note = models.TextField(blank=True, default='', help_text='A personal memory.')
+    migration_note = models.TextField(blank=True, default='', help_text='Where it came from.')
+    ritual_note = models.TextField(blank=True, default='', help_text="When it's made.")
+    commensality_note = models.TextField(blank=True, default='', help_text="How it's shared.")
+    terroir_note = models.TextField(blank=True, default='', help_text='Taste of place.')
+    craft_note = models.TextField(blank=True, default='', help_text='The craft.')
 
     def __str__(self):
-        return f"Cultural Context for {self.recipe.title}"
+        return f"Cultural context for {self.recipe.title}"
 
 
 class IngredientRoute(models.Model):

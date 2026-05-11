@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
-    EndangeredNote, RecipeCulturalContext, IngredientRoute
+    EndangeredNote, RecipeCulturalContext, IngredientRoute,
 )
 
 
@@ -172,6 +172,15 @@ class RecipeIngredientWriteSerializer(serializers.Serializer):
             raise serializers.ValidationError("Amount must be a positive number.")
         return value
 
+class CulturalContextSerializer(serializers.ModelSerializer):
+    """The seven "Beyond the Recipe" narrative notes (#521)."""
+    class Meta:
+        model = RecipeCulturalContext
+        fields = [
+            'identity_note', 'memory_note', 'migration_note', 'ritual_note',
+            'commensality_note', 'terroir_note', 'craft_note',
+        ]
+
 class EndangeredNoteSerializer(serializers.ModelSerializer):
     """Sourced note attached to a recipe's endangered-heritage status (#524)."""
 
@@ -209,6 +218,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Religion.objects.all(), source='religions',
         many=True, write_only=True, required=False,
     )
+    cultural_context = CulturalContextSerializer(required=False, allow_null=True)
     story_count = serializers.IntegerField(read_only=True, default=0)
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
@@ -226,10 +236,10 @@ class RecipeSerializer(serializers.ModelSerializer):
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
+            'cultural_context',
             'story_count',
             'rank_score', 'rank_reason',
             'heritage_group', 'endangered_notes',
-            'cultural_context'
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
 
@@ -256,12 +266,26 @@ class RecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"ingredients_write": "At least one ingredient is required."})
         return data
 
+    def _save_cultural_context(self, recipe, cultural_data):
+        # cultural_data is the validated nested payload, or None when the
+        # caller omitted it (PATCH) or sent it explicitly null. We only
+        # create-or-update when a dict was provided.
+        if not cultural_data:
+            return
+        context, _ = RecipeCulturalContext.objects.update_or_create(
+            recipe=recipe, defaults=cultural_data,
+        )
+        # Refresh the cached reverse relation so the serialized response
+        # reflects the write even when the recipe was loaded with
+        # select_related('cultural_context').
+        recipe.cultural_context = context
+
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients_write', [])
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
         religions = validated_data.pop('religions', None)
-        cultural_context_data = validated_data.pop('cultural_context', None)
+        cultural_data = validated_data.pop('cultural_context', None)
         recipe = Recipe.objects.create(**validated_data)
         for item in ingredients_data:
             RecipeIngredient.objects.create(
@@ -276,10 +300,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.event_tags.set(event_tags)
         if religions is not None:
             recipe.religions.set(religions)
-
-        if cultural_context_data:
-            RecipeCulturalContext.objects.create(recipe=recipe, **cultural_context_data)
-
+        self._save_cultural_context(recipe, cultural_data)
         return recipe
 
     def update(self, instance, validated_data):
@@ -287,8 +308,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
         religions = validated_data.pop('religions', None)
-        cultural_context_data = validated_data.pop('cultural_context', None)
-
+        cultural_data = validated_data.pop('cultural_context', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -307,13 +327,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.event_tags.set(event_tags)
         if religions is not None:
             instance.religions.set(religions)
-
-        if cultural_context_data is not None:
-            RecipeCulturalContext.objects.update_or_create(
-                recipe=instance,
-                defaults=cultural_context_data
-            )
-
+        self._save_cultural_context(instance, cultural_data)
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):
