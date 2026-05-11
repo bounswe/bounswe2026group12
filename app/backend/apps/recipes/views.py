@@ -18,7 +18,8 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute, Bookmark
+    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute, Bookmark,
+    Rating,
 )
 from .serializers import (
     ConvertRequestSerializer,
@@ -38,6 +39,8 @@ from .serializers import (
     ReligionLookupSerializer,
     ReligionSerializer,
     IngredientRouteSerializer,
+    RecipeRatingWriteSerializer,
+    RecipeRatingSummarySerializer,
 )
 
 
@@ -152,6 +155,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     Bookmark.objects.filter(recipe=models.OuterRef('pk'), user=user)
                 )
             )
+            qs = qs.annotate(
+                user_rating=models.Subquery(
+                    Rating.objects.filter(
+                        recipe=models.OuterRef('pk'),
+                        user=user,
+                    ).values('score')[:1],
+                    output_field=models.IntegerField(),
+                )
+            )
 
         if self.action == 'list':
             qs = apply_recipe_filters(qs, self.request.query_params, user=user)
@@ -174,6 +186,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def _rating_summary(self, recipe, user_rating):
+        return RecipeRatingSummarySerializer(
+            {
+                'average_rating': recipe.average_rating,
+                'rating_count': recipe.rating_count,
+                'user_rating': user_rating,
+            }
+        ).data
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated, IsAuthorOrReadOnly])
     def publish(self, request, pk=None):
@@ -239,6 +260,35 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'is_bookmarked': is_bookmarked,
             'bookmark_count': count
         }, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post', 'delete'], permission_classes=[permissions.IsAuthenticated])
+    def rate(self, request, pk=None):
+        recipe = self.get_object()
+
+        if recipe.author_id == request.user.id:
+            return Response(
+                {'detail': 'You cannot rate your own recipe.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if request.method == 'POST':
+            serializer = RecipeRatingWriteSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            score = serializer.validated_data['score']
+            rating, created = Rating.objects.update_or_create(
+                user=request.user,
+                recipe=recipe,
+                defaults={'score': score},
+            )
+            recipe.refresh_from_db(fields=['average_rating', 'rating_count'])
+            return Response(
+                self._rating_summary(recipe, rating.score),
+                status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+            )
+
+        Rating.objects.filter(user=request.user, recipe=recipe).delete()
+        recipe.refresh_from_db(fields=['average_rating', 'rating_count'])
+        return Response(self._rating_summary(recipe, None), status=status.HTTP_200_OK)
 
 class ModeratedLookupViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
