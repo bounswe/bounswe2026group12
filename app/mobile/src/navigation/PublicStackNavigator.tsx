@@ -13,6 +13,7 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
+import RegionMapDetailScreen from '../screens/RegionMapDetailScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import StoryCreateScreen from '../screens/StoryCreateScreen';
@@ -128,6 +129,11 @@ export function PublicStackNavigator() {
         name="CulturalCalendar"
         component={CulturalCalendarScreen}
         options={{ title: 'Calendar' }}
+      />
+      <Stack.Screen
+        name="RegionMapDetail"
+        component={RegionMapDetailScreen}
+        options={{ title: 'Region' }}
       />
     </Stack.Navigator>
   );
