@@ -1,6 +1,6 @@
 import type { RecipeDetail, RecipeIngredientRow } from '../types/recipe';
 import { parseAuthorId } from '../utils/parseAuthorId';
-import { apiGetJson, apiPatchFormData, apiPatchJson } from './httpClient';
+import { apiGetJson, apiPatchFormData, apiPatchJson, nextPagePath } from './httpClient';
 
 /**
  * Same endpoint as web `fetchRecipe` in `recipeService.js`.
@@ -113,8 +113,12 @@ export async function updateRecipeById(id: string, formData: FormData): Promise<
   await apiPatchFormData(`/api/recipes/${id}/`, formData);
 }
 
-/** Minimal list for story linking / pickers (web: GET `/api/recipes/`). */
-export async function fetchRecipesList(): Promise<
+/** Minimal list for story linking / pickers (web: GET `/api/recipes/`).
+ * Optional `filter.author` adds `?author=<id>` so callers (e.g. profile) get
+ * server-filtered results instead of pulling the whole feed and filtering
+ * client-side. Walks the DRF `next` link to gather all pages — profiles can
+ * have more than the default page size. */
+export async function fetchRecipesList(filter?: { author?: number | string }): Promise<
   {
     id: string;
     title: string;
@@ -126,13 +130,25 @@ export async function fetchRecipesList(): Promise<
     rank_reason?: string | null;
   }[]
 > {
-  const data = await apiGetJson<any>(`/api/recipes/`);
-  const list: any[] = Array.isArray(data)
-    ? data
-    : data && Array.isArray(data.results)
-      ? data.results
-      : [];
-  return list.map((r) => {
+  const initialParams = new URLSearchParams();
+  if (filter?.author != null) initialParams.set('author', String(filter.author));
+  const initialQs = initialParams.toString();
+  const collected: any[] = [];
+  let path: string | null = `/api/recipes/${initialQs ? `?${initialQs}` : ''}`;
+  while (path) {
+    const data: any = await apiGetJson<any>(path);
+    if (Array.isArray(data)) {
+      collected.push(...data);
+      break;
+    }
+    if (data && Array.isArray(data.results)) {
+      collected.push(...data.results);
+      path = nextPagePath(data.next);
+    } else {
+      break;
+    }
+  }
+  return collected.map((r) => {
     const reg = r.region;
     const regionLabel =
       reg == null

@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ErrorView } from '../components/ui/ErrorView';
@@ -19,13 +19,6 @@ type ListItem = {
   author?: { id?: number | string; username?: string } | number | string | null;
 };
 
-function authorIdOf(item: ListItem): string | null {
-  const a = item.author;
-  if (!a) return null;
-  if (typeof a === 'object') return a.id != null ? String(a.id) : null;
-  return String(a);
-}
-
 export default function UserProfileScreen({ route, navigation }: Props) {
   const { userId, username } = route.params;
   const userIdStr = String(userId);
@@ -44,9 +37,12 @@ export default function UserProfileScreen({ route, navigation }: Props) {
     setError(null);
     void (async () => {
       try {
+        // Backend `?author=<id>` filter (#637) lets us pull only this user's
+        // content instead of fetching everything and filtering client-side
+        // — which used to silently miss anyone past page 1 (#619).
         const [recipeList, storyList] = await Promise.all([
-          fetchRecipesList(),
-          fetchStoriesList(),
+          fetchRecipesList({ author: userIdStr }),
+          fetchStoriesList({ author: userIdStr }),
         ]);
         if (cancelled) return;
         setRecipes(Array.isArray(recipeList) ? recipeList : []);
@@ -64,16 +60,10 @@ export default function UserProfileScreen({ route, navigation }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [reloadToken]);
+  }, [userIdStr, reloadToken]);
 
-  const myRecipes = useMemo(
-    () => recipes.filter((r) => authorIdOf(r) === userIdStr),
-    [recipes, userIdStr],
-  );
-  const myStories = useMemo(
-    () => stories.filter((s) => authorIdOf(s) === userIdStr),
-    [stories, userIdStr],
-  );
+  const myRecipes = recipes;
+  const myStories = stories;
 
   const initial = (username ?? 'U').slice(0, 1).toUpperCase();
 
