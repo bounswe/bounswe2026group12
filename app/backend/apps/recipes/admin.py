@@ -5,6 +5,11 @@ from .models import (
     RecipeCulturalContext, IngredientRoute
 )
 
+class RecipeCulturalContextInline(admin.StackedInline):
+    model = RecipeCulturalContext
+    extra = 0
+    can_delete = True
+
 
 class EndangeredNoteInline(admin.TabularInline):
     model = EndangeredNote
@@ -15,7 +20,7 @@ class EndangeredNoteInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'created_at', 'is_published', 'is_heritage', 'heritage_status')
     list_filter = ('is_published', 'is_heritage', 'heritage_status')
-    inlines = [EndangeredNoteInline]
+    inlines = [RecipeCulturalContextInline, EndangeredNoteInline]
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):

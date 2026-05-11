@@ -295,10 +295,9 @@ class Command(BaseCommand):
 
     def _seed_story_comments(self, comments_data, users, stories):
         """Seed story comments/questions with optional nested replies."""
-        story_map = {s.title: s for s in stories}
         id_map = {}
         for c in comments_data:
-            story = story_map.get(c['story'])
+            story = stories.get(c['story'])
             if not story:
                 raise CommandError(f"story_comments: story '{c['story']}' not found.")
             parent = id_map.get(c.get('parent_ref')) if c.get('parent_ref') else None

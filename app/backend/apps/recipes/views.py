@@ -117,7 +117,7 @@ def apply_recipe_filters(qs, params, user=None):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
-    queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
+    queryset = Recipe.objects.select_related('region', 'author', 'cultural_context').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
         'dietary_tags', 'event_tags', 'religions',
         'heritage_memberships__heritage_group',
@@ -343,7 +343,6 @@ class IngredientViewSet(ModeratedLookupViewSet):
         if self.action == 'substitutes':
             return [permissions.AllowAny()]
         return super().get_permissions()
-
     @action(detail=True, methods=['get'], url_path='substitutes')
     def substitutes(self, request, pk=None):
         """Return categorized, ranked substitution suggestions for an approved ingredient."""
