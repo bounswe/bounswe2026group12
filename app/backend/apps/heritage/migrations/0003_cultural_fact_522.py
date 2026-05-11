@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('heritage', '0001_initial'),
+        ('heritage', '0002_heritage_journey_step_511'),
         ('recipes', '0019_ingredient_checkoff_529'),
     ]
 
