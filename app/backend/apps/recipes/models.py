@@ -134,6 +134,12 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)
     video = models.FileField(upload_to='recipes/videos/', null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='recipes')
+    # Optional per-recipe map coordinates (#662). Recipes without coordinates
+    # are valid; they surface in the "unlocated" list of the zoom-to-region view
+    # (#464). Region map bounds reuse the existing Region.bbox_* fields above
+    # (Option A from #662); no new Region field is needed here.
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
