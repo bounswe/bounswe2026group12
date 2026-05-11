@@ -8,13 +8,3 @@ export async function fetchSubstitutes(ingredientId, ingredientName) {
   const response = await apiClient.get(`/api/ingredients/${ingredientId}/substitutes/`);
   return response.data;
 }
-
-export async function checkIngredient(recipeId, ingredientId) {
-  if (USE_MOCK) return;
-  await apiClient.post(`/api/recipes/${recipeId}/check-ingredient/`, { ingredient: ingredientId });
-}
-
-export async function uncheckIngredient(recipeId, ingredientId) {
-  if (USE_MOCK) return;
-  await apiClient.delete(`/api/recipes/${recipeId}/check-ingredient/${ingredientId}/`);
-}
