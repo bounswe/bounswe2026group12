@@ -125,7 +125,6 @@ export default function RecipeDetailPage() {
   if (!recipe) return null;
 
   const isAuthor = user && user.id === recipe.author;
-  const authorContactable = recipe.author_is_contactable ?? recipe.author_contactable ?? true;
   const regionName = regions.find((r) => r.id === recipe.region)?.name;
 
   const hasConverted = recipe.ingredients.some((ri) => ri.converted_amount);
@@ -176,23 +175,17 @@ export default function RecipeDetailPage() {
             <p className="recipe-detail-error" role="alert">{deleteError}</p>
           )}
           {user && !isAuthor && recipe.author_username && (
-            authorContactable ? (
-              <button
-                className="btn btn-outline btn-sm"
-                onClick={() =>
-                  navigate(
-                    `/inbox?compose=true&to=${recipe.author}&toUsername=${recipe.author_username}` +
-                    `&recipeId=${recipe.id}&recipeTitle=${encodeURIComponent(recipe.title)}`
-                  )
-                }
-              >
-                Message @{recipe.author_username}
-              </button>
-            ) : (
-              <button className="btn btn-outline btn-sm" disabled>
-                Messaging disabled by author
-              </button>
-            )
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() =>
+                navigate(
+                  `/inbox?compose=true&to=${recipe.author}&toUsername=${recipe.author_username}` +
+                  `&recipeId=${recipe.id}&recipeTitle=${encodeURIComponent(recipe.title)}`
+                )
+              }
+            >
+              Message @{recipe.author_username}
+            </button>
           )}
         </div>
       </div>

@@ -159,6 +159,22 @@ describe('ThreadPage', () => {
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
+  it('surfaces an inline error alert when sendMessage rejects and preserves the draft', async () => {
+    messageService.sendMessage.mockRejectedValueOnce(new Error('network down'));
+    renderPage('42');
+
+    await screen.findByText('Hi from Alice');
+    const textarea = screen.getByPlaceholderText(/write a message/i);
+    await userEvent.type(textarea, 'will fail');
+    await userEvent.click(screen.getByRole('button', { name: /send/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent(/could not send message/i);
+    });
+    // Draft is retained so user can retry
+    expect(textarea).toHaveValue('will fail');
+  });
+
   it('calls markThreadRead with the URL threadId after messages load', async () => {
     renderPage('123');
     await screen.findByText('Hi from Alice');

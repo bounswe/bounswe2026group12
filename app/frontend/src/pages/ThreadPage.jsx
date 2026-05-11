@@ -24,6 +24,7 @@ export default function ThreadPage() {
   const [error, setError] = useState('');
   const [body, setBody] = useState('');
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -45,10 +46,13 @@ export default function ThreadPage() {
     e.preventDefault();
     if (!body.trim() || sending) return;
     setSending(true);
+    setSendError('');
     try {
       const msg = await sendMessage(threadId, body.trim());
       setMessages((prev) => [...prev, msg]);
       setBody('');
+    } catch {
+      setSendError('Could not send message.');
     } finally {
       setSending(false);
     }
@@ -108,6 +112,8 @@ export default function ThreadPage() {
         ))}
         <div ref={bottomRef} />
       </div>
+
+      {sendError && <p className="thread-send-error" role="alert">{sendError}</p>}
 
       <form className="thread-send-bar" onSubmit={handleSend}>
         <textarea

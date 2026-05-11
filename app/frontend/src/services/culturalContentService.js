@@ -1,4 +1,5 @@
 import { apiClient } from './api';
+import { fetchMapRegionContent } from './mapService';
 
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === 'true';
 
@@ -40,5 +41,10 @@ export async function fetchDailyCulturalContent() {
   const response = await apiClient.get('/api/cultural-content/daily/');
   const list = Array.isArray(response.data) ? response.data : [];
   return list.map(normalize);
+}
+
+export async function fetchRegionStories(regionId) {
+  const items = await fetchMapRegionContent(regionId);
+  return items.filter((item) => item.content_type === 'story');
 }
 

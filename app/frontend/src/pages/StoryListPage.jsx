@@ -39,7 +39,7 @@ export default function StoryListPage() {
               <h2 className="story-card-title">
                 <Link to={`/stories/${story.id}`} className="story-card-link">{story.title}</Link>
               </h2>
-              {story.region && <span className="story-card-region">{story.region}</span>}
+              {story.region_name && <span className="story-card-region">{story.region_name}</span>}
               {story.author_username && (
                 <p className="story-card-author">By {story.author_username}</p>
               )}

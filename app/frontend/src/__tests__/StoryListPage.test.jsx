@@ -6,8 +6,8 @@ import * as storyService from '../services/storyService';
 jest.mock('../services/storyService');
 
 const mockStories = [
-  { id: 1, title: "Grandma's Kitchen", author: 1, author_username: 'eren', region: 'Aegean', image: null },
-  { id: 2, title: 'Black Sea Memories', author: 2, author_username: 'ahmet', region: 'Black Sea', image: null },
+  { id: 1, title: "Grandma's Kitchen", author: 1, author_username: 'eren', region_name: 'Aegean', image: null },
+  { id: 2, title: 'Black Sea Memories', author: 2, author_username: 'ahmet', region_name: 'Black Sea', image: null },
 ];
 
 function renderPage() {
