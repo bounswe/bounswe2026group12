@@ -36,6 +36,11 @@ export async function updateMe(payload) {
   return response.data;
 }
 
+export async function logoutRequest(refreshToken) {
+  if (USE_MOCK) return;
+  await apiClient.post('/api/auth/logout/', { refresh: refreshToken });
+}
+
 export async function refreshAccessToken(refreshToken) {
   // Use raw axios (no apiClient) so we don't trigger our own response interceptor.
   const response = await axios.post(`${API}/api/auth/refresh/`, { refresh: refreshToken });

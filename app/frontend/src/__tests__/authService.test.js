@@ -6,6 +6,7 @@ import {
   fetchMe,
   updateMe,
   refreshAccessToken,
+  logoutRequest,
   getContactabilityValue,
 } from '../services/authService';
 
@@ -76,6 +77,17 @@ describe('refreshAccessToken', () => {
       { refresh: 'old-refresh' },
     );
     expect(result).toEqual({ access: 'new', refresh: 'r' });
+  });
+});
+
+describe('logoutRequest', () => {
+  it('POSTs the refresh token to /api/auth/logout/ via apiClient', async () => {
+    apiClient.post.mockResolvedValue({});
+    await logoutRequest('refresh-abc');
+    expect(apiClient.post).toHaveBeenCalledWith(
+      '/api/auth/logout/',
+      { refresh: 'refresh-abc' },
+    );
   });
 });
 

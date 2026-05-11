@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { fetchMe } from '../services/authService';
+import { fetchMe, logoutRequest } from '../services/authService';
 import { registerWebDeviceToken } from '../services/deviceTokenService';
 
 export const AuthContext = createContext(null);
@@ -53,6 +53,10 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    const currentRefresh = refreshToken;
+    if (currentRefresh) {
+      logoutRequest(currentRefresh).catch(() => {});
+    }
     setUser(null);
     setToken(null);
     setRefreshToken(null);
