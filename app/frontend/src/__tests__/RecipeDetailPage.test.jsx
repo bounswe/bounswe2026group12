@@ -6,10 +6,12 @@ import RecipeDetailPage from '../pages/RecipeDetailPage';
 import * as recipeService from '../services/recipeService';
 import * as searchService from '../services/searchService';
 import * as commentService from '../services/commentService';
+import * as checkOffService from '../services/checkOffService';
 
 jest.mock('../services/recipeService');
 jest.mock('../services/searchService');
 jest.mock('../services/commentService');
+jest.mock('../services/checkOffService');
 
 const mockRecipe = {
   id: 1,
@@ -46,6 +48,8 @@ beforeEach(() => {
     { id: 2, name: 'Mediterranean' },
   ]);
   commentService.fetchCommentsForRecipe.mockResolvedValue([]);
+  checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+  checkOffService.toggleCheckedIngredient.mockResolvedValue([]);
 });
 
 describe('RecipeDetailPage', () => {
@@ -212,6 +216,59 @@ describe('RecipeDetailPage', () => {
       expect(screen.getByText('Baklava')).toBeInTheDocument();
       expect(screen.getByText('A sweet pastry.')).toBeInTheDocument();
       confirmSpy.mockRestore();
+    });
+  });
+
+  describe('ingredient check-off persistence', () => {
+    beforeEach(() => {
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+      checkOffService.toggleCheckedIngredient.mockResolvedValue([]);
+    });
+
+    it('does not render ingredient checkboxes for anonymous users', async () => {
+      renderPage('1', null);
+      await waitFor(() => screen.getByText('Baklava'));
+      expect(screen.queryByRole('checkbox', { name: /mark .* as available/i })).not.toBeInTheDocument();
+      expect(checkOffService.fetchCheckedIngredients).not.toHaveBeenCalled();
+    });
+
+    it('fetches the canonical checked set on mount for a logged-in user', async () => {
+      // mockRecipe.ingredients[0].ingredient === 1
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([1]);
+      renderPage('1', { id: 3, username: 'eren' });
+      await waitFor(() => {
+        expect(checkOffService.fetchCheckedIngredients).toHaveBeenCalledWith('1');
+      });
+      await waitFor(() => {
+        const checkbox = screen.getByRole('checkbox', { name: /mark phyllo dough as available/i });
+        expect(checkbox).toBeChecked();
+      });
+    });
+
+    it('optimistically toggles and reconciles with the canonical list from the server', async () => {
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+      checkOffService.toggleCheckedIngredient.mockResolvedValue([1]);
+      renderPage('1', { id: 3, username: 'eren' });
+      const checkbox = await screen.findByRole('checkbox', { name: /mark phyllo dough as available/i });
+      expect(checkbox).not.toBeChecked();
+      await userEvent.click(checkbox);
+      await waitFor(() => {
+        expect(checkOffService.toggleCheckedIngredient).toHaveBeenCalledWith('1', 1, true);
+      });
+      await waitFor(() => {
+        expect(checkbox).toBeChecked();
+      });
+    });
+
+    it('reverts the optimistic toggle when the server rejects it', async () => {
+      checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
+      checkOffService.toggleCheckedIngredient.mockRejectedValue(new Error('500'));
+      renderPage('1', { id: 3, username: 'eren' });
+      const checkbox = await screen.findByRole('checkbox', { name: /mark phyllo dough as available/i });
+      await userEvent.click(checkbox);
+      await waitFor(() => {
+        expect(checkbox).not.toBeChecked();
+      });
     });
   });
 });

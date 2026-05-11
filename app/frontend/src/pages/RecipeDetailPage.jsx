@@ -3,7 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecipe, deleteRecipe } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
-import { fetchSubstitutes, checkIngredient, uncheckIngredient } from '../services/ingredientService';
+import { fetchSubstitutes } from '../services/ingredientService';
+import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import './RecipeDetailPage.css';
 
@@ -51,19 +52,37 @@ export default function RecipeDetailPage() {
     return () => { cancelled = true; };
   }, [id]);
 
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    fetchCheckedIngredients(id)
+      .then((ids) => { if (!cancelled) setChecked(new Set(ids)); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [user, id]);
+
   const toggleCheck = useCallback(async (ingredientId) => {
-    const next = new Set(checked);
-    if (next.has(ingredientId)) {
-      next.delete(ingredientId);
-      await uncheckIngredient(id, ingredientId).catch(() => {});
-    } else {
-      next.add(ingredientId);
-      await checkIngredient(id, ingredientId).catch(() => {});
+    if (!user) return;
+    const wasChecked = checked.has(ingredientId);
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (wasChecked) next.delete(ingredientId);
+      else next.add(ingredientId);
+      return next;
+    });
+    if (!wasChecked && openSubPanel === ingredientId) setOpenSubPanel(null);
+    try {
+      const canonical = await toggleCheckedIngredient(id, ingredientId, !wasChecked);
+      setChecked(new Set(canonical));
+    } catch {
+      setChecked((prev) => {
+        const next = new Set(prev);
+        if (wasChecked) next.add(ingredientId);
+        else next.delete(ingredientId);
+        return next;
+      });
     }
-    setChecked(next);
-    // Close sub panel if ingredient gets checked
-    if (openSubPanel === ingredientId) setOpenSubPanel(null);
-  }, [checked, id, openSubPanel]);
+  }, [checked, id, openSubPanel, user]);
 
   const openSub = useCallback(async (ingredientId, ingredientName) => {
     if (openSubPanel === ingredientId) {
