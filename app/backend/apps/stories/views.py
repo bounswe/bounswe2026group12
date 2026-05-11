@@ -8,6 +8,7 @@ from apps.common.ids import is_ulid
 from apps.common.permissions import IsAuthorOrReadOnly
 from apps.common.pagination import StandardResultsSetPagination
 from apps.common.personalization import rank_items, score_story, has_profile_terms
+from apps.recipes.views import apply_content_filters
 from .models import Story
 from .serializers import StorySerializer
 
@@ -42,7 +43,10 @@ class StoryViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             if not self.request.user.is_authenticated:
                 qs = qs.filter(is_published=True)
+        
         if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params)
+            
             story_type = self.request.query_params.get('story_type')
             if story_type is not None:
                 valid_values = {choice for choice, _ in Story.StoryType.choices}
