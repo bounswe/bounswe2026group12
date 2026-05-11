@@ -6929,21 +6929,15 @@
           },
           {
             "order": 4,
-            "location": "Greece and the Balkans",
+            "location": "Greece, the Balkans, and the Levant",
             "era": "Post-Ottoman (19th–20th c.)",
-            "story": "Greek dolmadakia emerged with lemon-egg sauce, while Balkan versions favoured sauerkraut leaves and smoked meat. Each culture embraced the technique as its own ancient tradition."
+            "story": "Greek dolmadakia arrived with a lemon-egg sauce, Balkan cooks turned to sauerkraut leaves and smoked meat, and Lebanese and Syrian kitchens folded in pomegranate molasses and spiced lamb. Each branch came to be claimed as a local invention rather than an Ottoman inheritance."
           },
           {
             "order": 5,
-            "location": "Levant",
-            "era": "Post-Ottoman (19th–20th c.)",
-            "story": "Lebanese and Syrian cooks added pomegranate molasses and spiced lamb, creating a distinctly Levantine branch noted for its tartness and deep colour."
-          },
-          {
-            "order": 6,
             "location": "Sweden",
             "era": "18th century",
-            "story": "King Charles XII returned from Ottoman exile in 1714 bringing the concept of stuffed cabbage leaves. Kåldolmar became a Swedish staple, served with lingonberry jam — a culinary bridge between two distant empires."
+            "story": "King Charles XII returned from Ottoman exile in 1714 with the idea of stuffed cabbage leaves. Kåldolmar became a Swedish staple, served with lingonberry jam, a culinary bridge between two distant empires."
           }
         ],
         "cultural_facts": [
@@ -7002,6 +6996,12 @@
             "location": "Eastern Europe",
             "era": "Medieval (13th–16th c.)",
             "story": "Pierogi emerged in Poland and Ukraine, likely through eastern trade and migration. Potato and cheese fillings replaced meat as the region's signature variation, and the dumpling became embedded in Christmas Eve ritual."
+          },
+          {
+            "order": 5,
+            "location": "Japan",
+            "era": "Modern (20th c.)",
+            "story": "Soldiers and settlers returning from Manchuria after the Second World War carried jiaozi home, where it was reworked into gyoza: thinner skins, a garlic-forward filling, and a crisp pan-fried base. The dumpling had travelled the Silk Road in both directions."
           }
         ],
         "cultural_facts": [
@@ -7047,6 +7047,18 @@
             "location": "Japan",
             "era": "Asuka period (6th–8th c.)",
             "story": "Buddhist monks brought soybean fermentation techniques from China. Japanese craftspeople refined the process into miso, developing regional varieties across the archipelago, from white Kyoto miso to rich red Sendai miso."
+          },
+          {
+            "order": 4,
+            "location": "Indonesia",
+            "era": "Documented 19th c., older in oral tradition",
+            "story": "On Java, soybeans bound by a white mat of Rhizopus mould became tempeh, a dense, sliceable protein eaten daily across the archipelago. It spread through Indonesian home kitchens long before the West learned to call it a superfood."
+          },
+          {
+            "order": 5,
+            "location": "Worldwide",
+            "era": "21st century",
+            "story": "A global fermentation revival put kimchi, miso, kombucha, and sourdough starters on restaurant menus and kitchen counters far from their origins. Old techniques of patience found a new audience hungry for living food."
           }
         ],
         "cultural_facts": [
@@ -7091,6 +7103,18 @@
             "location": "Sweden",
             "era": "18th century",
             "story": "King Charles XII tasted köfte during his Ottoman exile of 1709–1714 and brought the concept home. Swedish cooks replaced bulgur with breadcrumbs, added cream and allspice, and shaped the mixture into smaller balls. Köttbullar entered the national canon alongside kåldolmar."
+          },
+          {
+            "order": 4,
+            "location": "Greece",
+            "era": "Post-Ottoman (19th–20th c.)",
+            "story": "Greek keftedes split from the Ottoman table after independence: bound with bread soaked in wine or ouzo, brightened with mint and oregano, and often fried rather than grilled. The meatball stayed on the Greek table long after the empire that introduced it had gone."
+          },
+          {
+            "order": 5,
+            "location": "The Balkans",
+            "era": "Modern",
+            "story": "Across the former Ottoman Balkans the form survives as ćevapi: small fingers of minced beef and lamb grilled over charcoal and served with flatbread, raw onion, and ajvar. Bosnia, Serbia, and Croatia each insist their version is the original."
           }
         ],
         "cultural_facts": [
