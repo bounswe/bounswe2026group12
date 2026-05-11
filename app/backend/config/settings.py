@@ -128,9 +128,23 @@ REST_FRAMEWORK = {
 
 # JWT Settings
 from datetime import timedelta
+
+# Session contract (#393 / #TD-02), shared by the web and mobile clients:
+#   - Access token lifetime: 60 minutes. Sent as `Authorization: Bearer <access>`.
+#   - Refresh token lifetime: 90 days.
+#   - Refresh tokens rotate: every successful POST to `/api/auth/token/refresh/`
+#     (alias `/api/auth/refresh/`) returns a new access AND a new refresh token.
+#   - The old refresh token is blacklisted on rotation, so reusing it returns
+#     401 with `{"code": "token_not_valid"}`. The same applies after logout
+#     (`POST /api/auth/logout/`, which blacklists the supplied refresh token).
+#   The rotate-and-blacklist behaviour is also enforced explicitly by
+#   apps/users/views.py:TokenRefreshView; these flags keep SimpleJWT consistent
+#   with it. `token_blacklist` must stay in INSTALLED_APPS for blacklisting to work.
+# Clients that depend on these exact values:
+#   - app/mobile/src/services/httpClient.ts (refresh-and-retry interceptor)
+# Lifecycle tests live in apps/users/tests_session.py. Do not change the numbers
+# below without updating httpClient.ts and stating the reason.
 SIMPLE_JWT = {
-    # Mobile client relies on these exact lifetimes for its refresh-and-retry logic.
-    # Do not change without updating app/mobile/src/services/httpClient.ts accordingly.
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,          # Each refresh call issues a new refresh token
