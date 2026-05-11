@@ -22,6 +22,7 @@ import ProfilePage from './pages/ProfilePage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
 import EventDetailPage from './pages/EventDetailPage';
+import AccountPage from './pages/AccountPage';
 import ModerationPage from './pages/ModerationPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -114,6 +115,10 @@ export default function App() {
           <Route
             path="/profile"
             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
+          />
+          <Route
+            path="/account"
+            element={<ProtectedRoute><AccountPage /></ProtectedRoute>}
           />
           <Route
             path="/admin/moderation"

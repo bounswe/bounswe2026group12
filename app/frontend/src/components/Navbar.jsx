@@ -84,6 +84,13 @@ export default function Navbar() {
                       Profile
                     </Link>
                     <Link
+                      to="/account"
+                      className="navbar-dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      My Account
+                    </Link>
+                    <Link
                       to="/recipes/new"
                       className="navbar-dropdown-item"
                       onClick={() => setMenuOpen(false)}
