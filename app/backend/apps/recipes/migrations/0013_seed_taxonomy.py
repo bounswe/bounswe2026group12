@@ -10,7 +10,7 @@ def seed_taxonomy(apps, schema_editor):
 
     events = ['Wedding', 'Funeral', 'Graduation', 'Birthday', 'Anniversary', 'Religious Holiday']
     diets = ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Gluten-Free', 'Dairy-Free']
-    religions = ['Islam', 'Christianity', 'Judaism', 'Hinduism', 'Buddhism']
+    religions = ['Islam', 'Christianity', 'Judaism', 'Hinduism', 'Buddhism', 'Secular/None']
 
     for name in events:
         EventTag.objects.get_or_create(name=name, defaults={'is_approved': True})
@@ -26,7 +26,7 @@ def clear_taxonomy(apps, schema_editor):
 
     EventTag.objects.filter(name__in=['Wedding', 'Funeral', 'Graduation', 'Birthday', 'Anniversary', 'Religious Holiday']).delete()
     DietaryTag.objects.filter(name__in=['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Gluten-Free', 'Dairy-Free']).delete()
-    Religion.objects.filter(name__in=['Islam', 'Christianity', 'Judaism', 'Hinduism', 'Buddhism']).delete()
+    Religion.objects.filter(name__in=['Islam', 'Christianity', 'Judaism', 'Hinduism', 'Buddhism', 'Secular/None']).delete()
 
 class Migration(migrations.Migration):
 

@@ -8,7 +8,7 @@ def remove_secular_none(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("recipes", "0018_ingredient_unit_dietary_tag_audit_fields_361"),
+        ("recipes", "0020_recipe_heritage_fields_585"),
     ]
     operations = [
         migrations.RunPython(remove_secular_none, migrations.RunPython.noop),
