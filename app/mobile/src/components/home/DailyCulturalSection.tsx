@@ -61,7 +61,20 @@ export function DailyCulturalSection({ items }: Props) {
             >
               <View style={styles.kindRow}>
                 <Text style={styles.kindLabel}>{KIND_LABEL[item.kind]}</Text>
-                {item.region ? <Text style={styles.region}>{item.region}</Text> : null}
+                {item.region ? (
+                  <Pressable
+                    onPress={(e) => {
+                      e.stopPropagation?.();
+                      navigation.navigate('Search', { region: item.region });
+                    }}
+                    style={({ pressed }) => [styles.regionPill, pressed && { opacity: 0.85 }]}
+                    accessibilityRole="link"
+                    accessibilityLabel={`Browse ${item.region} content`}
+                    hitSlop={10}
+                  >
+                    <Text style={styles.regionPillText}>{item.region}</Text>
+                  </Pressable>
+                ) : null}
               </View>
               <Text style={styles.title} numberOfLines={2}>
                 {item.title}
@@ -142,7 +155,15 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
-  region: { fontSize: 11, color: tokens.colors.textMuted, fontWeight: '700' },
+  regionPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  regionPillText: { fontSize: 11, color: tokens.colors.text, fontWeight: '800', letterSpacing: 0.2 },
   title: {
     fontSize: 16,
     fontWeight: '800',

@@ -249,11 +249,28 @@ export default function HomeScreen({ navigation }: Props) {
                       </Text>
                     </Pressable>
                   ) : null}
-                  <View style={styles.tag}>
-                    <Text style={styles.tagText} numberOfLines={1}>
-                      {regionName ?? 'Recipe'}
-                    </Text>
-                  </View>
+                  {regionName ? (
+                    <Pressable
+                      onPress={(e) => {
+                        e.stopPropagation?.();
+                        navigation.navigate('Search', { region: regionName });
+                      }}
+                      style={({ pressed }) => [styles.tag, pressed && styles.pressed]}
+                      accessibilityRole="link"
+                      accessibilityLabel={`Browse ${regionName} recipes`}
+                      hitSlop={10}
+                    >
+                      <Text style={styles.tagText} numberOfLines={1}>
+                        {regionName}
+                      </Text>
+                    </Pressable>
+                  ) : (
+                    <View style={styles.tag}>
+                      <Text style={styles.tagText} numberOfLines={1}>
+                        Recipe
+                      </Text>
+                    </View>
+                  )}
                   <RankReasonBadge reason={item.rank_reason} style={styles.recipeBadge} />
                 </Pressable>
               );
