@@ -157,4 +157,22 @@ export const recipeFormStyles = StyleSheet.create({
     marginBottom: 8,
   },
   summaryLine: { fontSize: 15, color: tokens.colors.text, marginBottom: 4 },
+  authGate: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
+    gap: 14,
+  },
+  authGateHeading: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    fontFamily: tokens.typography.display.fontFamily,
+  },
+  authGateBody: {
+    fontSize: 15,
+    color: tokens.colors.textMuted,
+    lineHeight: 22,
+    marginBottom: 8,
+  },
 });
