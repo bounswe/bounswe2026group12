@@ -293,3 +293,26 @@ describe('RecipeDetailPage', () => {
     });
   });
 });
+
+// — Heritage badge (#500) —
+describe('RecipeDetailPage heritage badge', () => {
+  it('renders the heritage badge when recipe.heritage_group is present', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      heritage_group: { id: 1, name: 'Sarma' },
+    });
+    renderPage();
+    const link = await screen.findByRole('link', { name: /heritage: sarma/i });
+    expect(link).toHaveAttribute('href', '/heritage/1');
+  });
+
+  it('renders no heritage badge when recipe.heritage_group is null', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      heritage_group: null,
+    });
+    renderPage();
+    await screen.findByText('Baklava');
+    expect(screen.queryByText(/heritage:/i)).not.toBeInTheDocument();
+  });
+});
