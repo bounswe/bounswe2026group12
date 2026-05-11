@@ -1,8 +1,14 @@
 from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution, IngredientRoute, EndangeredNote,
+    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext,
+    IngredientRoute, EndangeredNote,
 )
+
+class RecipeCulturalContextInline(admin.StackedInline):
+    model = RecipeCulturalContext
+    extra = 0
+    can_delete = True
 
 
 class EndangeredNoteInline(admin.TabularInline):
@@ -14,7 +20,7 @@ class EndangeredNoteInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'created_at', 'is_published', 'heritage_status')
     list_filter = ('heritage_status', 'is_published')
-    inlines = [EndangeredNoteInline]
+    inlines = [RecipeCulturalContextInline, EndangeredNoteInline]
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
