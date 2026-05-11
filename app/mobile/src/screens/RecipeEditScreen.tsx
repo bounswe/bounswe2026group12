@@ -201,9 +201,24 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     });
 
     void (async () => {
+      // Each PATCH step is independent. We don't roll back a successful step
+      // when a later one fails — that would re-PATCH on retry and clobber
+      // server state needlessly. The user gets a toast that names which
+      // piece didn't save so they know what to fix.
+      let jsonOk = false;
+      let imageFailed = false;
+      let videoFailed = false;
       try {
         await patchRecipeJson(id, jsonBody);
-        if (localImage) {
+        jsonOk = true;
+      } catch {
+        showToast('Could not save recipe changes. Please try again.', 'error');
+        setSubmitting(false);
+        return;
+      }
+
+      if (localImage) {
+        try {
           await updateRecipeById(
             id,
             buildRecipeImageOnlyFormData({
@@ -212,20 +227,38 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
               type: localImage.mimeType,
             }),
           );
+          setLocalImage(null);
+        } catch {
+          imageFailed = true;
         }
-        if (localVideo) {
+      }
+
+      if (localVideo) {
+        try {
           await updateRecipeById(id, buildRecipeVideoOnlyFormData(localVideo));
+          setLocalVideo(null);
+        } catch {
+          videoFailed = true;
         }
+      }
+
+      if (imageFailed && videoFailed) {
+        showToast('Recipe saved — but image and video failed to upload.', 'error');
+      } else if (imageFailed) {
+        showToast('Recipe saved — but image upload failed.', 'error');
+      } else if (videoFailed) {
+        showToast('Recipe saved — but video upload failed.', 'error');
+      } else {
         showToast('Recipe updated!', 'success');
+      }
+
+      if (jsonOk) {
         navTimerRef.current = setTimeout(() => {
           navTimerRef.current = null;
           navigation.navigate('RecipeDetail', { id });
         }, 1500);
-      } catch {
-        showToast('Failed to save changes. Please try again.', 'error');
-      } finally {
-        setSubmitting(false);
       }
+      setSubmitting(false);
     })();
   }
 
