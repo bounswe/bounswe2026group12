@@ -23,4 +23,6 @@ export type RecipeDetail = {
   qa_enabled?: boolean;
   rank_score?: number;
   rank_reason?: string | null;
+  /** Heritage group surfaced by backend serializer when the recipe is grouped. */
+  heritage_group?: { id: number; name: string } | null;
 };
