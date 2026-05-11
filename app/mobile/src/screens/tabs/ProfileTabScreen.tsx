@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
   messagesBtnText: { color: tokens.colors.surfaceDark, fontSize: 16, fontWeight: '800' },
   culturalBtn: { backgroundColor: '#C8E5EB' },
   culturalBtnText: { color: tokens.colors.surfaceDark, fontSize: 16, fontWeight: '800' },
-  logoutBtn: { backgroundColor: tokens.colors.error },
-  logoutBtnText: { color: tokens.colors.textOnDark, fontSize: 16, fontWeight: '800' },
+  logoutBtn: { backgroundColor: '#FC6C85' },
+  logoutBtnText: { color: tokens.colors.surfaceDark, fontSize: 16, fontWeight: '800' },
   registerBtn: {
     flex: 1,
     backgroundColor: '#EFBF04',
