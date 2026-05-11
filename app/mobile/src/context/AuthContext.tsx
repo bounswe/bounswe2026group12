@@ -7,9 +7,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { logoutRequest } from '../services/authService';
 import type { AuthUser } from '../services/mockAuthService';
 
 const TOKEN_KEY = 'token';
+const REFRESH_KEY = 'refresh';
 const USER_KEY = 'user';
 
 export type AuthContextValue = {
@@ -18,7 +20,7 @@ export type AuthContextValue = {
   /** Derived session state (mirrors web usage of token presence). */
   isAuthenticated: boolean;
   isReady: boolean;
-  login: (userData: AuthUser, accessToken: string) => Promise<void>;
+  login: (userData: AuthUser, accessToken: string, refreshToken?: string | null) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: AuthUser) => Promise<void>;
 };
@@ -52,19 +54,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(async (userData: AuthUser, accessToken: string) => {
-    setUser(userData);
-    setToken(accessToken);
-    await AsyncStorage.multiSet([
-      [TOKEN_KEY, accessToken],
-      [USER_KEY, JSON.stringify(userData)],
-    ]);
-  }, []);
+  const login = useCallback(
+    async (userData: AuthUser, accessToken: string, refreshToken?: string | null) => {
+      setUser(userData);
+      setToken(accessToken);
+      const entries: [string, string][] = [
+        [TOKEN_KEY, accessToken],
+        [USER_KEY, JSON.stringify(userData)],
+      ];
+      if (refreshToken) entries.push([REFRESH_KEY, refreshToken]);
+      await AsyncStorage.multiSet(entries);
+      if (!refreshToken) {
+        // Older sessions may have a stale refresh from a previous login.
+        await AsyncStorage.removeItem(REFRESH_KEY);
+      }
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
+    // Best-effort: blacklist the refresh on the backend so a leaked access
+    // token can't be paired with a refresh to mint new sessions. Local
+    // logout still happens even if the request fails.
+    try {
+      const refresh = await AsyncStorage.getItem(REFRESH_KEY);
+      if (refresh) {
+        await logoutRequest(refresh);
+      }
+    } catch {
+      // ignore — local logout below will still happen
+    }
     setUser(null);
     setToken(null);
-    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
+    await AsyncStorage.multiRemove([TOKEN_KEY, REFRESH_KEY, USER_KEY]);
   }, []);
 
   const updateUser = useCallback(async (userData: AuthUser) => {

@@ -2,6 +2,21 @@ import type { AuthSuccess, AuthUser } from './mockAuthService';
 import { apiPatchJson, apiPostJson } from './httpClient';
 
 /**
+ * Best-effort server-side logout: blacklists the refresh token so a leaked
+ * access token can't be paired with the refresh to mint new sessions.
+ * Returns true on success, false on any failure — callers should still clear
+ * local auth state either way.
+ */
+export async function logoutRequest(refreshToken: string): Promise<boolean> {
+  try {
+    await apiPostJson<unknown>('/api/auth/logout/', { refresh: refreshToken });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Real backend auth service.
  * Mirrors web `authService.js` but uses the mobile fetch-based client.
  *

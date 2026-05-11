@@ -41,7 +41,7 @@ export default function RegisterScreen({ navigation }: Props) {
     setSubmitting(true);
     try {
       const data = await registerRequest(username, email, password);
-      await login(data.user, data.access);
+      await login(data.user, data.access, data.refresh);
       navigation.dispatch(
         CommonActions.reset({
           index: 1,

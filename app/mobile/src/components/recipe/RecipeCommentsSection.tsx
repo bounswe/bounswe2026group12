@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import {
   deleteComment,
   fetchCommentsForRecipe,
@@ -41,6 +42,7 @@ function formatTime(iso: string): string {
 
 export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
   const { user, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -99,7 +101,12 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
         onPress: async () => {
           try {
             await deleteComment(id);
-            setComments((prev) => prev.filter((c) => c.id !== id && c.parent_comment !== id));
+            // Only drop the target comment. The backend doesn't cascade to
+            // replies, so removing them from local state too would create a
+            // mirage — they'd vanish from the UI and reappear on the next
+            // reload. Replies remain visible (orphaned) until backend cascade
+            // lands or they're individually deleted.
+            setComments((prev) => prev.filter((c) => c.id !== id));
           } catch (e) {
             Alert.alert('Delete failed', e instanceof Error ? e.message : 'Try again.');
           }
@@ -126,6 +133,7 @@ export function RecipeCommentsSection({ recipeId, qaEnabled }: Props) {
           c.id === id ? { ...c, has_voted: target.has_voted, helpful_count: target.helpful_count } : c,
         ),
       );
+      showToast('Could not save your vote. Please try again.', 'error');
     } finally {
       setVotePendingIds((prev) => prev.filter((x) => x !== id));
     }
