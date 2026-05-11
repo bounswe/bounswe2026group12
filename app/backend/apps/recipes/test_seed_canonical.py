@@ -1,11 +1,13 @@
 import json
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.contrib.auth import get_user_model
+from PIL import Image
 
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, Unit,
@@ -213,3 +215,65 @@ class SeedCanonicalCommandTest(TestCase):
         self._run()
         user = User.objects.get(username='testuser1')
         self.assertTrue(user.check_password('StrongPassword123!'))
+
+    def test_attaches_image_to_recipe_when_file_exists(self):
+        """Seeder attaches image from fixtures/media/recipes/ when image field is present."""
+        fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        fixture_data['recipes'][0]['image'] = 'test_recipe.jpg'
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(fixture_data, f)
+
+        media_dir = Path(self.fixture_path).parent / 'fixtures' / 'media' / 'recipes'
+        media_dir.mkdir(parents=True, exist_ok=True)
+        img_path = media_dir / 'test_recipe.jpg'
+        from PIL import Image
+        img = Image.new('RGB', (2, 2), color='red')
+        img.save(str(img_path), 'JPEG')
+
+        from unittest.mock import patch
+        with patch('apps.recipes.management.commands.seed_canonical.MEDIA_DIR',
+                   Path(self.fixture_path).parent / 'fixtures' / 'media'):
+            self._run()
+
+        recipe = Recipe.objects.get(title='Test Recipe One')
+        self.assertTrue(recipe.image)
+        self.assertIn('test_recipe', recipe.image.name)
+
+    def test_skips_image_when_file_missing(self):
+        """Seeder warns but continues when image file doesn't exist."""
+        fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        fixture_data['recipes'][0]['image'] = 'nonexistent.jpg'
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(fixture_data, f)
+        self._run()
+        recipe = Recipe.objects.get(title='Test Recipe One')
+        self.assertFalse(recipe.image)
+
+    def test_recipe_without_image_field_has_no_image(self):
+        """Recipes without an image field in the fixture get no image."""
+        self._run()
+        recipe = Recipe.objects.get(title='Test Recipe One')
+        self.assertFalse(recipe.image)
+
+    def test_attaches_image_to_story_when_file_exists(self):
+        """Seeder attaches image from fixtures/media/stories/ when image field is present."""
+        fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        fixture_data['stories'][0]['image'] = 'test_story.jpg'
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(fixture_data, f)
+
+        media_dir = Path(self.fixture_path).parent / 'fixtures' / 'media' / 'stories'
+        media_dir.mkdir(parents=True, exist_ok=True)
+        img_path = media_dir / 'test_story.jpg'
+        from PIL import Image
+        img = Image.new('RGB', (2, 2), color='blue')
+        img.save(str(img_path), 'JPEG')
+
+        from unittest.mock import patch
+        with patch('apps.recipes.management.commands.seed_canonical.MEDIA_DIR',
+                   Path(self.fixture_path).parent / 'fixtures' / 'media'):
+            self._run()
+
+        story = Story.objects.get(title='Test Story')
+        self.assertTrue(story.image)
+        self.assertIn('test_story', story.image.name)
