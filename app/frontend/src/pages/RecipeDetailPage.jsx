@@ -170,7 +170,7 @@ export default function RecipeDetailPage() {
           {regionName && <span className="recipe-region-tag">{regionName}</span>}
           <h1 className="recipe-title">{recipe.title}</h1>
           {recipe.author_username && (
-            <p className="recipe-author">By <Link to={`/users/${recipe.author_username}`} className="recipe-author-link">@{recipe.author_username}</Link></p>
+            <p className="recipe-author"><Link to={`/users/${recipe.author_username}`} className="recipe-author-link">By {recipe.author_username}</Link></p>
           )}
         </div>
         <div className="recipe-detail-actions">

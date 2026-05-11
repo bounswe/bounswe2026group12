@@ -106,7 +106,7 @@ export default function StoryDetailPage() {
       )}
 
       {(story.author?.username || story.author_username) && (
-        <p className="story-author">By <Link to={`/users/${story.author?.username || story.author_username}`} className="story-author-link">@{story.author?.username || story.author_username}</Link></p>
+        <p className="story-author"><Link to={`/users/${story.author?.username || story.author_username}`} className="story-author-link">By {story.author?.username || story.author_username}</Link></p>
       )}
 
       {story.image && (
