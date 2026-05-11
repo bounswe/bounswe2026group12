@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0021_remove_secular_religion'),
+        ('recipes', '0022_zoom_region_coords_662'),
     ]
 
     operations = [
