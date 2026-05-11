@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Unit, Region, RecipeIngredient, Comment,
-    DietaryTag, EventTag, IngredientSubstitution, RecipeCulturalContext,
-    EndangeredNote, IngredientRoute,
+    DietaryTag, EventTag, IngredientSubstitution, EndangeredNote,
+    RecipeCulturalContext, IngredientRoute
 )
 
 class RecipeCulturalContextInline(admin.StackedInline):

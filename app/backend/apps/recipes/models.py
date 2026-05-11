@@ -316,7 +316,6 @@ class Vote(models.Model):
     def __str__(self):
         return f"Vote by {self.user.username} on Comment {self.comment.id}"
 
-
 class RecipeCulturalContext(models.Model):
     """Beyond the Recipe, seven optional narrative notes about a dish (#521).
 
@@ -361,3 +360,24 @@ class IngredientRoute(models.Model):
 
     def __str__(self):
         return f"Migration route for {self.ingredient.name}"
+
+
+class Bookmark(models.Model):
+    """User's bookmarked/favorite recipes (#706)."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'recipe')
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.recipe.title}"

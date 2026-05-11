@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
-    EndangeredNote, RecipeCulturalContext, IngredientRoute,
+    EndangeredNote, RecipeCulturalContext, IngredientRoute, Bookmark
 )
 
 
@@ -189,13 +189,6 @@ class EndangeredNoteSerializer(serializers.ModelSerializer):
         fields = ['id', 'recipe', 'text', 'source_url', 'created_at']
         read_only_fields = ['id', 'recipe', 'created_at']
 
-class RecipeCulturalContextSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RecipeCulturalContext
-        fields = [
-            'identity_note', 'memory_note', 'migration_note', 'ritual_note',
-            'commensality_note', 'terroir_note', 'craft_note'
-        ]
 
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
@@ -218,12 +211,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Religion.objects.all(), source='religions',
         many=True, write_only=True, required=False,
     )
-    cultural_context = CulturalContextSerializer(required=False, allow_null=True)
     story_count = serializers.IntegerField(read_only=True, default=0)
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
     heritage_group = serializers.SerializerMethodField()
-    cultural_context = RecipeCulturalContextSerializer(required=False, allow_null=True)
+    cultural_context = CulturalContextSerializer(required=False, allow_null=True)
+    is_bookmarked = serializers.BooleanField(read_only=True, allow_null=True)
+    bookmark_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = Recipe
@@ -240,6 +234,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'story_count',
             'rank_score', 'rank_reason',
             'heritage_group', 'endangered_notes',
+            'is_bookmarked', 'bookmark_count'
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
 
