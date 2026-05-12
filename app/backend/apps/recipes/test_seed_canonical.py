@@ -24,8 +24,8 @@ User = get_user_model()
 MINIMAL_FIXTURE = {
     "users": [
         {
-            "username": "testuser1",
-            "email": "test1@example.com",
+            "username": "emily",
+            "email": "emily@example.com",
             "password": "StrongPassword123!",
             "bio": "Test user one.",
             "region": "Black Sea",
@@ -36,8 +36,8 @@ MINIMAL_FIXTURE = {
             "event_interests": []
         },
         {
-            "username": "testuser2",
-            "email": "test2@example.com",
+            "username": "fatma",
+            "email": "fatma@example.com",
             "password": "StrongPassword123!",
             "bio": "Test user two.",
             "region": "Aegean",
@@ -52,7 +52,7 @@ MINIMAL_FIXTURE = {
         {
             "title": "Test Recipe One",
             "description": "A test recipe with tags.",
-            "author": "testuser1",
+            "author": "emily",
             "region": "Black Sea",
             "is_published": True,
             "dietary_tags": ["Halal"],
@@ -66,7 +66,7 @@ MINIMAL_FIXTURE = {
         {
             "title": "Test Recipe Two",
             "description": "Another test recipe.",
-            "author": "testuser2",
+            "author": "fatma",
             "region": "Aegean",
             "is_published": True,
             "dietary_tags": ["Vegetarian"],
@@ -82,7 +82,7 @@ MINIMAL_FIXTURE = {
             "title": "Test Story",
             "summary": "A test story summary.",
             "body": "This is the body of a test story.",
-            "author": "testuser1",
+            "author": "emily",
             "region": "Black Sea",
             "language": "en",
             "is_published": True,
@@ -160,27 +160,27 @@ class SeedCanonicalCommandTest(TestCase):
         fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
         fixture_data['messaging_threads'] = [
             {
-                'participants': ['testuser1', 'testuser2'],
+                'participants': ['emily', 'fatma'],
                 'messages': [
                     {
-                        'sender': 'testuser1',
+                        'sender': 'emily',
                         'body': 'Hi, can I ask about the rice ratio?',
                         'created_at': '2026-05-09T08:00:00Z',
                     },
                     {
-                        'sender': 'testuser2',
+                        'sender': 'fatma',
                         'body': 'Sure, I usually start at one part rice to one and a half parts water.',
                         'created_at': '2026-05-09T08:05:00Z',
                     },
                     {
-                        'sender': 'testuser1',
+                        'sender': 'emily',
                         'body': 'Perfect, thank you. I will try it tonight.',
                         'created_at': '2026-05-09T08:11:00Z',
                     },
                 ],
                 'last_read_at': {
-                    'testuser1': '2026-05-09T08:11:00Z',
-                    'testuser2': '2026-05-09T08:05:00Z',
+                    'emily': '2026-05-09T08:11:00Z',
+                    'fatma': '2026-05-09T08:05:00Z',
                 },
             }
         ]
@@ -200,8 +200,8 @@ class SeedCanonicalCommandTest(TestCase):
             parse_datetime('2026-05-09T08:11:00Z'),
         )
 
-        tp1 = ThreadParticipant.objects.get(thread=thread, user__username='testuser1')
-        tp2 = ThreadParticipant.objects.get(thread=thread, user__username='testuser2')
+        tp1 = ThreadParticipant.objects.get(thread=thread, user__username='emily')
+        tp2 = ThreadParticipant.objects.get(thread=thread, user__username='fatma')
         self.assertEqual(tp1.last_read_at, parse_datetime('2026-05-09T08:11:00Z'))
         self.assertEqual(tp2.last_read_at, parse_datetime('2026-05-09T08:05:00Z'))
 
@@ -209,7 +209,7 @@ class SeedCanonicalCommandTest(TestCase):
         fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
         fixture_data['messaging_threads'] = [
             {
-                'participants': ['testuser1', 'ghost_user'],
+                'participants': ['emily', 'ghost_user'],
                 'messages': [],
             }
         ]
@@ -283,7 +283,7 @@ class SeedCanonicalCommandTest(TestCase):
 
     def test_users_can_authenticate(self):
         self._run()
-        user = User.objects.get(username='testuser1')
+        user = User.objects.get(username='emily')
         self.assertTrue(user.check_password('StrongPassword123!'))
 
     def test_attaches_image_to_recipe_when_file_exists(self):
