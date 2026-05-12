@@ -1,0 +1,80 @@
+name: Seed database
+
+# Manually-triggered seeding of the production DB. Seeding is NOT part of the
+# deploy (deploy-web.yml) — it's a deliberate, occasional operation: run this
+# once after first bring-up, and again only when seed fixtures/commands change.
+# In that case deploy first (so the rebuilt backend image carries the new
+# fixtures), then run this workflow.
+#
+# mode=full  -> runs seed_canonical (which WIPES and rebuilds users / recipes /
+#               stories / heritage / cultural content) plus all the others.
+#               Destructive — requires confirm=yes.
+# mode=safe  -> runs everything EXCEPT seed_canonical. All of those are
+#               idempotent upserts; nothing is deleted.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'full = include seed_canonical (DESTRUCTIVE wipe+rebuild); safe = everything else'
+        type: choice
+        options: [safe, full]
+        default: safe
+        required: true
+      confirm:
+        description: 'Type "yes" to confirm a destructive mode=full run (ignored for mode=safe)'
+        type: string
+        default: ''
+        required: false
+
+concurrency:
+  # Don't run seeding and a deploy at the same time — a deploy recreates the
+  # backend container mid-seed.
+  group: deploy-web-main
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Guard destructive runs
+        if: ${{ inputs.mode == 'full' && inputs.confirm != 'yes' }}
+        run: |
+          echo "::error::mode=full wipes and rebuilds users/recipes/stories — re-run with confirm=yes if you really mean it."
+          exit 1
+
+      - name: Seed via SSH (docker compose exec)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          command_timeout: 30m
+          script: |
+            set -e
+            cd /root/bounswe2026group12
+            COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
+
+            if [ "${{ inputs.mode }}" = "full" ]; then
+              SEEDERS="seed_canonical seed_region_geodata seed_region_geo seed_story_coordinates seed_cultural_facts seed_cultural_content seed_ingredient_densities seed_ingredient_routes"
+            else
+              SEEDERS="seed_region_geodata seed_region_geo seed_story_coordinates seed_cultural_facts seed_cultural_content seed_ingredient_densities seed_ingredient_routes"
+            fi
+
+            echo "Seeding (mode=${{ inputs.mode }}): $SEEDERS"
+            for cmd in $SEEDERS; do
+              echo "==> manage.py $cmd"
+              $COMPOSE exec -T backend python manage.py "$cmd"
+            done
+
+            echo "Done. Current counts:"
+            $COMPOSE exec -T backend python manage.py shell -c "
+            from django.contrib.auth import get_user_model
+            from apps.recipes.models import Region, Recipe
+            from apps.stories.models import Story
+            from apps.heritage.models import HeritageGroup, CulturalFact
+            from apps.cultural_content.models import CulturalContent, CulturalEvent
+            U = get_user_model()
+            for n, m in [('users', U), ('regions', Region), ('recipes', Recipe), ('stories', Story), ('heritage_groups', HeritageGroup), ('cultural_facts', CulturalFact), ('cultural_content', CulturalContent), ('cultural_events', CulturalEvent)]:
+                print(f'  {n}: {m.objects.count()}')
+            "

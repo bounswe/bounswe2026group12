@@ -45,14 +45,19 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-re
 # 6. Wait for healthchecks (≤60s) and smoke
 docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 curl -fsS https://genipe.app/
+
+# 7. Seed the DB (one-time — see "Seeding" below). On a brand-new box:
+docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+  exec backend sh -c 'for c in seed_canonical seed_region_geodata seed_region_geo \
+    seed_story_coordinates seed_cultural_facts seed_cultural_content \
+    seed_ingredient_densities seed_ingredient_routes; do python manage.py "$c"; done'
 ```
 
 `db`, `backend`, and `web` should all report `(healthy)`. The backend
-entrypoint runs `migrate`, `collectstatic`, and — when `RUN_SEEDERS` is set
-(the compose default) — the idempotent `seed_*` management commands, in
-dependency order, before gunicorn starts. That whole sequence is covered by
-the backend healthcheck's 180s `start_period`, so the first start after a
-fresh DB can take a couple of minutes.
+entrypoint runs `migrate` and `collectstatic` before gunicorn starts; that's
+covered by the backend healthcheck's 40s `start_period`. Seeding is **not**
+done by the entrypoint or the deploy — it's the separate step above (and the
+"Seed database" workflow), run once after first bring-up.
 
 ## Required environment variables
 
@@ -72,7 +77,6 @@ Audited against `app/backend/config/settings.py`. Every `os.getenv` /
 | `POSTGRES_HOST` | Yes | `db` (compose service name) | Hardcoded in compose; only override outside compose |
 | `POSTGRES_PORT` | Yes | `5432` | Hardcoded in compose |
 | `REACT_APP_API_URL` | Yes (build-time) | `http://localhost` | Baked into the `web` image; set before `compose build` |
-| `RUN_SEEDERS` | No | `1` (compose) | When `1`/`true`, the backend entrypoint runs the idempotent `seed_*` commands on start; set `0` to bring the stack up against an empty DB. The bare image (outside compose) defaults to off. |
 | `AWS_STORAGE_BUCKET_NAME` | No | empty | When set, switches `DEFAULT_FILE_STORAGE` to S3Boto3Storage; otherwise the local `media_data` volume is used |
 | `AWS_S3_ENDPOINT_URL` | If S3 | empty | Required when bucket name is set |
 | `AWS_ACCESS_KEY_ID` | If S3 | empty | Required when bucket name is set |
@@ -110,13 +114,21 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100 
 
 ## Seeding
 
-The backend entrypoint (`app/backend/docker-entrypoint.sh`) runs these
-management commands, in this order, on every start when `RUN_SEEDERS` is
-truthy (the compose default):
+Seeding is a deliberate, occasional operation — **not** part of the deploy.
+`seed_canonical` *wipes and rebuilds* users / recipes / stories / heritage /
+cultural content, so running it on every deploy would destroy anything created
+on prod since the last deploy and (because `web` waits on `backend` being
+healthy) take the site down for the duration. Run seeding once after first
+bring-up, and again only when seed fixtures or commands change — in that case
+deploy first (so the rebuilt backend image carries the new fixtures), then
+seed.
+
+The commands, in dependency order:
 
 ```
 seed_canonical            # base data: regions, ingredients, recipes, stories,
                           #   heritage groups, cultural content/events, …
+                          #   (DESTRUCTIVE — wipes & rebuilds the above)
 seed_region_geodata       # built-in geo coords for known regions
 seed_region_geo           # region bbox + per-recipe map coords (fixture)
 seed_story_coordinates    # per-story map pins (needs region bbox)
@@ -126,22 +138,24 @@ seed_ingredient_densities # g/ml for unit conversions
 seed_ingredient_routes    # ingredient migration map overlays
 ```
 
-All of them are idempotent (keyed on natural keys), so rerunning on every
-container restart does not duplicate rows. A failing seeder logs a warning
-and the entrypoint continues — only `migrate` is fatal. `seed_test_db` is
-**not** in this list: it's a mock-data seeder for throwaway test DBs, not for
-prod.
+Everything except `seed_canonical` is an idempotent upsert (keyed on natural
+keys) — safe to rerun. `seed_test_db` is **not** in this list: it's a
+mock-data seeder for throwaway test DBs, not for prod.
 
-To seed a running stack manually (or to re-run after changing a fixture):
+Two ways to run it:
 
-```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml \
-  exec backend sh -c 'for c in seed_canonical seed_region_geodata seed_region_geo \
-    seed_story_coordinates seed_cultural_facts seed_cultural_content \
-    seed_ingredient_densities seed_ingredient_routes; do python manage.py "$c"; done'
-```
+1. **"Seed database" GitHub Action** (`.github/workflows/seed-db.yml`) —
+   `workflow_dispatch`. Pick `mode=safe` (everything except `seed_canonical`)
+   or `mode=full` (includes the destructive `seed_canonical`; requires
+   `confirm=yes`).
+2. **Directly on the box** (take a DB dump first — see `ops/ROLLBACK.md`):
 
-Take a DB dump first if you're touching prod (see `ops/ROLLBACK.md`).
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+     exec backend sh -c 'for c in seed_canonical seed_region_geodata seed_region_geo \
+       seed_story_coordinates seed_cultural_facts seed_cultural_content \
+       seed_ingredient_densities seed_ingredient_routes; do python manage.py "$c"; done'
+   ```
 
 ## Rollback
 
@@ -158,9 +172,8 @@ All three services report container-level health to compose:
 - `db`: `pg_isready -U $POSTGRES_USER -d $POSTGRES_DB`, 10s interval
 - `backend`: Python `urllib.request.urlopen("http://localhost:8000/admin/login/")` —
   the admin login page renders without a DB query, so this is a clean
-  liveness probe for gunicorn. 15s interval, 180s `start_period` to cover
-  migrate + collectstatic + the `seed_*` commands (gunicorn starts only after
-  the entrypoint finishes them).
+  liveness probe for gunicorn. 15s interval, 40s `start_period` to cover
+  migrate + collectstatic (gunicorn starts after the entrypoint finishes them).
 - `web`: in prod, `wget --no-check-certificate https://127.0.0.1/` (overridden
   in `docker-compose.prod.yml`); the base/dev healthcheck uses plain HTTP, but
   `nginx-prod.conf` only listens on `0.0.0.0` and `:80` redirects to https, so

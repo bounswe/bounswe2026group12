@@ -27,11 +27,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genipe_mvp_2026}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      # Run the idempotent seed_* management commands on container start (see
-      # app/backend/docker-entrypoint.sh). On by default for the compose stack
-      # so dev and prod both come up with reference + demo content; set
-      # RUN_SEEDERS=0 in .env to skip.
-      RUN_SEEDERS: ${RUN_SEEDERS:-1}
       # Optional S3-compatible object storage. Leave empty to use the local
       # media_data volume; set AWS_STORAGE_BUCKET_NAME (and the rest) in .env
       # to switch DEFAULT_FILE_STORAGE to S3Boto3Storage.
@@ -49,14 +44,13 @@ services:
     restart: unless-stopped
     # /admin/login/ renders without hitting the DB, so this is a clean
     # liveness probe for gunicorn. urlopen raises on non-2xx, exiting non-zero.
-    # start_period covers migrate + collectstatic + the seed_* commands
-    # (RUN_SEEDERS), which gunicorn only starts after.
+    # start_period covers migrate + collectstatic, which gunicorn starts after.
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/admin/login/')"]
       interval: 15s
       timeout: 5s
       retries: 3
-      start_period: 180s
+      start_period: 40s
 
   web:
     build:
