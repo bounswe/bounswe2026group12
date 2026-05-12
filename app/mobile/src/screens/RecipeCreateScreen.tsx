@@ -12,6 +12,7 @@ import {
   type AuthoringIngredientRow,
 } from '../components/recipe/recipeFormState';
 import { recipeFormStyles as styles } from '../components/recipe/recipeFormStyles';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { apiPatchFormData, apiPostJson } from '../services/httpClient';
@@ -21,6 +22,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'RecipeCreate'>;
 
 export default function RecipeCreateScreen({ navigation }: Props) {
   const { showToast } = useToast();
+  const { isAuthenticated, isReady } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [qaEnabled, setQaEnabled] = useState(true);
@@ -156,8 +158,9 @@ export default function RecipeCreateScreen({ navigation }: Props) {
     };
 
     void (async () => {
+      // Step 1 — JSON create. Failure means nothing exists, retry is safe.
+      let createdId: number | null = null;
       try {
-        // Same as web: JSON create, then multipart PATCH for video/thumbnail.
         const created = await apiPostJson<{ id: number }>('/api/recipes/', {
           title: title.trim(),
           description: payload.description,
@@ -169,10 +172,22 @@ export default function RecipeCreateScreen({ navigation }: Props) {
             unit: x.unit?.id ?? x.unit,
           })),
         });
-        if (payload.video || payload.image) {
+        createdId = created.id;
+      } catch {
+        showToast('Could not publish recipe. Please try again.', 'error');
+        setSubmitting(false);
+        return;
+      }
+
+      // Step 2 — multipart media upload. A failure here MUST NOT trigger a
+      // retry of step 1 (that creates an orphan + duplicate). We treat it as
+      // a soft failure: the recipe exists, user lands on its detail, and a
+      // toast tells them to re-upload from edit.
+      let mediaFailed = false;
+      if (payload.video || payload.image) {
+        try {
           const fd = new FormData();
           if (payload.video) {
-            // React Native file upload shape (not a web Blob).
             fd.append('video', {
               uri: payload.video.uri,
               name: payload.video.fileName ?? 'recipe-video.mp4',
@@ -186,16 +201,51 @@ export default function RecipeCreateScreen({ navigation }: Props) {
               type: payload.image.mimeType ?? 'image/jpeg',
             } as any);
           }
-          await apiPatchFormData(`/api/recipes/${created.id}/`, fd);
+          await apiPatchFormData(`/api/recipes/${createdId}/`, fd);
+        } catch {
+          mediaFailed = true;
         }
-        showToast('Recipe published!', 'success');
-        navigation.navigate('RecipeDetail', { id: String(created.id) });
-      } catch {
-        showToast('Failed to publish recipe. Please try again.', 'error');
-      } finally {
-        setSubmitting(false);
       }
+
+      if (mediaFailed) {
+        showToast('Recipe published — but media upload failed. Open it to retry from edit.', 'error');
+      } else {
+        showToast('Recipe published!', 'success');
+      }
+      setSubmitting(false);
+      navigation.navigate('RecipeDetail', { id: String(createdId) });
     })();
+  }
+
+  if (isReady && !isAuthenticated) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+        <View style={styles.authGate}>
+          <Text style={styles.authGateHeading} accessibilityRole="header">
+            Sign in to share a recipe
+          </Text>
+          <Text style={styles.authGateBody}>
+            Log in to publish recipes — your drafts, comments, and saves all live under your account.
+          </Text>
+          <Pressable
+            onPress={() => navigation.navigate('Login')}
+            style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Go to log in"
+          >
+            <Text style={styles.primaryButtonText}>Log In</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('Register')}
+            style={({ pressed }) => [styles.secondaryButton, pressed && styles.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Go to register"
+          >
+            <Text style={styles.secondaryButtonText}>Register</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (

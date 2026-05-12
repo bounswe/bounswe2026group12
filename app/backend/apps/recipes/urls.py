@@ -7,7 +7,7 @@ from .moderation_views import (
 from .views import (
     RecipeViewSet, IngredientViewSet, UnitViewSet, RegionViewSet, CommentViewSet,
     DietaryTagViewSet, EventTagViewSet, ReligionViewSet, ConvertView,
-    CheckedIngredientsView,
+    CheckedIngredientsView, IngredientRouteViewSet,
 )
 
 router = DefaultRouter()
@@ -19,6 +19,7 @@ router.register(r'comments', CommentViewSet, basename='comment')
 router.register(r'dietary-tags', DietaryTagViewSet, basename='dietary-tag')
 router.register(r'event-tags', EventTagViewSet, basename='event-tag')
 router.register(r'religions', ReligionViewSet, basename='religion')
+router.register(r'ingredient-routes', IngredientRouteViewSet, basename='ingredient-route')
 
 urlpatterns = [
     path('', include(router.urls)),

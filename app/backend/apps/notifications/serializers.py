@@ -10,9 +10,9 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = [
             'id', 'actor', 'actor_username', 'recipe', 'recipe_title',
-            'message', 'is_read', 'created_at',
+            'message', 'notification_type', 'is_read', 'created_at',
         ]
-        read_only_fields = ['actor', 'recipe', 'message', 'created_at']
+        read_only_fields = ['actor', 'recipe', 'message', 'notification_type', 'created_at']
 
 
 class DeviceTokenSerializer(serializers.ModelSerializer):

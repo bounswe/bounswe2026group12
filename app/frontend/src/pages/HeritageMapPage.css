@@ -1,0 +1,66 @@
+.heritage-map-page {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.heritage-map-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.heritage-map-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.heritage-map-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: #8C4A1C;
+  font-weight: 600;
+}
+
+.heritage-map-title {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #4A2208;
+}
+
+.heritage-map-wrap {
+  border: 1px solid #EADCBB;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.heritage-map-leaflet {
+  height: 70vh;
+  min-height: 480px;
+  width: 100%;
+}
+
+.heritage-center-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  background: #FAF1DE;
+  border: 2px solid #C4521E;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.heritage-map-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #5A3621;
+  background: #FAF7EF;
+  border: 1px dashed #EADCBB;
+  border-radius: 12px;
+}

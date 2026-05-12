@@ -2,6 +2,7 @@ import json
 from decimal import Decimal
 from pathlib import Path
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -9,14 +10,18 @@ from django.contrib.auth import get_user_model
 
 MEDIA_DIR = Path(__file__).resolve().parents[4] / 'fixtures' / 'media'
 
+from apps.cultural_content.models import CulturalContent, CulturalEvent, CulturalEventRecipe
+from apps.heritage.models import (
+    CulturalFact, HeritageGroup, HeritageGroupMembership, HeritageJourneyStep,
+)
+from apps.messaging.models import Thread, ThreadParticipant, Message
+from apps.notifications.models import Notification, DeviceToken
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, IngredientSubstitution, Unit,
-    DietaryTag, EventTag, Religion, Comment, Vote,
+    DietaryTag, EventTag, Religion, Comment, Vote, EndangeredNote,
+    RecipeCulturalContext, IngredientRoute
 )
 from apps.stories.models import Story, StoryRecipeLink, StoryComment, StoryVote
-from apps.cultural_content.models import CulturalContent
-from apps.notifications.models import Notification, DeviceToken
-from apps.messaging.models import Thread, ThreadParticipant, Message
 
 User = get_user_model()
 
@@ -41,6 +46,10 @@ class Command(BaseCommand):
         data = self._load_fixture(fixture_path)
 
         substitutions_data = data.get('ingredient_substitutions', [])
+        heritage_data = data.get('heritage', {})
+        heritage_groups = heritage_data.get('groups', [])
+        cultural_events_data = data.get('cultural_events', [])
+        ingredient_routes_data = data.get('ingredient_routes', [])
 
         if options['dry_run']:
             self.stdout.write(
@@ -50,7 +59,10 @@ class Command(BaseCommand):
                 f'{len(data.get("recipe_comments", []))} recipe comments, '
                 f'{len(data.get("story_comments", []))} story comments, '
                 f'{len(data["cultural_content"])} cultural content cards, '
-                f'{len(substitutions_data)} ingredient substitutions.'
+                f'{len(substitutions_data)} ingredient substitutions, '
+                f'{len(heritage_groups)} heritage groups, '
+                f'{len(cultural_events_data)} cultural events, '
+                f'{len(ingredient_routes_data)} ingredient routes.'
             )
             return
 
@@ -63,11 +75,21 @@ class Command(BaseCommand):
             self._seed_story_comments(data.get('story_comments', []), users, stories)
             cards = self._seed_cultural_content(data['cultural_content'])
             sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
+            heritage_stats = self._seed_heritage(heritage_data, recipes, stories)
+            event_stats = self._seed_cultural_events(cultural_events_data, recipes)
+            route_stats = self._seed_ingredient_routes(ingredient_routes_data)
 
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(users)} users, {len(recipes)} recipes, '
             f'{len(stories)} stories, {len(cards)} cultural content cards, '
-            f'{sub_created} substitutions added ({sub_skipped} already present).'
+            f'{sub_created} substitutions added ({sub_skipped} already present), '
+            f'{heritage_stats["groups"]} heritage groups '
+            f'({heritage_stats["memberships"]} memberships, '
+            f'{heritage_stats["steps"]} journey steps, '
+            f'{heritage_stats["facts"]} cultural facts), '
+            f'{event_stats["events"]} cultural events '
+            f'({event_stats["links"]} recipe links), '
+            f'{route_stats} ingredient migration routes.'
         ))
 
     def _load_fixture(self, path):
@@ -77,7 +99,15 @@ class Command(BaseCommand):
             return json.load(f)
 
     def _wipe(self):
+        # heritage
+        CulturalFact.objects.all().delete()
+        HeritageJourneyStep.objects.all().delete()
+        HeritageGroupMembership.objects.all().delete()
+        HeritageGroup.objects.all().delete()
+        # cultural_content
         CulturalContent.objects.all().delete()
+        CulturalEventRecipe.objects.all().delete()
+        CulturalEvent.objects.all().delete()
         Notification.objects.all().delete()
         DeviceToken.objects.all().delete()
         StoryVote.objects.all().delete()
@@ -87,7 +117,9 @@ class Command(BaseCommand):
         Vote.objects.all().delete()
         Comment.objects.all().delete()
         RecipeIngredient.objects.all().delete()
+        RecipeCulturalContext.objects.all().delete()
         Recipe.objects.all().delete()
+        IngredientRoute.objects.all().delete()
         Message.objects.all().delete()
         ThreadParticipant.objects.all().delete()
         Thread.objects.all().delete()
@@ -132,6 +164,9 @@ class Command(BaseCommand):
                 author=users[r['author']],
                 region=region,
                 is_published=r.get('is_published', True),
+                is_heritage=r.get('is_heritage', False),
+                heritage_status=r.get('heritage_status', 'none'),
+                heritage_notes=r.get('heritage_notes', ''),
             )
             if r.get('dietary_tags'):
                 recipe.dietary_tags.set(
@@ -150,8 +185,15 @@ class Command(BaseCommand):
                 recipe.save(update_fields=['steps'])
             for ing in r.get('ingredients', []):
                 ingredient, _ = Ingredient.objects.get_or_create(
-                    name=ing['name'], defaults={'is_approved': True},
+                    name=ing['name'],
+                    defaults={
+                        'is_approved': True,
+                        'heritage_status': ing.get('heritage_status', 'none'),
+                    },
                 )
+                if ing.get('heritage_status') and ingredient.heritage_status == 'none':
+                    ingredient.heritage_status = ing['heritage_status']
+                    ingredient.save(update_fields=['heritage_status'])
                 unit = None
                 if ing.get('unit'):
                     unit, _ = Unit.objects.get_or_create(
@@ -162,6 +204,18 @@ class Command(BaseCommand):
                     ingredient=ingredient,
                     amount=ing['amount'],
                     unit=unit,
+                )
+            if r.get('endangered_notes'):
+                for note in r['endangered_notes']:
+                    EndangeredNote.objects.create(
+                        recipe=recipe,
+                        text=note['text'],
+                        source_url=note.get('source_url', ''),
+                    )
+            if r.get('cultural_context'):
+                RecipeCulturalContext.objects.create(
+                    recipe=recipe,
+                    **r['cultural_context']
                 )
             recipes[r['title']] = recipe
             if r.get('image'):
@@ -176,7 +230,7 @@ class Command(BaseCommand):
         return recipes
 
     def _seed_stories(self, stories_data, users, recipes):
-        stories = []
+        stories = {}
         for s in stories_data:
             region = self._resolve(Region, s['region']) if s.get('region') else None
             story = Story.objects.create(
@@ -209,7 +263,7 @@ class Command(BaseCommand):
                 StoryRecipeLink.objects.create(
                     story=story, recipe=recipes[title], order=order,
                 )
-            stories.append(story)
+            stories[s['title']] = story
             if s.get('image'):
                 img_path = MEDIA_DIR / 'stories' / s['image']
                 if img_path.exists():
@@ -241,10 +295,9 @@ class Command(BaseCommand):
 
     def _seed_story_comments(self, comments_data, users, stories):
         """Seed story comments/questions with optional nested replies."""
-        story_map = {s.title: s for s in stories}
         id_map = {}
         for c in comments_data:
-            story = story_map.get(c['story'])
+            story = stories.get(c['story'])
             if not story:
                 raise CommandError(f"story_comments: story '{c['story']}' not found.")
             parent = id_map.get(c.get('parent_ref')) if c.get('parent_ref') else None
@@ -272,6 +325,118 @@ class Command(BaseCommand):
             )
             cards.append(card)
         return cards
+
+    def _seed_heritage(self, heritage_data, recipes, stories):
+        groups_data = heritage_data.get('groups', [])
+        if not groups_data:
+            return {'groups': 0, 'memberships': 0, 'steps': 0, 'facts': 0}
+
+        recipe_ct = ContentType.objects.get_for_model(Recipe)
+        story_ct = ContentType.objects.get_for_model(Story)
+
+        group_count = 0
+        membership_count = 0
+        step_count = 0
+        fact_count = 0
+
+        for g in groups_data:
+            group = HeritageGroup.objects.create(
+                name=g['name'],
+                description=g.get('description', ''),
+            )
+            group_count += 1
+
+            for title in g.get('recipe_members', []):
+                if title not in recipes:
+                    raise CommandError(
+                        f"Heritage group '{g['name']}' references recipe "
+                        f"'{title}' not found in fixture."
+                    )
+                HeritageGroupMembership.objects.create(
+                    heritage_group=group,
+                    content_type=recipe_ct,
+                    object_id=recipes[title].id,
+                )
+                membership_count += 1
+
+            for title in g.get('story_members', []):
+                if title not in stories:
+                    raise CommandError(
+                        f"Heritage group '{g['name']}' references story "
+                        f"'{title}' not found in fixture."
+                    )
+                HeritageGroupMembership.objects.create(
+                    heritage_group=group,
+                    content_type=story_ct,
+                    object_id=stories[title].id,
+                )
+                membership_count += 1
+
+            for step in g.get('journey_steps', []):
+                HeritageJourneyStep.objects.create(
+                    heritage_group=group,
+                    order=step['order'],
+                    location=step['location'],
+                    story=step['story'],
+                    era=step.get('era', ''),
+                )
+                step_count += 1
+
+            for fact in g.get('cultural_facts', []):
+                region = (
+                    self._resolve(Region, fact['region'])
+                    if fact.get('region')
+                    else None
+                )
+                CulturalFact.objects.create(
+                    heritage_group=group,
+                    region=region,
+                    text=fact['text'],
+                    source_url=fact.get('source_url', ''),
+                )
+                fact_count += 1
+
+        return {
+            'groups': group_count,
+            'memberships': membership_count,
+            'steps': step_count,
+            'facts': fact_count,
+        }
+
+    def _seed_cultural_events(self, events_data, recipes):
+        if not events_data:
+            return {'events': 0, 'links': 0}
+
+        event_count = 0
+        link_count = 0
+
+        for e in events_data:
+            region = (
+                self._resolve(Region, e['region'])
+                if e.get('region')
+                else None
+            )
+            event = CulturalEvent.objects.create(
+                name=e['name'],
+                date_rule=e['date_rule'],
+                region=region,
+                description=e.get('description', ''),
+            )
+            event_count += 1
+
+            for title in e.get('linked_recipes', []):
+                if title not in recipes:
+                    raise CommandError(
+                        f"Cultural event '{e['name']}' references recipe "
+                        f"'{title}' not found in fixture."
+                    )
+                CulturalEventRecipe.objects.create(
+                    event=event,
+                    recipe=recipes[title],
+                )
+                link_count += 1
+
+        return {'events': event_count, 'links': link_count}
 
     def _seed_substitutions(self, subs_data):
         # Idempotent restore of the canonical ingredient substitution graph.
@@ -311,3 +476,16 @@ class Command(BaseCommand):
                 f"Substitution seed references ingredients that are not seeded: {sorted(missing)}"
             )
         return created, skipped
+
+    def _seed_ingredient_routes(self, routes_data):
+        if not routes_data:
+            return 0
+        count = 0
+        for row in routes_data:
+            ingredient = self._resolve(Ingredient, row['ingredient'])
+            IngredientRoute.objects.create(
+                ingredient=ingredient,
+                waypoints=row['waypoints'],
+            )
+            count += 1
+        return count

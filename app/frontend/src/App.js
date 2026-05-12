@@ -22,7 +22,11 @@ import ProfilePage from './pages/ProfilePage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
 import EventDetailPage from './pages/EventDetailPage';
+import AccountPage from './pages/AccountPage';
 import ModerationPage from './pages/ModerationPage';
+import HeritagePage from './pages/HeritagePage';
+import HeritageMapPage from './pages/HeritageMapPage';
+import CalendarPage from './pages/CalendarPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const IMAGES = [
@@ -116,10 +120,17 @@ export default function App() {
             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
           />
           <Route
+            path="/account"
+            element={<ProtectedRoute><AccountPage /></ProtectedRoute>}
+          />
+          <Route
             path="/admin/moderation"
             element={<ProtectedRoute><ModerationPage /></ProtectedRoute>}
           />
 
+          <Route path="/heritage/:id" element={<HeritagePage />} />
+          <Route path="/heritage/:id/map" element={<HeritageMapPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>

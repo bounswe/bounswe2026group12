@@ -798,6 +798,8 @@
       "author": "ayse",
       "region": "Black Sea",
       "is_published": true,
+      "is_heritage": true,
+      "heritage_status": "preserved",
       "dietary_tags": [
         "Halal"
       ],
@@ -844,7 +846,16 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "black_sea_sarma.jpg"
+      "image": "black_sea_sarma.jpg",
+      "cultural_context": {
+        "identity_note": "This dish is the soul of the Black Sea kitchen. In Trabzon, if you don't have collard greens in your garden, you're not home.",
+        "memory_note": "I remember my grandmother's hands, stained green from sorting the leaves every November.",
+        "migration_note": "My family has grown these same seeds in the same village for at least six generations.",
+        "ritual_note": "Essential for winter weddings. We make it in huge copper pots that take three people to lift.",
+        "commensality_note": "Always served with a side of heavy cornbread and yogurt. We eat it from a central plate.",
+        "terroir_note": "The leaves must be picked after the first frost; that's when they become sweet and tender.",
+        "craft_note": "The roll should be no thicker than a pinky finger. It takes years to master the tension."
+      }
     },
     {
       "title": "Aegean Olive Oil Stuffed Grape Leaves",
@@ -905,7 +916,13 @@
           "unit": "bunch"
         }
       ],
-      "image": "aegean_grape_leaves.jpg"
+      "image": "aegean_grape_leaves.jpg",
+      "cultural_context": {
+        "identity_note": "A cool breeze on a plate. This dish represents the lightness and patience of the Aegean lifestyle.",
+        "memory_note": "I remember the competitive spirit between my aunts to see who could roll the thinnest sarma.",
+        "terroir_note": "The olive oil must be from the first cold press of the season for that peppery finish.",
+        "craft_note": "The trick is to roll them tightly enough so they don't open, but loosely enough for the rice to expand."
+      }
     },
     {
       "title": "Southeastern Sarma with Pomegranate Molasses",
@@ -1409,12 +1426,12 @@
     },
     {
       "title": "Anatolian Manti Dumplings",
-      "description": "Tiny hand-pinched dumplings filled with spiced ground beef, served under a blanket of garlicky yogurt and drizzled with red pepper butter. The smaller the manti, the greater the love.",
+      "description": "Tiny hand-pinched dumplings filled with spiced ground beef, served under a blanket of garlicky yogurt and drizzled with red pepper butter. This heritage version uses traditional Einkorn wheat.",
       "steps": [
         "Make the dough: combine flour, a pinch of salt, 1 egg, and 100 ml of water. Knead for 10 minutes until smooth and elastic. Rest covered for 30 minutes.",
         "Mix ground beef, grated onion, salt, pepper, and dried mint for the filling.",
         "Roll the dough paper-thin on a floured surface. Cut into 2 cm squares. Place a tiny pinch of filling in the center of each square and pinch the opposite corners together tightly to seal.",
-        "Boil the manti in a large pot of salted water for 10–12 minutes until they float and the dough is tender.",
+        "Boil the manti in a large pot of salted water for 10-12 minutes until they float and the dough is tender.",
         "Beat yogurt with crushed garlic and salt until smooth. Spread it generously in wide shallow bowls.",
         "Drain the manti and pile them over the yogurt.",
         "In a small pan, melt butter with red pepper flakes over medium heat until the butter turns deep amber and the flakes sizzle. Pour immediately over the manti and finish with dried mint."
@@ -1422,6 +1439,8 @@
       "author": "ayse",
       "region": "Anatolian",
       "is_published": true,
+      "is_heritage": true,
+      "heritage_status": "endangered",
       "dietary_tags": [
         "Halal"
       ],
@@ -1431,9 +1450,10 @@
       ],
       "ingredients": [
         {
-          "name": "Flour",
+          "name": "Einkorn Wheat (Siyez)",
           "amount": "400.00",
-          "unit": "grams"
+          "unit": "grams",
+          "heritage_status": "endangered"
         },
         {
           "name": "Ground Beef",
@@ -1471,7 +1491,19 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "anatolian_manti.jpg"
+      "endangered_notes": [
+        {
+          "text": "Einkorn wheat is one of the world's oldest grains; fewer than 50 families still grow it in Kastamonu.",
+          "source_url": "https://en.wikipedia.org/wiki/Einkorn_wheat"
+        }
+      ],
+      "image": "anatolian_manti.jpg",
+      "cultural_context": {
+        "identity_note": "Manti is more than food; it's a social contract. Making it alone is a chore, making it together is a celebration.",
+        "memory_note": "Four generations of women sitting around a large table, gossip and flour flying in equal measure.",
+        "ritual_note": "Traditionally, a bride-to-be would show her skill by fitting 40 manti into a single spoon.",
+        "craft_note": "The tiny folds are a test of patience. The smaller the manti, the more respect is shown to the guest."
+      }
     },
     {
       "title": "Traditional Irish Soda Bread",
@@ -1513,7 +1545,16 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "irish_soda_bread.jpg"
+      "image": "irish_soda_bread.jpg",
+      "cultural_context": {
+        "identity_note": "The bread of the people. Simple, honest, and resilient—much like the Irish spirit.",
+        "memory_note": "The smell of soda bread cooling on the windowsill is my first memory of my mother's kitchen.",
+        "migration_note": "My great-grandmother brought the recipe (and a cast-iron pot) to Boston in 1912.",
+        "ritual_note": "We cut a cross on the top to 'let the devil out' and help the bread rise.",
+        "commensality_note": "Best eaten warm with a thick slab of salted butter and a cup of strong tea.",
+        "terroir_note": "Soft wheat flour and acidic buttermilk are the keys; they react to give the lift without yeast.",
+        "craft_note": "Handle the dough as little as possible. If you're too rough, the bread will be tough."
+      }
     },
     {
       "title": "Greek Moussaka",
@@ -1640,6 +1681,85 @@
         }
       ],
       "image": "lebanese_tabbouleh.jpg"
+    },
+    {
+      "title": "Traditional Tarhana Soup",
+      "description": "An ancient fermented soup base made from grain and yogurt. This regional variation is becoming rare as traditional sun-drying methods are replaced by industrial production.",
+      "author": "mehmet",
+      "region": "Marmara",
+      "is_published": true,
+      "is_heritage": true,
+      "heritage_status": "endangered",
+      "dietary_tags": [
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Traditional Tarhana",
+          "amount": "3.00",
+          "unit": "tablespoons",
+          "heritage_status": "endangered"
+        },
+        {
+          "name": "Butter",
+          "amount": "30.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Tomato Paste",
+          "amount": "1.00",
+          "unit": "tablespoons"
+        },
+        {
+          "name": "Garlic",
+          "amount": "2.00",
+          "unit": "cloves"
+        }
+      ],
+      "endangered_notes": [
+        {
+          "text": "Regional Tarhana varieties are disappearing due to urbanization and the decline of traditional fermentation practices.",
+          "source_url": ""
+        }
+      ],
+      "image": "tarhana_soup.jpg",
+      "cultural_context": {
+        "identity_note": "The world's first 'instant soup,' born from the necessity of preserving summer's bounty for the harsh winter.",
+        "ritual_note": "Late summer is 'Tarhana time' when every balcony in the village is covered in drying dough.",
+        "terroir_note": "The taste changes with the wind; the local wild yeast and the mountain air are what make it unique."
+      }
+    },
+    {
+      "title": "Manisa Mesir Paste",
+      "description": "A traditional Turkish sweet/paste used for medicinal purposes, consisting of 41 different herbs and spices.",
+      "author": "elif",
+      "region": "Aegean",
+      "is_published": true,
+      "is_heritage": true,
+      "heritage_status": "endangered",
+      "dietary_tags": [
+        "Vegan",
+        "Vegetarian"
+      ],
+      "event_tags": [],
+      "religions": [],
+      "ingredients": [
+        {
+          "name": "Mesir Paste",
+          "amount": "1.00",
+          "unit": "pieces",
+          "heritage_status": "endangered"
+        }
+      ],
+      "endangered_notes": [
+        {
+          "text": "The last traditionally handmade healing paste in Manisa.",
+          "source_url": ""
+        }
+      ],
+      "image": "mesir_paste.jpg"
     },
     {
       "title": "Lebanese Hummus",
@@ -5113,6 +5233,29 @@
           "unit": "ml"
         }
       ]
+    },
+    {
+      "title": "Anatolian Köfte",
+      "description": "Classic hand-shaped Anatolian meatballs of ground beef and lamb blended with fine bulgur, onion, and warm spices, grilled over charcoal or pan-fried until golden. Every region of Turkey claims its own köfte, but the Anatolian heartland version — simple, fragrant, and generous — is where the tradition begins.",
+      "author": "fatma",
+      "region": "Anatolian",
+      "is_published": true,
+      "dietary_tags": ["Halal"],
+      "event_tags": [],
+      "religions": ["Islam"],
+      "ingredients": [
+        {"name": "Ground Beef", "amount": "300.00", "unit": "grams"},
+        {"name": "Ground Lamb", "amount": "200.00", "unit": "grams"},
+        {"name": "Fine Bulgur", "amount": "50.00", "unit": "grams"},
+        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
+        {"name": "Garlic", "amount": "2.00", "unit": "cloves"},
+        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"},
+        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
+        {"name": "Salt", "amount": "1.50", "unit": "teaspoons"},
+        {"name": "Pepper", "amount": "0.50", "unit": "teaspoons"}
+      ],
+      "image": "anatolian_kofte.jpg"
     }
   ],
   "stories": [
@@ -6026,6 +6169,23 @@
       "event_tags": [],
       "religions": [],
       "image": "story_mediterranean_harvest.jpg"
+    },
+    {
+      "title": "How Köfte Became Köttbullar",
+      "summary": "The Ottoman origins of Sweden's iconic meatballs, carried home by a king in exile.",
+      "body": "When King Charles XII of Sweden returned from his years of Ottoman exile in 1714, he carried more than military lessons. Among the culinary souvenirs was a fondness for köfte, the shaped ground meat that appeared at every Ottoman table. Swedish cooks adapted the concept: smaller, rounder, enriched with cream and allspice rather than bulgur and cumin. Within a generation köttbullar had become a fixture of Swedish home cooking. Today they sit in IKEA cafeterias worldwide, yet few diners know they are eating a dish whose ancestry runs through Anatolian charcoal grills and Central Asian campfires. The journey from köfte to köttbullar is one of the clearest threads connecting Ottoman and Nordic food culture.",
+      "author": "lars",
+      "region": "Nordic",
+      "language": "en",
+      "is_published": true,
+      "linked_recipes": [
+        "Anatolian Köfte",
+        "Swedish Meatballs - Kottbullar"
+      ],
+      "dietary_tags": [],
+      "event_tags": [],
+      "religions": [],
+      "image": "story_kofte_kottbullar.jpg"
     }
   ],
   "cultural_content": [
@@ -6725,6 +6885,316 @@
     {"from": "Walnuts", "to": "Pistachios", "match_type": "texture", "closeness": "0.85", "notes": ""},
     {"from": "Yogurt", "to": "Cream", "match_type": "texture", "closeness": "0.85", "notes": "Strain yogurt for a thicker result"},
     {"from": "Yogurt", "to": "Tahini", "match_type": "chemical", "closeness": "0.55", "notes": "Different binding; reduce liquid"},
-    {"from": "Zucchini", "to": "Eggplant", "match_type": "texture", "closeness": "0.60", "notes": "Salt and drain to remove bitterness"}
+    {"from": "Zucchini", "to": "Eggplant", "match_type": "texture", "closeness": "0.60", "notes": "Salt and drain to remove bitterness"},
+    {"from": "Einkorn Wheat (Siyez)", "to": "Flour", "match_type": "texture", "closeness": "0.85", "notes": "Einkorn is denser and nuttier; use 1:1 for a heritage result."},
+    {"from": "Traditional Tarhana", "to": "Lentils", "match_type": "flavor", "closeness": "0.40", "notes": "Very different flavor profile; use only as a thickener alternative."}
+  ],
+  "heritage": {
+    "groups": [
+      {
+        "name": "Sarma / Dolma",
+        "description": "Stuffed and rolled dishes spanning from the Ottoman heartland to Scandinavia. Grape leaves, cabbage, and collard greens wrap rice and meat fillings across at least six distinct regional traditions, each claiming the dish as its own.",
+        "recipe_members": [
+          "Black Sea Collard Green Sarma",
+          "Aegean Olive Oil Stuffed Grape Leaves",
+          "Southeastern Sarma with Pomegranate Molasses",
+          "Greek Dolmadakia",
+          "Swedish Cabbage Rolls - Kaldolmar",
+          "Lebanese Stuffed Grape Leaves with Lamb"
+        ],
+        "story_members": [
+          "Rolling Sarma by the Black Sea",
+          "Summer Sarma in the Aegean",
+          "From Anatolia to Athens: The Dolma Trail",
+          "How Swedish Cabbage Rolls Came from the Ottoman Empire"
+        ],
+        "journey_steps": [
+          {
+            "order": 1,
+            "location": "Central Asia",
+            "era": "Pre-Islamic",
+            "story": "Nomadic Turkic peoples wrapped seasoned meat in leaves for portable meals during long migrations across the steppe, carrying the technique westward as they moved."
+          },
+          {
+            "order": 2,
+            "location": "Anatolia",
+            "era": "Seljuk (11th–13th c.)",
+            "story": "As Turkic groups settled in Anatolia, grape leaves from local vineyards replaced steppe grasses, and rice from Persian trade routes enriched the filling. The dish took root in every household."
+          },
+          {
+            "order": 3,
+            "location": "Ottoman Empire",
+            "era": "Ottoman (15th–19th c.)",
+            "story": "Palace kitchens in Istanbul refined sarma into dozens of regional variations. The dish spread with the Empire to the Balkans, Levant, and North Africa, each region adapting it to local produce."
+          },
+          {
+            "order": 4,
+            "location": "Greece, the Balkans, and the Levant",
+            "era": "Post-Ottoman (19th–20th c.)",
+            "story": "Greek dolmadakia arrived with a lemon-egg sauce, Balkan cooks turned to sauerkraut leaves and smoked meat, and Lebanese and Syrian kitchens folded in pomegranate molasses and spiced lamb. Each branch came to be claimed as a local invention rather than an Ottoman inheritance."
+          },
+          {
+            "order": 5,
+            "location": "Sweden",
+            "era": "18th century",
+            "story": "King Charles XII returned from Ottoman exile in 1714 with the idea of stuffed cabbage leaves. Kåldolmar became a Swedish staple, served with lingonberry jam, a culinary bridge between two distant empires."
+          }
+        ],
+        "cultural_facts": [
+          {
+            "text": "The word 'dolma' derives from the Turkish verb 'doldurmak', meaning 'to stuff'. 'Sarma' comes from 'sarmak', meaning 'to wrap' — two verbs that define an entire culinary tradition.",
+            "source_url": "https://en.wikipedia.org/wiki/Dolma",
+            "region": null
+          },
+          {
+            "text": "Swedish kåldolmar trace directly to Charles XII's Ottoman exile of 1709–1714, making them one of the clearest documented examples of culinary transfer between the Ottoman Empire and Northern Europe.",
+            "source_url": "",
+            "region": "Nordic"
+          },
+          {
+            "text": "In many Black Sea households, sarma-rolling is a communal activity: neighbours gather the day before a wedding to prepare hundreds of rolls together, turning the kitchen into a social institution.",
+            "source_url": "",
+            "region": "Black Sea"
+          }
+        ]
+      },
+      {
+        "name": "Dumplings of the Silk Road",
+        "description": "From Turkish manti to Chinese xiaolongbao, filled dough parcels trace the ancient trade routes connecting East and West. Each culture along the Silk Road developed its own pocket of dough and filling, yet the underlying technique is unmistakably shared.",
+        "recipe_members": [
+          "Anatolian Manti Dumplings",
+          "Pierogi",
+          "Xiaolongbao",
+          "Samsa"
+        ],
+        "story_members": [
+          "My Grandmother's Manti",
+          "The Silk Road: How Noodles Travelled the World",
+          "The Bazaar at Samarkand"
+        ],
+        "journey_steps": [
+          {
+            "order": 1,
+            "location": "China",
+            "era": "Han Dynasty (206 BC – 220 AD)",
+            "story": "Jiaozi and early filled dumplings emerged in northern China as a way to seal nourishing fillings inside thin wheat dough during harsh winters. The form spread rapidly across the empire."
+          },
+          {
+            "order": 2,
+            "location": "Central Asia",
+            "era": "Silk Road era (7th–13th c.)",
+            "story": "Traders carried the dumpling concept westward through the mountain passes. Samarkand's bazaars became a crossroads where Chinese, Persian, and Turkic filling traditions merged into samsa and manti."
+          },
+          {
+            "order": 3,
+            "location": "Anatolia",
+            "era": "Seljuk/Ottoman (13th–16th c.)",
+            "story": "Migrating Turkic groups brought manti to Anatolia, where cooks miniaturised the dumplings to extreme smallness — a point of pride in Kayseri — and crowned them with garlic yogurt and red pepper butter."
+          },
+          {
+            "order": 4,
+            "location": "Eastern Europe",
+            "era": "Medieval (13th–16th c.)",
+            "story": "Pierogi emerged in Poland and Ukraine, likely through eastern trade and migration. Potato and cheese fillings replaced meat as the region's signature variation, and the dumpling became embedded in Christmas Eve ritual."
+          },
+          {
+            "order": 5,
+            "location": "Japan",
+            "era": "Modern (20th c.)",
+            "story": "Soldiers and settlers returning from Manchuria after the Second World War carried jiaozi home, where it was reworked into gyoza: thinner skins, a garlic-forward filling, and a crisp pan-fried base. The dumpling had travelled the Silk Road in both directions."
+          }
+        ],
+        "cultural_facts": [
+          {
+            "text": "Turkish manti are traditionally so small that forty of them should fit on a single spoon, according to a saying from Kayseri — the city considered the spiritual home of the dish.",
+            "source_url": "",
+            "region": "Anatolian"
+          },
+          {
+            "text": "The Silk Road was not a single route but a network of trade paths spanning over 6,000 kilometres, along which culinary techniques travelled alongside silk, spices, and ideas about flavour.",
+            "source_url": "https://en.wikipedia.org/wiki/Silk_Road",
+            "region": null
+          }
+        ]
+      },
+      {
+        "name": "Fermented Traditions",
+        "description": "Fermentation connects cuisines across East Asia and beyond. From Korean kimchi to Japanese miso, these living foods reflect centuries of microbial partnership between humans and nature — patience transformed into flavour.",
+        "recipe_members": [
+          "Kimchi Jjigae",
+          "Japanese Miso Soup"
+        ],
+        "story_members": [
+          "Fermentation East and West",
+          "Kimjang: The Community Work of Kimchi",
+          "Miso: A Living Ingredient"
+        ],
+        "journey_steps": [
+          {
+            "order": 1,
+            "location": "China",
+            "era": "Ancient (before 1000 BC)",
+            "story": "Early fermentation of soybeans and vegetables began in ancient China, producing the precursors of soy paste and pickled vegetables. The technique spread through trade and migration across East Asia."
+          },
+          {
+            "order": 2,
+            "location": "Korea",
+            "era": "Three Kingdoms (37 BC – 668 AD)",
+            "story": "Salted and fermented vegetables evolved into what would become kimchi. The communal practice of kimjang developed as communities prepared vast winter stores together, binding neighbourhoods through shared labour."
+          },
+          {
+            "order": 3,
+            "location": "Japan",
+            "era": "Asuka period (6th–8th c.)",
+            "story": "Buddhist monks brought soybean fermentation techniques from China. Japanese craftspeople refined the process into miso, developing regional varieties across the archipelago, from white Kyoto miso to rich red Sendai miso."
+          },
+          {
+            "order": 4,
+            "location": "Indonesia",
+            "era": "Documented 19th c., older in oral tradition",
+            "story": "On Java, soybeans bound by a white mat of Rhizopus mould became tempeh, a dense, sliceable protein eaten daily across the archipelago. It spread through Indonesian home kitchens long before the West learned to call it a superfood."
+          },
+          {
+            "order": 5,
+            "location": "Worldwide",
+            "era": "21st century",
+            "story": "A global fermentation revival put kimchi, miso, kombucha, and sourdough starters on restaurant menus and kitchen counters far from their origins. Old techniques of patience found a new audience hungry for living food."
+          }
+        ],
+        "cultural_facts": [
+          {
+            "text": "Kimjang, the communal practice of making and sharing kimchi, was inscribed on the UNESCO Intangible Cultural Heritage list in 2013 — one of the few food preparation traditions to receive this recognition.",
+            "source_url": "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881",
+            "region": "Korean"
+          },
+          {
+            "text": "A single batch of miso can take anywhere from six months to three years to ferment. Longer-aged varieties develop deeper, more complex flavours — Japanese cooks say the miso is 'listening' to the seasons.",
+            "source_url": "",
+            "region": "Japanese"
+          }
+        ]
+      },
+      {
+        "name": "Köfte",
+        "description": "Ground and shaped meat, seasoned with spices and herbs, cooked over fire. The principle behind köfte is ancient and nearly universal, yet the path from Central Asian nomadic camps to Ottoman palace kitchens to Swedish IKEA counters is surprisingly direct.",
+        "recipe_members": [
+          "Anatolian Köfte",
+          "Swedish Meatballs - Kottbullar"
+        ],
+        "story_members": [
+          "How Köfte Became Köttbullar",
+          "How Swedish Cabbage Rolls Came from the Ottoman Empire"
+        ],
+        "journey_steps": [
+          {
+            "order": 1,
+            "location": "Central Asia",
+            "era": "Pre-Islamic",
+            "story": "Nomadic Turkic communities shaped and grilled ground meat over open fires, seasoning it with whatever wild herbs grew on the steppe. The portable, protein-rich form made it ideal for life on horseback."
+          },
+          {
+            "order": 2,
+            "location": "Anatolia",
+            "era": "Ottoman (15th–19th c.)",
+            "story": "Ottoman court and street kitchens developed dozens of regional köfte variations — from İnegöl köfte with its pure meat simplicity to Adana kebab rolled on skewers with red pepper. Every city claimed its own signature shape and spice blend."
+          },
+          {
+            "order": 3,
+            "location": "Sweden",
+            "era": "18th century",
+            "story": "King Charles XII tasted köfte during his Ottoman exile of 1709–1714 and brought the concept home. Swedish cooks replaced bulgur with breadcrumbs, added cream and allspice, and shaped the mixture into smaller balls. Köttbullar entered the national canon alongside kåldolmar."
+          },
+          {
+            "order": 4,
+            "location": "Greece",
+            "era": "Post-Ottoman (19th–20th c.)",
+            "story": "Greek keftedes split from the Ottoman table after independence: bound with bread soaked in wine or ouzo, brightened with mint and oregano, and often fried rather than grilled. The meatball stayed on the Greek table long after the empire that introduced it had gone."
+          },
+          {
+            "order": 5,
+            "location": "The Balkans",
+            "era": "Modern",
+            "story": "Across the former Ottoman Balkans the form survives as ćevapi: small fingers of minced beef and lamb grilled over charcoal and served with flatbread, raw onion, and ajvar. Bosnia, Serbia, and Croatia each insist their version is the original."
+          }
+        ],
+        "cultural_facts": [
+          {
+            "text": "Turkish cuisine recognises over 290 regional köfte varieties, from the breadcrumb-free İnegöl köfte of Bursa to the raw çiğ köfte of Şanlıurfa — each city fiercely proud of its own version.",
+            "source_url": "",
+            "region": "Anatolian"
+          },
+          {
+            "text": "In 2018, Sweden's official Twitter account acknowledged that Swedish meatballs were based on a recipe Charles XII brought back from the Ottoman Empire — a tweet that delighted Turkey and surprised most Swedes.",
+            "source_url": "",
+            "region": null
+          }
+        ]
+      }
+    ]
+  },
+  "cultural_events": [
+    {
+      "name": "Nevruz / Nowruz",
+      "date_rule": "fixed:03-21",
+      "region": "Persian",
+      "description": "Celebrated on the spring equinox (around 21 March), Nowruz is a 3,000-year-old new year tradition observed across Iran, Afghanistan, Central Asia, parts of Turkey, and diaspora communities worldwide. The haft-sin table, set with seven symbolic items beginning with the Persian letter 's', is the visual centrepiece, while sabzi polo mahi (herb rice with fish) is the canonical new year dish.",
+      "linked_recipes": []
+    },
+    {
+      "name": "Hıdırellez",
+      "date_rule": "fixed:05-06",
+      "region": "Anatolian",
+      "description": "Festival marking the start of summer in Turkish and Balkan folk tradition. Celebrated on the night of 5–6 May, it commemorates the legendary meeting of the prophets Hızır and İlyas, who represent the abundance of land and sea. Communities gather outdoors, light bonfires, and share grilled meats.",
+      "linked_recipes": [
+        "Anatolian Köfte"
+      ]
+    },
+    {
+      "name": "Dongzhi Festival",
+      "date_rule": "fixed:12-22",
+      "region": "Chinese",
+      "description": "The Dongzhi (冬至) winter solstice festival is one of the most important Chinese celebrations, when families gather to eat tangyuan (glutinous rice balls) in the south or dumplings in the north. The festival honours the return of longer days and the yang energy growing within the yin of winter.",
+      "linked_recipes": [
+        "Xiaolongbao"
+      ]
+    },
+    {
+      "name": "Ramadan Iftar",
+      "date_rule": "lunar:ramadan",
+      "region": "Levantine",
+      "description": "The breaking of the daily fast during Ramadan is one of the most significant communal dining events in Islamic cultures worldwide. From Levantine iftar tables laden with grape leaves, fattoush, and lamb to Moroccan harira and Indonesian kolak, the iftar meal reflects each region's culinary identity within a shared spiritual framework.",
+      "linked_recipes": [
+        "Lebanese Stuffed Grape Leaves with Lamb"
+      ]
+    },
+    {
+      "name": "Chuseok",
+      "date_rule": "lunar:chuseok",
+      "region": "Korean",
+      "description": "Chuseok (추석) is the Korean harvest festival celebrated on the 15th day of the 8th lunar month. Families gather to honour ancestors with food offerings (charye), prepare songpyeon (half-moon rice cakes), and share hearty stews made with newly harvested ingredients.",
+      "linked_recipes": [
+        "Kimchi Jjigae"
+      ]
+    }
+  ],
+  "ingredient_routes": [
+    {
+      "ingredient": "Tomato",
+      "waypoints": [
+        {"lat": -9.19, "lng": -75.01, "era": "Ancestral", "label": "Andes (Peru)"},
+        {"lat": 19.43, "lng": -99.13, "era": "Pre-Columbian", "label": "Mexico (Aztecs)"},
+        {"lat": 40.41, "lng": -3.70, "era": "1540s", "label": "Spain"},
+        {"lat": 41.90, "lng": 12.49, "era": "1600s", "label": "Italy (Pomodoro)"},
+        {"lat": 41.01, "lng": 28.97, "era": "1800s", "label": "Istanbul (Ottoman)"}
+      ]
+    },
+    {
+      "ingredient": "Lentils",
+      "waypoints": [
+        {"lat": 37.00, "lng": 38.00, "era": "Ancient (Neolithic)", "label": "Fertile Crescent"},
+        {"lat": 30.00, "lng": 31.00, "era": "3000 BC", "label": "Ancient Egypt"},
+        {"lat": 41.00, "lng": 29.00, "era": "Ottoman Era", "label": "Anatolia / Istanbul"}
+      ]
+    }
   ]
 }

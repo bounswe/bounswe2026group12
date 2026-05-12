@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MapZoomControls } from '../components/map/MapZoomControls';
 import { RegionDetailSheet } from '../components/map/RegionDetailSheet';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
@@ -20,6 +21,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const { accent, setFocusedRegion } = useTheme();
+  const mapRef = useRef<MapView | null>(null);
 
   useEffect(() => {
     setFocusedRegion(focused?.name ?? null);
@@ -70,6 +72,7 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <View style={styles.fill}>
         <MapView
+          ref={mapRef}
           style={styles.map}
           initialRegion={INITIAL_MAP_REGION}
           onPress={() => setFocused(null)}
@@ -84,11 +87,33 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
               pinColor={focused?.id === pin.id ? accent.accent : tokens.colors.accentMustard}
               onPress={(e) => {
                 e.stopPropagation?.();
+                // Track for theme highlight, then dive into the zoomed
+                // per-recipe map (#464). The old `RegionDetailSheet` flow
+                // (recipes/stories overview) stays available below in case
+                // we ever want to bring it back; for now the spatial drill-in
+                // is the primary path.
                 setFocused(pin);
+                navigation.navigate('RegionMapDetail', {
+                  regionId: pin.id,
+                  regionName: pin.name,
+                });
               }}
             />
           ))}
         </MapView>
+
+        <MapZoomControls mapRef={mapRef} />
+
+        <View style={styles.routesCtaWrap} pointerEvents="box-none">
+          <Pressable
+            onPress={() => navigation.navigate('IngredientMigrationMap')}
+            style={({ pressed }) => [styles.routesCta, pressed && styles.routesCtaPressed]}
+            accessibilityLabel="Open ingredient migration routes"
+          >
+            <Text style={styles.routesCtaIcon}>🧭</Text>
+            <Text style={styles.routesCtaText}>Ingredient routes</Text>
+          </Pressable>
+        </View>
 
         {!focused ? (
           <View style={styles.hintWrap} pointerEvents="none">
@@ -171,4 +196,26 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   hintText: { fontSize: 13, color: tokens.colors.text, fontWeight: '700' },
+  routesCtaWrap: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 24,
+    alignItems: 'center',
+  },
+  routesCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    ...shadows.md,
+  },
+  routesCtaPressed: { opacity: 0.9 },
+  routesCtaIcon: { fontSize: 16 },
+  routesCtaText: { color: tokens.colors.textOnDark, fontSize: 15, fontWeight: '800' },
 });

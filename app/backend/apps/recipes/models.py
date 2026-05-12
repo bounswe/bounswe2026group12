@@ -1,7 +1,23 @@
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
+
+
+class HeritageStatus(models.TextChoices):
+    """Endangered-heritage tag for dishes and ingredients (#524, parent #507).
+
+    NONE       no special heritage status (default).
+    ENDANGERED at risk of being lost.
+    PRESERVED  actively kept alive.
+    REVIVED    brought back after near-loss.
+    """
+    NONE = 'none', 'None'
+    ENDANGERED = 'endangered', 'Endangered'
+    PRESERVED = 'preserved', 'Preserved'
+    REVIVED = 'revived', 'Revived'
+
 
 class CulturalModerationMixin(models.Model):
     """Audit fields for moderated lookup submissions.
@@ -75,6 +91,7 @@ class Region(CulturalModerationMixin, models.Model):
     def __str__(self):
         return self.name
 
+
 class Ingredient(CulturalModerationMixin, models.Model):
     """Ingredient model for reuse across recipes. User-submittable, moderated (#361)."""
     name = models.CharField(max_length=200, unique=True)
@@ -83,6 +100,10 @@ class Ingredient(CulturalModerationMixin, models.Model):
         max_digits=8, decimal_places=4,
         null=True, blank=True,
         help_text='g per ml. Required for mass to volume conversions. See apps/recipes/conversions/references.md for cited sources.',
+    )
+    heritage_status = models.CharField(
+        max_length=16, choices=HeritageStatus.choices, default=HeritageStatus.NONE,
+        help_text='Endangered-heritage tag (#524).',
     )
 
     def __str__(self):
@@ -135,11 +156,21 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to='recipes/images/', null=True, blank=True)
     video = models.FileField(upload_to='recipes/videos/', null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='recipes')
+    # Optional per-recipe map coordinates (#662). Recipes without coordinates
+    # are valid; they surface in the "unlocated" list of the zoom-to-region view
+    # (#464). Region map bounds reuse the existing Region.bbox_* fields above
+    # (Option A from #662); no new Region field is needed here.
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recipes')
     qa_enabled = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     is_heritage = models.BooleanField(default=False)
     heritage_notes = models.TextField(blank=True, default='')
+    heritage_status = models.CharField(
+        max_length=16, choices=HeritageStatus.choices, default=HeritageStatus.NONE,
+        help_text='Endangered-heritage tag (#524).',
+    )
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
@@ -152,9 +183,27 @@ class Recipe(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    rating_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
+
+class EndangeredNote(models.Model):
+    """Sourced note explaining a recipe's endangered-heritage status (#524).
+
+    Surfaces under the amber heritage badge on web (#520) and mobile (#526).
+    Each note carries free text plus an optional source link backing the claim.
+    Part of #507.
+    """
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='endangered_notes')
+    text = models.TextField()
+    source_url = models.URLField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Endangered note on {self.recipe.title}"
+
 
 class RecipeIngredient(models.Model):
     """Through model linking recipes and ingredients with amounts and units."""
@@ -269,3 +318,99 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Vote by {self.user.username} on Comment {self.comment.id}"
+
+
+class Rating(models.Model):
+    """A user's 1-5 star rating for a recipe (#734)."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='recipe_ratings',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ratings',
+    )
+    score = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_rating_per_user_recipe',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.recipe.title} {self.score}/5"
+
+class RecipeCulturalContext(models.Model):
+    """Beyond the Recipe, seven optional narrative notes about a dish (#521).
+
+    Backs the "Cultural Story" section on recipe detail (web #516, mobile #525)
+    and is part of #509. One row per recipe; every note defaults to an empty
+    string so a recipe with no story still serializes cleanly.
+    """
+    recipe = models.OneToOneField(
+        Recipe, on_delete=models.CASCADE, related_name='cultural_context',
+    )
+    identity_note = models.TextField(blank=True, default='', help_text='Why this dish matters.')
+    memory_note = models.TextField(blank=True, default='', help_text='A personal memory.')
+    migration_note = models.TextField(blank=True, default='', help_text='Where it came from.')
+    ritual_note = models.TextField(blank=True, default='', help_text="When it's made.")
+    commensality_note = models.TextField(blank=True, default='', help_text="How it's shared.")
+    terroir_note = models.TextField(blank=True, default='', help_text='Taste of place.')
+    craft_note = models.TextField(blank=True, default='', help_text='The craft.')
+
+    def __str__(self):
+        return f"Cultural context for {self.recipe.title}"
+
+
+class IngredientRoute(models.Model):
+    """Chronological movement of an ingredient across the world (#506).
+
+    Used for animated migration maps. Each route is tied to a specific
+    Ingredient and contains a list of waypoints (location, era, coords).
+    """
+
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        related_name='migration_routes',
+    )
+    # waypoints: list of objects like [{"lat": 1.2, "lng": 3.4, "era": "1500s", "label": "Spain"}]
+    waypoints = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['ingredient']
+
+    def __str__(self):
+        return f"Migration route for {self.ingredient.name}"
+
+
+class Bookmark(models.Model):
+    """User's bookmarked/favorite recipes (#706)."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'recipe')
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.recipe.title}"

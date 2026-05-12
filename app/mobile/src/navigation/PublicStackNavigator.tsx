@@ -1,6 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import EventDetailScreen from '../screens/EventDetailScreen';
 import ExploreScreen from '../screens/ExploreScreen';
+import HeritageMapScreen from '../screens/HeritageMapScreen';
+import HeritageScreen from '../screens/HeritageScreen';
+import IngredientMigrationMapScreen from '../screens/IngredientMigrationMapScreen';
 import CulturalCalendarScreen from '../screens/CulturalCalendarScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
@@ -11,6 +14,7 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
+import RegionMapDetailScreen from '../screens/RegionMapDetailScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import StoryCreateScreen from '../screens/StoryCreateScreen';
@@ -113,9 +117,29 @@ export function PublicStackNavigator() {
         options={{ title: 'Event' }}
       />
       <Stack.Screen
+        name="Heritage"
+        component={HeritageScreen}
+        options={{ title: 'Heritage' }}
+      />
+      <Stack.Screen
+        name="HeritageMap"
+        component={HeritageMapScreen}
+        options={{ title: 'Heritage Map' }}
+      />
+      <Stack.Screen
         name="CulturalCalendar"
         component={CulturalCalendarScreen}
         options={{ title: 'Calendar' }}
+      />
+      <Stack.Screen
+        name="RegionMapDetail"
+        component={RegionMapDetailScreen}
+        options={{ title: 'Region' }}
+      />
+      <Stack.Screen
+        name="IngredientMigrationMap"
+        component={IngredientMigrationMapScreen}
+        options={{ title: 'Migration routes' }}
       />
     </Stack.Navigator>
   );

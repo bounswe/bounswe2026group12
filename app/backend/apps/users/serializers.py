@@ -28,16 +28,21 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    bookmark_count = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             'id', 'email', 'username', 'bio', 'region', 'preferred_language', 'role', 'created_at',
             'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
-            'is_contactable',
+            'is_contactable', 'bookmark_count',
         ]
         read_only_fields = [
             'id', 'email', 'username', 'role', 'created_at',
         ]
+
+    def get_bookmark_count(self, obj):
+        return obj.bookmarks.count()
 
 
 class PublicUserSerializer(serializers.ModelSerializer):
@@ -89,6 +94,13 @@ class StringTagListField(serializers.ListField):
 
 
 class UserPreferencesUpdateSerializer(serializers.ModelSerializer):
+    """Self-service update for `PATCH /api/users/me/`.
+
+    Covers cultural-onboarding tags, contactability, and basic profile fields
+    (#659). Privilege-sensitive fields (email, role, is_staff, is_superuser)
+    are intentionally excluded so they cannot be changed through this endpoint.
+    All fields are optional; the view uses partial updates.
+    """
     cultural_interests = StringTagListField()
     regional_ties = StringTagListField()
     religious_preferences = StringTagListField()
@@ -99,4 +111,13 @@ class UserPreferencesUpdateSerializer(serializers.ModelSerializer):
         fields = [
             'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
             'is_contactable',
+            'username', 'bio', 'region', 'preferred_language',
         ]
+
+    def validate_username(self, value):
+        qs = User.objects.filter(username__iexact=value)
+        if self.instance is not None:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError('This username is already taken.')
+        return value

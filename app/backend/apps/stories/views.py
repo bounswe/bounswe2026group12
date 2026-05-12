@@ -46,7 +46,7 @@ class StoryViewSet(viewsets.ModelViewSet):
                 qs = qs.filter(is_published=True)
         
         if self.action == 'list':
-            qs = apply_content_filters(qs, self.request.query_params)
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
             
             story_type = self.request.query_params.get('story_type')
             if story_type is not None:

@@ -2,6 +2,12 @@ from django.db import models
 from django.conf import settings
 
 
+class NotificationType(models.TextChoices):
+    QUESTION = 'question', 'Question'
+    REPLY = 'reply', 'Reply'
+    RATING = 'rating', 'Rating'
+
+
 class Notification(models.Model):
     """In-app notification for a recipe author when a new question is posted."""
     recipient = models.ForeignKey(
@@ -20,6 +26,11 @@ class Notification(models.Model):
         related_name='notifications',
     )
     message = models.TextField()
+    notification_type = models.CharField(
+        max_length=16,
+        choices=NotificationType.choices,
+        default=NotificationType.QUESTION,
+    )
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

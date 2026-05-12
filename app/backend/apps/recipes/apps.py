@@ -4,3 +4,6 @@ class RecipesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.recipes'
     label = 'recipes'
+
+    def ready(self):
+        import apps.recipes.signals  # noqa: F401

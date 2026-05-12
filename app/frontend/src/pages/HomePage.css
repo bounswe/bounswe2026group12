@@ -160,3 +160,11 @@
   opacity: 0.45;
   cursor: default;
 }
+
+.home-random-fact {
+  margin-top: 2rem;
+}
+
+.home-random-fact:empty {
+  display: none;
+}

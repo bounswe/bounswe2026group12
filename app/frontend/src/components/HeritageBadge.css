@@ -1,0 +1,42 @@
+.heritage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1rem;
+  background: linear-gradient(135deg, #FAF1DE 0%, #F2E0BF 100%);
+  border: 1px solid #C4521E;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #4A2208;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.heritage-badge:hover,
+.heritage-badge:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(196, 82, 30, 0.18);
+  outline: none;
+}
+
+.heritage-badge-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.heritage-badge-label {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.heritage-badge-prefix {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8C4A1C;
+}
+
+.heritage-badge-name {
+  font-size: 1rem;
+}

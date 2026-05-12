@@ -18,7 +18,8 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution, IngredientCheckOff, RecipeIngredient,
+    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute, Bookmark,
+    Rating,
 )
 from .serializers import (
     ConvertRequestSerializer,
@@ -37,6 +38,9 @@ from .serializers import (
     EventTagSerializer,
     ReligionLookupSerializer,
     ReligionSerializer,
+    IngredientRouteSerializer,
+    RecipeRatingWriteSerializer,
+    RecipeRatingSummarySerializer,
 )
 
 
@@ -56,7 +60,7 @@ def _iexact_or(field_or_fields, values):
     return reduce(operator.or_, queries)
 
 
-def apply_content_filters(qs, params):
+def apply_content_filters(qs, params, user=None):
     """Apply rich filters (M4-15 / #346 / M5-20 / #386) across culture, event, diet, ingredient axes.
 
     Per axis: positive (`<axis>=`) and negative (`<axis>_exclude=`) accept
@@ -88,18 +92,39 @@ def apply_content_filters(qs, params):
     if author_id:
         qs = qs.filter(author_id=author_id)
 
+    # Heritage status filter (M5-20 / #507 / #524)
+    heritage_status = params.get('heritage_status')
+    if heritage_status:
+        statuses = [s.strip() for s in heritage_status.split(',') if s.strip()]
+        if statuses:
+            if hasattr(qs.model, 'heritage_status'):
+                qs = qs.filter(heritage_status__in=statuses)
+            elif hasattr(qs.model, 'recipe_links'):
+                # For stories, match via linked recipes
+                qs = qs.filter(recipe_links__recipe__heritage_status__in=statuses)
+    # Bookmark filter (#706)
+    bookmarked = params.get('bookmarked')
+    if bookmarked == 'true' and user and user.is_authenticated:
+        if qs.model == Recipe:
+            qs = qs.filter(bookmarks__user=user)
+        elif hasattr(qs.model, 'recipe_links'):
+            # For stories, match if any linked recipe is bookmarked
+            qs = qs.filter(recipe_links__recipe__bookmarks__user=user)
+
+
     return qs.distinct()
 
 # Backward compat alias
-def apply_recipe_filters(qs, params):
-    return apply_content_filters(qs, params)
+def apply_recipe_filters(qs, params, user=None):
+    return apply_content_filters(qs, params, user=user)
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """ViewSet for list/detail and management of Recipes."""
-    queryset = Recipe.objects.select_related('region', 'author').prefetch_related(
+    queryset = Recipe.objects.select_related('region', 'author', 'cultural_context').prefetch_related(
         'recipe_ingredients__ingredient', 'recipe_ingredients__unit',
         'dietary_tags', 'event_tags', 'religions',
         'heritage_memberships__heritage_group',
+        'endangered_notes',
     ).annotate(
         story_count=models.Count('story_links', filter=models.Q(story_links__story__is_published=True))
     ).all()
@@ -118,8 +143,30 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        user = self.request.user
+
+        # Annotate total bookmark count for the recipe
+        qs = qs.annotate(bookmark_count=models.Count('bookmarks', distinct=True))
+
+        if user.is_authenticated:
+            # Annotate whether the current user has bookmarked this recipe
+            qs = qs.annotate(
+                is_bookmarked=models.Exists(
+                    Bookmark.objects.filter(recipe=models.OuterRef('pk'), user=user)
+                )
+            )
+            qs = qs.annotate(
+                user_rating=models.Subquery(
+                    Rating.objects.filter(
+                        recipe=models.OuterRef('pk'),
+                        user=user,
+                    ).values('score')[:1],
+                    output_field=models.IntegerField(),
+                )
+            )
+
         if self.action == 'list':
-            qs = apply_recipe_filters(qs, self.request.query_params)
+            qs = apply_recipe_filters(qs, self.request.query_params, user=user)
         return qs
 
     def list(self, request, *args, **kwargs):
@@ -139,6 +186,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def _rating_summary(self, recipe, user_rating):
+        return RecipeRatingSummarySerializer(
+            {
+                'average_rating': recipe.average_rating,
+                'rating_count': recipe.rating_count,
+                'user_rating': user_rating,
+            }
+        ).data
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated, IsAuthorOrReadOnly])
     def publish(self, request, pk=None):
@@ -184,6 +240,55 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 serializer.save(author=request.user, recipe=recipe)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def bookmark(self, request, pk=None):
+        """Idempotent toggle for recipe bookmarks (#706)."""
+        recipe = self.get_object()
+        bookmark, created = Bookmark.objects.get_or_create(user=request.user, recipe=recipe)
+        
+        if not created:
+            bookmark.delete()
+            is_bookmarked = False
+        else:
+            is_bookmarked = True
+            
+        # Get updated count
+        count = recipe.bookmarks.count()
+        
+        return Response({
+            'is_bookmarked': is_bookmarked,
+            'bookmark_count': count
+        }, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post', 'delete'], permission_classes=[permissions.IsAuthenticated])
+    def rate(self, request, pk=None):
+        recipe = self.get_object()
+
+        if recipe.author_id == request.user.id:
+            return Response(
+                {'detail': 'You cannot rate your own recipe.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if request.method == 'POST':
+            serializer = RecipeRatingWriteSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            score = serializer.validated_data['score']
+            rating, created = Rating.objects.update_or_create(
+                user=request.user,
+                recipe=recipe,
+                defaults={'score': score},
+            )
+            recipe.refresh_from_db(fields=['average_rating', 'rating_count'])
+            return Response(
+                self._rating_summary(recipe, rating.score),
+                status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+            )
+
+        Rating.objects.filter(user=request.user, recipe=recipe).delete()
+        recipe.refresh_from_db(fields=['average_rating', 'rating_count'])
+        return Response(self._rating_summary(recipe, None), status=status.HTTP_200_OK)
 
 class ModeratedLookupViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
@@ -275,6 +380,12 @@ class IngredientViewSet(ModeratedLookupViewSet):
     serializer_class = IngredientSerializer
     lookup_serializer_class = IngredientLookupSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
+
     def get_permissions(self):
         # The parent's get_permissions hardcodes IsAdminUser for any action
         # outside list/retrieve/create. Honor the @action's permission_classes
@@ -282,7 +393,6 @@ class IngredientViewSet(ModeratedLookupViewSet):
         if self.action == 'substitutes':
             return [permissions.AllowAny()]
         return super().get_permissions()
-
     @action(detail=True, methods=['get'], url_path='substitutes')
     def substitutes(self, request, pk=None):
         """Return categorized, ranked substitution suggestions for an approved ingredient."""
@@ -324,11 +434,54 @@ class RegionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     serializer_class = RegionSubmissionSerializer
     lookup_serializer_class = RegionSerializer
 
+    def get_permissions(self):
+        # The parent's get_permissions hardcodes IsAdminUser for any action
+        # outside list/retrieve/create, which would lock down the read-only
+        # `recipes` action. Treat it like list/retrieve.
+        if self.action == 'recipes':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+
+    @action(detail=True, methods=['get'], url_path='recipes')
+    def recipes(self, request, pk=None):
+        """Split a region's recipes into located (has lat+lng) and unlocated.
+
+        Backs the zoom-to-region map view (#464 / #662): the located list
+        becomes per-recipe pins, the unlocated list becomes the "without a
+        location" bar. Both lists are ordered newest first.
+        """
+        region = get_object_or_404(Region, pk=pk, is_approved=True)
+        recipes = region.recipes.select_related('author').order_by('-created_at')
+
+        located, unlocated = [], []
+        for recipe in recipes:
+            base = {
+                'id': recipe.id,
+                'title': recipe.title,
+                'author_username': recipe.author.username,
+            }
+            if recipe.latitude is not None and recipe.longitude is not None:
+                located.append({
+                    **base,
+                    'latitude': recipe.latitude,
+                    'longitude': recipe.longitude,
+                })
+            else:
+                unlocated.append(base)
+
+        return Response({'located': located, 'unlocated': unlocated})
+
 class DietaryTagViewSet(ModeratedLookupViewSet):
     """ViewSet for list/submission of dietary tags (M4-15)."""
     queryset = DietaryTag.objects.all().order_by(Lower('name'), 'id')
     serializer_class = DietaryTagSerializer
     lookup_serializer_class = DietaryTagLookupSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
 
 class EventTagViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     """ViewSet for list/submission of event tags (M4-15, #391)."""
@@ -336,11 +489,23 @@ class EventTagViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     serializer_class = EventTagSerializer
     lookup_serializer_class = EventTagLookupSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
+
 class ReligionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
     """ViewSet for list/submission of religions (M5-20, #391)."""
     queryset = Religion.objects.all().order_by(Lower('name'), 'id')
     serializer_class = ReligionSerializer
     lookup_serializer_class = ReligionLookupSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'list':
+            qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
+        return qs
 
 class CommentViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """ViewSet for deleting and interacting with comments."""
@@ -499,3 +664,27 @@ class CheckedIngredientsView(APIView):
             ).delete()
 
         return Response(self._checked_ids(request.user, recipe))
+
+
+class IngredientRouteViewSet(viewsets.ModelViewSet):
+    """CRUD for ingredient migration routes (#506).
+
+    Public reads for map animations; staff-only writes for curation.
+    Supports filtering by ingredient_id. Part of the heritage feature set
+    but lives in apps/recipes to stay next to the Ingredient model.
+    """
+
+    queryset = IngredientRoute.objects.select_related('ingredient')
+    serializer_class = IngredientRouteSerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        ingredient_id = self.request.query_params.get('ingredient')
+        if ingredient_id:
+            qs = qs.filter(ingredient_id=ingredient_id)
+        return qs

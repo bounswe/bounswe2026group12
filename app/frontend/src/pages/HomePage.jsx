@@ -5,6 +5,7 @@ import { fetchRegions } from '../services/searchService';
 import { fetchDailyCulturalContent } from '../services/culturalContentService';
 import DailyCulturalSection from '../components/DailyCulturalSection';
 import FloatingCulturalPrompt from '../components/FloatingCulturalPrompt';
+import RandomCulturalFact from '../components/RandomCulturalFact';
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import './HomePage.css';
 
@@ -165,6 +166,9 @@ export default function HomePage() {
       </form>
 
       <DailyCulturalSection items={dailyCards} personalized={isPersonalized} />
+      <aside className="home-random-fact" aria-label="Cultural fact of the moment">
+        <RandomCulturalFact />
+      </aside>
       <FloatingCulturalPrompt regions={regions} />
     </main>
   );

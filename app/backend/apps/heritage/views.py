@@ -89,3 +89,6 @@ class CulturalFactViewSet(viewsets.ModelViewSet):
         if fact is None:
             return Response(status=404)
         return Response(self.get_serializer(fact).data)
+
+
+

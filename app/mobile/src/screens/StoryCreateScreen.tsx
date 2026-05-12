@@ -25,7 +25,7 @@ const LANGS: { label: string; value: StoryLanguage }[] = [
 ];
 
 export default function StoryCreateScreen({ navigation }: Props) {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isReady } = useAuth();
   const { showToast } = useToast();
 
   const [title, setTitle] = useState('');
@@ -72,6 +72,8 @@ export default function StoryCreateScreen({ navigation }: Props) {
 
     setSubmitting(true);
     void (async () => {
+      // Step 1 — JSON create. Failure means nothing exists, retry is safe.
+      let createdId: string | null = null;
       try {
         const created = await apiPostJson<{ id: string }>('/api/stories/', {
           title: title.trim(),
@@ -81,20 +83,66 @@ export default function StoryCreateScreen({ navigation }: Props) {
           linked_recipe_id: linkedRecipe ? Number(linkedRecipe.id) : null,
           region: regionId,
         });
-        if (imageUri) {
-          await updateStoryImageById(String(created.id), { uri: imageUri });
-        }
-        showToast('Story published!', 'success');
-        navigation.navigate('StoryDetail', { id: created.id });
+        createdId = String(created.id);
       } catch (e) {
         showToast(
-          e instanceof Error ? e.message : 'Failed to publish story. Please try again.',
+          e instanceof Error ? e.message : 'Could not publish story. Please try again.',
           'error',
         );
-      } finally {
         setSubmitting(false);
+        return;
       }
+
+      // Step 2 — image upload. Soft failure: story exists, navigate to it,
+      // user can re-upload the image from edit if it fails.
+      let imageFailed = false;
+      if (imageUri) {
+        try {
+          await updateStoryImageById(createdId, { uri: imageUri });
+        } catch {
+          imageFailed = true;
+        }
+      }
+
+      if (imageFailed) {
+        showToast('Story published — but image upload failed. Open it to retry from edit.', 'error');
+      } else {
+        showToast('Story published!', 'success');
+      }
+      setSubmitting(false);
+      navigation.navigate('StoryDetail', { id: createdId });
     })();
+  }
+
+  if (isReady && !isAuthenticated) {
+    return (
+      <SafeAreaView style={form.safe} edges={['top', 'left', 'right']}>
+        <View style={form.authGate}>
+          <Text style={form.authGateHeading} accessibilityRole="header">
+            Sign in to share a story
+          </Text>
+          <Text style={form.authGateBody}>
+            Log in to publish stories — your drafts, comments, and saves all live under your account.
+          </Text>
+          <Pressable
+            onPress={() => navigation.navigate('Login')}
+            style={({ pressed }) => [form.primaryButton, pressed && form.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Go to log in"
+          >
+            <Text style={form.primaryButtonText}>Log In</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('Register')}
+            style={({ pressed }) => [form.secondaryButton, pressed && form.buttonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Go to register"
+          >
+            <Text style={form.secondaryButtonText}>Register</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (

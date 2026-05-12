@@ -11,8 +11,13 @@ export function buildRecipePatchJsonBody(input: {
   qaEnabled: boolean;
   rows: AuthoringIngredientRow[];
 }): Record<string, unknown> {
+  // Require an ingredient + a non-empty amount. The unit is *not* required —
+  // backend accepts `null` and we no longer silently drop unit-less rows
+  // (the previous filter did, swallowing valid edits). UI-level validation
+  // in RecipeEditScreen still asks for a unit; this filter only catches
+  // rows that slipped through (e.g. legacy data with a missing unit).
   const validRows = input.rows.filter(
-    (r) => r.ingredient.id != null && r.amount.trim() !== '' && r.unit.id != null,
+    (r) => r.ingredient.id != null && r.amount.trim() !== '',
   );
 
   // Region intentionally omitted from the patch body. The detail API exposes
@@ -28,7 +33,7 @@ export function buildRecipePatchJsonBody(input: {
     ingredients_write: validRows.map((r) => ({
       ingredient: r.ingredient.id,
       amount: r.amount.trim(),
-      unit: r.unit.id,
+      unit: r.unit.id ?? null,
     })),
   };
 }

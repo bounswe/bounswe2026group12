@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from apps.recipes.models import Recipe, Comment, Region
-from apps.notifications.models import Notification
+from apps.recipes.models import Recipe, Comment, Region, Rating
+from apps.notifications.models import Notification, NotificationType
 
 User = get_user_model()
 
@@ -102,6 +102,16 @@ class NotificationSignalTests(TestCase):
         notif = Notification.objects.get()
         self.assertIn(self.questioner.username, notif.message)
         self.assertIn(self.recipe.title, notif.message)
+
+    def test_question_notification_type_is_question(self):
+        Comment.objects.create(
+            recipe=self.recipe,
+            author=self.questioner,
+            body="When should I serve this?",
+            type="QUESTION",
+        )
+        notif = Notification.objects.get()
+        self.assertEqual(notif.notification_type, NotificationType.QUESTION)
 
     # ------------------------------------------------------------------
     # Guard: self-question — no notification
@@ -206,6 +216,7 @@ class NotificationReplySignalTests(TestCase):
         self.assertEqual(notif.actor, self.replier)
         self.assertEqual(notif.recipe, self.recipe)
         self.assertIn(self.replier.username, notif.message)
+        self.assertEqual(notif.notification_type, NotificationType.REPLY)
 
     def test_no_notification_when_asker_replies_to_own_question(self):
         """The asker replying to their own question must NOT generate a notification."""
@@ -254,3 +265,36 @@ class NotificationReplySignalTests(TestCase):
 
         # Still exactly one notification
         self.assertEqual(Notification.objects.count(), 1)
+
+
+class NotificationRatingSignalTests(TestCase):
+    def setUp(self):
+        self.author = make_user("rating-author")
+        self.rater = make_user("rating-user")
+        self.recipe = make_recipe(self.author)
+
+    def test_notification_created_on_first_rating(self):
+        Rating.objects.create(user=self.rater, recipe=self.recipe, score=4)
+
+        self.assertEqual(Notification.objects.count(), 1)
+        notif = Notification.objects.get()
+        self.assertEqual(notif.recipient, self.author)
+        self.assertEqual(notif.actor, self.rater)
+        self.assertEqual(notif.recipe, self.recipe)
+        self.assertEqual(notif.notification_type, NotificationType.RATING)
+        self.assertIn(self.rater.username, notif.message)
+        self.assertIn(self.recipe.title, notif.message)
+
+    def test_score_update_does_not_create_new_notification(self):
+        rating = Rating.objects.create(user=self.rater, recipe=self.recipe, score=2)
+        self.assertEqual(Notification.objects.count(), 1)
+
+        rating.score = 5
+        rating.save()
+
+        self.assertEqual(Notification.objects.count(), 1)
+
+    def test_self_rating_does_not_create_notification(self):
+        Rating.objects.create(user=self.author, recipe=self.recipe, score=5)
+
+        self.assertEqual(Notification.objects.count(), 0)

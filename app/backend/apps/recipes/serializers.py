@@ -2,7 +2,9 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
+    EndangeredNote, RecipeCulturalContext, IngredientRoute, Bookmark
 )
+
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,7 +46,7 @@ class RegionSubmissionSerializer(serializers.ModelSerializer):
 class IngredientLookupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'heritage_status']
 
 class NamedSubmissionSerializer(serializers.ModelSerializer):
     duplicate_message = 'This name already exists.'
@@ -83,7 +85,10 @@ class IngredientSerializer(NamedSubmissionSerializer):
 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'is_approved', 'heritage_status', 'density_g_per_ml',
+            'submitted_by', 'submitted_at', 'reviewed_by', 'reviewed_at', 'rejection_reason'
+        ]
         read_only_fields = NamedSubmissionSerializer.AUDIT_READ_ONLY_FIELDS
 
 class UnitLookupSerializer(serializers.ModelSerializer):
@@ -167,6 +172,24 @@ class RecipeIngredientWriteSerializer(serializers.Serializer):
             raise serializers.ValidationError("Amount must be a positive number.")
         return value
 
+class CulturalContextSerializer(serializers.ModelSerializer):
+    """The seven "Beyond the Recipe" narrative notes (#521)."""
+    class Meta:
+        model = RecipeCulturalContext
+        fields = [
+            'identity_note', 'memory_note', 'migration_note', 'ritual_note',
+            'commensality_note', 'terroir_note', 'craft_note',
+        ]
+
+class EndangeredNoteSerializer(serializers.ModelSerializer):
+    """Sourced note attached to a recipe's endangered-heritage status (#524)."""
+
+    class Meta:
+        model = EndangeredNote
+        fields = ['id', 'recipe', 'text', 'source_url', 'created_at']
+        read_only_fields = ['id', 'recipe', 'created_at']
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
     region_name = serializers.ReadOnlyField(source='region.name')
@@ -175,6 +198,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     dietary_tags = DietaryTagLookupSerializer(many=True, read_only=True)
     event_tags = EventTagLookupSerializer(many=True, read_only=True)
     religions = ReligionLookupSerializer(many=True, read_only=True)
+    endangered_notes = EndangeredNoteSerializer(many=True, read_only=True)
     dietary_tag_ids = serializers.PrimaryKeyRelatedField(
         queryset=DietaryTag.objects.all(), source='dietary_tags',
         many=True, write_only=True, required=False,
@@ -191,22 +215,31 @@ class RecipeSerializer(serializers.ModelSerializer):
     rank_score = serializers.SerializerMethodField()
     rank_reason = serializers.SerializerMethodField()
     heritage_group = serializers.SerializerMethodField()
+    cultural_context = CulturalContextSerializer(required=False, allow_null=True)
+    is_bookmarked = serializers.BooleanField(read_only=True, allow_null=True)
+    bookmark_count = serializers.IntegerField(read_only=True, default=0)
+    user_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = [
             'id', 'public_id', 'title', 'description', 'steps', 'image', 'video',
-            'region', 'region_name', 'author', 'author_username', 'qa_enabled',
-            'is_published', 'is_heritage', 'heritage_notes',
+            'region', 'region_name', 'latitude', 'longitude',
+            'author', 'author_username', 'qa_enabled',
+            'is_published', 'is_heritage', 'heritage_notes', 'heritage_status',
+            'average_rating', 'rating_count', 'user_rating',
             'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
+            'cultural_context',
             'story_count',
             'rank_score', 'rank_reason',
-            'heritage_group',
+            'heritage_group', 'endangered_notes',
+            'is_bookmarked', 'bookmark_count'
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
+
 
     def get_heritage_group(self, obj):
         # Most recent membership wins. The GenericRelation prefetch covers
@@ -224,17 +257,35 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_rank_reason(self, obj):
         return getattr(obj, 'rank_reason', None)
 
+    def get_user_rating(self, obj):
+        return getattr(obj, 'user_rating', None)
+
     def validate(self, data):
         if self.context['request'].method == 'POST':
             if not data.get('ingredients_write'):
                 raise serializers.ValidationError({"ingredients_write": "At least one ingredient is required."})
         return data
 
+    def _save_cultural_context(self, recipe, cultural_data):
+        # cultural_data is the validated nested payload, or None when the
+        # caller omitted it (PATCH) or sent it explicitly null. We only
+        # create-or-update when a dict was provided.
+        if not cultural_data:
+            return
+        context, _ = RecipeCulturalContext.objects.update_or_create(
+            recipe=recipe, defaults=cultural_data,
+        )
+        # Refresh the cached reverse relation so the serialized response
+        # reflects the write even when the recipe was loaded with
+        # select_related('cultural_context').
+        recipe.cultural_context = context
+
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients_write', [])
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
         religions = validated_data.pop('religions', None)
+        cultural_data = validated_data.pop('cultural_context', None)
         recipe = Recipe.objects.create(**validated_data)
         for item in ingredients_data:
             RecipeIngredient.objects.create(
@@ -249,6 +300,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.event_tags.set(event_tags)
         if religions is not None:
             recipe.religions.set(religions)
+        self._save_cultural_context(recipe, cultural_data)
         return recipe
 
     def update(self, instance, validated_data):
@@ -256,6 +308,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         dietary_tags = validated_data.pop('dietary_tags', None)
         event_tags = validated_data.pop('event_tags', None)
         religions = validated_data.pop('religions', None)
+        cultural_data = validated_data.pop('cultural_context', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -274,6 +327,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.event_tags.set(event_tags)
         if religions is not None:
             instance.religions.set(religions)
+        self._save_cultural_context(instance, cultural_data)
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -306,9 +360,33 @@ class CommentSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class RecipeRatingWriteSerializer(serializers.Serializer):
+    score = serializers.IntegerField(min_value=1, max_value=5)
+
+
+class RecipeRatingSummarySerializer(serializers.Serializer):
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2, allow_null=True)
+    rating_count = serializers.IntegerField()
+    user_rating = serializers.IntegerField(allow_null=True)
+
+
 class IngredientSubstituteSerializer(serializers.Serializer):
     """One row of substitution output: the target ingredient + ranking + notes."""
     id = serializers.IntegerField(source='to_ingredient.id', read_only=True)
     name = serializers.CharField(source='to_ingredient.name', read_only=True)
     closeness = serializers.DecimalField(max_digits=3, decimal_places=2, read_only=True)
     notes = serializers.CharField(read_only=True)
+
+
+class IngredientRouteSerializer(serializers.ModelSerializer):
+    """Read/write shape for ingredient migration routes."""
+
+    ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
+
+    class Meta:
+        model = IngredientRoute
+        fields = [
+            'id', 'ingredient', 'ingredient_name', 'waypoints',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']

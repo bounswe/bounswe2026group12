@@ -43,6 +43,21 @@ describe('Public routes (unauthenticated)', () => {
     renderApp('/stories/1');
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
+
+  test('/heritage/1 renders HeritagePage (loading first)', () => {
+    renderApp('/heritage/1');
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+  });
+
+  test('/heritage/1/map renders HeritageMapPage (loading first)', () => {
+    renderApp('/heritage/1/map');
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+  });
+
+  test('/calendar renders CalendarPage', () => {
+    renderApp('/calendar');
+    expect(screen.getByRole('heading', { name: /cultural food calendar/i })).toBeInTheDocument();
+  });
 });
 
 describe('Protected routes (unauthenticated)', () => {

@@ -10,6 +10,9 @@ export type SearchResultItem = {
   thumbnail?: string | null;
   rankScore: number;
   rankReason: string | null;
+  /** Surfaced only when the producer knows the state (e.g. Saved tab); leave
+   * undefined for search responses that don't include the field. */
+  isBookmarked?: boolean;
 };
 
 type BackendSearchResponse = {
