@@ -16,7 +16,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.notifications.models import DeviceToken, Notification
+from apps.notifications.models import DeviceToken, Notification, NotificationType
 from apps.recipes.models import Comment, Recipe, Region
 
 User = get_user_model()
@@ -63,6 +63,7 @@ class MarkReadActionTests(APITestCase):
         res = self.client.post(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertTrue(res.data['is_read'])
+        self.assertEqual(res.data['notification_type'], NotificationType.QUESTION)
         self.notif.refresh_from_db()
         self.assertTrue(self.notif.is_read)
 

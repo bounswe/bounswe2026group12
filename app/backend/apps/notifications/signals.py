@@ -3,7 +3,7 @@ import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from apps.recipes.models import Comment
+from apps.recipes.models import Comment, Rating
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,18 @@ def _send_expo_push(tokens, title, body):
         logger.error("Expo push server error: %s", exc)
 
 
+def _create_notification(recipient, actor, recipe, message, notification_type):
+    from .models import Notification
+
+    return Notification.objects.create(
+        recipient=recipient,
+        actor=actor,
+        recipe=recipe,
+        message=message,
+        notification_type=notification_type,
+    )
+
+
 @receiver(post_save, sender=Comment)
 def notify_recipe_author_on_question(sender, instance, created, **kwargs):
     """
@@ -76,18 +88,19 @@ def notify_recipe_author_on_question(sender, instance, created, **kwargs):
     if author == actor:
         return
 
-    from .models import Notification, DeviceToken
+    from .models import DeviceToken, NotificationType
 
     message = (
         f"{actor.username} asked a question on your recipe \"{recipe.title}\"."
     )
 
     # 1. Persist in-app notification
-    Notification.objects.create(
+    _create_notification(
         recipient=author,
         actor=actor,
         recipe=recipe,
         message=message,
+        notification_type=NotificationType.QUESTION,
     )
 
     # 2. Push notification (best-effort)
@@ -126,18 +139,19 @@ def notify_asker_on_reply(sender, instance, created, **kwargs):
     if recipient == actor:
         return
 
-    from .models import Notification, DeviceToken
+    from .models import DeviceToken, NotificationType
 
     message = (
         f"{actor.username} replied to your question on \"{recipe.title}\"."
     )
 
     # 1. Persist in-app notification
-    Notification.objects.create(
+    _create_notification(
         recipient=recipient,
         actor=actor,
         recipe=recipe,
         message=message,
+        notification_type=NotificationType.REPLY,
     )
 
     # 2. Push notification (best-effort)
@@ -150,3 +164,29 @@ def notify_asker_on_reply(sender, instance, created, **kwargs):
             title="New reply to your question",
             body=message,
         )
+
+
+@receiver(post_save, sender=Rating)
+def notify_recipe_author_on_rating(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    recipe = instance.recipe
+    author = recipe.author
+    actor = instance.user
+
+    if author == actor:
+        return
+
+    from .models import NotificationType
+
+    message = (
+        f"{actor.username} rated your recipe \"{recipe.title}\"."
+    )
+    _create_notification(
+        recipient=author,
+        actor=actor,
+        recipe=recipe,
+        message=message,
+        notification_type=NotificationType.RATING,
+    )
