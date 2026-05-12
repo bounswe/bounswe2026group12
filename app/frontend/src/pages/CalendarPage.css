@@ -1,0 +1,188 @@
+.calendar-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.calendar-page-header h1 {
+  margin: 0 0 0.25rem;
+  color: #4A2208;
+}
+
+.calendar-page-subtitle {
+  margin: 0;
+  color: #5A3621;
+}
+
+.calendar-filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.calendar-filter {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #5A3621;
+  font-weight: 600;
+}
+
+.calendar-filter select {
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #EADCBB;
+  border-radius: 8px;
+  background: white;
+  min-width: 12rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.calendar-month {
+  background: #FAF7EF;
+  border: 1px solid #EADCBB;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.calendar-month h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.6rem;
+  color: #4A2208;
+}
+
+.calendar-month ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calendar-month-empty {
+  color: #8C7757;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.calendar-event-card {
+  width: 100%;
+  text-align: left;
+  background: white;
+  border: 1px solid #EADCBB;
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.calendar-event-card:hover,
+.calendar-event-card:focus-visible {
+  border-color: #C4521E;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.calendar-event-name {
+  font-weight: 600;
+  color: #4A2208;
+}
+
+.calendar-event-region {
+  font-size: 0.8rem;
+  color: #8C4A1C;
+}
+
+.calendar-lunar {
+  background: #FFF8E7;
+  border: 1px dashed #E8D27A;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.calendar-lunar h2 {
+  margin: 0 0 0.4rem;
+  color: #8C6A1C;
+}
+
+.calendar-lunar-note {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #5A3621;
+}
+
+.calendar-lunar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.calendar-event-detail {
+  position: relative;
+  background: #FAF7EF;
+  border: 1px solid #EADCBB;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.calendar-event-detail-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #5A3621;
+}
+
+.calendar-event-detail h2 {
+  margin: 0 0 0.25rem;
+  color: #4A2208;
+}
+
+.calendar-event-detail-rule {
+  font-size: 0.85rem;
+  color: #8C4A1C;
+  margin: 0 0 0.5rem;
+}
+
+.calendar-event-detail-region,
+.calendar-event-detail-description {
+  margin: 0 0 0.5rem;
+  color: #3A2613;
+}
+
+.calendar-event-detail-recipes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.calendar-event-detail-recipes a {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  background: white;
+  border: 1px solid #EADCBB;
+  border-radius: 999px;
+  color: #4A2208;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
