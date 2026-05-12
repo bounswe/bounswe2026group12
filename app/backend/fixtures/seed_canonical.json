@@ -1,4 +1,12 @@
 {
+  "religions": [
+    "Islam",
+    "Christianity",
+    "Judaism",
+    "Hinduism",
+    "Buddhism",
+    "Secular/None"
+  ],
   "users": [
     {
       "username": "ayse",
@@ -1738,7 +1746,8 @@
       "region": "Aegean",
       "is_published": true,
       "is_heritage": true,
-      "heritage_status": "endangered",
+      "heritage_status": "revived",
+      "heritage_notes": "Revived through the annual Mesir Macunu Festival in Manisa, held every spring since the sixteenth century; inscribed on UNESCO's list of Intangible Cultural Heritage in 2012.",
       "dietary_tags": [
         "Vegan",
         "Vegetarian"
@@ -2352,7 +2361,9 @@
         "Vegetarian"
       ],
       "event_tags": [],
-      "religions": [],
+      "religions": [
+        "Secular/None"
+      ],
       "ingredients": [
         {
           "name": "Flour",
@@ -4140,7 +4151,9 @@
         "Vegetarian"
       ],
       "event_tags": [],
-      "religions": [],
+      "religions": [
+        "Secular/None"
+      ],
       "ingredients": [
         {
           "name": "Flour",
@@ -5261,6 +5274,7 @@
   "stories": [
     {
       "title": "Rolling Sarma by the Black Sea",
+      "story_type": "family",
       "summary": "A grandmother's autumn ritual of rolling sarma with collard greens and butter.",
       "body": "Every autumn in Trabzon, when the first Black Sea winds begin to cool the hillsides, you know the season of sarma has arrived. The collard greens, which have been growing fat and dark throughout the summer, are at their best in October — large enough to wrap generously, tender enough to yield to the tooth. This is when my grandmother would call the family to the kitchen.\n\nShe moved through the preparation with the unhurried confidence of someone who had done this hundreds of times. First came the blanching: the big leaves dropped into a pot of boiling salted water for just thirty seconds, then pulled out into a basin of ice water to stop the cooking. She said the cold water kept the color alive. Then the careful trimming of the thick central stems with a small knife she had used for forty years.\n\nThe filling was ground beef — always from the local butcher, never pre-packaged — mixed with raw rice, finely grated onion, salt, and enough black pepper to give it warmth. She kneaded it with her hands the way a baker kneads dough, working it until it held together. The smell of the raw meat and the pepper was somehow already appetizing in anticipation of what it would become.\n\nThe rolling itself was a kind of meditation. Each leaf laid flat on the wooden board, a heaped tablespoon of filling near the base, sides folded in like an envelope, then rolled firmly away from the body. She showed me how tight to roll: tight enough to hold together in the pot, loose enough for the rice to expand without bursting the leaf. We rolled for nearly an hour, talking about everything and nothing.\n\nInto the pot they went, seam-side down, in tight concentric circles. A handful of torn leaves lined the bottom so nothing would scorch. Then the butter — proper Black Sea butter, orange-gold and tasting of grass — melted over the top, and enough hot water to barely cover. An inverted plate kept everything in place.\n\nForty-five minutes of gentle simmering filled the whole house with a smell that I have never been able to replicate in any other kitchen. When my grandmother lifted the lid and the steam rose, I understood for the first time that a recipe is not really about ingredients or steps. It is about time, and the people who teach you to spend it.",
       "author": "ayse",
@@ -5281,6 +5295,7 @@
     },
     {
       "title": "Summer Sarma in the Aegean",
+      "story_type": "traditional",
       "summary": "The lighter, olive-oil version of sarma that marks the beginning of summer.",
       "body": "In the Aegean, sarma takes a completely different form from its Black Sea cousin. The collard greens and butter give way to tender grape leaves and olive oil, and the filling holds no meat at all. This is zeytinyagli dolma — olive oil dolma — the kind you make when you want to taste the season itself rather than cover it.\n\nThe grape leaves come from our own vine, picked in late April when they are still small and pale green, before the summer heat turns them tough. My mother picks them early in the morning before the sun has warmed them, cutting each stem cleanly and stacking the leaves in a cloth. We blanch them briefly in salted water, just enough to soften them, and lay them out on the kitchen table to dry.\n\nThe filling is where the work and the love both live. Onions are sweated in olive oil until completely soft and translucent — my mother says you should be able to press them flat between two fingers without any crunch. Then raw rice goes in and toasts in the oil for two minutes. Pine nuts follow, then dried currants that plump when they hit the warm pan, dried mint, a whisper of cinnamon and allspice, salt, and enough black pepper to make you feel it. A small amount of water goes in, the lid goes on, and the rice steams until it is half-cooked. This semi-cooked rice is the key: it will finish cooking inside the grape leaf, absorbing all the flavors of the olive oil and lemon.\n\nThe rolling is precise. Each leaf gets one teaspoon — never more — because the rice will double in volume. Tight enough to hold, loose enough to breathe. Seam-side down into the pot, packed close so they support each other, the remaining olive oil drizzled over everything, the juice of two lemons poured over the top, cold water to just reach the top layer, and an inverted plate to keep them down.\n\nLow heat, forty minutes, and then the most important step: letting them cool in the pot. They are not ready when they are hot. They are ready when they have had time to absorb everything, to settle into themselves, to become cool and smooth and deeply flavored. You eat them at room temperature with a final squeeze of lemon, and you understand why my mother calls this the taste of the end of spring.",
       "author": "elif",
@@ -5299,6 +5314,7 @@
     },
     {
       "title": "From Anatolia to Athens: The Dolma Trail",
+      "story_type": "historical",
       "summary": "Tracing how stuffed grape leaves traveled from Anatolian kitchens to Greek tavernas.",
       "body": "Every Greek grandmother will tell you with absolute certainty that dolmadakia is a Greek dish. It has always been Greek, it will always be Greek, and the matter is not open for discussion. I grew up believing the same thing. My grandmother made them every week without consulting a recipe, her hands working with the automatic fluency of someone who had been doing this since childhood. She learned from her mother, who learned from hers, and so on backward into a time she could not name.\n\nIt was not until I was twenty-three, traveling for the first time outside Greece, that I started to notice something. In Istanbul, I watched an elderly woman at a market selling dolma that looked identical to what my grandmother made — same leaf, same filling, same cold-served presentation with lemon wedges. In Lebanon, the stuffed grape leaves at a family lunch were so close to home that I had to remind myself I was a stranger in someone else's kitchen.\n\nI began reading food history after that trip, and what I found was not surprising so much as humbling. The Ottoman culinary tradition, which stretched at its peak from the Balkans to the Arabian Peninsula and from the Crimea to North Africa, spread the technique of stuffed vegetables and leaves across an enormous geography. The word dolma itself is Turkish, from the verb doldurmak, to fill or to stuff. The technique was the empire's gift to its entire table.\n\nIn my taverna in Athens, I still make dolmadakia the way my grandmother taught me. Cold, with olive oil, with a generous squeeze of lemon, always with fresh herbs in the filling. They are Greek dolmadakia, and I am proud of them. But I no longer think the pride requires exclusivity. When I traveled to Izmir a second time, I sat down with a Turkish cook who had also learned the recipe from her grandmother. We made dolmadakia and dolma side by side, compared our ratios of rice to herb, argued gently about the correct amount of lemon. We did not share a language, but we shared something older than language. I drove back to Athens understanding that the best food is never owned by anyone. It belongs to everyone who has ever loved making it.",
       "author": "dimitris",
@@ -5317,6 +5333,7 @@
     },
     {
       "title": "How Swedish Cabbage Rolls Came from the Ottoman Empire",
+      "story_type": "historical",
       "summary": "The surprising Ottoman origins of Sweden's beloved kaldolmar.",
       "body": "In the early eighteenth century, King Charles XII of Sweden found himself in a position that history does not usually arrange for monarchs: he was a guest of the Ottoman Empire, living in Bender, in what is now Moldova, for nearly five years after his defeat at the Battle of Poltava. He arrived with a military escort and a shattered army. What he did not arrive with, and what he eventually took home, was a recipe.\n\nThe Ottoman court fed the king generously during his stay. Among the dishes that crossed his table, it is believed, were the stuffed vegetables that Ottoman cooks had been perfecting for centuries. The technique of wrapping a seasoned rice and meat filling in a leaf or a casing was nothing like anything in the Swedish culinary tradition of that era. Swedish cooking in 1710 ran to salted meats, porridges, and root vegetables. The idea of filling a leaf and cooking it in its own juices was a revelation.\n\nWhen Charles returned to Sweden in 1715, the culinary memory came with him. Kaldolmar — the name itself is a Swedish phonetic approximation of the Turkish kol dolma, meaning stuffed roll — appeared in Swedish cookbooks within decades. The version that took hold replaced the grape leaf with white cabbage, which was abundant in the Swedish climate, and adapted the filling to local tastes: pork and beef in place of lamb, a cream sauce in place of the olive oil broth.\n\nToday, kaldolmar sits in the Swedish culinary canon alongside meatballs and pickled herring, foods that most Swedes consider quintessentially their own. The Ottoman connection has been forgotten by most who eat it. When I tell Swedish students about the history, their first reaction is usually disbelief, then fascination, then something like pride at an unexpected international connection.\n\nFood history has a way of doing this: showing us that every national dish was once somebody else's foreign influence, absorbed and transformed until it became indistinguishable from home.",
       "author": "lars",
@@ -5334,6 +5351,7 @@
     },
     {
       "title": "The Buttermilk Substitute",
+      "story_type": "family",
       "summary": "Discovering how to adapt Irish family recipes when ingredients are not available.",
       "body": "The recipe card was laminated, which I had always found slightly funny — as though my grandmother had anticipated that soda bread would need to survive a hundred years of kitchen accidents. The card listed four ingredients: flour, buttermilk, baking soda, salt. That was it. No measurements in some places, just the instruction to add buttermilk until the dough comes together, which is the kind of direction that makes complete sense only once you already know how to make the bread.\n\nI came to Istanbul for a semester abroad and brought the recipe card in my wallet like a talisman. The first weekend, I went to every supermarket within walking distance of my apartment looking for buttermilk. No one knew the word. I tried describing it — sour milk, thick, for baking — and was met with polite confusion. I found a fermented dairy product that turned out to be ayran, which was too thin. I found sour cream, which was too thick.\n\nIt was my neighbor Fatma who solved the problem. She listened to my halting description, went to her own refrigerator, and came back with a container of yogurt and a glass of water. She mixed them together on the spot in a roughly three-to-one ratio and handed me the glass. It smelled right. It tasted right, with that clean sourness that reacts with the baking soda to make the bread rise.\n\nThe bread I made that afternoon was not identical to my grandmother's. It was slightly denser and had a faint yogurt sweetness that the original lacked. But it was recognizably the same loaf — the same cross scored on top, the same hollow sound when you knocked the bottom, the same crumb that crumbled slightly before it set.\n\nI have thought about that afternoon often. The recipe survived not because I found the exact ingredient, but because the underlying principle was preserved: an acid, a starch, a leavening, and enough liquid to bring them together. Fatma's yogurt-water served the chemistry perfectly. My grandmother, who came to America with nothing but her recipes and her memory, adapted just as fluidly when she could not find Irish soda flour in Boston. The recipe was always a framework, not a law.",
       "author": "sarah",
@@ -5350,6 +5368,7 @@
     },
     {
       "title": "Sunday Borek Ritual",
+      "story_type": "family",
       "summary": "The early-morning tradition of making borek for the whole family.",
       "body": "In our house, Sunday starts with sound rather than light. Before the sun has cleared the cypress trees, there is already movement in the kitchen: the soft creak of the oven door, the low hum of the gas flame, the barely audible sound of my mother's hands working the phyllo dough across the dining room table. By the time I was old enough to wake up and investigate, the ritual was already well underway.\n\nShe keeps the dough recipe in her head, as she keeps most of her recipes. Water, flour, olive oil, a pinch of salt, and something she calls patience — the willingness to let the gluten relax between rollings so the dough does not fight back. She uses a long thin rolling pin that belonged to her mother and before that to her grandmother. It is smooth from decades of use and slightly bowed at one end from an incident no one will explain.\n\nThe stretching is the part that I love to watch most. Once the dough is rolled to a rough circle, she drapes it over her forearms and lifts it, letting gravity and the gentle movement of her arms stretch it thinner and thinner. The light from the kitchen window comes through the dough in that last phase, making it nearly translucent. She can tell by the light when it is ready.\n\nThe filling is simple to the point of austerity: feta crumbled into a bowl with chopped parsley, an egg beaten in to bind it, black pepper for warmth. That is all. She says that when the ingredients are good, complexity is an insult to them. The feta comes from a small producer in the village whose cheese is sharper and saltier than anything from a supermarket.\n\nBy eight in the morning, the borek comes out of the oven, golden and crackling, smelling of hot cheese and olive oil and the faintest sweetness from the eggs. We eat it at the table without plates, tearing pieces directly from the pan. The conversation is easy in the way that only shared rituals allow it to be. My nieces, who are seven and ten, have started asking to help with the rolling. My mother teaches them the same way she was taught: no measurements, no timers, just hands and attention and the slow accumulation of knowing.",
       "author": "elif",
@@ -5368,6 +5387,7 @@
     },
     {
       "title": "Wedding Feasts of Southeastern Turkey",
+      "story_type": "festive",
       "summary": "How kebabs and sarma anchor the multi-day wedding celebrations of the southeast.",
       "body": "In Gaziantep and Adana, a wedding is not an event. It is a season. The preparations begin at least a week before the ceremony and involve not just the family but the entire neighborhood, organized with the unsentimental efficiency of people who have done this many times and know exactly what goes wrong if you leave something to the last day.\n\nThe meat arrives two days before. In my family, we buy whole lambs from a trusted farmer and have them butchered to specification: some coarsely ground for the Adana kebab, some cut for stewing, some reserved for the sarma. The women of three generations gather at my aunt's house to make the sarma. The conversation never stops — it moves from the wedding to old grievances to old jokes to the recipe, which everyone has an opinion on.\n\nOur southeastern sarma is unmistakably different from the versions you find in western Turkey. The filling uses ground lamb rather than beef, mixed with rice, tomato paste, and the spice that defines the region: isot, the dark dried Urfa pepper that is smoky and slow-burning rather than sharp. But the real signature is the pomegranate molasses. We add it both to the filling and to the cooking liquid, and it gives the sarma a deep, lacquered sweetness that lingers at the back of the throat. You can taste geography in it.\n\nThe Adana kebab is the centerpiece of the second evening, the night the families meet. Hand-minced lamb is seasoned with isot, red pepper flakes, and a restrained amount of sumac, then formed onto wide flat skewers and grilled over charcoal in the open yard. The smoke from the charcoal is part of the flavor, and there is no substitute for it. My uncle stands at the grill for four hours, turning skewers, handing plates, refusing all offers of relief.\n\nTables are set end to end along the street. Neighbors appear with dishes unannounced, as they have for generations: neighbor Halise brings her ayran, Cemil Bey brings the flatbread, the family two doors down has been frying çiğ köfte since the morning. The feast has no beginning and no end. It simply continues until everyone is fed.",
       "author": "fatma",
@@ -5391,6 +5411,7 @@
     },
     {
       "title": "Miso: A Living Ingredient",
+      "story_type": "traditional",
       "summary": "Understanding miso as a fermented, living paste central to Japanese home cooking.",
       "body": "When I was a child, I thought miso was simply salty brown paste. My mother kept a large ceramic crock of it in the back of the refrigerator, and it never seemed to run out, and I never thought to ask where it came from or how it was made. I ate miso soup every morning the way other children eat cereal — automatically, without attention.\n\nIt was my grandmother, who had been making her own miso for forty years, who explained what I was actually eating. Miso, she said, is a living thing. The koji mold — a cultivated fungus that the Japanese call the national mold, kinzoku — works over months or years inside the crock, breaking down the proteins and starches in the soybeans through enzymatic activity into hundreds of complex flavor compounds. The longer it ferments, the deeper and more complex the flavor becomes. Her miso was fermented for two years and had a depth that commercial miso cannot approach.\n\nShe showed me her crock. Under a weighted lid, the paste was dark and dense and smelled intensely of the earth and the sea at once. She pressed a small spoon of it into my palm. It was salty and sweet and had a savory depth that hit the back of the tongue and stayed there.\n\nThe rules around miso soup, she told me, are not arbitrary. You must never boil the miso. Boiling kills the bacterial cultures that make miso more than a flavoring — it becomes dead salt. The soup is built in stages: the dashi first, brought to a temperature just below boiling; the tofu and seaweed heated gently in the broth; the miso dissolved separately in a ladle before being stirred in at the end. These steps take four minutes. They are four minutes that represent centuries of accumulated understanding about how to keep a living ingredient alive.\n\nI now make miso soup every morning. I have my grandmother's recipe for fermenting my own miso, though I have not yet attempted it — the commitment of two years still intimidates me. But I follow her rules precisely when I make the soup. I dissolve the miso gently. I never let it boil. And every morning I taste what patience and respect for an ingredient actually mean.",
       "author": "yuki",
@@ -5411,6 +5432,7 @@
     },
     {
       "title": "The Spice Road to Indian Kitchens",
+      "story_type": "historical",
       "summary": "How ancient trade routes shaped the spice palette of everyday Indian cooking.",
       "body": "When people ask me to describe Indian cooking, I begin with what is not native to it. The chili pepper, which many people consider the defining flavor of Indian cuisine, did not exist in India before 1498. It arrived with the Portuguese, who encountered it in Brazil and carried it eastward. Within two centuries it had so thoroughly integrated itself into the subcontinent's cooking that most people assumed it had always been there.\n\nThe story of Indian spices is entirely this kind of story. Turmeric traveled overland from Southeast Asia along ancient trade routes that predate the written record. Cumin was traded by Persian and Arab merchants. Coriander spread from the Mediterranean through Central Asia. Black pepper, which was already indigenous to the Malabar Coast, was so valuable to Roman traders that it was used as currency. Every spice in the Indian kitchen has a journey attached to it.\n\nWhen I make dal tadka, I am aware of this layered history in a way that might seem excessive for what is, practically speaking, a bowl of yellow lentils. But the tadka — the flash-frying of whole spices in clarified butter — is a technique that has been described in Sanskrit texts dating back two thousand years. When the cumin seeds hit the hot ghee and begin to splutter, releasing their volatile oils in a burst of fragrance, they are doing exactly what they did in kitchens before the spice routes, before the Portuguese, before the chili pepper arrived to change everything.\n\nMy grandmother grew up in a household where the tadka was done on a wood fire, and the smell of the smoke mixed with the cumin in a way that I have never been able to replicate on a gas stove. She said the wood fire gave the ghee a different flavor, something more complex, that she missed her entire adult life in the city. I think about that every time I make the tadka — how much we lose in translation, generation to generation, kitchen to kitchen, and how much we carry forward without knowing it.\n\nThe lentils, the ghee, the cumin, the turmeric: each one a gift from somewhere else, long since made into something entirely our own.",
       "author": "priya",
@@ -5427,6 +5449,7 @@
     },
     {
       "title": "My Grandmother's Manti",
+      "story_type": "family",
       "summary": "The painstaking art of making tiny Anatolian dumplings by hand.",
       "body": "There is a saying in Kayseri that a bride's worth is measured by the size of her manti. The smaller the dumplings, the more skillful and devoted the cook. The ideal Kayseri manti is said to be small enough that forty will fit on a single spoon — a benchmark so demanding that even experienced cooks treat it as aspirational rather than achievable.\n\nMy grandmother treated it as a daily expectation.\n\nShe began with the dough, which she made without a recipe: flour, an egg, a pinch of salt, enough water to bring it together into something firm and smooth. She kneaded it for ten minutes — she timed this by the radio, always the morning broadcast — then wrapped it in a cloth to rest. The resting was not negotiable. The gluten needed time to relax before it would roll thin enough.\n\nThe filling was simpler than the shells deserved: ground beef, grated onion, salt, black pepper. She seasoned it by tasting raw, pressing a tiny pinch against her tongue, which I later learned is actually standard practice despite what food safety guidelines might suggest.\n\nThe rolling was the performance. She flattened the dough in stages on the wooden table, stopping three or four times to let it rest, pushing it always thinner until it was nearly translucent. Then she cut it into tiny squares — two centimeters on a side, no more — with a wheel cutter that she had used since before my mother was born.\n\nInto each square went a speck of filling the size of a large pea. Then the pinching: she gathered the four corners of each square and pressed them together with a single decisive movement, and the manti was done. She worked at a speed I could not follow without losing count, each one identical to the last.\n\nWhen the manti were boiled and piled into a bowl, she covered them with yogurt that had been beaten with raw garlic and salt until it was completely smooth, then drizzled red-pepper butter over the top, made by frying butter with dried red pepper flakes until the butter turned deep amber. The heat of the butter met the cold of the yogurt and created something neither one could be alone: warm, cool, sharp, creamy, all at once.\n\nNo version I have ever eaten in a restaurant has come close to hers. Not for lack of skill, I think, but for lack of the decades she had spent making this.",
       "author": "ayse",
@@ -5445,6 +5468,7 @@
     },
     {
       "title": "Italian Sundays",
+      "story_type": "family",
       "summary": "The sacred weekly tradition of slow-cooked ragu and family gathering.",
       "body": "In our family, Sunday belongs to the ragu. This has been true for as long as anyone can remember, and the Sunday ragu has a logic and a structure that is as dependable as the church bells that ring three blocks from our apartment.\n\nIt begins early. I wake at six-thirty, which is earlier than I need to, but the ragu cannot be rushed and I have never liked the anxiety of starting late. The onion and garlic go into the olive oil first, over the lowest possible flame, and they cook for a full fifteen minutes before the meat arrives. This long slow start is not optional. It is what makes the base of the sauce different from any hurried version, giving it a sweetness and depth that cannot be achieved in five minutes of high-heat cooking.\n\nThe meat — ground beef, always the same butcher, always the same cut — goes in over high heat, and I spend eight to ten minutes breaking it up and letting it brown completely. Not grey. Brown. This is the step that home cooks most often shortcut, and it is the step that makes the most difference. Then the tomato paste, cooked dry in the pan until it turns from bright red to a deep brick color, then water, and the long, patient simmer.\n\nThe smell of the sauce as it cooks is the signal to the rest of the family. My daughter calls it from wherever she is in the apartment to say she is coming. My grandchildren, who are seven and ten, know what it means and appear in the kitchen with an unusual willingness to help. By eleven o'clock, the pasta water is already boiling and the three generations of us are finding their places at the table — the same places they have always occupied, because no one has ever discussed this, and no one needs to.\n\nThe ragu is the same every week. The pasta shape is the same. The wine is the same. This is not poverty of imagination; it is the point. Consistency is what makes a ritual. And a ritual, properly kept, is one of the few things in a life that can make you feel genuinely secure.",
       "author": "maria",
@@ -5463,6 +5487,7 @@
     },
     {
       "title": "Istanbul Street Food Memories",
+      "story_type": "personal",
       "summary": "Recalling the lahmacun stands that shaped a food blogger's palate.",
       "body": "The first thing I remember tasting consciously — not eating, but actually tasting, with attention — was a lahmacun from a stand in Kadıköy. I was eleven years old. I had been eating lahmacun my entire life, the way you eat things you grow up around without registering them as remarkable. That afternoon was different.\n\nThe stand was operated by a man who worked alone. He made the dough himself, and it was thinner than anything I had seen before, almost see-through when he held it up to the light. The topping — lamb ground with onion, tomato, parsley, and a generous amount of red pepper flakes — was spread right to the very edge in a layer thin enough that it would cook through completely in the ninety seconds the lahmacun spent in the wood-fired oven. The heat of that oven was extraordinary. Standing next to it in October felt like standing next to a furnace.\n\nThe man pulled it out with a long wooden peel, laid it flat on the marble counter, scattered a handful of raw parsley over the top, squeezed half a lemon over everything, and rolled it into a tube. He handed it to me wrapped in a piece of paper, and I stood on the street corner eating it.\n\nThe crust was so thin it shattered when I bit into it, but the topping was somehow still juicy, the fat from the lamb releasing into the bread. The parsley was bright and grassy. The lemon cut through the fat and made everything louder. I remember thinking, with the clarity that arrives occasionally and unexpectedly in childhood, that I had never paid proper attention to food before and that I should start.\n\nI have spent the two decades since writing about food and eating at restaurants on five continents. I have had meals that cost a hundred times what that lahmacun cost. None of them has made me feel more awake than that afternoon in Kadıköy when I was eleven and the world of flavor suddenly opened up. The great meals are not always in the great restaurants. Sometimes they are on a street corner in October, for the price of a cup of tea.",
       "author": "mehmet",
@@ -5479,6 +5504,7 @@
     },
     {
       "title": "A Lebanese Table Is Never Empty",
+      "story_type": "traditional",
       "summary": "The Lebanese philosophy of abundance and hospitality through food.",
       "body": "There is a phrase in Lebanese Arabic — dakhilak — that does not have an exact translation. It means something like under your protection, or I am in your care, and it is used both as a plea and as an expression of trust. When someone enters a Lebanese home and sits down to eat, the table that is set before them is a physical form of that phrase. You are seen. You are fed. You are safe here.\n\nMy mother understood the table as an ethical statement. She kept hummus in the refrigerator every day of her life, not because she planned to serve it — though she often did — but because the absence of something to offer a guest was, to her mind, a kind of moral failure. The hummus was always freshly made, with the chickpeas soaked and cooked from scratch, never from a can, blended until smooth with tahini and the juice of two lemons and a clove of raw garlic that perfumed everything it touched. She set it in a bowl with a well in the center filled with good olive oil and a dusting of cumin.\n\nThe tabbouleh took longer. She chopped the parsley by hand on a wooden board, the knife moving in a quick rocking rhythm that she had developed over forty years. Not minced — chopped, with texture, so that each piece of parsley retained its identity in the bowl. The bulgur went in soaked and squeezed dry, the tomatoes diced small and drained of their juice, the spring onion cut thin, the dressing bright with lemon. She tasted it three times before serving.\n\nWhen guests came unexpectedly, which they often did because Lebanese hospitality operates on the assumption that people will always come, she did not apologize for what was not on the table. She put out what was there and made it feel like enough, which it always was, because enough is a feeling as much as a quantity.\n\nI have tried to carry this with me in my own kitchen. To keep something good always ready. To make the table say the same thing my mother's table always said: you are not a stranger here.",
       "author": "leila",
@@ -5498,6 +5524,7 @@
     },
     {
       "title": "Baking Across the Atlantic",
+      "story_type": "historical",
       "summary": "How Irish baking traditions survived and adapted in American kitchens.",
       "body": "My grandmother left County Cork in 1961 with a brown suitcase, fifty dollars, and a handful of recipe cards written in her own hand. She was twenty-two years old. The recipes were not sentimental objects to her — they were practical ones, a record of the things she knew how to make and intended to keep making wherever she ended up, which turned out to be a three-room apartment in South Boston.\n\nThe soda bread was the first thing she baked in the new apartment, in a gas oven she had never used before, in a city where she did not yet know the neighborhood baker. She made it from the same four ingredients she had always used — flour, buttermilk, baking soda, salt — scored the cross in the top, knocked the bottom, and declared it done. It was the same bread. The Atlantic had not changed it.\n\nWhat changed was everything around it. American flour was different from Irish flour — softer, more finely milled, which made the bread slightly lighter and required a little less liquid. American butter was saltier. She adjusted without making notes, absorbing the differences into her hands over years of repetition.\n\nThe scones came later, introduced by a neighbor who had come from Edinburgh and who served them one afternoon with jam she had brought from home. My grandmother went home and made them the next morning from memory, adjusting what she had seen to match the ingredients she kept on hand. They were not exactly like the neighbor's scones — richer, slightly different in texture, with a tang from the buttermilk that the original had not had. But they were good, and they were hers, and they entered the repertoire.\n\nI bake both every weekend now, in a kitchen that has good knives and a stand mixer and all the equipment my grandmother never had. I make the soda bread by hand and without measuring, the way she taught my mother and my mother taught me, and every loaf is slightly different, and every loaf is recognizably hers. The scones I make the same way. The recipes traveled three generations and three thousand miles, and they are still alive, still changing, still being adapted to whoever is making them and whatever is in the kitchen. That is exactly as it should be.",
       "author": "sarah",
@@ -5517,6 +5544,7 @@
     },
     {
       "title": "When Yogurt Connects Continents",
+      "story_type": "historical",
       "summary": "Exploring how yogurt serves as a culinary bridge between Turkish and Indian traditions.",
       "body": "The word yogurt comes from Turkish — from the verb yoğurmak, meaning to knead or to thicken. This etymological fact is one of the few clear claims any culture can make about yogurt, and even that is contested. What is certain is that fermented milk was being made independently across the Middle East, Central Asia, and South Asia long before anyone thought to write down a recipe, and that each tradition developed its own uses, flavors, and meanings for it.\n\nIn Trabzon, where I grew up, yogurt is thick and tart and appears at nearly every meal. It is spooned cold over hot kuymak — the rich cornmeal and cheese dish from the Black Sea — where it cuts the fat of the butter and the mozzarella and gives the whole thing a brightness that makes you want another spoonful immediately. It is also beaten with garlic and served cold under manti, where the contrast between the hot pepper butter drizzled over the top and the cold garlic yogurt underneath is one of the most satisfying temperature contrasts in Turkish cooking.\n\nI encountered a parallel tradition when I started reading about Indian cooking, and then deepened my understanding through conversations with Priya, a food writer from Rajasthan who visited Istanbul two years ago. She described dahi — Indian yogurt — as a cooling agent, a marinade, a preservative, a digestive, and a base for sauces. In raita, it is mixed with grated cucumber and cumin to make a cold condiment that softens the heat of spicy dishes. In tikka masala, it is used to tenderize the paneer before grilling. The functional logic was identical to what I knew from home.\n\nThe word itself migrated from Turkish into English, then from English into global usage, which means that in some sense Turkish is responsible for naming a foodstuff that belongs to no single culture. I think this is exactly the right outcome for yogurt. It is one of those ingredients that belongs to everyone because everyone discovered it independently, developed their own traditions around it, and found that the traditions, in their underlying logic, were the same all along.",
       "author": "mehmet",
@@ -5534,6 +5562,7 @@
     },
     {
       "title": "Fermentation East and West",
+      "story_type": "traditional",
       "summary": "Drawing parallels between Japanese miso fermentation and Mediterranean preservation.",
       "body": "Fermentation is the oldest form of food technology that humans practice, predating pottery, agriculture, and possibly fire in its simplest forms. Ripe fruit ferments on its own. Milk left in a warm vessel ferments overnight. The first fermented foods were not inventions so much as observations: this changed, and it was still good, and in fact it was better.\n\nIn Japan, fermentation is a deeply codified art. The production of miso, sake, soy sauce, mirin, and rice vinegar all depend on koji — Aspergillus oryzae — a mold that Japanese culture has cultivated and refined for over a thousand years. The koji breaks down starches and proteins through enzymatic activity, generating hundreds of flavor compounds in the process. The national reverence for fermentation is embedded in the language and ritual of food: the word umami, now a borrowed term in many languages, is itself a description of the savory depth that fermentation produces.\n\nIn Greece and across the Mediterranean, a different fermentation tradition preserved different ingredients. Grape leaves packed in brine, olives cured in salt water or ash, cheeses made from cultured milk: all of these rely on the same underlying principle, that the controlled activity of microorganisms transforms a raw ingredient into something more stable, more flavorful, and more nourishing.\n\nWhen I first tasted Greek dolmadakia — cold grape leaves with rice and herbs — I recognized something in the flavor that I could not immediately name. The leaves themselves had been packed in brine long enough to develop the characteristic fermented tang, a soft acidity that was different from vinegar and yet related to it. It was the same family of flavor that I knew from miso, from soy sauce, from the pickled vegetables we eat with almost every meal in Japan.\n\nThis recognition felt significant. It was not that the foods were the same. They were obviously different, from different cultures, made with different techniques. But the impulse behind them was shared: the understanding that time, salt, and beneficial microorganisms can take a simple ingredient and produce something that no amount of cooking can replicate. That understanding crosses every cultural boundary I know of. It may be the most universal thing about how humans feed themselves.",
       "author": "yuki",
@@ -5551,6 +5580,7 @@
     },
     {
       "title": "Nowruz: A Table Full of Meaning",
+      "story_type": "festive",
       "summary": "The Persian New Year table, Haft-Sin, is a feast of symbols as much as flavours.",
       "body": "Every spring my family arranges the Haft-Sin table hours before the new year arrives. Seven items that start with the letter sin in Farsi, each carrying a wish: health, wealth, love, patience. Amir always insists on making Ghormeh Sabzi the day before so the flavours can deepen overnight.",
       "author": "amir",
@@ -5569,6 +5599,7 @@
     },
     {
       "title": "The Art of Persian Tea",
+      "story_type": "traditional",
       "summary": "In Iran, tea is not a drink - it is a ritual of hospitality and slow time.",
       "body": "The samovar sits at the centre of Iranian social life. It is always on, always ready. Guests arrive and within minutes a glass of dark amber tea appears, sweetened with nabat rock candy. My grandmother in Tehran would judge a home by the quality of its tea. Tahdig would arrive shortly after.",
       "author": "amir",
@@ -5587,6 +5618,7 @@
     },
     {
       "title": "Arabic Coffee and the Ethics of Hospitality",
+      "story_type": "traditional",
       "summary": "Qahwa is brewed with cardamom and poured without question.",
       "body": "Rashid taught me that in the Gulf, Arabic coffee is a social contract. You pour for your guest before yourself. The coffee is pale gold, lightly roasted, perfumed with cardamom and sometimes saffron. Dates come alongside. When Rashid made Kabsa for a large gathering, the qahwa was always ready an hour before the rice.",
       "author": "rashid",
@@ -5607,6 +5639,7 @@
     },
     {
       "title": "Dates: The Original Fast Food of the Desert",
+      "story_type": "historical",
       "summary": "Before energy bars and protein shakes, the date palm fed civilisations.",
       "body": "The date palm appears in the Quran more than any other plant. For desert travellers, a handful of dates and a skin of water was enough to cross vast distances. Rashid's family always breaks the Ramadan fast with three dates and water before anything else. After the fast, the table fills with Shawarma, hummus, and salads.",
       "author": "rashid",
@@ -5630,6 +5663,7 @@
     },
     {
       "title": "Dim Sum Sunday: A Cantonese Institution",
+      "story_type": "family",
       "summary": "Yum cha is how Cantonese families spend Sunday mornings.",
       "body": "Wei's earliest food memory is being carried into a roaring dim sum hall in Guangzhou at seven in the morning. Bamboo steamers stacked five high, trolleys rattling past, elderly men reading newspapers over cups of pu'er tea. The Xiaolongbao arrived last. His grandmother insisted on the proper technique: bite a small hole, drink the soup first, never squeeze from the sides.",
       "author": "wei",
@@ -5646,6 +5680,7 @@
     },
     {
       "title": "Chinese New Year: Cooking for Luck",
+      "story_type": "festive",
       "summary": "Every dish at New Year carries meaning - fish for abundance, dumplings for wealth.",
       "body": "The kitchen is busiest in the days before Spring Festival. Fish must be served whole, representing a complete year. Long noodles must not be cut, symbolising long life. His aunt makes Char Siu, the red-lacquered pork filling the apartment with sweet smoke. The noise of firecrackers outside blends with the sound of chopsticks on ceramic bowls.",
       "author": "wei",
@@ -5664,6 +5699,7 @@
     },
     {
       "title": "Kimjang: The Community Work of Kimchi",
+      "story_type": "traditional",
       "summary": "Making kimchi for winter was once a neighbourhood event that lasted days.",
       "body": "Jimin grew up in Busan watching the kimjang ritual every November. Neighbours would gather with mountains of cabbage, radishes, garlic, and gochugaru. Stories were exchanged, opinions about the right ratio of garlic to fish sauce were hotly debated. UNESCO recognised kimjang as intangible cultural heritage in 2013. Jimin still makes Kimchi Jjigae every winter from the batch his mother sends from Busan.",
       "author": "jimin",
@@ -5680,6 +5716,7 @@
     },
     {
       "title": "Seoul Street Food After Midnight",
+      "story_type": "personal",
       "summary": "Pojangmacha tents glow orange at 2am, serving the city's night workers and night owls.",
       "body": "After a late shift in Hongdae, Jimin always stops at the pojangmacha on the corner. Tteokbokki bubbles in red sauce, and somewhere a vendor is grilling Bulgogi over charcoal. The steam rises into the cold night air. Jimin orders the same thing every time: Bulgogi on rice with a cold Hite beer, eating standing up, watching Seoul move around him.",
       "author": "jimin",
@@ -5696,6 +5733,7 @@
     },
     {
       "title": "The Floating Markets of Thailand",
+      "story_type": "personal",
       "summary": "At dawn on Bangkok's waterways, boats loaded with produce and hot food navigate the canals.",
       "body": "Linh took a long-tail boat to Damnoen Saduak market before sunrise. The smell of lemongrass and chilli hit before the dock came into view. A woman in the middle of the canal was making Pad Thai to order in a wok balanced in her boat. Linh ate it from a styrofoam container balanced on her knees. It was the best Pad Thai she had ever eaten and she never found that vendor again.",
       "author": "linh",
@@ -5712,6 +5750,7 @@
     },
     {
       "title": "Pho at Dawn in Hanoi",
+      "story_type": "personal",
       "summary": "The best pho in Vietnam is eaten at 6am on a plastic stool on the pavement.",
       "body": "Linh knows the rule: pho is a morning food. The broth for a proper Pho has been simmering since the previous night over twelve hours or more. In Hanoi's Old Quarter, the best shops open at 5:30am and close when the pot is empty. Each bowl is assembled to order: noodles first, then beef, then a ladle of steaming broth, then the table condiments.",
       "author": "linh",
@@ -5728,6 +5767,7 @@
     },
     {
       "title": "The Souks of Marrakech: A Spice Education",
+      "story_type": "personal",
       "summary": "Navigating the spice market in Marrakech is a lesson in colour, scent, and bargaining.",
       "body": "Amina navigated the souks of Marrakech with her aunt every Friday as a child. The spice sellers would call out as you passed, pressing small packets of ras el hanout into your hands. Her aunt judged a spice seller by the colour of his saffron. The Lamb Tagine at home that afternoon was always better after the market visit.",
       "author": "amina",
@@ -5748,6 +5788,7 @@
     },
     {
       "title": "The Ethiopian Coffee Ceremony",
+      "story_type": "traditional",
       "summary": "Buna is prepared and served in a ritual that can take over an hour.",
       "body": "Kwame attended his first Ethiopian coffee ceremony in Addis Ababa and understood immediately why it takes so long: the ceremony is the point. Green beans are roasted, ground by hand, boiled in a clay jebena, and poured from a height into small cups. Three rounds are served: the first is strongest. Injera and wat arrived after the third cup.",
       "author": "kwame",
@@ -5766,6 +5807,7 @@
     },
     {
       "title": "A Nigerian Celebration Table",
+      "story_type": "festive",
       "summary": "Owambe parties are where Nigerian cuisine reaches its most abundant and joyful expression.",
       "body": "Zara has attended more owambe parties than she can count. The rice is always Jollof Rice. Zara's mother makes Egusi Soup for every owambe she attends, a three-hour process she guards jealously, refusing to share the recipe until Zara was thirty. The seeds must be ground fresh; jarred egusi is an insult to the occasion.",
       "author": "zara",
@@ -5790,6 +5832,7 @@
     },
     {
       "title": "West African Markets: Abundance in Colour",
+      "story_type": "traditional",
       "summary": "The open-air markets of West Africa are the real kitchen of the continent.",
       "body": "Marcus spent three months travelling through West Africa researching traditional foodways. In Accra's Makola Market, he found vendors who had been selling the same ingredients from the same spot for forty years. They could tell you exactly how ripe the plantains were by the way they smelled. Marcus cooked Fufu with Light Soup that evening in a hostel kitchen, feeling briefly like he understood something.",
       "author": "marcus",
@@ -5806,6 +5849,7 @@
     },
     {
       "title": "Jerk and the Geography of Smoke",
+      "story_type": "historical",
       "summary": "Jerk chicken cooked over pimento wood is an experience that cannot be replicated indoors.",
       "body": "Camila found the jerk pit at the end of a dirt road outside Montego Bay. A large man was tending three long metal barrels converted to smokers. The smell of allspice and scotch bonnet in the smoke was overwhelming and wonderful. The Jerk Chicken was nothing like the versions she had eaten in London or New York. It required geography to exist properly.",
       "author": "camila",
@@ -5824,6 +5868,7 @@
     },
     {
       "title": "Caribbean Cooking: Where Continents Meet on a Plate",
+      "story_type": "historical",
       "summary": "Caribbean food is one of the great synthesis cuisines.",
       "body": "Rosa grew up in Trinidad eating food that she only later understood as an act of historical synthesis. Her grandmother made Rice and Peas every Sunday without exception, the kidney beans slow-cooked in coconut milk until they collapsed into the rice. Caribbean cuisine is what happens when history forces people together and they cook to survive, then to celebrate.",
       "author": "rosa",
@@ -5843,6 +5888,7 @@
     },
     {
       "title": "The Asado: Argentina's Sacred Ritual",
+      "story_type": "traditional",
       "summary": "Sunday asado is not just a meal in Argentina - it is a social institution with rules.",
       "body": "Diego's father ran the asado with the seriousness of a surgeon. He lit the fire with newspaper and quebracho wood, and spent three hours tending the coals before a single piece of meat touched the grill. The Empanadas arrived first while the fire settled. Eating was spread over four hours. The asado is where Diego learned the Argentine relationship with time: infinite patience for the important things.",
       "author": "diego",
@@ -5862,6 +5908,7 @@
     },
     {
       "title": "Peru's Market Kitchens: Ceviche Before Noon",
+      "story_type": "personal",
       "summary": "In Lima's markets, the best ceviche is sold from modest stalls at breakfast time.",
       "body": "Camila arrived at Surquillo market in Lima at nine in the morning. The ceviche vendors were already at full capacity. The rule in Lima is that ceviche is a morning food. The Ceviche arrived in a heavy ceramic bowl: fish cured white by lime, crispy choclo, slices of sweet potato, a curl of red onion. The cooking had happened without heat, through chemistry alone.",
       "author": "camila",
@@ -5881,6 +5928,7 @@
     },
     {
       "title": "Feijoada and the Brazilian Sense of Gathering",
+      "story_type": "traditional",
       "summary": "Feijoada is served on Saturdays because it demands time - to cook it and to recover from it.",
       "body": "Rosa's Sao Paulo apartment barely fits twelve people but the Saturday feijoada somehow always draws that number. The black beans and smoked meats have been soaking and simmering since Friday evening. Guests arrive throughout the afternoon, eating in shifts. After eating, nobody moves quickly. Feijoada demands rest. Rosa considers this a feature, not a bug.",
       "author": "rosa",
@@ -5897,6 +5945,7 @@
     },
     {
       "title": "Pupusas: Made by Hand, Eaten with Family",
+      "story_type": "family",
       "summary": "The pupusa is El Salvador's national dish - simple to describe, difficult to perfect.",
       "body": "Marcus learned to make Pupusas in a kitchen in San Salvador from Dona Elena who had been making them since she was eight years old. The masa must be the right humidity. Dona Elena formed the pupusa in seconds with movements her hands had memorised. She laughed at Marcus's concentration and told him the secret was to stop thinking.",
       "author": "marcus",
@@ -5915,6 +5964,7 @@
     },
     {
       "title": "The Boulangerie: France's Most Democratic Institution",
+      "story_type": "traditional",
       "summary": "The French bakery is open twice a day so bread arrives fresh at every meal.",
       "body": "Pierre has lived on the same street in Lyon for forty years and has bought bread from the same boulangerie for thirty-eight of them. The Croissant at breakfast requires no accompaniment, just time and coffee. France decided bread was too important to be left entirely to market forces. He thinks about this each morning as he tears the end off a baguette before he has even left the shop.",
       "author": "pierre",
@@ -5928,11 +5978,14 @@
         "Vegetarian"
       ],
       "event_tags": [],
-      "religions": [],
+      "religions": [
+        "Secular/None"
+      ],
       "image": "story_french_boulangerie.jpg"
     },
     {
       "title": "Bistrot Culture: Eating Simply, Eating Well",
+      "story_type": "traditional",
       "summary": "The French bistrot serves uncomplicated food with extraordinary attention to the fundamentals.",
       "body": "Pierre believes the bistrot is the highest form of restaurant. No theatre, no foam, no tweezers. He ate Coq au Vin at a bistrot in the Beaujolais region on a rainy October evening and wept slightly, not from sadness but from recognition. The chicken had been braised for hours in young Beaujolais wine, the sauce dark and glossy. The owner came out to ask how it was. Pierre told him it was perfect. It was.",
       "author": "pierre",
@@ -5949,6 +6002,7 @@
     },
     {
       "title": "Tapas: The Architecture of Spanish Sociability",
+      "story_type": "traditional",
       "summary": "Tapas are not an appetiser format - they are a philosophy of eating and gathering.",
       "body": "Isabel grew up understanding tapas as the natural structure of any evening out. You do not sit at one restaurant; you move. The portions are small so the bill stays manageable and the walking continues. Paella was the Sunday dish reserved for families and gardens. Isabel's father insists that Gazpacho must come first on hot days, cold from the fridge, eaten from a glass like a drink.",
       "author": "isabel",
@@ -5966,6 +6020,7 @@
     },
     {
       "title": "Salt Cod and the Portuguese Atlantic",
+      "story_type": "historical",
       "summary": "Bacalhau has 365 recipes in Portugal - one for every day of the year, they say.",
       "body": "Isabel's Portuguese grandmother had a different Bacalhau recipe for every season and occasion. The fish has been a Portuguese staple since the fifteenth century. It must be soaked for at least 24 hours before cooking. Bacalhau a Bras, with shredded cod, matchstick potatoes, and eggs, was the weekday version. Isabel realised that Portuguese identity, like salt cod, required patience and multiple rinses before it revealed itself.",
       "author": "isabel",
@@ -5982,6 +6037,7 @@
     },
     {
       "title": "The British Pub and Its Comfort Food",
+      "story_type": "traditional",
       "summary": "Pub food in Britain has evolved from embarrassing to genuinely excellent in a generation.",
       "body": "Oliver remembers when pub food meant a sweating pasty in a heated cabinet and little else. Sometime in the 2000s something shifted. He now judges pubs by their Shepherd's Pie: the lamb must be long-braised, the mash properly buttered, the top genuinely browned. In a good pub on a winter afternoon with Shepherd's Pie, Oliver feels an uncomplicated contentment he struggles to find elsewhere.",
       "author": "oliver",
@@ -5999,6 +6055,7 @@
     },
     {
       "title": "Afternoon Tea: Britain's Most Exportable Ceremony",
+      "story_type": "traditional",
       "summary": "The ritual of afternoon tea remains best at home.",
       "body": "Emily finds it amusing that the rest of the world romanticises afternoon tea while the British largely abandoned it in the 1970s. At its best, it is a genuinely civilised invention: small sandwiches, warm Cream Tea Scones with clotted cream and jam, and good tea poured into proper cups. Scones must be warm; eating a cold scone is a waste of everyone's time.",
       "author": "emily",
@@ -6017,6 +6074,7 @@
     },
     {
       "title": "Christmas Markets and the Food of German Winter",
+      "story_type": "festive",
       "summary": "German Christmas markets are as much about food as they are about decoration and romance.",
       "body": "Hans associates winter with Gluehwein and Wiener Schnitzel. The Christmas markets in his hometown of Nuremberg open on the first Sunday of Advent. The smell from a hundred metres away: mulled wine, roasted almonds, bratwurst on charcoal grills. Hans buys a Schnitzel from the same vendor every year - the pork pounded thin, the breadcrumb crust perfectly golden.",
       "author": "hans",
@@ -6037,6 +6095,7 @@
     },
     {
       "title": "Hungarian Kitchen: Paprika Is Not a Spice, It Is a Philosophy",
+      "story_type": "traditional",
       "summary": "Hungarian cooking is defined by sweet paprika - not as a garnish but as the central flavour.",
       "body": "Katarina grew up watching her grandmother add paprika to everything. Goulash begins with onions softened in lard and then a quantity of paprika that startles visitors - several heaped tablespoons off the heat. The soup is almost orange. Apple Strudel came after the main course, the pastry stretched impossibly thin on a floured tablecloth.",
       "author": "katarina",
@@ -6056,6 +6115,7 @@
     },
     {
       "title": "The Russian Dacha and Summer Preserving",
+      "story_type": "family",
       "summary": "Russians preserve summer in jars every August - pickles, jams, mushrooms - to open in February.",
       "body": "Nadia's family spent every August at the dacha where her grandmother presided over the preserving ritual. Every morning was foraging: mushrooms in the birch forest, berries from the garden, cucumbers from the vegetable beds. Blini were made in quantity and eaten immediately with the morning's preserves. In February, when Moscow was dark and frozen, Nadia would open a jar and understand exactly what her grandmother had been doing.",
       "author": "nadia",
@@ -6072,6 +6132,7 @@
     },
     {
       "title": "Christmas Eve in Poland: The Twelve Dishes",
+      "story_type": "festive",
       "summary": "Wigilia, the Polish Christmas Eve supper, requires twelve meatless dishes representing the apostles.",
       "body": "Katarina's Polish-German family always argued about which Christmas tradition to follow. Her Polish grandmother won on Christmas Eve, when Wigilia was observed strictly: twelve meatless dishes eaten by candlelight after the first star appeared. The meal began with Borscht, then Pierogi filled with potato and cheese. Nobody was allowed to leave the table until all twelve courses had appeared.",
       "author": "katarina",
@@ -6095,6 +6156,7 @@
     },
     {
       "title": "The Bazaar at Samarkand",
+      "story_type": "historical",
       "summary": "The markets of Uzbekistan have fed Silk Road travellers for two thousand years.",
       "body": "Aliya spent a summer in Samarkand and never stopped being astonished by the bazaars. Stalls piled with dried apricots, walnuts, pomegranates. Vendors selling samsa from tandoor ovens. Plov cooked in enormous cast-iron kazan pots over open fires, the rice stained orange with carrot and rendered fat, the lamb falling apart. Aliya ate Plov every day for a week.",
       "author": "aliya",
@@ -6115,6 +6177,7 @@
     },
     {
       "title": "The Silk Road: How Noodles Travelled the World",
+      "story_type": "historical",
       "summary": "Central Asian Lagman noodles challenge the assumption that pasta is purely Italian.",
       "body": "Aliya has followed the noodle argument for years. But standing in a Uyghur restaurant in Kashgar eating Lagman - thick hand-pulled noodles in spiced lamb broth - she suspects the question is wrong. Noodles emerged in multiple places simultaneously. The Silk Road did not carry noodles; it carried techniques, spices, and the cultural permission to exchange ideas.",
       "author": "aliya",
@@ -6135,6 +6198,7 @@
     },
     {
       "title": "The Australian Backyard BBQ: A National Myth",
+      "story_type": "traditional",
       "summary": "The Australian barbecue is simultaneously very real and entirely mythologised.",
       "body": "Jack has been to enough Australian barbecues to know they are both simpler and better than the international reputation suggests. There are usually just some people, a gas barbecue, sausages, burgers, and a Meat Pie if someone remembered to bring them. What Jack loves about Australian food culture is its refusal of pretension. Nobody at a backyard barbecue is performing.",
       "author": "jack",
@@ -6153,6 +6217,7 @@
     },
     {
       "title": "The Olive Harvest: A Mediterranean September",
+      "story_type": "traditional",
       "summary": "In Greece, Turkey, and Spain, the olive harvest is the event that marks the change of seasons.",
       "body": "Dimitris returns to his family's village in Crete every October for the olive harvest. The trees his grandfather planted are fifty years old now, their trunks twisted and silver. The harvest requires the whole extended family, nets spread under the trees. The first pressing of the new oil arrives at the kitchen table within days. Dimitris eats it on bread with nothing else. The Falafel and hummus at the family table are always dressed with the new oil.",
       "author": "dimitris",
@@ -6172,6 +6237,7 @@
     },
     {
       "title": "How Köfte Became Köttbullar",
+      "story_type": "historical",
       "summary": "The Ottoman origins of Sweden's iconic meatballs, carried home by a king in exile.",
       "body": "When King Charles XII of Sweden returned from his years of Ottoman exile in 1714, he carried more than military lessons. Among the culinary souvenirs was a fondness for köfte, the shaped ground meat that appeared at every Ottoman table. Swedish cooks adapted the concept: smaller, rounder, enriched with cream and allspice rather than bulgur and cumin. Within a generation köttbullar had become a fixture of Swedish home cooking. Today they sit in IKEA cafeterias worldwide, yet few diners know they are eating a dish whose ancestry runs through Anatolian charcoal grills and Central Asian campfires. The journey from köfte to köttbullar is one of the clearest threads connecting Ottoman and Nordic food culture.",
       "author": "lars",
