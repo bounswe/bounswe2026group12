@@ -99,3 +99,25 @@ describe('RecipeListPage', () => {
     );
   });
 });
+
+describe('RecipeListPage star rating', () => {
+  it('shows read-only stars with the average and count next to each card', async () => {
+    recipeService.fetchRecipes.mockResolvedValueOnce([
+      {
+        id: 1, title: 'Baklava', region_name: 'Aegean', image: null, author_username: 'eren',
+        average_rating: 4.3, rating_count: 12, user_rating: null,
+      },
+      {
+        id: 2, title: 'Manti', region_name: 'Anatolian', image: null, author_username: 'eren',
+        average_rating: null, rating_count: 0,
+      },
+    ]);
+    renderPage();
+    expect(await screen.findByText('Baklava')).toBeInTheDocument();
+    expect(screen.getByText('4.3 (12)')).toBeInTheDocument();
+    // The unrated card shows the "Not rated" label.
+    expect(screen.getByText(/not rated/i)).toBeInTheDocument();
+    // Cards never expose interactive radios.
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+  });
+});

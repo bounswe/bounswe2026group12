@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRecipes } from '../services/recipeService';
+import StarRating from '../components/StarRating';
 import './RecipeListPage.css';
 
 export default function RecipeListPage() {
@@ -45,6 +46,13 @@ export default function RecipeListPage() {
               {recipe.author_username && (
                 <p className="recipe-browse-author">By {recipe.author_username}</p>
               )}
+              <div className="recipe-browse-rating">
+                <StarRating
+                  average={recipe.average_rating ?? null}
+                  count={recipe.rating_count ?? 0}
+                  size="sm"
+                />
+              </div>
             </div>
           </article>
         ))}

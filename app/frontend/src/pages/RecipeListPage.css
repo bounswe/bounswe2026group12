@@ -92,3 +92,7 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
+
+.recipe-browse-rating {
+  margin-top: 0.35rem;
+}
