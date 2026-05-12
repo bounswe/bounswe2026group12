@@ -68,6 +68,7 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             self._wipe()
+            self._seed_religions(data.get('religions', []))
             users = self._seed_users(data['users'])
             recipes = self._seed_recipes(data['recipes'], users)
             stories = self._seed_stories(data['stories'], users, recipes)
@@ -135,6 +136,14 @@ class Command(BaseCommand):
 
     def _resolve_many(self, model, names):
         return [self._resolve(model, n) for n in names]
+
+    def _seed_religions(self, religion_names):
+        # Ensure the Religion lookup rows the fixture tags items with exist.
+        # Most are created by migration 0013, but 'Secular/None' was dropped by
+        # migration 0021; recreate it here (idempotently) so recipes/stories can
+        # be tagged Secular/None for API filter parity (#786).
+        for name in religion_names:
+            Religion.objects.get_or_create(name=name, defaults={'is_approved': True})
 
     def _seed_users(self, users_data):
         users = {}
@@ -240,6 +249,7 @@ class Command(BaseCommand):
                 author=users[s['author']],
                 region=region,
                 language=s.get('language', 'en'),
+                story_type=s.get('story_type') or None,
                 is_published=s.get('is_published', True),
             )
             if s.get('dietary_tags'):
