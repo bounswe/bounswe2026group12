@@ -23,13 +23,22 @@ class StampSerializer(serializers.ModelSerializer):
 class PassportEventSerializer(serializers.ModelSerializer):
     related_recipe = serializers.PrimaryKeyRelatedField(read_only=True)
     related_story = serializers.PrimaryKeyRelatedField(read_only=True)
+    recipe_title = serializers.SerializerMethodField()
+    story_title = serializers.SerializerMethodField()
 
     class Meta:
         model = PassportEvent
         fields = [
             'id', 'event_type', 'description', 'timestamp',
-            'related_recipe', 'related_story', 'stamp_rarity',
+            'related_recipe', 'related_story', 'recipe_title', 'story_title',
+            'stamp_rarity',
         ]
+
+    def get_recipe_title(self, obj):
+        return obj.related_recipe.title if obj.related_recipe_id else None
+
+    def get_story_title(self, obj):
+        return obj.related_story.title if obj.related_story_id else None
 
 
 class QuestProgressSerializer(serializers.Serializer):

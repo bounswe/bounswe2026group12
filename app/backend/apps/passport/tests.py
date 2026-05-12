@@ -566,6 +566,37 @@ class TimelineTest(APITestCase):
         self.assertEqual(timeline[0]['description'], 'event-54')
         self.assertEqual(timeline[-1]['description'], 'event-5')
 
+    def test_timeline_event_includes_recipe_and_story_titles(self):
+        PassportEvent.objects.create(
+            user=self.bob, event_type=PassportEvent.TYPE_RECIPE_TRIED,
+            description='tried a recipe', timestamp=timezone.now(),
+            related_recipe=self.recipe,
+        )
+        PassportEvent.objects.create(
+            user=self.bob, event_type=PassportEvent.TYPE_STORY_SAVED,
+            description='saved a story', timestamp=timezone.now() - timedelta(seconds=1),
+            related_story=self.story,
+        )
+        timeline = self.client.get('/api/users/bob/passport/').data['timeline']
+        by_type = {e['event_type']: e for e in timeline}
+
+        recipe_event = by_type[PassportEvent.TYPE_RECIPE_TRIED]
+        self.assertEqual(recipe_event['recipe_title'], 'R')
+        self.assertIsNone(recipe_event['story_title'])
+
+        story_event = by_type[PassportEvent.TYPE_STORY_SAVED]
+        self.assertEqual(story_event['story_title'], 'S')
+        self.assertIsNone(story_event['recipe_title'])
+
+    def test_timeline_event_titles_are_none_without_related_objects(self):
+        PassportEvent.objects.create(
+            user=self.bob, event_type=PassportEvent.TYPE_LEVEL_UP,
+            description='reached level 2', timestamp=timezone.now(),
+        )
+        event = self.client.get('/api/users/bob/passport/').data['timeline'][0]
+        self.assertIsNone(event['recipe_title'])
+        self.assertIsNone(event['story_title'])
+
 
 class PopulatedPassportEndpointTest(APITestCase):
     """GET /api/users/<username>/passport/ once stamps/quests/timeline exist."""
