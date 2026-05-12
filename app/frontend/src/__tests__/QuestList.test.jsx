@@ -44,4 +44,23 @@ describe('QuestList', () => {
     render(<QuestList quests={[quests[1]]} />);
     expect(screen.getByText(/✓ done/i)).toBeInTheDocument();
   });
+
+  it('accepts the backend event_end field for event quest deadlines', () => {
+    // Backend ships `event_end` for time-limited quests; older mock data
+    // used `deadline`. The component should accept either.
+    render(<QuestList quests={[
+      {
+        id: 99,
+        name: 'Event Quest',
+        description: 'Limited time',
+        progress: 0,
+        target_count: 1,
+        reward_type: 'badge',
+        reward_value: 'Event',
+        event_end: '2026-12-31T00:00:00Z',
+        completed_at: null,
+      },
+    ]} />);
+    expect(screen.getByText(/31 Dec 2026/i)).toBeInTheDocument();
+  });
 });
