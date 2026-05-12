@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { logoutRequest } from '../services/authService';
+import { setAuthExpiredHandler } from '../services/httpClient';
 import type { AuthUser } from '../services/mockAuthService';
 
 const TOKEN_KEY = 'token';
@@ -71,6 +72,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     [],
   );
+
+  /**
+   * Lightweight local-only logout used when httpClient detects an expired
+   * session (token_not_valid + refresh failed). The full `logout()` below
+   * also tries to blacklist the refresh server-side, but at this point the
+   * refresh is already invalid so we skip the network call and just collapse
+   * local state. AsyncStorage was already cleared by httpClient.
+   */
+  const localLogout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+  }, []);
+
+  useEffect(() => {
+    // Register with the http layer so a 401 token_not_valid that can't be
+    // refreshed turns into `user === null` in React state. Screens guarded
+    // by `isAuthenticated` will then redirect to Login on their own.
+    setAuthExpiredHandler(() => localLogout());
+    return () => setAuthExpiredHandler(null);
+  }, [localLogout]);
 
   const logout = useCallback(async () => {
     // Best-effort: blacklist the refresh on the backend so a leaked access
