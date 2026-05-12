@@ -150,3 +150,13 @@ export async function fetchRecipesByRegion(regionName) {
   const response = await apiClient.get('/api/recipes/', { params: { region: regionName, page_size: 100 } });
   return response.data.results ?? response.data;
 }
+
+/**
+ * Top N recipes for the home page weekly rail (#876).
+ * Wraps fetchRecipes() and slices client-side. A future curated/featured
+ * endpoint can replace this without touching consumers.
+ */
+export async function fetchFeaturedRecipes(limit = 6) {
+  const list = await fetchRecipes();
+  return list.slice(0, limit);
+}

@@ -1,5 +1,5 @@
 import * as storyService from '../services/storyService';
-import { fetchMyStories, fetchStoriesByRegion } from '../services/storyService';
+import { fetchMyStories, fetchStoriesByRegion, fetchFeaturedStories } from '../services/storyService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
@@ -143,5 +143,20 @@ describe('fetchStoriesByRegion', () => {
   it('unwraps paginated DRF responses', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [{ id: 6 }] } });
     expect(await fetchStoriesByRegion('Aegean')).toEqual([{ id: 6 }]);
+  });
+});
+
+describe('fetchFeaturedStories', () => {
+  it('returns the first <limit> stories from the list endpoint', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: Array.from({ length: 10 }, (_, i) => ({ id: i + 1 })) } });
+    const result = await fetchFeaturedStories(6);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { page_size: 100 } });
+    expect(result).toHaveLength(6);
+    expect(result.map((s) => s.id)).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('defaults limit to 6 when not provided', async () => {
+    apiClient.get.mockResolvedValue({ data: Array.from({ length: 12 }, (_, i) => ({ id: i + 1 })) });
+    expect(await fetchFeaturedStories()).toHaveLength(6);
   });
 });
