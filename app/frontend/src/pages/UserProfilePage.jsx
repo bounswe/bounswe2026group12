@@ -1,18 +1,29 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getPublicProfile } from '../services/passportService';
+import { getPublicProfile, getPassport } from '../services/passportService';
 import { extractApiError } from '../services/api';
+import PassportCover from '../components/passport/PassportCover';
+import PassportStatsBar from '../components/passport/PassportStatsBar';
+import StampGrid from '../components/passport/StampGrid';
+import CultureGrid from '../components/passport/CultureGrid';
+import PassportMap from '../components/passport/PassportMap';
+import PassportTimeline from '../components/passport/PassportTimeline';
+import QuestList from '../components/passport/QuestList';
 import './UserProfilePage.css';
+
+const TABS = ['stamps', 'cultures', 'map', 'timeline', 'quests'];
 
 export default function UserProfilePage() {
   const { username } = useParams();
   const { user: currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [profile, setProfile]   = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState('');
+  const [passport, setPassport] = useState(null);
+  const [tab, setTab]           = useState('stamps');
 
   const isOwn = currentUser?.username === username;
 
@@ -30,6 +41,11 @@ export default function UserProfilePage() {
         }
       })
       .finally(() => setLoading(false));
+  }, [username]);
+
+  useEffect(() => {
+    if (!username) return;
+    getPassport(username).then(setPassport).catch(() => {});
   }, [username]);
 
   if (loading) return <p className="page-status">Loading…</p>;
@@ -97,12 +113,30 @@ export default function UserProfilePage() {
         </section>
       ))}
 
-      {/* Passport placeholder — future issues #591–#597 */}
-      <section className="user-profile-passport-placeholder">
-        <span className="user-profile-passport-icon">🗺</span>
-        <div>
-          <h2>Cultural Passport</h2>
-          <p>Stamps, quests, and journey timeline coming soon.</p>
+      {/* Cultural Passport */}
+      <section className="user-profile-passport">
+        <PassportCover theme={passport?.active_theme} />
+        <PassportStatsBar stats={passport?.stats} level={passport?.level} />
+
+        <nav className="passport-tab-nav" aria-label="Passport sections">
+          {TABS.map(t => (
+            <button
+              key={t}
+              className={`passport-tab-btn${tab === t ? ' active' : ''}`}
+              onClick={() => setTab(t)}
+              aria-current={tab === t ? 'true' : undefined}
+            >
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
+        </nav>
+
+        <div className="passport-tab-content">
+          {tab === 'stamps'   && <StampGrid stamps={passport?.stamps ?? []} />}
+          {tab === 'cultures' && <CultureGrid cultures={passport?.culture_summaries ?? []} />}
+          {tab === 'map'      && <PassportMap cultures={passport?.culture_summaries ?? []} />}
+          {tab === 'timeline' && <PassportTimeline events={passport?.timeline ?? []} />}
+          {tab === 'quests'   && <QuestList quests={passport?.active_quests ?? []} />}
         </div>
       </section>
 

@@ -1,0 +1,69 @@
+.passport-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+}
+
+.passport-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.passport-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.passport-stat-label {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.2rem;
+}
+
+.passport-level-badge {
+  margin-left: auto;
+  padding: 0.3rem 0.875rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.level-bronze    { background: #CD7F3222; color: #8B5500; border: 1.5px solid #CD7F32; }
+.level-silver    { background: #C0C0C022; color: #555;    border: 1.5px solid #C0C0C0; }
+.level-gold      { background: #FFD70022; color: #7A5C00; border: 1.5px solid #FFD700; }
+.level-emerald   { background: #50C87822; color: #1a5c3a; border: 1.5px solid #50C878; }
+.level-legendary { background: #9B59B622; color: #5a1a8a; border: 1.5px solid #9B59B6; }
+.level-master    { background: #C4521E22; color: #7a2a0a; border: 1.5px solid #C4521E; }
+
+.passport-stats-bar--skeleton {
+  gap: 1rem;
+}
+
+.passport-stat-skeleton {
+  width: 60px;
+  height: 40px;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@media (max-width: 480px) {
+  .passport-level-badge { margin-left: 0; width: 100%; text-align: center; }
+}

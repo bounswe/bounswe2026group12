@@ -1,0 +1,157 @@
+.culture-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.culture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.culture-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  text-align: center;
+}
+
+.culture-card:hover,
+.culture-card--active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.culture-card-emblem {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.culture-card-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.culture-card-rarity {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-pill);
+}
+
+.culture-card-rarity--bronze    { background: #CD7F3222; color: #8B5500; }
+.culture-card-rarity--silver    { background: #C0C0C022; color: #555;    }
+.culture-card-rarity--gold      { background: #FFD70022; color: #7A5C00; }
+.culture-card-rarity--emerald   { background: #50C87822; color: #1a5c3a; }
+.culture-card-rarity--legendary { background: #9B59B622; color: #5a1a8a; }
+
+/* Detail panel */
+.culture-detail-panel {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.culture-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.culture-detail-emblem {
+  font-size: 2.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.culture-detail-name {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 800;
+  margin: 0 0 0.15rem;
+}
+
+.culture-detail-rarity {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.culture-detail-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.culture-detail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.culture-detail-stat {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.culture-detail-stat span {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.culture-detail-dish {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.culture-upgrade-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.culture-upgrade-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.culture-upgrade-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.culture-upgrade-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.culture-upgrade-pct {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
