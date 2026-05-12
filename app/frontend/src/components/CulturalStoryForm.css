@@ -1,0 +1,79 @@
+.cultural-story-form {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  margin: 1rem 0 1.5rem;
+  padding: 0;
+}
+
+.cultural-story-form.is-open {
+  border-color: var(--color-primary);
+}
+
+.cultural-story-form-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.cultural-story-form-toggle-chev {
+  color: var(--color-primary);
+  font-weight: 900;
+}
+
+.cultural-story-form-body {
+  padding: 0 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.cultural-story-form-intro {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.cultural-story-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cultural-story-form-field-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.cultural-story-form-field-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.cultural-story-form-field-input {
+  margin-top: 0.25rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  background: var(--color-surface-input);
+  color: var(--color-text);
+}
+
+.cultural-story-form-field-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

@@ -3,6 +3,8 @@ import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
 import StepsEditor from '../components/StepsEditor';
+import CulturalStoryForm from '../components/CulturalStoryForm';
+import { CULTURAL_STORY_FIELDS, trimCulturalStoryForPayload } from '../components/culturalStoryFields';
 import Toast from '../components/Toast';
 import DraftRestoreBanner from '../components/DraftRestoreBanner';
 import useDraftAutosave from '../hooks/useDraftAutosave';
@@ -53,6 +55,7 @@ export default function RecipeEditPage() {
   const [qaEnabled, setQaEnabled] = useState(false);
   const [rows, setRows] = useState([]);
   const [steps, setSteps] = useState([]);
+  const [culturalStory, setCulturalStory] = useState({});
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -84,6 +87,15 @@ export default function RecipeEditPage() {
             : [makeEmptyRow()]
         );
         setSteps(Array.isArray(recipeData.steps) ? recipeData.steps : []);
+        // Pre-fill cultural story when the recipe already carries one (#516).
+        if (recipeData.cultural_context && typeof recipeData.cultural_context === 'object') {
+          const next = {};
+          for (const { key } of CULTURAL_STORY_FIELDS) {
+            const v = recipeData.cultural_context[key];
+            next[key] = typeof v === 'string' ? v : '';
+          }
+          setCulturalStory(next);
+        }
         setIngredients(ings);
         setUnits(uns);
       })
@@ -164,6 +176,7 @@ export default function RecipeEditPage() {
     const cleanedSteps = steps
       .map((s) => (typeof s === 'string' ? s.trim() : ''))
       .filter((s) => s.length > 0);
+    const culturalPayload = trimCulturalStoryForPayload(culturalStory);
     const payload = {
       title,
       description,
@@ -171,6 +184,9 @@ export default function RecipeEditPage() {
       qa_enabled: qaEnabled,
       is_published: publish,
       steps: cleanedSteps,
+      // Always send cultural_context on edit so emptied fields persist back
+      // as blanks (the serializer keys default to '' on the model side).
+      cultural_context: culturalPayload,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -309,6 +325,13 @@ export default function RecipeEditPage() {
             Walk readers through the recipe one step at a time. Order matters — use the arrows to reorder. Empty steps are skipped on save.
           </p>
           <StepsEditor value={steps} onChange={setSteps} />
+
+          <CulturalStoryForm
+            values={culturalStory}
+            onChange={(key, value) =>
+              setCulturalStory((prev) => ({ ...prev, [key]: value }))
+            }
+          />
         </section>
 
         <div className="recipe-form-actions">
