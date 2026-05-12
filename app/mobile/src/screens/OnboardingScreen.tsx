@@ -32,30 +32,68 @@ type Step = {
   options: string[];
 };
 
+/**
+ * Chip labels must match `app/backend/fixtures/seed_canonical.json` verbatim
+ * so saved preferences align with seeded users/recipes/stories (#883).
+ */
 const STEPS: Step[] = [
   {
     key: 'cultural_interests',
     title: 'Cultural Interests',
     description: 'Choose cuisines and traditions you want to explore.',
-    options: ['Ottoman', 'Anatolian', 'Balkan', 'Levantine', 'Mediterranean', 'Central Asian'],
+    options: [
+      'Turkish cuisine',
+      'Mediterranean diet',
+      'Italian cuisine',
+      'Japanese cuisine',
+      'Black Sea traditions',
+      'street food',
+      'vegetarian',
+      'Levantine cuisine',
+    ],
   },
   {
     key: 'regional_ties',
     title: 'Regional Ties',
     description: 'Select regions connected to your family or roots.',
-    options: ['Aegean', 'Marmara', 'Central Anatolia', 'Black Sea', 'Mediterranean', 'Southeastern Anatolia'],
+    options: [
+      'Black Sea',
+      'Marmara',
+      'Aegean',
+      'Anatolian',
+      'Southeastern Anatolia',
+      'Levantine',
+      'Mediterranean',
+      'North African',
+    ],
   },
   {
     key: 'religious_preferences',
     title: 'Dietary / Religious Preferences',
     description: 'Pick preferences to personalize recommendations.',
-    options: ['Halal', 'Kosher', 'Vegetarian', 'Vegan', 'Pescetarian', 'No Preference'],
+    options: [
+      'Halal',
+      'Kosher',
+      'Vegan',
+      'Vegetarian',
+      'Islam',
+      'Christianity',
+      'Hinduism',
+      'Buddhism',
+    ],
   },
   {
     key: 'event_interests',
     title: 'Event Interests',
     description: 'Choose occasions you cook for most often.',
-    options: ['Ramadan', 'Eid', 'Weddings', 'Family Gatherings', 'Religious Holidays', 'Weeknight Meals'],
+    options: [
+      'Wedding',
+      'Religious Holiday',
+      'Birthday',
+      'Anniversary',
+      'Graduation',
+      'Funeral',
+    ],
   },
 ];
 
