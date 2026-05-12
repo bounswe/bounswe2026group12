@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchRecipes } from '../services/recipeService';
 import StarRating from '../components/StarRating';
 import './RecipeListPage.css';
@@ -8,6 +8,8 @@ export default function RecipeListPage() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [q, setQ] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -18,12 +20,29 @@ export default function RecipeListPage() {
     return () => { cancelled = true; };
   }, []);
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    navigate(`/search?q=${encodeURIComponent(q)}`);
+  }
+
   if (loading) return <p className="page-status">Loading…</p>;
   if (error) return <p className="page-status page-error">{error}</p>;
 
   return (
     <main className="page-card recipe-list">
       <h1 className="recipe-list-heading">Recipes</h1>
+      <form className="list-search-form" onSubmit={handleSubmit} role="search" aria-label="Search recipes">
+        <label htmlFor="recipe-list-search" className="sr-only">Search recipes</label>
+        <input
+          id="recipe-list-search"
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search recipes…"
+          className="list-search-input"
+        />
+        <button type="submit" className="btn btn-primary list-search-btn">Search</button>
+      </form>
       {recipes.length === 0 && (
         <p className="recipe-list-empty">No recipes yet. Share the first one!</p>
       )}

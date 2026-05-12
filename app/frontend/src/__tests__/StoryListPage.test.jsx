@@ -70,3 +70,36 @@ describe('StoryListPage', () => {
     );
   });
 });
+
+describe('StoryListPage — search form', () => {
+  beforeEach(() => {
+    storyService.fetchStories.mockResolvedValue([]);
+  });
+
+  function renderWithRoutes() {
+    return render(
+      <MemoryRouter initialEntries={['/stories']}>
+        <Routes>
+          <Route path="/stories" element={<StoryListPage />} />
+          <Route path="/search" element={<div>search-page</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  it('renders a search form with a search input and Search button', async () => {
+    renderWithRoutes();
+    await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
+    expect(screen.getByRole('searchbox')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
+  });
+
+  it('navigates to /search?q=<query> on submit', async () => {
+    const { fireEvent } = require('@testing-library/react');
+    renderWithRoutes();
+    await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'grandma' } });
+    fireEvent.submit(screen.getByRole('search', { name: /search stories/i }));
+    expect(await screen.findByText('search-page')).toBeInTheDocument();
+  });
+});

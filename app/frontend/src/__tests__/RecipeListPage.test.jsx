@@ -143,3 +143,36 @@ describe('RecipeListPage bookmark icon', () => {
     expect(screen.getByLabelText(/not bookmarked/i)).toBeInTheDocument();
   });
 });
+
+describe('RecipeListPage — search form', () => {
+  beforeEach(() => {
+    recipeService.fetchRecipes.mockResolvedValue([]);
+  });
+
+  function renderWithRoutes() {
+    return render(
+      <MemoryRouter initialEntries={['/recipes']}>
+        <Routes>
+          <Route path="/recipes" element={<RecipeListPage />} />
+          <Route path="/search" element={<div>search-page</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  it('renders a search form with a search input and Search button', async () => {
+    renderWithRoutes();
+    await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
+    expect(screen.getByRole('searchbox')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
+  });
+
+  it('navigates to /search?q=<query> on submit', async () => {
+    const { fireEvent } = require('@testing-library/react');
+    renderWithRoutes();
+    await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'baklava' } });
+    fireEvent.submit(screen.getByRole('search', { name: /search recipes/i }));
+    expect(await screen.findByText('search-page')).toBeInTheDocument();
+  });
+});
