@@ -88,43 +88,13 @@ export default function ProfileTabScreen() {
 
               <View style={styles.list}>
                 <ActionRow
-                  icon="\u{1F373}"
-                  label="My recipes"
-                  onPress={openUserProfile}
-                  accessibilityLabel="View my recipes"
-                />
-                <ActionRow
-                  icon="\u{1F4DC}"
-                  label="My stories"
-                  onPress={openUserProfile}
-                  accessibilityLabel="View my stories"
-                />
-                <ActionRow
-                  icon="\u{1F516}"
-                  label="Saved recipes"
-                  onPress={openUserProfile}
-                  accessibilityLabel="View saved recipes"
-                />
-                <ActionRow
                   icon="✉️"
                   label="Messages"
                   onPress={() => navigation.navigate('Feed', { screen: 'Inbox' })}
                   accessibilityLabel="Open messages"
                 />
                 <ActionRow
-                  icon="\u{1F30D}"
-                  label="Cultural preferences"
-                  onPress={() => navigation.navigate('Feed', { screen: 'Onboarding' })}
-                  accessibilityLabel="Update cultural preferences"
-                />
-                <ActionRow
-                  icon="✏️"
-                  label="Edit profile"
-                  onPress={() => navigation.navigate('Feed', { screen: 'EditProfile' })}
-                  accessibilityLabel="Edit profile"
-                />
-                <ActionRow
-                  icon="\u{1F6AA}"
+                  icon="🚪"
                   label="Log out"
                   onPress={() => void logout()}
                   accessibilityLabel="Log out"

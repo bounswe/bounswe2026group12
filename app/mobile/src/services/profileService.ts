@@ -54,3 +54,33 @@ export async function updateOwnProfile(
 ): Promise<UserProfile> {
   return apiPatchJson<UserProfile>(ENDPOINT, patch);
 }
+
+/**
+ * Public-facing user profile shape returned by `GET /api/users/<username>/`.
+ *
+ * Backed by `PublicUserSerializer` in
+ * `app/backend/apps/users/serializers.py`. Note this endpoint lives at
+ * `/api/users/<username>/` (no `/profile/` suffix). The "dietary preferences"
+ * surfaced on web is actually the `religious_preferences` field on the
+ * backend — there is no separate `dietary_preferences` field today.
+ */
+export type PublicUserProfile = {
+  username: string;
+  bio?: string | null;
+  region?: string | null;
+  cultural_interests?: string[];
+  religious_preferences?: string[];
+  event_interests?: string[];
+  created_at?: string | null;
+  recipe_count?: number;
+  story_count?: number;
+};
+
+/** Fetch a user's public profile by username. */
+export async function fetchPublicProfile(
+  username: string,
+): Promise<PublicUserProfile> {
+  return apiGetJson<PublicUserProfile>(
+    `/api/users/${encodeURIComponent(username)}/`,
+  );
+}
