@@ -161,7 +161,10 @@ All three services report container-level health to compose:
   liveness probe for gunicorn. 15s interval, 180s `start_period` to cover
   migrate + collectstatic + the `seed_*` commands (gunicorn starts only after
   the entrypoint finishes them).
-- `web`: `wget -qO- http://localhost/`, 10s interval
+- `web`: in prod, `wget --no-check-certificate https://127.0.0.1/` (overridden
+  in `docker-compose.prod.yml`); the base/dev healthcheck uses plain HTTP, but
+  `nginx-prod.conf` only listens on `0.0.0.0` and `:80` redirects to https, so
+  the prod check hits https on loopback. 10s interval.
 
 `backend` waits on `db: service_healthy`; `web` waits on `backend:
 service_healthy`. Compose will not mark the stack up until each dependency
