@@ -4,7 +4,7 @@ const USE_MOCK = process.env.REACT_APP_USE_MOCK === 'true';
 
 // Lunar event dates resolved to Gregorian, keyed by year then event name.
 // Keep in sync with mobile calendarService.ts — update both together each year.
-const LUNAR_YEARLY = {
+export const LUNAR_YEARLY = {
   2024: { ramadan: { month: 2, day: 10 }, 'eid-fitr': { month: 3, day: 10 }, 'eid-adha': { month: 5, day: 16 }, mevlid: { month: 9, day: 15 }, ashura: { month: 7, day: 17 } },
   2025: { ramadan: { month: 2, day: 28 }, 'eid-fitr': { month: 3, day: 30 }, 'eid-adha': { month: 5, day: 6 }, mevlid: { month: 9, day: 4 }, ashura: { month: 7, day: 5 } },
   2026: { ramadan: { month: 2, day: 17 }, 'eid-fitr': { month: 3, day: 19 }, 'eid-adha': { month: 4, day: 26 }, mevlid: { month: 8, day: 24 }, ashura: { month: 6, day: 24 } },

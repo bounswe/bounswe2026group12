@@ -172,3 +172,18 @@
   border-color: var(--color-primary);
   color: #fff;
 }
+
+.map-content-item-story {
+  border-left: 3px solid #2E7D7D;
+}
+
+.map-pin-link {
+  color: var(--color-primary, #C4521E);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.map-pin-link:hover,
+.map-pin-link:focus-visible {
+  text-decoration: underline;
+}

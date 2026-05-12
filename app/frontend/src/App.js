@@ -20,6 +20,7 @@ import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
 import ProfilePage from './pages/ProfilePage';
+import ProfileEditPage from './pages/ProfileEditPage';
 import UserProfilePage from './pages/UserProfilePage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
@@ -85,6 +86,10 @@ export default function App() {
           <Route
             path="/profile"
             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
+          />
+          <Route
+            path="/profile/edit"
+            element={<ProtectedRoute><ProfileEditPage /></ProtectedRoute>}
           />
           <Route
             path="/account"

@@ -20,6 +20,10 @@ export default function ProfilePage() {
         <p className="profile-email">{user.email}</p>
       </section>
 
+      <p className="profile-edit-link-wrap">
+        <Link to="/profile/edit" className="btn btn-outline btn-sm">Edit profile</Link>
+      </p>
+
       <ContactabilityToggle user={user} onUserUpdated={updateUser} />
 
       <ProfileDashboard user={user} />

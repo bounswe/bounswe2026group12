@@ -33,18 +33,25 @@ export async function fetchThreads() {
 
 export async function fetchMessages(threadId) {
   if (USE_MOCK) return getMockMessages(threadId);
-  const res = await apiClient.get(`/api/threads/${threadId}/messages/`);
-  const items = Array.isArray(res.data?.results) ? res.data.results : res.data;
-  const list = Array.isArray(items) ? items : [];
-  return list.map((message) => ({
-    id: message.id,
-    body: message.body,
-    createdAt: message.created_at,
-    sender: {
-      id: message.sender,
-      username: message.sender_username,
-    },
-  }));
+  const collected = [];
+  let path = `/api/threads/${threadId}/messages/`;
+  while (path) {
+    const res = await apiClient.get(path);
+    const data = res.data;
+    const pageItems = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : []);
+    for (const message of pageItems) {
+      collected.push({
+        id: message.id,
+        body: message.body,
+        createdAt: message.created_at,
+        sender: { id: message.sender, username: message.sender_username },
+      });
+    }
+    if (!data?.next || Array.isArray(data)) break;
+    const nextUrl = new URL(data.next);
+    path = `${nextUrl.pathname}${nextUrl.search}`;
+  }
+  return collected;
 }
 
 export async function sendMessage(threadId, body) {

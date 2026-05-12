@@ -29,7 +29,7 @@ describe('fetchMapRegionContent', () => {
       data: { results: [{ id: 1, title: 'Item' }], next: null },
     });
     const result = await fetchMapRegionContent('tr');
-    expect(apiClient.get).toHaveBeenCalledWith('/api/map/regions/tr/content/');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/map/regions/tr/content/', { params: { page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Item' }]);
   });
 
@@ -37,5 +37,18 @@ describe('fetchMapRegionContent', () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 2 }] });
     const result = await fetchMapRegionContent('jp');
     expect(result).toEqual([{ id: 2 }]);
+  });
+});
+
+describe('fetchMapRegionContent — pagination cap (#851)', () => {
+  it('passes page_size=100', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 1 }] });
+    await fetchMapRegionContent(3);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/map/regions/3/content/', { params: { page_size: 100 } });
+  });
+
+  it('unwraps DRF results', async () => {
+    apiClient.get.mockResolvedValue({ data: { count: 1, next: null, results: [{ id: 2 }] } });
+    expect(await fetchMapRegionContent(3)).toEqual([{ id: 2 }]);
   });
 });

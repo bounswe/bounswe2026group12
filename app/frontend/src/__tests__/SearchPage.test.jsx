@@ -84,6 +84,27 @@ describe('SearchPage', () => {
     expect(screen.queryByText('Yogurt Salad')).not.toBeInTheDocument();
   });
 
+  it('applies story_type client-side to filter story results only', async () => {
+    searchService.search.mockResolvedValue([
+      { type: 'recipe', id: 1, title: 'Yogurt Soup', region: 'Black Sea', thumbnail: null },
+      { type: 'story',  id: 2, title: 'Family Feast',  region: 'Aegean', story_type: 'family', thumbnail: null },
+      { type: 'story',  id: 3, title: 'Old Customs',   region: 'Aegean', story_type: 'traditional', thumbnail: null },
+    ]);
+    renderPage('?q=&region=&ingredient=&meal_type=&story_type=family');
+    await waitFor(() => screen.getByText('Family Feast'));
+    expect(screen.getByText('Family Feast')).toBeInTheDocument();
+    expect(screen.queryByText('Old Customs')).not.toBeInTheDocument();
+    // Recipes are unaffected by story_type.
+    expect(screen.getByText('Yogurt Soup')).toBeInTheDocument();
+  });
+
+  it('renders a story_type active-filter chip when the URL carries one', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=&region=&ingredient=&meal_type=&story_type=festive');
+    await waitFor(() => screen.getByText(/no results/i));
+    expect(screen.getByText(/story type: festive/i)).toBeInTheDocument();
+  });
+
   it('shows active filter chips for non-empty filters', async () => {
     searchService.search.mockResolvedValue([]);
     renderPage('?q=&region=Aegean&ingredient=yogurt&meal_type=');
