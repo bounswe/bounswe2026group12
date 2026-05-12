@@ -105,3 +105,11 @@ describe('ProfilePage — my recipes / stories / bookmarks', () => {
     expect(screen.getByText(/no saved recipes yet/i)).toBeInTheDocument();
   });
 });
+
+describe('ProfilePage — edit link (#660)', () => {
+  it('renders an "Edit profile" link pointing at /profile/edit', () => {
+    renderPage({ user: { id: 1, username: 'me', email: 'me@x.com', is_contactable: true } });
+    const link = screen.getByRole('link', { name: /edit profile/i });
+    expect(link).toHaveAttribute('href', '/profile/edit');
+  });
+});

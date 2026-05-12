@@ -72,16 +72,41 @@ describe('SearchPage', () => {
         diet_exclude: '',
         event: '',
         event_exclude: '',
+        meal_type: '',
       });
     });
   });
 
-  it('applies meal_type client-side to filter results by title', async () => {
-    searchService.search.mockResolvedValue(mockResults);
-    renderPage('?q=&region=&ingredient=yogurt&meal_type=soup');
-    await waitFor(() => screen.getByText('Yogurt Soup'));
+  it('passes meal_type server-side to the search API (#700)', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=&region=&ingredient=yogurt&meal_type=breakfast');
+    await waitFor(() => {
+      expect(searchService.search).toHaveBeenCalledWith('', '', '', expect.objectContaining({
+        ingredient: 'yogurt',
+        meal_type: 'breakfast',
+      }));
+    });
+  });
+
+  it('applies story_type client-side to filter story results only', async () => {
+    searchService.search.mockResolvedValue([
+      { type: 'recipe', id: 1, title: 'Yogurt Soup', region: 'Black Sea', thumbnail: null },
+      { type: 'story',  id: 2, title: 'Family Feast',  region: 'Aegean', story_type: 'family', thumbnail: null },
+      { type: 'story',  id: 3, title: 'Old Customs',   region: 'Aegean', story_type: 'traditional', thumbnail: null },
+    ]);
+    renderPage('?q=&region=&ingredient=&meal_type=&story_type=family');
+    await waitFor(() => screen.getByText('Family Feast'));
+    expect(screen.getByText('Family Feast')).toBeInTheDocument();
+    expect(screen.queryByText('Old Customs')).not.toBeInTheDocument();
+    // Recipes are unaffected by story_type.
     expect(screen.getByText('Yogurt Soup')).toBeInTheDocument();
-    expect(screen.queryByText('Yogurt Salad')).not.toBeInTheDocument();
+  });
+
+  it('renders a story_type active-filter chip when the URL carries one', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=&region=&ingredient=&meal_type=&story_type=festive');
+    await waitFor(() => screen.getByText(/no results/i));
+    expect(screen.getByText(/story type: festive/i)).toBeInTheDocument();
   });
 
   it('shows active filter chips for non-empty filters', async () => {
@@ -147,6 +172,7 @@ describe('SearchPage', () => {
         diet_exclude: '',
         event: '',
         event_exclude: '',
+        meal_type: '',
       });
     });
   });
@@ -172,6 +198,7 @@ describe('SearchPage', () => {
         diet_exclude: '',
         event: '',
         event_exclude: 'Wedding',
+        meal_type: '',
       });
     });
     expect(screen.getByText(/diet\+: vegan/i)).toBeInTheDocument();

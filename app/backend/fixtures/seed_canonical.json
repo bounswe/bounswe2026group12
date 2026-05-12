@@ -855,7 +855,8 @@
         "commensality_note": "Always served with a side of heavy cornbread and yogurt. We eat it from a central plate.",
         "terroir_note": "The leaves must be picked after the first frost; that's when they become sweet and tender.",
         "craft_note": "The roll should be no thicker than a pinky finger. It takes years to master the tension."
-      }
+      },
+      "meal_type": "main_course"
     },
     {
       "title": "Aegean Olive Oil Stuffed Grape Leaves",
@@ -922,7 +923,8 @@
         "memory_note": "I remember the competitive spirit between my aunts to see who could roll the thinnest sarma.",
         "terroir_note": "The olive oil must be from the first cold press of the season for that peppery finish.",
         "craft_note": "The trick is to roll them tightly enough so they don't open, but loosely enough for the rice to expand."
-      }
+      },
+      "meal_type": "snack"
     },
     {
       "title": "Southeastern Sarma with Pomegranate Molasses",
@@ -984,7 +986,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "southeastern_sarma.jpg"
+      "image": "southeastern_sarma.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Greek Dolmadakia",
@@ -1045,7 +1048,8 @@
           "unit": "bunch"
         }
       ],
-      "image": "greek_dolmadakia.jpg"
+      "image": "greek_dolmadakia.jpg",
+      "meal_type": "snack"
     },
     {
       "title": "Swedish Cabbage Rolls - Kaldolmar",
@@ -1098,7 +1102,8 @@
         }
       ],
       "image": "swedish_kaldolmar.jpg",
-      "heritage_status": "revived"
+      "heritage_status": "revived",
+      "meal_type": "main_course"
     },
     {
       "title": "Lebanese Stuffed Grape Leaves with Lamb",
@@ -1158,7 +1163,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "lebanese_grape_leaves.jpg"
+      "image": "lebanese_grape_leaves.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Trabzon Butter Kuymak",
@@ -1201,7 +1207,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "trabzon_kuymak.jpg"
+      "image": "trabzon_kuymak.jpg",
+      "meal_type": "breakfast"
     },
     {
       "title": "Istanbul Lahmacun",
@@ -1260,7 +1267,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "istanbul_lahmacun.jpg"
+      "image": "istanbul_lahmacun.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Aegean Herb Borek",
@@ -1308,7 +1316,8 @@
           "unit": "ml"
         }
       ],
-      "image": "aegean_herb_borek.jpg"
+      "image": "aegean_herb_borek.jpg",
+      "meal_type": "breakfast"
     },
     {
       "title": "Red Lentil Soup - Mercimek Corbasi",
@@ -1366,7 +1375,8 @@
           "unit": "pieces"
         }
       ],
-      "image": "red_lentil_soup.jpg"
+      "image": "red_lentil_soup.jpg",
+      "meal_type": "soup"
     },
     {
       "title": "Adana Kebab",
@@ -1423,7 +1433,8 @@
           "unit": "pieces"
         }
       ],
-      "image": "adana_kebab.jpg"
+      "image": "adana_kebab.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Anatolian Manti Dumplings",
@@ -1504,7 +1515,8 @@
         "memory_note": "Four generations of women sitting around a large table, gossip and flour flying in equal measure.",
         "ritual_note": "Traditionally, a bride-to-be would show her skill by fitting 40 manti into a single spoon.",
         "craft_note": "The tiny folds are a test of patience. The smaller the manti, the more respect is shown to the guest."
-      }
+      },
+      "meal_type": "main_course"
     },
     {
       "title": "Traditional Irish Soda Bread",
@@ -1555,7 +1567,8 @@
         "commensality_note": "Best eaten warm with a thick slab of salted butter and a cup of strong tea.",
         "terroir_note": "Soft wheat flour and acidic buttermilk are the keys; they react to give the lift without yeast.",
         "craft_note": "Handle the dough as little as possible. If you're too rough, the bread will be tough."
-      }
+      },
+      "meal_type": "snack"
     },
     {
       "title": "Greek Moussaka",
@@ -1617,7 +1630,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "greek_moussaka.jpg"
+      "image": "greek_moussaka.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Lebanese Tabbouleh",
@@ -1681,7 +1695,8 @@
           "unit": "bunch"
         }
       ],
-      "image": "lebanese_tabbouleh.jpg"
+      "image": "lebanese_tabbouleh.jpg",
+      "meal_type": "snack"
     },
     {
       "title": "Traditional Tarhana Soup",
@@ -1730,7 +1745,8 @@
         "identity_note": "The world's first 'instant soup,' born from the necessity of preserving summer's bounty for the harsh winter.",
         "ritual_note": "Late summer is 'Tarhana time' when every balcony in the village is covered in drying dough.",
         "terroir_note": "The taste changes with the wind; the local wild yeast and the mountain air are what make it unique."
-      }
+      },
+      "meal_type": "soup"
     },
     {
       "title": "Manisa Mesir Paste",
@@ -1760,7 +1776,8 @@
           "source_url": ""
         }
       ],
-      "image": "mesir_paste.jpg"
+      "image": "mesir_paste.jpg",
+      "meal_type": "snack"
     },
     {
       "title": "Lebanese Hummus",
@@ -1818,7 +1835,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "lebanese_hummus.jpg"
+      "image": "lebanese_hummus.jpg",
+      "meal_type": "snack"
     },
     {
       "title": "Italian Sunday Ragu",
@@ -1877,7 +1895,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "italian_ragu.jpg"
+      "image": "italian_ragu.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Levantine Kibbeh",
@@ -1932,7 +1951,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "levantine_kibbeh.jpg"
+      "image": "levantine_kibbeh.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Indian Dal Tadka",
@@ -1998,7 +2018,8 @@
           "unit": "grams"
         }
       ],
-      "image": "indian_dal_tadka.jpg"
+      "image": "indian_dal_tadka.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Japanese Miso Soup",
@@ -2044,7 +2065,8 @@
           "unit": "pieces"
         }
       ],
-      "image": "japanese_miso_soup.jpg"
+      "image": "japanese_miso_soup.jpg",
+      "meal_type": "soup"
     },
     {
       "title": "Paneer Tikka Masala",
@@ -2117,7 +2139,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "paneer_tikka_masala.jpg"
+      "image": "paneer_tikka_masala.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Japanese Onigiri Rice Balls",
@@ -2162,7 +2185,8 @@
           "unit": "tablespoons"
         }
       ],
-      "image": "japanese_onigiri.jpg"
+      "image": "japanese_onigiri.jpg",
+      "meal_type": "snack"
     },
     {
       "title": "Swedish Meatballs - Kottbullar",
@@ -2219,7 +2243,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "swedish_meatballs.jpg"
+      "image": "swedish_meatballs.jpg",
+      "meal_type": "main_course"
     },
     {
       "title": "Baklava",
@@ -2281,7 +2306,8 @@
           "unit": "pieces"
         }
       ],
-      "image": "baklava.jpg"
+      "image": "baklava.jpg",
+      "meal_type": "dessert"
     },
     {
       "title": "Buttermilk Scones",
@@ -2333,7 +2359,8 @@
           "unit": "teaspoons"
         }
       ],
-      "image": "buttermilk_scones.jpg"
+      "image": "buttermilk_scones.jpg",
+      "meal_type": "breakfast"
     },
     {
       "title": "Aegean Olive Oil Cake",
@@ -2386,7 +2413,8 @@
           "unit": "pieces"
         }
       ],
-      "image": "aegean_olive_oil_cake.jpg"
+      "image": "aegean_olive_oil_cake.jpg",
+      "meal_type": "dessert"
     },
     {
       "title": "Ghormeh Sabzi",
@@ -2445,7 +2473,8 @@
           "amount": "3.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Tahdig",
@@ -2486,7 +2515,8 @@
           "amount": "2.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Fesenjan",
@@ -2536,7 +2566,8 @@
           "amount": "3.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Kabsa",
@@ -2596,7 +2627,8 @@
           "amount": "50.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Shawarma",
@@ -2648,7 +2680,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Kunafa",
@@ -2697,7 +2730,8 @@
           "amount": "50.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "dessert"
     },
     {
       "title": "Mapo Tofu",
@@ -2753,7 +2787,8 @@
           "amount": "3.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Xiaolongbao",
@@ -2798,7 +2833,8 @@
           "amount": "1.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Char Siu",
@@ -2843,7 +2879,8 @@
           "amount": "3.00",
           "unit": "cloves"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Bibimbap",
@@ -2899,7 +2936,8 @@
           "amount": "2.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Kimchi Jjigae",
@@ -2945,7 +2983,8 @@
           "amount": "1.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "soup"
     },
     {
       "title": "Bulgogi",
@@ -2998,7 +3037,8 @@
           "amount": "2.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Pad Thai",
@@ -3054,7 +3094,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Pho",
@@ -3107,7 +3148,8 @@
           "amount": "1.00",
           "unit": "bunch"
         }
-      ]
+      ],
+      "meal_type": "soup"
     },
     {
       "title": "Rendang",
@@ -3163,7 +3205,8 @@
           "amount": "4.00",
           "unit": "cloves"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Lamb Tagine",
@@ -3224,7 +3267,8 @@
           "amount": "50.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Couscous Royal",
@@ -3278,7 +3322,8 @@
           "amount": "50.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Shakshuka",
@@ -3329,7 +3374,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "breakfast"
     },
     {
       "title": "Jollof Rice",
@@ -3385,7 +3431,8 @@
           "amount": "2.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Egusi Soup",
@@ -3439,7 +3486,8 @@
           "amount": "2.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "soup"
     },
     {
       "title": "Fufu with Light Soup",
@@ -3490,7 +3538,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Injera",
@@ -3526,7 +3575,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Doro Wat",
@@ -3582,7 +3632,8 @@
           "amount": "50.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Ugali with Sukuma Wiki",
@@ -3629,7 +3680,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Jerk Chicken",
@@ -3682,7 +3734,8 @@
           "amount": "2.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Rice and Peas",
@@ -3729,7 +3782,8 @@
           "amount": "2.00",
           "unit": "cloves"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Fried Plantain",
@@ -3761,7 +3815,8 @@
           "amount": "0.50",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Empanadas",
@@ -3814,7 +3869,8 @@
           "amount": "100.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Ceviche",
@@ -3867,7 +3923,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Feijoada",
@@ -3920,7 +3977,8 @@
           "amount": "2.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Pupusas",
@@ -3968,7 +4026,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Tamales",
@@ -4022,7 +4081,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Gallo Pinto",
@@ -4069,7 +4129,8 @@
           "amount": "1.00",
           "unit": "bunch"
         }
-      ]
+      ],
+      "meal_type": "breakfast"
     },
     {
       "title": "Ratatouille",
@@ -4128,7 +4189,8 @@
           "amount": "2.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Croissant",
@@ -4178,7 +4240,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "breakfast"
     },
     {
       "title": "Coq au Vin",
@@ -4233,7 +4296,8 @@
           "amount": "50.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Paella",
@@ -4292,7 +4356,8 @@
           "amount": "800.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Gazpacho",
@@ -4344,7 +4409,8 @@
           "amount": "1.00",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "soup"
     },
     {
       "title": "Bacalhau a Bras",
@@ -4398,7 +4464,8 @@
           "amount": "1.00",
           "unit": "bunch"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Fish and Chips",
@@ -4441,7 +4508,8 @@
           "amount": "2.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Shepherd's Pie",
@@ -4491,7 +4559,8 @@
           "amount": "100.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Cream Tea Scones",
@@ -4544,7 +4613,8 @@
           "amount": "50.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "dessert"
     },
     {
       "title": "Wiener Schnitzel",
@@ -4589,7 +4659,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Goulash",
@@ -4639,7 +4710,8 @@
           "amount": "50.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Apple Strudel",
@@ -4694,7 +4766,8 @@
           "amount": "50.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "dessert"
     },
     {
       "title": "Borscht",
@@ -4750,7 +4823,8 @@
           "amount": "2.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "soup"
     },
     {
       "title": "Pierogi",
@@ -4804,7 +4878,8 @@
           "amount": "100.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Blini",
@@ -4854,7 +4929,8 @@
           "amount": "0.50",
           "unit": "teaspoons"
         }
-      ]
+      ],
+      "meal_type": "breakfast"
     },
     {
       "title": "Plov",
@@ -4915,7 +4991,8 @@
           "amount": "50.00",
           "unit": "grams"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Lagman",
@@ -4967,7 +5044,8 @@
           "amount": "50.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Samsa",
@@ -5014,7 +5092,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Pavlova",
@@ -5068,7 +5147,8 @@
           "amount": "2.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "dessert"
     },
     {
       "title": "Meat Pie",
@@ -5116,7 +5196,8 @@
           "amount": "1.00",
           "unit": "pieces"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Aloo Gobi",
@@ -5178,7 +5259,8 @@
           "amount": "3.00",
           "unit": "tablespoons"
         }
-      ]
+      ],
+      "meal_type": "main_course"
     },
     {
       "title": "Falafel",
@@ -5233,7 +5315,8 @@
           "amount": "500.00",
           "unit": "ml"
         }
-      ]
+      ],
+      "meal_type": "snack"
     },
     {
       "title": "Anatolian Köfte",
@@ -5301,7 +5384,8 @@
         }
       ],
       "image": "anatolian_kofte.jpg",
-      "heritage_status": "revived"
+      "heritage_status": "revived",
+      "meal_type": "main_course"
     }
   ],
   "stories": [
@@ -6821,6 +6905,406 @@
         "kind": "recipe",
         "title": "Ceviche"
       }
+    },
+    {
+      "slug": "black-sea-butter-tradition",
+      "kind": "tradition",
+      "title": "The Black Sea Butter Ritual",
+      "body": "In the Black Sea region, butter is more than an ingredient—it is a cultural marker. The sound of the wooden churn (yayık) is the heartbeat of a traditional mountain home. High-altitude pastures (yaylas) produce butter with a distinctive yellow hue and a floral aroma that defines local breakfast rituals.",
+      "region": "Black Sea",
+      "link": {
+        "kind": "recipe",
+        "title": "Trabzon Butter Kuymak"
+      },
+      "cultural_tags": [
+        "Black Sea",
+        "Turkish",
+        "butter",
+        "breakfast"
+      ]
+    },
+    {
+      "slug": "persian-new-year-feast",
+      "kind": "holiday",
+      "title": "Nowruz Kitchen: Cooking for Renewal",
+      "body": "Nowruz, the Persian New Year, begins at the exact moment of the spring equinox. The celebration is anchored by the 'Haft-Sin' table, but the kitchen is where the labor of renewal happens. Families gather to cook dishes like Sabzi Polo (herb rice) and Kuku Sabzi, symbolizing the greening of the earth and the cycle of life.",
+      "region": "Persian",
+      "link": {
+        "kind": "story",
+        "title": "Nowruz: A Table Full of Meaning"
+      },
+      "cultural_tags": [
+        "Persian",
+        "Nowruz",
+        "new year",
+        "spring"
+      ]
+    },
+    {
+      "slug": "southeast-asian-street-food",
+      "kind": "fact",
+      "title": "Street Food as Cultural Archive",
+      "body": "Across Southeast Asia, street food carts are more than convenient places to eat—they are living archives of migration and adaptation. A single bowl of noodles or a stir-fry can trace centuries of trade between China, India, and the indigenous cultures of the islands and mainland.",
+      "region": "Southeast Asian",
+      "link": {
+        "kind": "recipe",
+        "title": "Pad Thai"
+      },
+      "cultural_tags": [
+        "Southeast Asian",
+        "Thai",
+        "street food",
+        "history"
+      ]
+    },
+    {
+      "slug": "east-african-communal-dining",
+      "kind": "tradition",
+      "title": "Breaking Bread on Injera",
+      "body": "In East Africa, specifically Ethiopia and Eritrea, the concept of 'gursha'—hand-feeding a fellow diner—is a profound act of love and respect. This communal style of dining centers around the injera, a large sourdough flatbread that serves as both plate and utensil, bringing everyone together around a single source of nourishment.",
+      "region": "East African",
+      "link": {
+        "kind": "recipe",
+        "title": "Injera"
+      },
+      "cultural_tags": [
+        "East African",
+        "Ethiopian",
+        "communal dining",
+        "tradition"
+      ]
+    },
+    {
+      "slug": "south-american-empanada-trail",
+      "kind": "dish",
+      "title": "The Empanada: A Continent's Pocket of History",
+      "body": "From the high Andes to the streets of Buenos Aires, the empanada is South America's versatile pocket of history. Each region has its own dough, its own crimp (repulgue), and its own filling. Whether baked or fried, it represents the fusion of Spanish influence with local ingredients and communal gathering (peñas).",
+      "region": "South American",
+      "link": {
+        "kind": "recipe",
+        "title": "Empanadas"
+      },
+      "cultural_tags": [
+        "South American",
+        "Argentine",
+        "empanada",
+        "street food"
+      ]
+    },
+    {
+      "slug": "french-terroir-croissant",
+      "kind": "fact",
+      "title": "The Croissant: Not Originally French",
+      "body": "While the croissant is the quintessential French pastry, its ancestor, the kipferl, was born in Austria. French bakers took the simple crescent-shaped bread and transformed it through the technique of lamination (layering dough with butter), creating the flaky, buttery icon of the French boulangerie we know today.",
+      "region": "French",
+      "link": {
+        "kind": "recipe",
+        "title": "Croissant"
+      },
+      "cultural_tags": [
+        "French",
+        "baking",
+        "history",
+        "Austrian"
+      ]
+    },
+    {
+      "slug": "central-american-maize-heritage",
+      "kind": "tradition",
+      "title": "Maize: The Sacred Grain of the Americas",
+      "body": "For the indigenous peoples of Central America, maize is not just a crop—it is the material of creation. The process of nixtamalization, which turns corn into masa, is an ancient scientific achievement that allowed civilizations to flourish. Today, this heritage lives on in every tortilla and tamale made by hand.",
+      "region": "Central American",
+      "link": {
+        "kind": "recipe",
+        "title": "Tamales"
+      },
+      "cultural_tags": [
+        "Central American",
+        "maize",
+        "heritage",
+        "indigenous"
+      ]
+    },
+    {
+      "slug": "korean-fermentation-wisdom",
+      "kind": "fact",
+      "title": "Korea's Fermentation Science",
+      "body": "Korean cuisine is built on the logic of fermentation. Beyond taste, the 'jang' (sauces) and kimchi are products of time, temperature, and microbial balance. This 'living food' reflects a deep cultural wisdom that values patience and the relationship between human health and the natural world.",
+      "region": "Korean",
+      "link": {
+        "kind": "recipe",
+        "title": "Kimchi Jjigae"
+      },
+      "cultural_tags": [
+        "Korean",
+        "fermentation",
+        "kimchi",
+        "science"
+      ]
+    },
+    {
+      "slug": "caribbean-spice-fusion",
+      "kind": "dish",
+      "title": "Jerk: Smoke, Spice, and Memory",
+      "body": "Jerk is Jamaica's gift to the world, a cooking style born of necessity and resistance. Maroon communities used pimento wood, scotch bonnet peppers, and secret spice blends to preserve and cook meat in hidden pits. Today, the smoke of a jerk pan is the aroma of Jamaican resilience and culinary creativity.",
+      "region": "Caribbean",
+      "link": {
+        "kind": "recipe",
+        "title": "Jerk Chicken"
+      },
+      "cultural_tags": [
+        "Caribbean",
+        "Jamaican",
+        "jerk",
+        "spice",
+        "smoke"
+      ]
+    },
+    {
+      "slug": "north-african-tagine-heritage",
+      "kind": "tradition",
+      "title": "Slow Fire, Patient Hands: The Way of the Tagine",
+      "body": "The tagine is both a vessel and a dish, designed for the slow, gentle cooking required in arid climates. The conical lid allows steam to circulate and condense, returning moisture to the meat and vegetables. It is a philosophy of cooking that rewards patience and honors the delicate balance of spices like saffron, ginger, and turmeric.",
+      "region": "North African",
+      "link": {
+        "kind": "recipe",
+        "title": "Lamb Tagine"
+      },
+      "cultural_tags": [
+        "North African",
+        "Moroccan",
+        "tagine",
+        "slow cooking"
+      ]
+    }
+  ],
+  "quests": [
+    {
+      "name": "Aegean Explorer",
+      "description": "Try 3 Aegean recipes to discover the light, olive-oil centered flavors of the coast.",
+      "category": "discovery",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Aegean",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Spice Road Wanderer",
+      "description": "The Silk Road carried more than silk—it carried the flavors that define us. Try 5 recipes from any region.",
+      "category": "discovery",
+      "target_count": 5,
+      "filter_criteria": {
+        "action": "recipe_try"
+      },
+      "reward_type": "theme",
+      "reward_value": "spice_road_wanderer",
+      "is_event_quest": false
+    },
+    {
+      "name": "Story Seeker",
+      "description": "Cultural heritage is carried in stories as much as in pots. Save 3 stories to your passport.",
+      "category": "discovery",
+      "target_count": 3,
+      "filter_criteria": {
+        "action": "story_save"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Mediterranean Taster",
+      "description": "From the shores of Greece to the coast of Turkey, discover the Mediterranean diet. Try 2 Mediterranean recipes.",
+      "category": "discovery",
+      "target_count": 2,
+      "filter_criteria": {
+        "region": "Mediterranean",
+        "action": "recipe_try"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Mediterranean Shores",
+      "is_event_quest": false
+    },
+    {
+      "name": "Far East Flavors",
+      "description": "Explore the precision and tradition of Japanese cooking. Try 3 Japanese recipes.",
+      "category": "discovery",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Japanese",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Heritage Guardian",
+      "description": "Preserve the traditions that are at risk of being forgotten. Try 3 heritage recipes.",
+      "category": "heritage",
+      "target_count": 3,
+      "filter_criteria": {
+        "heritage": true,
+        "action": "recipe_try"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Heritage Guardian",
+      "is_event_quest": false
+    },
+    {
+      "name": "Black Sea Traditions",
+      "description": "The rugged Black Sea coast holds unique heritage. Interact with 2 Black Sea heritage items.",
+      "category": "heritage",
+      "target_count": 2,
+      "filter_criteria": {
+        "region": "Black Sea",
+        "heritage": true
+      },
+      "reward_type": "theme",
+      "reward_value": "black_sea_keeper",
+      "is_event_quest": false
+    },
+    {
+      "name": "Anatolian Roots",
+      "description": "Anatolia is a cradle of civilizations. Interact with 2 Anatolian recipes or stories.",
+      "category": "heritage",
+      "target_count": 2,
+      "filter_criteria": {
+        "region": "Anatolian"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Living Recipe Keeper",
+      "description": "Become a steward of our shared culinary history. Interact with 5 heritage items.",
+      "category": "heritage",
+      "target_count": 5,
+      "filter_criteria": {
+        "heritage": true
+      },
+      "reward_type": "theme",
+      "reward_value": "living_archive",
+      "is_event_quest": false
+    },
+    {
+      "name": "Silk Road Journey",
+      "description": "Trace the ancient trade routes through Central Asia. Try 3 Central Asian recipes.",
+      "category": "journey",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Central Asian",
+        "action": "recipe_try"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Silk Road Traveler",
+      "is_event_quest": false
+    },
+    {
+      "name": "Levantine Passage",
+      "description": "Discover the communal generosity of the Levant. Interact with 4 Levantine recipes or stories.",
+      "category": "journey",
+      "target_count": 4,
+      "filter_criteria": {
+        "region": "Levantine"
+      },
+      "reward_type": "theme",
+      "reward_value": "levantine_voyager",
+      "is_event_quest": false
+    },
+    {
+      "name": "Around the World in 10 Recipes",
+      "description": "A global culinary adventure. Try 10 recipes from any region.",
+      "category": "journey",
+      "target_count": 10,
+      "filter_criteria": {
+        "action": "recipe_try"
+      },
+      "reward_type": "theme",
+      "reward_value": "globe_trotter",
+      "is_event_quest": false
+    },
+    {
+      "name": "Korean Kitchen",
+      "description": "Master the art of fermentation and balance. Try 3 Korean recipes.",
+      "category": "journey",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Korean",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Persian Treasures",
+      "description": "Experience the sophisticated flavors of Persian cuisine. Interact with 3 Persian items.",
+      "category": "journey",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Persian"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Persian Garden",
+      "is_event_quest": false
+    },
+    {
+      "name": "Community Storyteller",
+      "description": "Stories are the threads that bind us. Save 5 stories from any region.",
+      "category": "community",
+      "target_count": 5,
+      "filter_criteria": {
+        "action": "story_save"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Community Storyteller",
+      "is_event_quest": false
+    },
+    {
+      "name": "West African Explorer",
+      "description": "Bold, spicy, and communal. Try 3 West African recipes.",
+      "category": "community",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "West African",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Indian Culinary Journey",
+      "description": "Navigate the spice trails of the subcontinent. Try 3 Indian recipes.",
+      "category": "community",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Indian",
+        "action": "recipe_try"
+      },
+      "reward_type": "theme",
+      "reward_value": "indian_spice_trail",
+      "is_event_quest": false
+    },
+    {
+      "name": "Ramadan Recipe Quest",
+      "description": "Share the spirit of reflection and community. Try 2 recipes during the holy month.",
+      "category": "community",
+      "target_count": 2,
+      "filter_criteria": {
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": true,
+      "event_start": "2026-02-17T00:00:00Z",
+      "event_end": "2026-03-19T23:59:59Z"
     }
   ],
   "recipe_comments": [
@@ -7727,7 +8211,11 @@
       "date_rule": "fixed:03-21",
       "region": "Persian",
       "description": "Celebrated on the spring equinox (around 21 March), Nowruz is a 3,000-year-old new year tradition observed across Iran, Afghanistan, Central Asia, parts of Turkey, and diaspora communities worldwide. The haft-sin table, set with seven symbolic items beginning with the Persian letter 's', is the visual centrepiece, while sabzi polo mahi (herb rice with fish) is the canonical new year dish.",
-      "linked_recipes": ["Ghormeh Sabzi", "Tahdig", "Fesenjan"]
+      "linked_recipes": [
+        "Ghormeh Sabzi",
+        "Tahdig",
+        "Fesenjan"
+      ]
     },
     {
       "name": "Hıdırellez",
@@ -7770,154 +8258,216 @@
       "date_rule": "lunar:diwali",
       "region": "Indian",
       "description": "Diwali, the Festival of Lights, is India's most significant holiday, celebrating the victory of light over darkness. Families clean their homes, light oil lamps, and share an abundance of sweets and savoury snacks. Traditional meals often feature rich lentil dishes, paneer specialities, and spiced vegetable curries.",
-      "linked_recipes": ["Indian Dal Tadka", "Paneer Tikka Masala", "Aloo Gobi"]
+      "linked_recipes": [
+        "Indian Dal Tadka",
+        "Paneer Tikka Masala",
+        "Aloo Gobi"
+      ]
     },
     {
       "name": "Lunar New Year / Chunjie",
       "date_rule": "lunar:chinese_new_year",
       "region": "Chinese",
       "description": "The Spring Festival marks the beginning of the lunar calendar and is the most important traditional Chinese holiday. The New Year's Eve reunion dinner is a sacred ritual where families gather to eat symbolic foods like dumplings (representing wealth) and fish (representing surplus). Each region has its own canonical dishes that anchor the celebration.",
-      "linked_recipes": ["Xiaolongbao", "Mapo Tofu", "Char Siu"]
+      "linked_recipes": [
+        "Xiaolongbao",
+        "Mapo Tofu",
+        "Char Siu"
+      ]
     },
     {
       "name": "Eid al-Fitr",
       "date_rule": "lunar:eid_al_fitr",
       "region": "Arabian",
       "description": "Eid al-Fitr, the 'Festival of Breaking the Fast', marks the end of Ramadan. It is a time of immense joy and gratitude, celebrated with communal prayers and festive feasts. The morning often begins with dates and sweets, followed by elaborate rice and meat dishes shared with extended family and neighbours.",
-      "linked_recipes": ["Kabsa", "Kunafa", "Shawarma"]
+      "linked_recipes": [
+        "Kabsa",
+        "Kunafa",
+        "Shawarma"
+      ]
     },
     {
       "name": "Eid al-Adha",
       "date_rule": "lunar:eid_al_adha",
       "region": "Levantine",
       "description": "The 'Festival of Sacrifice' commemorates Ibrahim's willingness to sacrifice his son. It is a time of charity and communal sharing, where meat from sacrificed animals is divided among family, friends, and the less fortunate. Levantine tables feature hearty meat-based dishes like kibbeh and fresh hummus spreads.",
-      "linked_recipes": ["Levantine Kibbeh", "Lebanese Hummus"]
+      "linked_recipes": [
+        "Levantine Kibbeh",
+        "Lebanese Hummus"
+      ]
     },
     {
       "name": "Thanksgiving",
       "date_rule": "fixed:11-28",
       "region": "North American",
       "description": "Thanksgiving is a North American harvest festival focused on gratitude and family. The centrepiece of the celebration is a shared feast that typically includes roasted meats, seasonal vegetables, and savoury pies. It is a day defined by the abundance of the autumn harvest and the warmth of communal dining.",
-      "linked_recipes": ["Shepherd's Pie"]
+      "linked_recipes": [
+        "Shepherd's Pie"
+      ]
     },
     {
       "name": "La Tomatina",
       "date_rule": "fixed:08-27",
       "region": "Iberian",
       "description": "Held in the town of Buñol, La Tomatina is a world-famous food fight festival where participants throw overripe tomatoes at each other. Beyond the chaos in the streets, the day is a celebration of the tomato harvest, with the town hosting paella cooking competitions and communal feasts featuring fresh Mediterranean produce.",
-      "linked_recipes": ["Gazpacho", "Paella"]
+      "linked_recipes": [
+        "Gazpacho",
+        "Paella"
+      ]
     },
     {
       "name": "Bastille Day",
       "date_rule": "fixed:07-14",
       "region": "French",
       "description": "The French National Day commemorates the storming of the Bastille and the birth of the Republic. Throughout France, communities celebrate with military parades, fireworks, and communal meals known as 'Banquet républicain'. Tables are filled with French classics that celebrate the country's diverse regional produce.",
-      "linked_recipes": ["Ratatouille", "Coq au Vin"]
+      "linked_recipes": [
+        "Ratatouille",
+        "Coq au Vin"
+      ]
     },
     {
       "name": "St. Patrick's Day",
       "date_rule": "fixed:03-17",
       "region": "British Isles",
       "description": "St. Patrick's Day celebrates the patron saint of Ireland and Irish culture worldwide. The holiday is marked by parades, traditional music, and the sharing of hearty Irish comfort foods. Soda bread, stews, and roasted meats are staples of the festive table, often shared in local pubs and family homes.",
-      "linked_recipes": ["Traditional Irish Soda Bread"]
+      "linked_recipes": [
+        "Traditional Irish Soda Bread"
+      ]
     },
     {
       "name": "Obon Festival",
       "date_rule": "fixed:08-15",
       "region": "Japanese",
       "description": "Obon is a Japanese Buddhist custom to honour the spirits of one's ancestors. Families gather to visit graves, perform traditional dances, and share specific vegetarian offerings known as Shojin Ryori. Simple, comforting foods like miso soup and rice balls are central to the communal spirit of the festival.",
-      "linked_recipes": ["Japanese Miso Soup", "Japanese Onigiri Rice Balls"]
+      "linked_recipes": [
+        "Japanese Miso Soup",
+        "Japanese Onigiri Rice Balls"
+      ]
     },
     {
       "name": "Midsommar",
       "date_rule": "fixed:06-21",
       "region": "Nordic",
       "description": "Midsummer is one of the most celebrated holidays in Nordic cultures, marking the summer solstice. Communities gather around maypoles to sing and dance, often staying up through the white nights. The festive meal typically features herring, new potatoes, and iconic Swedish meatballs or cabbage rolls.",
-      "linked_recipes": ["Swedish Meatballs - Kottbullar", "Swedish Cabbage Rolls - Kaldolmar"]
+      "linked_recipes": [
+        "Swedish Meatballs - Kottbullar",
+        "Swedish Cabbage Rolls - Kaldolmar"
+      ]
     },
     {
       "name": "Mesir Macunu Festival",
       "date_rule": "fixed:03-21",
       "region": "Aegean",
       "description": "Held in Manisa, this festival commemorates the recovery of Ayşe Hafsa Sultan through a medicinal paste made of 41 different spices and herbs. The paste is scattered from the dome of the Sultan Mosque to the crowds below. It is a celebration of healing, history, and the rich spice traditions of the Aegean region.",
-      "linked_recipes": ["Manisa Mesir Paste"]
+      "linked_recipes": [
+        "Manisa Mesir Paste"
+      ]
     },
     {
       "name": "Oktoberfest",
       "date_rule": "fixed:09-21",
       "region": "Central European",
       "description": "Originally a royal wedding celebration, Oktoberfest has evolved into the world's largest Volksfest. Millions gather in Munich to share traditional Bavarian food and drink under massive tents. The festive menu is dominated by hearty Central European staples like schnitzel, pretzels, and apple strudel.",
-      "linked_recipes": ["Wiener Schnitzel", "Apple Strudel"]
+      "linked_recipes": [
+        "Wiener Schnitzel",
+        "Apple Strudel"
+      ]
     },
     {
       "name": "Wigilia (Christmas Eve)",
       "date_rule": "fixed:12-24",
       "region": "Eastern European",
       "description": "Wigilia is the solemn Christmas Eve vigil in Poland and other Eastern European cultures. The meatless twelve-dish supper begins when the first star appears in the sky. Pierogi and borscht are central to the meal, which is eaten after sharing the oplatek Christmas wafer with family members.",
-      "linked_recipes": ["Pierogi", "Borscht"]
+      "linked_recipes": [
+        "Pierogi",
+        "Borscht"
+      ]
     },
     {
       "name": "Maslenitsa",
       "date_rule": "lunar:maslenitsa",
       "region": "Russia",
       "description": "Maslenitsa, or 'Butter Week', is an Eastern Slavic religious and folk holiday celebrated during the last week before Great Lent. It celebrates the end of winter with outdoor games and the consumption of blini — thin pancakes whose round, golden shape symbolises the sun.",
-      "linked_recipes": ["Blini"]
+      "linked_recipes": [
+        "Blini"
+      ]
     },
     {
       "name": "Timkat",
       "date_rule": "fixed:01-19",
       "region": "Ethiopia",
       "description": "Timkat is the Ethiopian Orthodox celebration of Epiphany, commemorating the baptism of Jesus in the Jordan River. Pilgrims process with replicas of the Ark of the Covenant to bodies of water for blessing. Festive meals feature large platters of injera served with doro wat and other spicy stews.",
-      "linked_recipes": ["Injera", "Doro Wat"]
+      "linked_recipes": [
+        "Injera",
+        "Doro Wat"
+      ]
     },
     {
       "name": "Homowo Festival",
       "date_rule": "lunar:homowo",
       "region": "Ghana",
       "description": "The Homowo festival of the Ga people of Ghana literally means 'hooting at hunger'. It commemorates a period of great famine that was ended by a bumper harvest. The celebration centres on a special festive dish called kpokpoi, shared alongside light soups and fufu.",
-      "linked_recipes": ["Fufu with Light Soup"]
+      "linked_recipes": [
+        "Fufu with Light Soup"
+      ]
     },
     {
       "name": "Día de los Muertos",
       "date_rule": "fixed:11-01",
       "region": "Central American",
       "description": "Day of the Dead is a vibrant celebration where families welcome back the souls of their deceased relatives for a brief reunion. Altars (ofrendas) are decorated with photos, marigolds, and the favourite foods of the departed. Tamales and pan de muerto are essential offerings and festive staples.",
-      "linked_recipes": ["Tamales"]
+      "linked_recipes": [
+        "Tamales"
+      ]
     },
     {
       "name": "Inti Raymi",
       "date_rule": "fixed:06-24",
       "region": "South American",
       "description": "The Festival of the Sun is an Andean religious ceremony in honour of the god Inti, marking the winter solstice in the Southern Hemisphere. Ancient Inca rituals are reenacted in Cusco, accompanied by traditional music and the sharing of South American staples like empanadas and fresh ceviche.",
-      "linked_recipes": ["Empanadas", "Ceviche"]
+      "linked_recipes": [
+        "Empanadas",
+        "Ceviche"
+      ]
     },
     {
       "name": "Carnaval",
       "date_rule": "lunar:carnaval",
       "region": "Brazil",
       "description": "Carnaval is Brazil's world-famous festival of music, dance, and parade held before the start of Lent. While the samba schools take centre stage, the streets are filled with food stalls serving feijoada and fried snacks. It is a time of communal indulgence and high-energy celebration.",
-      "linked_recipes": ["Feijoada", "Fried Plantain"]
+      "linked_recipes": [
+        "Feijoada",
+        "Fried Plantain"
+      ]
     },
     {
       "name": "Songkran",
       "date_rule": "fixed:04-13",
       "region": "Southeast Asian",
       "description": "Songkran is the traditional Thai New Year, famous for its massive public water fights that symbolise ritual cleansing. Beyond the water, families gather to visit temples and share festive meals. Southeast Asian staples like Pad Thai and aromatic curries are central to the holiday's communal feasts.",
-      "linked_recipes": ["Pad Thai", "Rendang"]
+      "linked_recipes": [
+        "Pad Thai",
+        "Rendang"
+      ]
     },
     {
       "name": "Yalda Night",
       "date_rule": "fixed:12-21",
       "region": "Persian",
       "description": "Shab-e Yalda is the Persian winter solstice celebration, marking the longest night of the year and the victory of light over darkness. Families stay awake all night, reading poetry and eating symbolic red foods like pomegranate and watermelon. The evening often features slow-cooked stews like fesenjan.",
-      "linked_recipes": ["Fesenjan"]
+      "linked_recipes": [
+        "Fesenjan"
+      ]
     },
     {
       "name": "Australia Day BBQ",
       "date_rule": "fixed:01-26",
       "region": "Australia",
       "description": "While its historical context is complex, Australia Day is widely marked by 'the great Australian BBQ'. Families and friends gather in backyards and parks to grill meats and share summer desserts like pavlova. It is a day defined by casual communal dining and the height of the Australian summer.",
-      "linked_recipes": ["Pavlova", "Meat Pie"]
+      "linked_recipes": [
+        "Pavlova",
+        "Meat Pie"
+      ]
     }
   ],
   "ingredient_routes": [

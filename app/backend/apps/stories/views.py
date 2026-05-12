@@ -47,14 +47,6 @@ class StoryViewSet(viewsets.ModelViewSet):
         
         if self.action == 'list':
             qs = apply_content_filters(qs, self.request.query_params, user=self.request.user)
-            
-            story_type = self.request.query_params.get('story_type')
-            if story_type is not None:
-                valid_values = {choice for choice, _ in Story.StoryType.choices}
-                if story_type in valid_values:
-                    qs = qs.filter(story_type=story_type)
-                else:
-                    qs = qs.none()
         return qs
 
     def list(self, request, *args, **kwargs):

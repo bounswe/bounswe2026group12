@@ -22,6 +22,7 @@ from apps.recipes.models import (
     RecipeCulturalContext, IngredientRoute
 )
 from apps.stories.models import Story, StoryRecipeLink, StoryComment, StoryVote
+from apps.passport.models import Quest, UserQuest
 
 User = get_user_model()
 
@@ -50,6 +51,7 @@ class Command(BaseCommand):
         heritage_groups = heritage_data.get('groups', [])
         cultural_events_data = data.get('cultural_events', [])
         ingredient_routes_data = data.get('ingredient_routes', [])
+        quests_data = data.get('quests', [])
 
         if options['dry_run']:
             self.stdout.write(
@@ -59,6 +61,7 @@ class Command(BaseCommand):
                 f'{len(data.get("recipe_comments", []))} recipe comments, '
                 f'{len(data.get("story_comments", []))} story comments, '
                 f'{len(data["cultural_content"])} cultural content cards, '
+                f'{len(quests_data)} quests, '
                 f'{len(substitutions_data)} ingredient substitutions, '
                 f'{len(heritage_groups)} heritage groups, '
                 f'{len(cultural_events_data)} cultural events, '
@@ -74,6 +77,7 @@ class Command(BaseCommand):
             self._seed_recipe_comments(data.get('recipe_comments', []), users, recipes)
             self._seed_story_comments(data.get('story_comments', []), users, stories)
             cards = self._seed_cultural_content(data['cultural_content'], recipes, stories)
+            quest_count = self._seed_quests(quests_data)
             sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
             heritage_stats = self._seed_heritage(heritage_data, recipes, stories)
             event_stats = self._seed_cultural_events(cultural_events_data, recipes)
@@ -82,6 +86,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(users)} users, {len(recipes)} recipes, '
             f'{len(stories)} stories, {len(cards)} cultural content cards, '
+            f'{quest_count} quests, '
             f'{sub_created} substitutions added ({sub_skipped} already present), '
             f'{heritage_stats["groups"]} heritage groups '
             f'({heritage_stats["memberships"]} memberships, '
@@ -99,6 +104,10 @@ class Command(BaseCommand):
             return json.load(f)
 
     def _wipe(self):
+        # passport (Quest/UserQuest only; CulturalPassport, Stamp,
+        # StampInteraction, PassportEvent are auto-managed and cascade from User)
+        UserQuest.objects.all().delete()
+        Quest.objects.all().delete()
         # heritage
         CulturalFact.objects.all().delete()
         HeritageJourneyStep.objects.all().delete()
@@ -163,6 +172,7 @@ class Command(BaseCommand):
                 description=r['description'],
                 author=users[r['author']],
                 region=region,
+                meal_type=r.get('meal_type', ''),
                 is_published=r.get('is_published', True),
                 is_heritage=r.get('is_heritage', False),
                 heritage_status=r.get('heritage_status', 'none'),
@@ -345,6 +355,26 @@ class Command(BaseCommand):
                 card.save(update_fields=['link_kind', 'link_id'])
             cards.append(card)
         return cards
+
+    def _seed_quests(self, quests_data):
+        if not quests_data:
+            return 0
+        count = 0
+        for q in quests_data:
+            Quest.objects.create(
+                name=q['name'],
+                description=q.get('description', ''),
+                category=q['category'],
+                target_count=q.get('target_count', 1),
+                filter_criteria=q.get('filter_criteria', {}),
+                reward_type=q['reward_type'],
+                reward_value=q.get('reward_value', ''),
+                is_event_quest=q.get('is_event_quest', False),
+                event_start=q.get('event_start'),
+                event_end=q.get('event_end'),
+            )
+            count += 1
+        return count
 
     def _seed_heritage(self, heritage_data, recipes, stories):
         groups_data = heritage_data.get('groups', [])

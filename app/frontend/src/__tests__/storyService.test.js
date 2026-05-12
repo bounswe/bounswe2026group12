@@ -1,5 +1,5 @@
 import * as storyService from '../services/storyService';
-import { fetchMyStories } from '../services/storyService';
+import { fetchMyStories, fetchStoriesByRegion } from '../services/storyService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
@@ -46,7 +46,7 @@ describe('storyService — new functions', () => {
   it('fetchStories calls GET /api/stories/ and returns data', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Test' }] });
     const result = await storyService.fetchStories();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Test' }]);
   });
 
@@ -122,12 +122,26 @@ describe('fetchMyStories', () => {
   it('GETs /api/stories/?author=<id> and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 3, title: 'Mine' }] });
     const result = await fetchMyStories(42);
-    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { author: 42 } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { author: 42, page_size: 100 } });
     expect(result).toEqual([{ id: 3, title: 'Mine' }]);
   });
 
   it('unwraps paginated DRF responses', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [{ id: 8 }] } });
     expect(await fetchMyStories(42)).toEqual([{ id: 8 }]);
+  });
+});
+
+describe('fetchStoriesByRegion', () => {
+  it('GETs /api/stories/?region=<name>&page_size=100 and returns the list', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 2, title: 'Trabzon Memory', latitude: 41.0, longitude: 39.7 }] });
+    const result = await fetchStoriesByRegion('Black Sea');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { region: 'Black Sea', page_size: 100 } });
+    expect(result).toEqual([{ id: 2, title: 'Trabzon Memory', latitude: 41.0, longitude: 39.7 }]);
+  });
+
+  it('unwraps paginated DRF responses', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: [{ id: 6 }] } });
+    expect(await fetchStoriesByRegion('Aegean')).toEqual([{ id: 6 }]);
   });
 });

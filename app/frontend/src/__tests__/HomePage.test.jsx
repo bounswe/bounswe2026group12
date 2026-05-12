@@ -66,17 +66,18 @@ describe('HomePage', () => {
     expect(screen.getByRole('button', { name: 'Soup' })).toBeInTheDocument();
   });
 
-  it('navigates to /search with region and meal_type on submit', async () => {
+  it('navigates to /search with region, meal_type and story_type on submit', async () => {
     renderPage();
     await waitFor(() => screen.getByRole('button', { name: 'Aegean' }));
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'baklava' } });
     fireEvent.click(screen.getByRole('button', { name: 'Aegean' }));
     fireEvent.click(screen.getByRole('button', { name: 'Soup' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Family' }));
     fireEvent.click(screen.getByRole('button', { name: /^search$/i }));
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/search?q=baklava&region=Aegean&meal_type=Soup'
+      '/search?q=baklava&region=Aegean&meal_type=Soup&story_type=family'
     );
   });
 
@@ -84,8 +85,16 @@ describe('HomePage', () => {
     renderPage();
     fireEvent.click(screen.getByRole('button', { name: /^search$/i }));
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/search?q=&region=&meal_type='
+      '/search?q=&region=&meal_type=&story_type='
     );
+  });
+
+  it('renders Story Type chips that are enabled and clickable', () => {
+    renderPage();
+    const familyChip = screen.getByRole('button', { name: 'Family' });
+    expect(familyChip).toBeEnabled();
+    fireEvent.click(familyChip);
+    expect(familyChip.className).toMatch(/active/);
   });
 
   it('shows onboarding nudge for logged-in users without onboarding data', () => {

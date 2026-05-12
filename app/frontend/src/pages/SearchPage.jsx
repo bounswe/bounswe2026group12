@@ -58,6 +58,7 @@ export default function SearchPage() {
   const event = searchParams.get('event') || '';
   const eventExclude = searchParams.get('event_exclude') || '';
   const mealType = searchParams.get('meal_type') || '';
+  const storyType = searchParams.get('story_type') || '';
   const language = searchParams.get('language') || '';
 
   const [localQ, setLocalQ] = useState(q);
@@ -130,7 +131,13 @@ export default function SearchPage() {
     ].some((list) => Array.isArray(list) && list.length > 0);
   }, [user]);
 
-  const displayResults = results;
+  // Client-side filter for story_type: Story.story_type exists on the backend
+  // but the unified /api/search/ endpoint does not yet pass the query param
+  // through. Apply it here until the backend lands. meal_type is now handled
+  // server-side via the filters memo above.
+  const displayResults = storyType.trim()
+    ? results.filter((r) => r.type !== 'story' || (r.story_type || '').toLowerCase() === storyType.toLowerCase())
+    : results;
 
   function removeFilter(paramKey) {
     const next = new URLSearchParams(searchParams);
@@ -146,6 +153,7 @@ export default function SearchPage() {
     event && { label: `Event+: ${event}`, key: 'event' },
     eventExclude && { label: `Event-: ${eventExclude}`, key: 'event_exclude' },
     mealType && { label: `Meal type: ${mealType}`, key: 'meal_type' },
+    storyType && { label: `Story type: ${storyType}`, key: 'story_type' },
     region && { label: `Region: ${region}`, key: 'region' },
   ].filter(Boolean);
 
@@ -180,7 +188,9 @@ export default function SearchPage() {
       `&diet_exclude=${encodeURIComponent(formatCsv(localDietExclude))}` +
       `&event=${encodeURIComponent(formatCsv(localEventInclude))}` +
       `&event_exclude=${encodeURIComponent(formatCsv(localEventExclude))}` +
-      `&meal_type=${encodeURIComponent(localMealType)}&language=${encodeURIComponent(language)}`
+      `&meal_type=${encodeURIComponent(localMealType)}` +
+      `&story_type=${encodeURIComponent(storyType)}` +
+      `&language=${encodeURIComponent(language)}`
     );
   }
 

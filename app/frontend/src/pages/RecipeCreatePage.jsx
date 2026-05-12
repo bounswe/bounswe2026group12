@@ -66,6 +66,8 @@ export default function RecipeCreatePage() {
   const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
 
   const isDirty = useRef(false);
+  const toastTimerRef = useRef(null);
+  const navTimerRef = useRef(null);
 
   useEffect(() => {
     fetchIngredients().then(setIngredients).catch(() => {});
@@ -84,11 +86,19 @@ export default function RecipeCreatePage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    };
+  }, []);
+
   function markDirty() { isDirty.current = true; }
 
   function showToast(message, type) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+    toastTimerRef.current = setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
   }
 
   function handleRestore(draft) {
@@ -183,14 +193,14 @@ export default function RecipeCreatePage() {
           clearDraft();
           isDirty.current = false;
           showToast('Recipe published but media upload failed — open it to retry.', 'error');
-          setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
+          navTimerRef.current = setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
           return;
         }
       }
       clearDraft();
       isDirty.current = false;
       showToast(publish ? 'Recipe published!' : 'Draft saved!', 'success');
-      setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
+      navTimerRef.current = setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
     } catch {
       showToast(
         publish ? 'Failed to publish recipe. Please try again.' : 'Failed to save draft. Please try again.',

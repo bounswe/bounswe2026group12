@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCulturalEvents } from '../services/culturalEventService';
+import { parseEventDate } from '../services/calendarService';
 import { fetchRegions } from '../services/searchService';
 import './CalendarPage.css';
 
@@ -9,17 +10,37 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-function parseDateRule(rule) {
-  if (typeof rule !== 'string') return { kind: 'unknown' };
-  if (rule.startsWith('fixed:')) {
-    const [mm, dd] = rule.slice('fixed:'.length).split('-');
-    const month = parseInt(mm, 10);
-    return { kind: 'fixed', month, day: parseInt(dd, 10) };
-  }
-  if (rule.startsWith('lunar:')) {
-    return { kind: 'lunar', name: rule.slice('lunar:'.length) };
-  }
-  return { kind: 'unknown' };
+const LUNAR_PRETTY = {
+  'ramadan': 'Ramadan',
+  'eid-fitr': 'Eid al-Fitr',
+  'eid-al-fitr': 'Eid al-Fitr',
+  'eid-adha': 'Eid al-Adha',
+  'eid-al-adha': 'Eid al-Adha',
+  'kurban-bayrami': 'Eid al-Adha',
+  'mevlid': 'Mevlid',
+  'ashura': 'Ashura',
+  'diwali': 'Diwali',
+  'chuseok': 'Chuseok',
+  'carnaval': 'Carnaval',
+  'chinese-new-year': 'Chinese New Year',
+  'lunar-new-year': 'Lunar New Year',
+  'chunjie': 'Lunar New Year',
+  'homowo': 'Homowo',
+  'maslenitsa': 'Maslenitsa',
+};
+
+function prettyLunar(slug) {
+  if (!slug) return '';
+  const normalized = slug.toLowerCase().replace(/_/g, '-');
+  if (LUNAR_PRETTY[normalized]) return LUNAR_PRETTY[normalized];
+  return normalized.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+}
+
+function ruleFromEvent(event) {
+  const r = event.date_rule;
+  if (typeof r !== 'string') return null;
+  if (r.startsWith('fixed:')) return r.slice('fixed:'.length);
+  return r;
 }
 
 export default function CalendarPage() {
@@ -48,16 +69,20 @@ export default function CalendarPage() {
 
   const grouped = useMemo(() => {
     const byMonth = Array.from({ length: 12 }, () => []);
-    const lunar = [];
+    const movable = [];
     for (const event of events) {
-      const parsed = parseDateRule(event.date_rule);
-      if (parsed.kind === 'fixed' && parsed.month >= 1 && parsed.month <= 12) {
-        byMonth[parsed.month - 1].push(event);
-      } else if (parsed.kind === 'lunar') {
-        lunar.push(event);
+      const rule = ruleFromEvent(event);
+      const parsed = parseEventDate(rule);
+      if (!parsed) continue;
+      if (parsed.isLunar && parsed.lunarUnresolved) {
+        movable.push({ event, parsed });
+        continue;
+      }
+      if (Number.isInteger(parsed.monthIndex) && parsed.monthIndex >= 0 && parsed.monthIndex <= 11) {
+        byMonth[parsed.monthIndex].push({ event, parsed });
       }
     }
-    return { byMonth, lunar };
+    return { byMonth, movable };
   }, [events]);
 
   return (
@@ -107,20 +132,13 @@ export default function CalendarPage() {
                 <p className="calendar-month-empty">No events.</p>
               ) : (
                 <ul>
-                  {monthEvents.map((event) => (
-                    <li key={event.id}>
-                      <button
-                        type="button"
-                        className="calendar-event-card"
-                        aria-label={`Open ${event.name} details`}
-                        onClick={() => setSelected(event)}
-                      >
-                        <span className="calendar-event-name">{event.name}</span>
-                        {event.region?.name && (
-                          <span className="calendar-event-region">{event.region.name}</span>
-                        )}
-                      </button>
-                    </li>
+                  {monthEvents.map(({ event, parsed }) => (
+                    <CalendarEventCard
+                      key={event.id}
+                      event={event}
+                      parsed={parsed}
+                      onSelect={() => setSelected(event)}
+                    />
                   ))}
                 </ul>
               )}
@@ -129,27 +147,20 @@ export default function CalendarPage() {
         })}
       </div>
 
-      {grouped.lunar.length > 0 && (
+      {grouped.movable.length > 0 && (
         <section className="calendar-lunar" data-testid="calendar-lunar">
-          <h2>Lunar-Anchored Events</h2>
+          <h2>Lunar / movable feasts</h2>
           <p className="calendar-lunar-note">
-            Lunar dates shift each year; check a current lunar calendar for the exact day.
+            These shift each year — check a current lunar calendar for the exact day.
           </p>
           <ul>
-            {grouped.lunar.map((event) => (
-              <li key={event.id}>
-                <button
-                  type="button"
-                  className="calendar-event-card"
-                  aria-label={`Open ${event.name} details`}
-                  onClick={() => setSelected(event)}
-                >
-                  <span className="calendar-event-name">{event.name}</span>
-                  {event.region?.name && (
-                    <span className="calendar-event-region">{event.region.name}</span>
-                  )}
-                </button>
-              </li>
+            {grouped.movable.map(({ event, parsed }) => (
+              <CalendarEventCard
+                key={event.id}
+                event={event}
+                parsed={parsed}
+                onSelect={() => setSelected(event)}
+              />
             ))}
           </ul>
         </section>
@@ -188,5 +199,39 @@ export default function CalendarPage() {
         </aside>
       )}
     </main>
+  );
+}
+
+function CalendarEventCard({ event, parsed, onSelect }) {
+  const isLunar = Boolean(parsed?.isLunar);
+  const isMovable = isLunar && parsed?.lunarUnresolved;
+  const pretty = isLunar ? prettyLunar(parsed.lunarName) : '';
+  const dateLabel = isMovable
+    ? '(movable)'
+    : `${MONTHS[parsed.monthIndex].slice(0, 3)} ${parsed.day}`;
+
+  return (
+    <li>
+      <button
+        type="button"
+        className="calendar-event-card"
+        aria-label={`Open ${event.name} details`}
+        onClick={onSelect}
+      >
+        <span className={`calendar-event-badge${isLunar ? ' is-lunar' : ''}`}>
+          {dateLabel}
+        </span>
+        <span className="calendar-event-name">{event.name}</span>
+        {event.region?.name && (
+          <span className="calendar-event-region">{event.region.name}</span>
+        )}
+        {isLunar && (
+          <span className="calendar-event-lunar-subline">
+            ☾ On the lunar calendar: {pretty} this year
+            {isMovable ? ' (movable)' : ''}
+          </span>
+        )}
+      </button>
+    </li>
   );
 }

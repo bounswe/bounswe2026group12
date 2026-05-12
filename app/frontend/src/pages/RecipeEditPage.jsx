@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
@@ -64,6 +64,8 @@ export default function RecipeEditPage() {
   const draftKey = `draft:recipe:${id}`;
   const draftState = { title, description, region, qaEnabled, rows, steps };
   const { savedDraft, clearDraft } = useDraftAutosave(draftKey, draftState, { enabled: !loading });
+  const toastTimerRef = useRef(null);
+  const navTimerRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,9 +96,17 @@ export default function RecipeEditPage() {
     return () => { cancelled = true; };
   }, [id]);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    };
+  }, []);
+
   function showToast(message, type) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+    toastTimerRef.current = setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
   }
 
   function handleRestore(draft) {
@@ -180,7 +190,7 @@ export default function RecipeEditPage() {
 
       clearDraft();
       showToast(publish ? 'Recipe updated!' : 'Draft saved!', 'success');
-      setTimeout(() => navigate(`/recipes/${id}`), 1500);
+      navTimerRef.current = setTimeout(() => navigate(`/recipes/${id}`), 1500);
     } catch {
       showToast('Failed to save changes. Please try again.', 'error');
     }

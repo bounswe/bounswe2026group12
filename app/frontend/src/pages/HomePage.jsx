@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRegions } from '../services/searchService';
 import { fetchDailyCulturalContent } from '../services/culturalContentService';
+import ChipGroup from '../components/ChipGroup';
 import DailyCulturalSection from '../components/DailyCulturalSection';
 import FloatingCulturalPrompt from '../components/FloatingCulturalPrompt';
 import RandomCulturalFact from '../components/RandomCulturalFact';
@@ -10,7 +11,15 @@ import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import './HomePage.css';
 
 const MEAL_TYPES = ['Breakfast', 'Soup', 'Main Course', 'Dessert', 'Snack', 'Drink'];
-const STORY_TYPES = ['Traditional', 'Historical', 'Family', 'Festive', 'Personal'];
+// Display labels paired with API slugs (matches Story.StoryType choices on the
+// backend — see app/backend/apps/stories/models.py).
+const STORY_TYPES = [
+  { label: 'Traditional', value: 'traditional' },
+  { label: 'Historical', value: 'historical' },
+  { label: 'Family', value: 'family' },
+  { label: 'Festive', value: 'festive' },
+  { label: 'Personal', value: 'personal' },
+];
 
 export default function HomePage() {
   const auth = useContext(AuthContext) || {};
@@ -64,7 +73,10 @@ export default function HomePage() {
   function handleSubmit(e) {
     e.preventDefault();
     navigate(
-      `/search?q=${encodeURIComponent(q)}&region=${encodeURIComponent(selectedRegion)}&meal_type=${encodeURIComponent(selectedMealType)}`
+      `/search?q=${encodeURIComponent(q)}` +
+      `&region=${encodeURIComponent(selectedRegion)}` +
+      `&meal_type=${encodeURIComponent(selectedMealType)}` +
+      `&story_type=${encodeURIComponent(selectedStoryType)}`
     );
   }
 
@@ -112,56 +124,63 @@ export default function HomePage() {
         </div>
 
         <div className="home-chip-filters">
-          <div className="home-chip-group">
-            <span className="home-chip-label">Region</span>
-            <div className="home-chips">
-              {regions.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  className={`home-chip${selectedRegion === r.name ? ' active' : ''}`}
-                  onClick={() => setSelectedRegion(selectedRegion === r.name ? '' : r.name)}
-                >
-                  {r.name}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ChipGroup
+            label="Region"
+            icon="🌍"
+            visibleCount={12}
+            className="home-chip-group"
+            labelClassName="home-chip-label"
+            itemsClassName="home-chips"
+          >
+            {regions.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                className={`home-chip${selectedRegion === r.name ? ' active' : ''}`}
+                onClick={() => setSelectedRegion(selectedRegion === r.name ? '' : r.name)}
+              >
+                {r.name}
+              </button>
+            ))}
+          </ChipGroup>
 
-          <div className="home-chip-group">
-            <span className="home-chip-label">Meal Type</span>
-            <div className="home-chips">
-              {MEAL_TYPES.map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  className={`home-chip${selectedMealType === m ? ' active' : ''}`}
-                  onClick={() => setSelectedMealType(selectedMealType === m ? '' : m)}
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ChipGroup
+            label="Meal Type"
+            icon="🍽"
+            className="home-chip-group"
+            labelClassName="home-chip-label"
+            itemsClassName="home-chips"
+          >
+            {MEAL_TYPES.map((m) => (
+              <button
+                key={m}
+                type="button"
+                className={`home-chip${selectedMealType === m ? ' active' : ''}`}
+                onClick={() => setSelectedMealType(selectedMealType === m ? '' : m)}
+              >
+                {m}
+              </button>
+            ))}
+          </ChipGroup>
 
-          <div className="home-chip-group">
-            <span className="home-chip-label">
-              Story Type <span className="chip-soon">coming soon</span>
-            </span>
-            <div className="home-chips">
-              {STORY_TYPES.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  className={`home-chip${selectedStoryType === s ? ' active' : ''}`}
-                  onClick={() => setSelectedStoryType(selectedStoryType === s ? '' : s)}
-                  disabled
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ChipGroup
+            label="Story Type"
+            icon="📜"
+            className="home-chip-group"
+            labelClassName="home-chip-label"
+            itemsClassName="home-chips"
+          >
+            {STORY_TYPES.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                className={`home-chip${selectedStoryType === s.value ? ' active' : ''}`}
+                onClick={() => setSelectedStoryType(selectedStoryType === s.value ? '' : s.value)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </ChipGroup>
         </div>
       </form>
 
