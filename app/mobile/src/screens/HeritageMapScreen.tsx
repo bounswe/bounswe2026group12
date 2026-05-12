@@ -267,7 +267,6 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
                 title={cluster.region}
                 description={`${cluster.members.length} member${cluster.members.length === 1 ? '' : 's'}`}
                 anchor={{ x: 0.5, y: 0.5 }}
-                tracksViewChanges={false}
               >
                 <View collapsable={false} style={styles.regionMarkerWrap}>
                   <View
