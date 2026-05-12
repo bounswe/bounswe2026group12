@@ -1,5 +1,5 @@
 # Local equivalents:
-#   cd app/backend && coverage run --source=apps manage.py test && coverage report --omit='*/migrations/*,*/tests*'
+#   cd app/backend && coverage run --source=apps manage.py test --parallel auto && coverage combine && coverage report --omit='*/migrations/*,*/tests*'
 #   cd app/frontend && npm test -- --watchAll=false --coverage
 
 name: Tests
@@ -18,7 +18,7 @@ jobs:
   backend-tests:
     name: Backend tests
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: app/backend
@@ -39,11 +39,15 @@ jobs:
           pip install coverage==7.13.5
 
       - name: Run Django test suite
-        run: coverage run --source=apps manage.py test --noinput --verbosity=2
+        # --parallel auto fans the suite across the runner's CPUs (~2x on the
+        # 2-core GitHub runner). .coveragerc has concurrency=multiprocessing so
+        # subprocess coverage is captured; `coverage combine` merges it below.
+        run: coverage run --source=apps manage.py test --noinput --parallel auto
 
       - name: Backend coverage report
         if: always()
         run: |
+          coverage combine || true
           echo "## Backend coverage" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           coverage report --omit='*/migrations/*,*/tests*' --skip-empty | tail -25 >> "$GITHUB_STEP_SUMMARY"
