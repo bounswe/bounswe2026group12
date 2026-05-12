@@ -57,6 +57,7 @@ export default function RecipeCreatePage() {
   const [regions, setRegions] = useState([]);
 
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   const draftState = { title, description, region, qaEnabled, rows };
@@ -137,6 +138,7 @@ export default function RecipeCreatePage() {
   }
 
   async function submit(publish) {
+    if (submitting) return;
     if (!validate()) {
       document.getElementById('error-summary')?.focus();
       return;
@@ -156,13 +158,22 @@ export default function RecipeCreatePage() {
       })),
     };
 
+    setSubmitting(true);
     try {
       const created = await createRecipe(payload);
       if (video || thumbnail) {
         const mediaData = new FormData();
         if (video) mediaData.append('video', video);
         if (thumbnail) mediaData.append('image', thumbnail);
-        await updateRecipe(created.id, mediaData);
+        try {
+          await updateRecipe(created.id, mediaData);
+        } catch {
+          clearDraft();
+          isDirty.current = false;
+          showToast('Recipe published but media upload failed — open it to retry.', 'error');
+          setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
+          return;
+        }
       }
       clearDraft();
       isDirty.current = false;
@@ -173,6 +184,7 @@ export default function RecipeCreatePage() {
         publish ? 'Failed to publish recipe. Please try again.' : 'Failed to save draft. Please try again.',
         'error'
       );
+      setSubmitting(false);
     }
   }
 
@@ -370,6 +382,7 @@ export default function RecipeCreatePage() {
           <button
             type="button"
             className="btn btn-outline"
+            disabled={submitting}
             onClick={() => submit(false)}
           >
             Save as draft
@@ -377,9 +390,10 @@ export default function RecipeCreatePage() {
           <button
             type="button"
             className="btn btn-primary publish-btn"
+            disabled={submitting}
             onClick={() => submit(true)}
           >
-            Publish Recipe
+            {submitting ? 'Publishing…' : 'Publish Recipe'}
           </button>
           <p className="publish-note">
             Drafts stay private to you. Published recipes are visible to everyone.

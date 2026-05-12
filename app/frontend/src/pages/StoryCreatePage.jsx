@@ -20,6 +20,7 @@ export default function StoryCreatePage() {
   const [recipeSearch, setRecipeSearch] = useState('');
   const [allRecipes, setAllRecipes] = useState([]);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   const draftState = { title, body, language, linkedRecipe };
@@ -51,7 +52,7 @@ export default function StoryCreatePage() {
   }
 
   async function submit(publish) {
-    if (!validate()) return;
+    if (submitting || !validate()) return;
 
     const formData = new FormData();
     formData.append('title', title);
@@ -61,6 +62,7 @@ export default function StoryCreatePage() {
     if (linkedRecipe) formData.append('linked_recipe', linkedRecipe.id);
     if (image) formData.append('image', image);
 
+    setSubmitting(true);
     try {
       const created = await createStory(formData);
       clearDraft();
@@ -71,6 +73,8 @@ export default function StoryCreatePage() {
         publish ? 'Failed to publish story. Please try again.' : 'Failed to save draft. Please try again.',
         'error'
       );
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -178,6 +182,7 @@ export default function StoryCreatePage() {
           <button
             type="button"
             className="btn btn-outline"
+            disabled={submitting}
             onClick={() => submit(false)}
           >
             Save as draft
@@ -185,9 +190,10 @@ export default function StoryCreatePage() {
           <button
             type="button"
             className="btn btn-primary"
+            disabled={submitting}
             onClick={() => submit(true)}
           >
-            Publish Story
+            {submitting ? 'Publishing…' : 'Publish Story'}
           </button>
         </div>
       </form>
