@@ -50,6 +50,74 @@ function markerSizeForCount(count: number): number {
   return 32;
 }
 
+/** Just the colored dot — hardware-textured + offscreen-composited so Android
+ * properly rounds the corners when it snapshots the view into the marker
+ * bitmap (without this, borderRadius is silently dropped and the marker
+ * renders as a coloured square). */
+function HeritageRegionDot({ size, isTop }: { size: number; isTop: boolean }) {
+  return (
+    <View
+      collapsable={false}
+      renderToHardwareTextureAndroid
+      needsOffscreenAlphaCompositing
+      style={{
+        width: size + 8,
+        height: size + 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+      }}
+    >
+      <View
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: isTop
+            ? tokens.colors.accentGreen
+            : tokens.colors.accentMustard,
+          borderWidth: 3,
+          borderColor: tokens.colors.surfaceDark,
+        }}
+      />
+    </View>
+  );
+}
+
+/** Region marker — wraps the dot in a Marker and runs the dual tracksViewChanges
+ * trick (start tracking so the layout is captured, then stop tracking once
+ * the view has settled so Android doesn't re-snapshot and reintroduce the
+ * square-clipping bug on subsequent renders). */
+function HeritageRegionMarker({
+  cluster,
+  isTop,
+  size,
+  onPress,
+}: {
+  cluster: RegionCluster;
+  isTop: boolean;
+  size: number;
+  onPress: () => void;
+}) {
+  const [tracks, setTracks] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setTracks(false), 800);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <Marker
+      coordinate={cluster.coords}
+      onPress={onPress}
+      title={cluster.region}
+      description={`${cluster.members.length} member${cluster.members.length === 1 ? '' : 's'}`}
+      anchor={{ x: 0.5, y: 0.5 }}
+      tracksViewChanges={tracks}
+    >
+      <HeritageRegionDot size={size} isTop={isTop} />
+    </Marker>
+  );
+}
+
 export default function HeritageMapScreen({ route, navigation }: Props) {
   const { heritageGroupId } = route.params;
   const [group, setGroup] = useState<HeritageGroupDetail | null>(null);
@@ -260,38 +328,13 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
             const isTop = topRegion?.region === cluster.region;
             const size = markerSizeForCount(cluster.members.length);
             return (
-              <Marker
+              <HeritageRegionMarker
                 key={`region-${cluster.region}`}
-                coordinate={cluster.coords}
+                cluster={cluster}
+                isTop={isTop}
+                size={size}
                 onPress={() => handleMarkerPress(cluster.region)}
-                title={cluster.region}
-                description={`${cluster.members.length} member${cluster.members.length === 1 ? '' : 's'}`}
-                anchor={{ x: 0.5, y: 0.5 }}
-              >
-                <View collapsable={false} style={styles.regionMarkerWrap}>
-                  <Text
-                    style={[
-                      styles.regionMarkerDot,
-                      {
-                        fontSize: size,
-                        color: isTop
-                          ? tokens.colors.accentGreen
-                          : tokens.colors.accentMustard,
-                      },
-                    ]}
-                  >
-                    ●
-                  </Text>
-                  <Text
-                    style={[
-                      styles.regionMarkerCount,
-                      { fontSize: size >= 56 ? 22 : size >= 44 ? 18 : 14 },
-                    ]}
-                  >
-                    {cluster.members.length}
-                  </Text>
-                </View>
-              </Marker>
+              />
             );
           })}
         </MapView>
@@ -436,24 +479,6 @@ const styles = StyleSheet.create({
     fontFamily: tokens.typography.display.fontFamily,
   },
   emptyBody: { fontSize: 15, color: tokens.colors.textMuted, lineHeight: 22 },
-  regionMarkerWrap: {
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  regionMarkerDot: {
-    textAlign: 'center',
-    lineHeight: undefined,
-    textShadowColor: tokens.colors.surfaceDark,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 1.5,
-  },
-  regionMarkerCount: {
-    position: 'absolute',
-    fontWeight: '900',
-    color: tokens.colors.surfaceDark,
-    textAlign: 'center',
-  },
   legend: {
     position: 'absolute',
     top: 16,
