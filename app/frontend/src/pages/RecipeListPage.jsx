@@ -40,6 +40,16 @@ export default function RecipeListPage() {
               {recipe.region_name && (
                 <span className="recipe-browse-region">{recipe.region_name}</span>
               )}
+              <span
+                className={`recipe-browse-bookmark${recipe.is_bookmarked ? ' active' : ''}`}
+                aria-label={
+                  recipe.is_bookmarked
+                    ? `Bookmarked, ${recipe.bookmark_count ?? 0} saves`
+                    : 'Not bookmarked'
+                }
+              >
+                {recipe.is_bookmarked ? '🔖' : '🏷'}
+              </span>
               <h2 className="recipe-browse-title">
                 <Link to={`/recipes/${recipe.id}`} className="recipe-browse-link">{recipe.title}</Link>
               </h2>

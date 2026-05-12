@@ -96,3 +96,15 @@
 .recipe-browse-rating {
   margin-top: 0.35rem;
 }
+
+.recipe-browse-bookmark {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+  display: inline-block;
+}
+
+.recipe-browse-bookmark.active {
+  color: var(--color-accent-mustard);
+}

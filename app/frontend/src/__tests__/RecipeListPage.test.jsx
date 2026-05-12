@@ -121,3 +121,25 @@ describe('RecipeListPage star rating', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument();
   });
 });
+
+describe('RecipeListPage bookmark icon', () => {
+  it('renders a filled bookmark icon when recipe.is_bookmarked is true', async () => {
+    recipeService.fetchRecipes.mockResolvedValueOnce([
+      { id: 1, title: 'Baklava', region_name: 'Aegean', image: null, author_username: 'eren',
+        is_bookmarked: true, bookmark_count: 4, rating_count: 0, average_rating: null },
+    ]);
+    renderPage();
+    expect(await screen.findByText('Baklava')).toBeInTheDocument();
+    expect(screen.getByLabelText(/bookmarked, 4 saves/i)).toBeInTheDocument();
+  });
+
+  it('renders an empty bookmark icon when recipe.is_bookmarked is false / missing', async () => {
+    recipeService.fetchRecipes.mockResolvedValueOnce([
+      { id: 2, title: 'Manti', region_name: 'Anatolian', image: null, author_username: 'eren',
+        is_bookmarked: false, bookmark_count: 0, rating_count: 0, average_rating: null },
+    ]);
+    renderPage();
+    expect(await screen.findByText('Manti')).toBeInTheDocument();
+    expect(screen.getByLabelText(/not bookmarked/i)).toBeInTheDocument();
+  });
+});
