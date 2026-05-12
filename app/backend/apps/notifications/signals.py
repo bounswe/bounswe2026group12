@@ -88,6 +88,7 @@ def notify_recipe_author_on_question(sender, instance, created, **kwargs):
         actor=actor,
         recipe=recipe,
         message=message,
+        notification_type=Notification.NotificationType.QUESTION,
     )
 
     # 2. Push notification (best-effort)
@@ -138,6 +139,7 @@ def notify_asker_on_reply(sender, instance, created, **kwargs):
         actor=actor,
         recipe=recipe,
         message=message,
+        notification_type=Notification.NotificationType.REPLY,
     )
 
     # 2. Push notification (best-effort)
@@ -148,5 +150,53 @@ def notify_asker_on_reply(sender, instance, created, **kwargs):
         _send_expo_push(
             tokens=device_tokens,
             title="New reply to your question",
+            body=message,
+        )
+
+
+@receiver(post_save, sender='recipes.Rating')
+def notify_recipe_author_on_rating(sender, instance, created, **kwargs):
+    """
+    When a recipe is rated for the first time by a user, notify the recipe
+    author with a persisted in-app Notification plus an Expo push (best-effort).
+
+    Fires on creation only; re-rating (a score update) does NOT notify again.
+    Self-rating is blocked at the API level, but guarded here too.
+    """
+    if not created:
+        return
+
+    recipe = instance.recipe
+
+    # Don't notify authors of their own ratings (also blocked at the API)
+    if recipe.author_id == instance.user_id:
+        return
+
+    author = recipe.author
+    actor = instance.user
+
+    from .models import Notification, DeviceToken
+
+    message = (
+        f"{actor.username} rated your recipe \"{recipe.title}\" {instance.score} stars."
+    )
+
+    # 1. Persist in-app notification
+    Notification.objects.create(
+        recipient=author,
+        actor=actor,
+        recipe=recipe,
+        message=message,
+        notification_type=Notification.NotificationType.RATING,
+    )
+
+    # 2. Push notification (best-effort)
+    device_tokens = list(
+        DeviceToken.objects.filter(user=author).values_list('token', flat=True)
+    )
+    if device_tokens:
+        _send_expo_push(
+            tokens=device_tokens,
+            title="New rating on your recipe",
             body=message,
         )

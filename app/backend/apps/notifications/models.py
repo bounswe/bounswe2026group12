@@ -3,7 +3,13 @@ from django.conf import settings
 
 
 class Notification(models.Model):
-    """In-app notification for a recipe author when a new question is posted."""
+    """In-app notification for a recipe author (new question, reply, or rating)."""
+
+    class NotificationType(models.TextChoices):
+        QUESTION = 'question', 'Question'
+        REPLY = 'reply', 'Reply'
+        RATING = 'rating', 'Rating'
+
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -18,6 +24,11 @@ class Notification(models.Model):
         'recipes.Recipe',
         on_delete=models.CASCADE,
         related_name='notifications',
+    )
+    notification_type = models.CharField(
+        max_length=16,
+        choices=NotificationType.choices,
+        default=NotificationType.QUESTION,
     )
     message = models.TextField()
     is_read = models.BooleanField(default=False)
