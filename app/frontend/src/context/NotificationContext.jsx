@@ -17,6 +17,8 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const notificationsRef = useRef([]);
+  useEffect(() => { notificationsRef.current = notifications; }, [notifications]);
 
   const refreshNotifications = useCallback(async () => {
     if (!token) {
@@ -41,7 +43,7 @@ export function NotificationProvider({ children }) {
   }, [refreshNotifications]);
 
   const markRead = useCallback(async (id) => {
-    const current = notifications.find((item) => item.id === id);
+    const current = notificationsRef.current.find((item) => item.id === id);
     if (!current || current.isRead) return;
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
     try {
@@ -52,7 +54,7 @@ export function NotificationProvider({ children }) {
     } catch {
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: false } : n)));
     }
-  }, [notifications]);
+  }, []);
 
   const markAllRead = useCallback(async () => {
     setNotifications((prev) => prev.map((n) => (n.isRead ? n : { ...n, isRead: true })));
