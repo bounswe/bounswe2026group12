@@ -422,3 +422,56 @@ describe('RecipeDetailPage star rating', () => {
     await waitFor(() => expect(recipeService.rateRecipe).toHaveBeenCalledWith('1', 5));
   });
 });
+
+describe('RecipeDetailPage bookmark button', () => {
+  it('hides the bookmark button for anonymous viewers', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      is_bookmarked: false,
+      bookmark_count: 4,
+    });
+    renderPage('1', null);
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('button', { name: /bookmark|save/i })).not.toBeInTheDocument();
+  });
+
+  it('hides the bookmark button for the recipe author', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 3,
+      is_bookmarked: false,
+      bookmark_count: 1,
+    });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('button', { name: /bookmark|save/i })).not.toBeInTheDocument();
+  });
+
+  it('renders an unsaved bookmark button for a non-author authenticated viewer', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 99,
+      is_bookmarked: false,
+      bookmark_count: 2,
+    });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    const btn = screen.getByRole('button', { name: /bookmark this recipe/i });
+    expect(btn).toHaveTextContent(/save/i);
+  });
+
+  it('calls toggleBookmark and flips state on click', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 99,
+      is_bookmarked: false,
+      bookmark_count: 2,
+    });
+    recipeService.toggleBookmark.mockResolvedValue({ is_bookmarked: true, bookmark_count: 3 });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    await userEvent.click(screen.getByRole('button', { name: /bookmark this recipe/i }));
+    await waitFor(() => expect(recipeService.toggleBookmark).toHaveBeenCalledWith('1'));
+    expect(await screen.findByRole('button', { name: /remove bookmark/i })).toBeInTheDocument();
+  });
+});

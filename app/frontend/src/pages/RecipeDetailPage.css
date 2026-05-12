@@ -464,3 +464,16 @@
   display: flex;
   align-items: center;
 }
+
+/* ── Bookmark (#707) ── */
+.recipe-bookmark-btn {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.recipe-bookmark-btn.active {
+  background: var(--color-accent-mustard);
+  border-color: var(--color-accent-mustard);
+  color: var(--color-text);
+}

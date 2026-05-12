@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchRecipe, deleteRecipe, rateRecipe, unrateRecipe } from '../services/recipeService';
+import { fetchRecipe, deleteRecipe, rateRecipe, unrateRecipe, toggleBookmark } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
 import { fetchSubstitutes } from '../services/ingredientService';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
@@ -80,6 +80,35 @@ export default function RecipeDetailPage() {
       setRatingBusy(false);
     }
   }, [ratingBusy, recipe, id]);
+
+  // #707 — bookmark
+  const [bookmarkBusy, setBookmarkBusy] = useState(false);
+
+  const handleBookmark = useCallback(async () => {
+    if (bookmarkBusy || !recipe) return;
+    setBookmarkBusy(true);
+    const prev = {
+      is_bookmarked: recipe.is_bookmarked,
+      bookmark_count: recipe.bookmark_count,
+    };
+    setRecipe((r) =>
+      r
+        ? {
+            ...r,
+            is_bookmarked: !r.is_bookmarked,
+            bookmark_count: (r.bookmark_count ?? 0) + (r.is_bookmarked ? -1 : 1),
+          }
+        : r,
+    );
+    try {
+      const summary = await toggleBookmark(id);
+      setRecipe((r) => (r ? { ...r, ...summary } : r));
+    } catch {
+      setRecipe((r) => (r ? { ...r, ...prev } : r));
+    } finally {
+      setBookmarkBusy(false);
+    }
+  }, [bookmarkBusy, recipe, id]);
 
   const handleTryRecipe = useCallback(async () => {
     if (tryingRecipe || tried) return;
@@ -242,6 +271,19 @@ export default function RecipeDetailPage() {
           </div>
         </div>
         <div className="recipe-detail-actions">
+          {user && !isAuthor && (
+            <button
+              type="button"
+              className={`btn btn-sm recipe-bookmark-btn${recipe.is_bookmarked ? ' active' : ''}`}
+              onClick={handleBookmark}
+              disabled={bookmarkBusy}
+              aria-pressed={Boolean(recipe.is_bookmarked)}
+              aria-label={recipe.is_bookmarked ? 'Remove bookmark' : 'Bookmark this recipe'}
+            >
+              {recipe.is_bookmarked ? '🔖 Saved' : '🏷 Save'}
+              {typeof recipe.bookmark_count === 'number' && ` · ${recipe.bookmark_count}`}
+            </button>
+          )}
           {isAuthor && (
             <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">
               Edit
