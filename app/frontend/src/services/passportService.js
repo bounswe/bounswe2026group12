@@ -21,7 +21,7 @@ export async function getPublicProfile(username) {
 }
 
 // Stubs — will be implemented when passport backend ships
-export async function getPassportStamps(username) { return []; }       // #584
-export async function getPassportStats(username) { return null; }      // #587
-export async function getPassportTimeline(username) { return []; }     // #588
-export async function getPassportQuests(username) { return []; }       // #586
+export async function getPassportStamps(_username) { return []; }       // #584
+export async function getPassportStats(_username) { return null; }      // #587
+export async function getPassportTimeline(_username) { return []; }     // #588
+export async function getPassportQuests(_username) { return []; }       // #586

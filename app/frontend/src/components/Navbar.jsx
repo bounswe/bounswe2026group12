@@ -70,22 +70,24 @@ export default function Navbar() {
             <>
               <NotificationTray />
               <div className="navbar-user-menu" ref={menuRef}>
-                <button
-                  className="navbar-user-btn"
-                  onClick={() => setMenuOpen(o => !o)}
-                  aria-expanded={menuOpen}
-                  aria-haspopup="true"
-                >
-                  <span className="navbar-avatar">
-                    {user.username[0].toUpperCase()}
-                  </span>
+                <div className="navbar-user-btn-area">
+                  <button
+                    className="navbar-user-btn"
+                    onClick={() => setMenuOpen(o => !o)}
+                    aria-expanded={menuOpen}
+                    aria-haspopup="true"
+                    aria-label={`User menu for @${user.username}`}
+                  >
+                    <span className="navbar-avatar">
+                      {user.username?.[0]?.toUpperCase() ?? '?'}
+                    </span>
+                    <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
+                  </button>
                   <Link
                     to={`/users/${user.username}`}
                     className="navbar-username"
-                    onClick={(e) => e.stopPropagation()}
                   >@{user.username}</Link>
-                  <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
-                </button>
+                </div>
                 {menuOpen && (
                   <div className="navbar-dropdown" role="menu">
                     <Link

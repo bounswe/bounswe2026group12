@@ -53,7 +53,7 @@ export default function UserProfilePage() {
 
       {/* Header */}
       <div className="user-profile-header">
-        <div className="user-profile-avatar">{profile.username[0].toUpperCase()}</div>
+        <div className="user-profile-avatar">{profile.username?.[0]?.toUpperCase() ?? '?'}</div>
         <div className="user-profile-identity">
           <h1 className="user-profile-username">@{profile.username}</h1>
           {profile.region && <span className="user-profile-region">📍 {profile.region}</span>}
