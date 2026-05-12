@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Recipe, Ingredient, Unit, RecipeIngredient, Region, Comment,
     DietaryTag, EventTag, Religion, IngredientSubstitution,
-    EndangeredNote, RecipeCulturalContext, IngredientRoute, Bookmark
+    EndangeredNote, RecipeCulturalContext, IngredientRoute, Bookmark, Rating
 )
 
 
@@ -218,6 +218,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     cultural_context = CulturalContextSerializer(required=False, allow_null=True)
     is_bookmarked = serializers.BooleanField(read_only=True, allow_null=True)
     bookmark_count = serializers.IntegerField(read_only=True, default=0)
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2, read_only=True)
+    rating_count = serializers.IntegerField(read_only=True, default=0)
+    user_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -234,9 +237,23 @@ class RecipeSerializer(serializers.ModelSerializer):
             'story_count',
             'rank_score', 'rank_reason',
             'heritage_group', 'endangered_notes',
-            'is_bookmarked', 'bookmark_count'
+            'is_bookmarked', 'bookmark_count',
+            'average_rating', 'rating_count', 'user_rating',
         ]
         read_only_fields = ['public_id', 'author', 'created_at', 'updated_at']
+
+    def get_user_rating(self, obj):
+        # The authenticated caller's score for this recipe, or null. Anonymous
+        # reads always get null. RecipeViewSet annotates `user_rating` on the
+        # queryset for authenticated users so list views avoid an N+1; fall back
+        # to a direct lookup when the annotation is absent (e.g. detail action).
+        request = self.context.get('request')
+        if not request or not request.user or not request.user.is_authenticated:
+            return None
+        if hasattr(obj, 'user_rating'):
+            return obj.user_rating
+        rating = Rating.objects.filter(user=request.user, recipe=obj).first()
+        return rating.score if rating else None
 
 
     def get_heritage_group(self, obj):
@@ -375,3 +392,8 @@ class IngredientRouteSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at',
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class RatingWriteSerializer(serializers.Serializer):
+    """Validates the POST body for the recipe rate endpoint (#734)."""
+    score = serializers.IntegerField(min_value=1, max_value=5)

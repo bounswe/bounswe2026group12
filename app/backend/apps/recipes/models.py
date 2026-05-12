@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
@@ -170,6 +171,11 @@ class Recipe(models.Model):
         max_length=16, choices=HeritageStatus.choices, default=HeritageStatus.NONE,
         help_text='Endangered-heritage tag (#524).',
     )
+    # Denormalised star-rating stats (#734). Recomputed by post_save/post_delete
+    # signals on Rating (see apps/recipes/signals.py). average_rating is null when
+    # the recipe has no ratings yet; rating_count is 0 in that case.
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    rating_count = models.IntegerField(default=0)
     dietary_tags = models.ManyToManyField(DietaryTag, blank=True, related_name='recipes')
     event_tags = models.ManyToManyField(EventTag, blank=True, related_name='recipes')
     religions = models.ManyToManyField(Religion, blank=True, related_name='recipes')
@@ -315,6 +321,25 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Vote by {self.user.username} on Comment {self.comment.id}"
+
+class Rating(models.Model):
+    """A 1 to 5 star rating left by a user on a recipe (#734).
+
+    One rating per (user, recipe); re-rating updates the existing row.
+    Recipe.average_rating and Recipe.rating_count are kept in sync via
+    post_save/post_delete signals (see apps/recipes/signals.py).
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
+    score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'recipe')
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.recipe.title} {self.score}/5"
 
 class RecipeCulturalContext(models.Model):
     """Beyond the Recipe, seven optional narrative notes about a dish (#521).

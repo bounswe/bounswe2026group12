@@ -18,7 +18,8 @@ from apps.common.personalization import rank_items, score_recipe, has_profile_te
 from .conversions import ConversionError, convert as convert_units
 from .models import (
     Recipe, Ingredient, Unit, Region, Comment, DietaryTag, EventTag, Religion, Vote,
-    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute, Bookmark
+    IngredientSubstitution, IngredientCheckOff, RecipeIngredient, IngredientRoute, Bookmark,
+    Rating
 )
 from .serializers import (
     ConvertRequestSerializer,
@@ -38,6 +39,7 @@ from .serializers import (
     ReligionLookupSerializer,
     ReligionSerializer,
     IngredientRouteSerializer,
+    RatingWriteSerializer,
 )
 
 
@@ -150,7 +152,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             qs = qs.annotate(
                 is_bookmarked=models.Exists(
                     Bookmark.objects.filter(recipe=models.OuterRef('pk'), user=user)
-                )
+                ),
+                # The caller's own star rating (#734), so the serializer's
+                # user_rating field avoids an N+1 in list views.
+                user_rating=models.Subquery(
+                    Rating.objects.filter(recipe=models.OuterRef('pk'), user=user).values('score')[:1]
+                ),
             )
 
         if self.action == 'list':
@@ -239,6 +246,45 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'is_bookmarked': is_bookmarked,
             'bookmark_count': count
         }, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+
+    def _rating_stats(self, recipe, user):
+        """Current rating stats for `recipe` plus `user`'s own score (or null)."""
+        recipe.refresh_from_db(fields=['average_rating', 'rating_count'])
+        own = Rating.objects.filter(user=user, recipe=recipe).values_list('score', flat=True).first()
+        return {
+            'average_rating': recipe.average_rating,
+            'rating_count': recipe.rating_count,
+            'user_rating': own,
+        }
+
+    @action(detail=True, methods=['post', 'delete'], url_path='rate',
+            permission_classes=[permissions.IsAuthenticated])
+    def rate(self, request, pk=None):
+        """Create, update, or remove the caller's 1 to 5 star rating (#734).
+
+        POST   {"score": 4}  create-or-update; returns new stats.
+        DELETE               remove the caller's rating if present; returns
+                             new stats (idempotent, always 200).
+        Authors cannot rate their own recipe (403). Out-of-range score is 400.
+        """
+        recipe = self.get_object()
+        if recipe.author_id == request.user.id:
+            return Response(
+                {'detail': 'You cannot rate your own recipe.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if request.method == 'DELETE':
+            Rating.objects.filter(user=request.user, recipe=recipe).delete()
+            return Response(self._rating_stats(recipe, request.user), status=status.HTTP_200_OK)
+
+        serializer = RatingWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Rating.objects.update_or_create(
+            user=request.user, recipe=recipe,
+            defaults={'score': serializer.validated_data['score']},
+        )
+        return Response(self._rating_stats(recipe, request.user), status=status.HTTP_200_OK)
 
 class ModeratedLookupViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
