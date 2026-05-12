@@ -48,8 +48,11 @@ curl -fsS https://genipe.app/
 ```
 
 `db`, `backend`, and `web` should all report `(healthy)`. The backend
-entrypoint runs `migrate` and `collectstatic` automatically before gunicorn
-starts; that's covered by the backend healthcheck's 40s `start_period`.
+entrypoint runs `migrate`, `collectstatic`, and — when `RUN_SEEDERS` is set
+(the compose default) — the idempotent `seed_*` management commands, in
+dependency order, before gunicorn starts. That whole sequence is covered by
+the backend healthcheck's 180s `start_period`, so the first start after a
+fresh DB can take a couple of minutes.
 
 ## Required environment variables
 
@@ -69,6 +72,7 @@ Audited against `app/backend/config/settings.py`. Every `os.getenv` /
 | `POSTGRES_HOST` | Yes | `db` (compose service name) | Hardcoded in compose; only override outside compose |
 | `POSTGRES_PORT` | Yes | `5432` | Hardcoded in compose |
 | `REACT_APP_API_URL` | Yes (build-time) | `http://localhost` | Baked into the `web` image; set before `compose build` |
+| `RUN_SEEDERS` | No | `1` (compose) | When `1`/`true`, the backend entrypoint runs the idempotent `seed_*` commands on start; set `0` to bring the stack up against an empty DB. The bare image (outside compose) defaults to off. |
 | `AWS_STORAGE_BUCKET_NAME` | No | empty | When set, switches `DEFAULT_FILE_STORAGE` to S3Boto3Storage; otherwise the local `media_data` volume is used |
 | `AWS_S3_ENDPOINT_URL` | If S3 | empty | Required when bucket name is set |
 | `AWS_ACCESS_KEY_ID` | If S3 | empty | Required when bucket name is set |
@@ -104,6 +108,41 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 docker compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100 backend web db
 ```
 
+## Seeding
+
+The backend entrypoint (`app/backend/docker-entrypoint.sh`) runs these
+management commands, in this order, on every start when `RUN_SEEDERS` is
+truthy (the compose default):
+
+```
+seed_canonical            # base data: regions, ingredients, recipes, stories,
+                          #   heritage groups, cultural content/events, …
+seed_region_geodata       # built-in geo coords for known regions
+seed_region_geo           # region bbox + per-recipe map coords (fixture)
+seed_story_coordinates    # per-story map pins (needs region bbox)
+seed_cultural_facts       # region-tied "Did You Know?" facts
+seed_cultural_content     # culture cards
+seed_ingredient_densities # g/ml for unit conversions
+seed_ingredient_routes    # ingredient migration map overlays
+```
+
+All of them are idempotent (keyed on natural keys), so rerunning on every
+container restart does not duplicate rows. A failing seeder logs a warning
+and the entrypoint continues — only `migrate` is fatal. `seed_test_db` is
+**not** in this list: it's a mock-data seeder for throwaway test DBs, not for
+prod.
+
+To seed a running stack manually (or to re-run after changing a fixture):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+  exec backend sh -c 'for c in seed_canonical seed_region_geodata seed_region_geo \
+    seed_story_coordinates seed_cultural_facts seed_cultural_content \
+    seed_ingredient_densities seed_ingredient_routes; do python manage.py "$c"; done'
+```
+
+Take a DB dump first if you're touching prod (see `ops/ROLLBACK.md`).
+
 ## Rollback
 
 Three rollback paths (quick reset to a previous good commit, full revert to
@@ -119,8 +158,9 @@ All three services report container-level health to compose:
 - `db`: `pg_isready -U $POSTGRES_USER -d $POSTGRES_DB`, 10s interval
 - `backend`: Python `urllib.request.urlopen("http://localhost:8000/admin/login/")` —
   the admin login page renders without a DB query, so this is a clean
-  liveness probe for gunicorn. 15s interval, 40s `start_period` to cover
-  migrate + collectstatic.
+  liveness probe for gunicorn. 15s interval, 180s `start_period` to cover
+  migrate + collectstatic + the `seed_*` commands (gunicorn starts only after
+  the entrypoint finishes them).
 - `web`: `wget -qO- http://localhost/`, 10s interval
 
 `backend` waits on `db: service_healthy`; `web` waits on `backend:
