@@ -172,6 +172,7 @@ class Command(BaseCommand):
                 description=r['description'],
                 author=users[r['author']],
                 region=region,
+                meal_type=r.get('meal_type', ''),
                 is_published=r.get('is_published', True),
                 is_heritage=r.get('is_heritage', False),
                 heritage_status=r.get('heritage_status', 'none'),

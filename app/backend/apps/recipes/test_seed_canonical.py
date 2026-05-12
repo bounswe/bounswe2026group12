@@ -277,3 +277,11 @@ class SeedCanonicalCommandTest(TestCase):
         story = Story.objects.get(title='Test Story')
         self.assertTrue(story.image)
         self.assertIn('test_story', story.image.name)
+    def test_seeds_meal_type(self):
+        fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        fixture_data['recipes'][0]['meal_type'] = 'soup'
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(fixture_data, f)
+        self._run()
+        recipe = Recipe.objects.get(title='Test Recipe One')
+        self.assertEqual(recipe.meal_type, 'soup')
