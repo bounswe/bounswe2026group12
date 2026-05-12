@@ -48,4 +48,27 @@ describe('PassportTimeline', () => {
     renderTimeline([events[2]]);
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
+
+  it('prefers the human-readable description when the backend provides one', () => {
+    renderTimeline([
+      {
+        id: 99,
+        event_type: 'stamp_earned',
+        description: 'Earned a bronze stamp for Black Sea',
+        timestamp: '2026-05-12T00:00:00Z',
+        related_recipe: null,
+        related_story: null,
+      },
+    ]);
+    expect(screen.getByText(/earned a bronze stamp for black sea/i)).toBeInTheDocument();
+    // The raw slug should not leak through when a description is present
+    expect(screen.queryByText(/^stamp earned$/i)).not.toBeInTheDocument();
+  });
+
+  it('falls back to the event_type slug when description is missing', () => {
+    renderTimeline([
+      { id: 100, event_type: 'recipe_tried', timestamp: '2026-05-12T00:00:00Z', related_recipe: null, related_story: null },
+    ]);
+    expect(screen.getByText(/recipe tried/i)).toBeInTheDocument();
+  });
 });

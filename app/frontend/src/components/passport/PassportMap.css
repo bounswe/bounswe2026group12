@@ -5,17 +5,20 @@
 .passport-map-svg {
   width: 100%;
   height: auto;
+  display: block;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--color-border);
+  /* Ocean tint behind the country polygons. */
+  background:
+    radial-gradient(circle at 50% 45%, #E5F0FA 0%, #C7DEED 100%);
 }
 
-.passport-map-region {
-  cursor: pointer;
-  transition: opacity 0.15s ease;
+.passport-map-svg path {
+  transition: opacity 0.15s ease, filter 0.15s ease;
 }
 
-.passport-map-region:hover {
-  opacity: 0.8;
+.passport-map-svg path:hover {
+  filter: drop-shadow(0 1px 2px rgba(60, 30, 0, 0.35));
 }
 
 .passport-map-popover {
@@ -32,12 +35,21 @@
   gap: 0.2rem;
   font-size: 0.8125rem;
   pointer-events: none;
-  min-width: 140px;
+  min-width: 160px;
+  max-width: 240px;
 }
 
 .passport-map-popover strong {
   font-size: 0.9rem;
   color: var(--color-text);
+}
+
+.passport-map-popover-culture {
+  font-size: 0.75rem;
+  color: var(--color-primary-text);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .passport-map-popover span {

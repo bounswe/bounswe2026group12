@@ -15,7 +15,9 @@
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^6.30.3",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-simple-maps": "^3.0.0",
+    "web-vitals": "^2.1.4",
+    "world-atlas": "^2.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
