@@ -1,7 +1,7 @@
 import { apiClient } from './api';
 import {
-  MOCK_THREADS,
-  MOCK_MESSAGES,
+  getMockThreads,
+  getMockMessages,
   mockCreateThread,
   mockSendMessage,
 } from '../mocks/messages';
@@ -9,7 +9,7 @@ import {
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === 'true';
 
 export async function fetchThreads() {
-  if (USE_MOCK) return [...MOCK_THREADS];
+  if (USE_MOCK) return getMockThreads();
   const res = await apiClient.get('/api/threads/');
   const items = Array.isArray(res.data?.results) ? res.data.results : res.data;
   const list = Array.isArray(items) ? items : [];
@@ -32,7 +32,7 @@ export async function fetchThreads() {
 }
 
 export async function fetchMessages(threadId) {
-  if (USE_MOCK) return [...(MOCK_MESSAGES[Number(threadId)] || [])];
+  if (USE_MOCK) return getMockMessages(threadId);
   const res = await apiClient.get(`/api/threads/${threadId}/messages/`);
   const items = Array.isArray(res.data?.results) ? res.data.results : res.data;
   const list = Array.isArray(items) ? items : [];
