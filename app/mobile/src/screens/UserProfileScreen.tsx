@@ -18,6 +18,10 @@ import {
   type BookmarkedRecipeListItem,
 } from '../services/bookmarkService';
 import { fetchPassport, type Passport } from '../services/passportService';
+import {
+  fetchPublicProfile,
+  type PublicUserProfile,
+} from '../services/profileService';
 import { fetchRecipesList } from '../services/recipeService';
 import { fetchStoriesList } from '../services/storyService';
 import { resolveTheme } from '../utils/passportTheme';
@@ -97,6 +101,11 @@ export default function UserProfileScreen({ route, navigation }: Props) {
   const [passportLoading, setPassportLoading] = useState(true);
   const [passportError, setPassportError] = useState<string | null>(null);
   const [activePassportTab, setActivePassportTab] = useState<PassportTabKey>('stamps');
+
+  // Public profile (#874): bio, region, join date, stats, preference tags.
+  // Failures here must not break the rest of the screen — we simply skip the
+  // rich header section. The legacy fetches above stay independent.
+  const [publicProfile, setPublicProfile] = useState<PublicUserProfile | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -182,6 +191,29 @@ export default function UserProfileScreen({ route, navigation }: Props) {
     }, [loadPassport]),
   );
 
+  // Fetch the public profile by username. Don't block the screen on failure —
+  // we just skip the rich header if it errors.
+  useEffect(() => {
+    let cancelled = false;
+    if (!username) {
+      setPublicProfile(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+    void (async () => {
+      try {
+        const data = await fetchPublicProfile(username);
+        if (!cancelled) setPublicProfile(data);
+      } catch {
+        if (!cancelled) setPublicProfile(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [username, reloadToken]);
+
   // Initial fetch when the user first opens the Saved tab.
   useEffect(() => {
     if (isOwnProfile && activeTab === 'saved' && savedRecipes.length === 0 && !savedLoading && !savedError) {
@@ -226,10 +258,57 @@ export default function UserProfileScreen({ route, navigation }: Props) {
           <View style={styles.avatar} accessibilityLabel="User avatar">
             <Text style={styles.avatarText}>{initial}</Text>
           </View>
-          <Text style={styles.username} accessibilityRole="header">
-            {username ?? `User #${userIdStr}`}
-          </Text>
+          <View style={styles.headerIdentity}>
+            <Text style={styles.username} accessibilityRole="header">
+              {username ?? `User #${userIdStr}`}
+            </Text>
+            {publicProfile?.region ? (
+              <View style={styles.regionPill} accessibilityLabel={`Region ${publicProfile.region}`}>
+                <Text style={styles.regionPillText} numberOfLines={1}>
+                  {`\u{1F4CD} ${publicProfile.region}`}
+                </Text>
+              </View>
+            ) : null}
+            {publicProfile?.created_at ? (
+              <Text style={styles.joinedText}>
+                {`Joined ${new Date(publicProfile.created_at).getFullYear()}`}
+              </Text>
+            ) : null}
+          </View>
         </View>
+
+        {publicProfile ? (
+          <View style={styles.infoCard}>
+            {publicProfile.bio ? (
+              <Text style={styles.bioText}>{publicProfile.bio}</Text>
+            ) : null}
+            <Text style={styles.statsText} accessibilityLabel="Profile stats">
+              {`${publicProfile.recipe_count ?? 0} recipes · ${publicProfile.story_count ?? 0} stories`}
+            </Text>
+            <TagSection label="Cultural Interests" values={publicProfile.cultural_interests} />
+            <TagSection label="Dietary Preferences" values={publicProfile.religious_preferences} />
+            <TagSection label="Event Interests" values={publicProfile.event_interests} />
+            {isOwnProfile ? (
+              <Pressable
+                onPress={() => navigation.navigate('EditProfile')}
+                style={({ pressed }) => [styles.editBtn, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Edit profile"
+              >
+                <Text style={styles.editBtnText}>{'✏️  Edit profile'}</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : isOwnProfile ? (
+          <Pressable
+            onPress={() => navigation.navigate('EditProfile')}
+            style={({ pressed }) => [styles.editBtnStandalone, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Edit profile"
+          >
+            <Text style={styles.editBtnText}>{'✏️  Edit profile'}</Text>
+          </Pressable>
+        ) : null}
 
         {canMessage ? (
           <Pressable
@@ -434,6 +513,30 @@ export default function UserProfileScreen({ route, navigation }: Props) {
   );
 }
 
+function TagSection({
+  label,
+  values,
+}: {
+  label: string;
+  values?: string[] | null;
+}) {
+  if (!values || values.length === 0) return null;
+  return (
+    <View style={styles.tagSection} accessibilityLabel={label}>
+      <Text style={styles.tagSectionTitle}>{label}</Text>
+      <View style={styles.tagRow}>
+        {values.map((v) => (
+          <View key={`${label}-${v}`} style={styles.tagPill}>
+            <Text style={styles.tagPillText} numberOfLines={1}>
+              {v}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function TabButton({
   label,
   active,
@@ -498,6 +601,69 @@ const styles = StyleSheet.create({
     color: tokens.colors.text,
     fontFamily: tokens.typography.display.fontFamily,
     flexShrink: 1,
+  },
+  headerIdentity: { flex: 1, minWidth: 0, gap: 6 },
+  regionPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: tokens.colors.accentGreenTint,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+    borderRadius: tokens.radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+  },
+  regionPillText: { fontSize: 12, fontWeight: '700', color: tokens.colors.text },
+  joinedText: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '600' },
+  infoCard: {
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.surface,
+    padding: 16,
+    marginBottom: 22,
+    gap: 12,
+    ...shadows.md,
+  },
+  bioText: { fontSize: 15, color: tokens.colors.text, lineHeight: 21 },
+  statsText: { fontSize: 13, fontWeight: '700', color: tokens.colors.textMuted },
+  tagSection: { gap: 6 },
+  tagSectionTitle: { fontSize: 13, fontWeight: '800', color: tokens.colors.text, letterSpacing: 0.3 },
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  tagPill: {
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+    borderRadius: tokens.radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  tagPillText: { fontSize: 12, fontWeight: '700', color: tokens.colors.text },
+  editBtn: {
+    alignSelf: 'flex-start',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    ...shadows.sm,
+  },
+  editBtnStandalone: {
+    alignSelf: 'flex-start',
+    marginBottom: 22,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    ...shadows.sm,
+  },
+  editBtnText: {
+    color: tokens.colors.textOnDark,
+    fontSize: 14,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   messageBtn: {
     marginBottom: 22,
