@@ -6,11 +6,17 @@ jest.mock('../../src/services/passportTimelineService', () => ({
   normalizeEvent: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({ navigate: mockNavigate }),
+}));
+
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import {
   JourneyTimeline,
   composeTitle,
+  extractRelatedIds,
   formatTimeAgo,
 } from '../../src/components/passport/JourneyTimeline';
 import {
@@ -81,9 +87,39 @@ describe('composeTitle', () => {
   });
 });
 
+describe('extractRelatedIds', () => {
+  it('finds related_recipe id', () => {
+    expect(
+      extractRelatedIds(makeEvent({ payload: { related_recipe: 42 } })),
+    ).toEqual({ recipeId: 42, storyId: null });
+  });
+
+  it('finds story id under linked_story', () => {
+    expect(
+      extractRelatedIds(makeEvent({ payload: { linked_story: '7' } })),
+    ).toEqual({ recipeId: null, storyId: 7 });
+  });
+
+  it('returns nulls when payload is empty', () => {
+    expect(extractRelatedIds(makeEvent({ payload: {} }))).toEqual({
+      recipeId: null,
+      storyId: null,
+    });
+  });
+
+  it('ignores non-positive or non-numeric values', () => {
+    expect(
+      extractRelatedIds(
+        makeEvent({ payload: { related_recipe: 0, related_story: 'abc' } }),
+      ),
+    ).toEqual({ recipeId: null, storyId: null });
+  });
+});
+
 describe('JourneyTimeline', () => {
   beforeEach(() => {
     mockedFetch.mockReset();
+    mockNavigate.mockReset();
   });
 
   it('renders the empty state when there are no events', async () => {
@@ -130,6 +166,58 @@ describe('JourneyTimeline', () => {
     const { findByText } = render(<JourneyTimeline username="ayse" />);
     expect(await findByText('fresh')).toBeTruthy();
     expect(mockedFetch).toHaveBeenCalledWith('ayse');
+  });
+
+  it('renders a Recipe pill when payload has related_recipe and tapping navigates', async () => {
+    const ev = makeEvent({
+      id: 21,
+      message: 'Tried Sarma',
+      payload: { related_recipe: 99 },
+    });
+    const { getByText } = render(
+      <JourneyTimeline username="ayse" initialEvents={[ev]} />,
+    );
+    const pill = getByText('Recipe #99 →');
+    expect(pill).toBeTruthy();
+    fireEvent.press(pill);
+    expect(mockNavigate).toHaveBeenCalledWith('RecipeDetail', { id: '99' });
+  });
+
+  it('renders both Recipe and Story pills when both ids are present', async () => {
+    const ev = makeEvent({
+      id: 22,
+      message: 'Linked event',
+      payload: { related_recipe: 5, related_story: 8 },
+    });
+    const { getByText } = render(
+      <JourneyTimeline username="ayse" initialEvents={[ev]} />,
+    );
+    expect(getByText('Recipe #5 →')).toBeTruthy();
+    const storyPill = getByText('Story #8 →');
+    expect(storyPill).toBeTruthy();
+    fireEvent.press(storyPill);
+    expect(mockNavigate).toHaveBeenCalledWith('StoryDetail', { id: '8' });
+  });
+
+  it('renders no pill when payload has no related ids', async () => {
+    const ev = makeEvent({ id: 23, message: 'Plain event', payload: {} });
+    const { queryByText } = render(
+      <JourneyTimeline username="ayse" initialEvents={[ev]} />,
+    );
+    expect(queryByText(/Recipe #/)).toBeNull();
+    expect(queryByText(/Story #/)).toBeNull();
+  });
+
+  it('skips the Recipe pill when the message already mentions Recipe #', async () => {
+    const ev = makeEvent({
+      id: 24,
+      message: 'Linked to Recipe #99 yesterday',
+      payload: { related_recipe: 99 },
+    });
+    const { queryByText } = render(
+      <JourneyTimeline username="ayse" initialEvents={[ev]} />,
+    );
+    expect(queryByText('Recipe #99 →')).toBeNull();
   });
 
   it('renders a time-ago label for recent events', async () => {

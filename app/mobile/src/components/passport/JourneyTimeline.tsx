@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../navigation/types';
 import { tokens } from '../../theme';
 import { ErrorView } from '../ui/ErrorView';
 import { LoadingView } from '../ui/LoadingView';
@@ -7,6 +10,62 @@ import {
   fetchTimeline,
   type TimelineEvent,
 } from '../../services/passportTimelineService';
+
+type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+const RECIPE_ID_KEYS = ['related_recipe', 'recipe_id', 'linked_recipe'] as const;
+const STORY_ID_KEYS = ['related_story', 'story_id', 'linked_story'] as const;
+
+/**
+ * Coerce an arbitrary payload value into a positive integer id. Accepts
+ * either a number or a numeric string — backends have been known to send
+ * ids as strings via DRF serializers. Returns `null` for anything we can't
+ * confidently turn into a positive int.
+ */
+function coerceId(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+    return Math.floor(value);
+  }
+  if (typeof value === 'string' && value.trim() !== '') {
+    const n = Number(value);
+    if (Number.isFinite(n) && n > 0) return Math.floor(n);
+  }
+  return null;
+}
+
+/**
+ * Pull recipe + story ids out of an event's payload. Defensive against
+ * backend key drift — the wire format has shipped under at least three
+ * different names for the same field. Returns the first positive id we
+ * find per slot, `null` otherwise.
+ */
+export function extractRelatedIds(event: TimelineEvent): {
+  recipeId: number | null;
+  storyId: number | null;
+} {
+  const payload = (event.payload ?? {}) as Record<string, unknown>;
+  let recipeId: number | null = null;
+  for (const key of RECIPE_ID_KEYS) {
+    recipeId = coerceId(payload[key]);
+    if (recipeId !== null) break;
+  }
+  let storyId: number | null = null;
+  for (const key of STORY_ID_KEYS) {
+    storyId = coerceId(payload[key]);
+    if (storyId !== null) break;
+  }
+  return { recipeId, storyId };
+}
+
+/**
+ * Server-formatted messages sometimes already embed the link text (e.g.
+ * "Tried Recipe #42"). When that's the case we skip rendering our own pill
+ * to avoid duplicating the affordance on screen.
+ */
+function messageMentions(message: string | undefined, kind: 'Recipe' | 'Story'): boolean {
+  if (!message) return false;
+  return message.includes(`${kind} #`);
+}
 
 type Props = {
   username: string;
@@ -102,10 +161,14 @@ type RowProps = {
 };
 
 function TimelineRow({ event, isFirst, isLast }: RowProps) {
+  const navigation = useNavigation<Nav>();
   const title = composeTitle(event);
   const time = formatTimeAgo(event.created_at);
   const icon = iconFor(event.event_type);
   const a11y = `${event.event_type.replace(/_/g, ' ')}: ${title}${time ? `, ${time}` : ''}`;
+  const { recipeId, storyId } = extractRelatedIds(event);
+  const showRecipePill = recipeId !== null && !messageMentions(event.message, 'Recipe');
+  const showStoryPill = storyId !== null && !messageMentions(event.message, 'Story');
   return (
     <View style={styles.row} accessible accessibilityLabel={a11y}>
       <View style={styles.rail}>
@@ -119,6 +182,42 @@ function TimelineRow({ event, isFirst, isLast }: RowProps) {
         <Text style={styles.title} numberOfLines={2}>
           {title}
         </Text>
+        {(showRecipePill || showStoryPill) ? (
+          <View style={styles.pillRow}>
+            {showRecipePill && recipeId !== null ? (
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('RecipeDetail', { id: String(recipeId) })
+                }
+                style={({ pressed }) => [
+                  styles.pill,
+                  styles.recipePill,
+                  pressed && styles.pillPressed,
+                ]}
+                accessibilityRole="link"
+                accessibilityLabel={`Open Recipe ${recipeId}`}
+              >
+                <Text style={styles.pillText}>{`Recipe #${recipeId} →`}</Text>
+              </Pressable>
+            ) : null}
+            {showStoryPill && storyId !== null ? (
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('StoryDetail', { id: String(storyId) })
+                }
+                style={({ pressed }) => [
+                  styles.pill,
+                  styles.storyPill,
+                  pressed && styles.pillPressed,
+                ]}
+                accessibilityRole="link"
+                accessibilityLabel={`Open Story ${storyId}`}
+              >
+                <Text style={styles.pillText}>{`Story #${storyId} →`}</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
         {time ? <Text style={styles.time}>{time}</Text> : null}
       </View>
     </View>
@@ -324,6 +423,33 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 12,
     color: tokens.colors.textMuted,
+  },
+  pillRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginTop: 6,
+  },
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: tokens.radius.pill,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  recipePill: {
+    backgroundColor: tokens.colors.accentMustard,
+  },
+  storyPill: {
+    backgroundColor: tokens.colors.accentGreen,
+  },
+  pillPressed: {
+    opacity: 0.75,
+  },
+  pillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: tokens.colors.text,
   },
   empty: {
     paddingVertical: 24,
