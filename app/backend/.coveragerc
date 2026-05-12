@@ -1,5 +1,11 @@
 [run]
 source = apps
+# Django's `manage.py test --parallel` runs each test bucket in a subprocess,
+# so coverage must hook multiprocessing and write per-process data files.
+# The CI workflow runs `coverage combine` before `coverage report`.
+concurrency = multiprocessing
+parallel = true
+sigterm = true
 omit =
     */migrations/*
     */tests*

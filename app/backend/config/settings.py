@@ -116,6 +116,11 @@ if 'test' in sys.argv or not os.environ.get('POSTGRES_HOST'):
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 
+# Tests create a lot of users; the default PBKDF2 hasher dominates the runtime.
+# A fast hasher cuts the suite substantially and is irrelevant to test behaviour.
+if 'test' in sys.argv:
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
+
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
