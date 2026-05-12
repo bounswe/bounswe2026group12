@@ -9,7 +9,7 @@ import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import HeritageBadge from '../components/HeritageBadge';
 import CulturalFactCard from '../components/CulturalFactCard';
 import { fetchCulturalFacts } from '../services/culturalFactService';
-import { tryRecipe, addRecipeToPassport } from '../services/passportService';
+import { tryRecipe } from '../services/passportService';
 import './RecipeDetailPage.css';
 
 const MATCH_TYPE_LABELS = {
@@ -54,9 +54,6 @@ export default function RecipeDetailPage() {
   const [tried, setTried] = useState(false);
   const [tryingRecipe, setTryingRecipe] = useState(false);
   const [tryError, setTryError] = useState('');
-  const [saved, setSaved] = useState(false);
-  const [savingRecipe, setSavingRecipe] = useState(false);
-  const [saveError, setSaveError] = useState('');
 
   const handleTryRecipe = useCallback(async () => {
     if (tryingRecipe || tried) return;
@@ -71,20 +68,6 @@ export default function RecipeDetailPage() {
       setTryingRecipe(false);
     }
   }, [tryingRecipe, tried, id]);
-
-  const handleAddToPassport = useCallback(async () => {
-    if (savingRecipe || saved) return;
-    setSavingRecipe(true);
-    setSaveError('');
-    try {
-      await addRecipeToPassport(id);
-      setSaved(true);
-    } catch {
-      setSaveError('Could not save. Try again.');
-    } finally {
-      setSavingRecipe(false);
-    }
-  }, [savingRecipe, saved, id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -253,15 +236,6 @@ export default function RecipeDetailPage() {
                 {tried ? '✓ I Tried This' : tryingRecipe ? 'Saving…' : 'I Tried This'}
               </button>
               {tryError && <p className="recipe-passport-error" role="alert">{tryError}</p>}
-              <button
-                className={`btn btn-sm recipe-passport-btn${saved ? ' active' : ''}`}
-                onClick={handleAddToPassport}
-                disabled={saved || savingRecipe}
-                aria-pressed={saved}
-              >
-                {saved ? '✓ In Passport' : savingRecipe ? 'Saving…' : 'Add to Passport'}
-              </button>
-              {saveError && <p className="recipe-passport-error" role="alert">{saveError}</p>}
             </div>
           )}
         </div>

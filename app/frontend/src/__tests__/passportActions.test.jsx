@@ -82,22 +82,19 @@ beforeEach(() => {
   culturalFactService.fetchCulturalFacts.mockResolvedValue([]);
   storyService.fetchStory.mockResolvedValue(mockStory);
   passportService.tryRecipe.mockResolvedValue({ status: 'ok' });
-  passportService.addRecipeToPassport.mockResolvedValue({ status: 'ok' });
   passportService.saveStoryToPassport.mockResolvedValue({ status: 'ok' });
 });
 
 describe('Passport action buttons — RecipeDetailPage', () => {
-  it('does not show passport buttons when logged out', async () => {
+  it('does not show I Tried This button when logged out', async () => {
     renderRecipePage(null);
     await waitFor(() => expect(screen.getByText('Baklava')).toBeInTheDocument());
     expect(screen.queryByRole('button', { name: /i tried this/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /add to passport/i })).not.toBeInTheDocument();
   });
 
-  it('shows both passport buttons when logged in', async () => {
+  it('shows I Tried This button when logged in', async () => {
     renderRecipePage(loggedInUser);
     await waitFor(() => expect(screen.getByRole('button', { name: /i tried this/i })).toBeInTheDocument());
-    expect(screen.getByRole('button', { name: /add to passport/i })).toBeInTheDocument();
   });
 
   it('clicking I Tried This calls tryRecipe and disables the button', async () => {
@@ -106,14 +103,6 @@ describe('Passport action buttons — RecipeDetailPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /i tried this/i }));
     expect(passportService.tryRecipe).toHaveBeenCalledWith('1');
     await waitFor(() => expect(screen.getByRole('button', { name: /✓ i tried this/i })).toBeDisabled());
-  });
-
-  it('clicking Add to Passport calls addRecipeToPassport and disables the button', async () => {
-    renderRecipePage(loggedInUser);
-    await waitFor(() => expect(screen.getByRole('button', { name: /add to passport/i })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole('button', { name: /add to passport/i }));
-    expect(passportService.addRecipeToPassport).toHaveBeenCalledWith('1');
-    await waitFor(() => expect(screen.getByRole('button', { name: /✓ in passport/i })).toBeDisabled());
   });
 
   it('tryRecipe failure shows error, button stays clickable', async () => {
@@ -125,14 +114,6 @@ describe('Passport action buttons — RecipeDetailPage', () => {
     expect(screen.getByRole('button', { name: /i tried this/i })).not.toBeDisabled();
   });
 
-  it('addRecipeToPassport failure shows error, button stays clickable', async () => {
-    passportService.addRecipeToPassport.mockRejectedValue(new Error('fail'));
-    renderRecipePage(loggedInUser);
-    await waitFor(() => expect(screen.getByRole('button', { name: /add to passport/i })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole('button', { name: /add to passport/i }));
-    await waitFor(() => expect(screen.getAllByRole('alert').length).toBeGreaterThan(0));
-    expect(screen.getByRole('button', { name: /add to passport/i })).not.toBeDisabled();
-  });
 });
 
 describe('Passport action buttons — StoryDetailPage', () => {
