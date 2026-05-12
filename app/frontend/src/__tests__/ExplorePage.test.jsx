@@ -2,39 +2,56 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ExplorePage from '../pages/ExplorePage';
 import * as exploreService from '../services/exploreService';
+import { AuthContext } from '../context/AuthContext';
 
 jest.mock('../services/exploreService');
+jest.mock('../services/recipeService', () => ({
+  toggleBookmark: jest.fn().mockResolvedValue({ is_bookmarked: true }),
+}));
 
 const mockEvents = [
   {
-    id: 'wedding',
-    name: 'Weddings',
-    emoji: '💍',
+    id: 'featured',
+    name: 'Today on Genipe',
+    emoji: '⭐',
+    featuredRail: true,
     featured: [
-      { type: 'recipe', id: 1, title: 'Wedding Soup', author_username: 'eren' },
-      { type: 'story', id: 2, title: "Our Big Day", author_username: 'alice' },
+      { type: 'recipe', id: 1, title: 'Wedding Soup', author_username: 'eren', region: 'Aegean' },
     ],
   },
   {
-    id: 'newyear',
-    name: 'New Year',
-    emoji: '🎉',
+    id: 'region-aegean',
+    name: 'Aegean',
+    emoji: '🫒',
     featured: [
-      { type: 'recipe', id: 3, title: 'Lentil Salad', author_username: 'bob' },
+      { type: 'recipe', id: 1, title: 'Wedding Soup', author_username: 'eren', region: 'Aegean' },
+      { type: 'story', id: 2, title: "Our Big Day", author_username: 'alice', region: 'Aegean' },
+    ],
+  },
+  {
+    id: 'region-marmara',
+    name: 'Marmara',
+    emoji: '🌊',
+    featured: [
+      { type: 'recipe', id: 3, title: 'Lentil Salad', author_username: 'bob', region: 'Marmara' },
     ],
   },
 ];
 
-function renderPage() {
+function renderPage({ user = { id: 1, username: 'me' } } = {}) {
   return render(
-    <MemoryRouter initialEntries={['/explore']}>
-      <Routes>
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/explore/:eventId" element={<div>Event detail</div>} />
-        <Route path="/recipes/:id" element={<div>Recipe detail</div>} />
-        <Route path="/stories/:id" element={<div>Story detail</div>} />
-      </Routes>
-    </MemoryRouter>,
+    <AuthContext.Provider value={{ user, token: 't', login: jest.fn(), logout: jest.fn(), loading: false }}>
+      <MemoryRouter initialEntries={['/explore']}>
+        <Routes>
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/explore/:eventId" element={<div>Event detail</div>} />
+          <Route path="/recipes/:id" element={<div>Recipe detail</div>} />
+          <Route path="/stories/:id" element={<div>Story detail</div>} />
+          <Route path="/login" element={<div>Login</div>} />
+          <Route path="/map" element={<div>Map</div>} />
+        </Routes>
+      </MemoryRouter>
+    </AuthContext.Provider>,
   );
 }
 
@@ -44,54 +61,70 @@ beforeEach(() => {
 });
 
 describe('ExplorePage', () => {
-  it('shows a loading state while events load', () => {
+  it('shows skeleton rails while events load', () => {
     let resolve;
     exploreService.fetchExploreEvents.mockReturnValue(new Promise((r) => { resolve = r; }));
-    renderPage();
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    const { container } = renderPage();
+    expect(container.querySelectorAll('.explore-card-skeleton').length).toBeGreaterThan(0);
+    expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
     resolve([]);
   });
 
-  it('renders each event section after fetch resolves', async () => {
+  it('renders the featured rail + region rails after fetch resolves', async () => {
     renderPage();
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /weddings/i })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: /new year/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /today on genipe/i })).toBeInTheDocument();
     });
-    expect(screen.getByText('Wedding Soup')).toBeInTheDocument();
-    expect(screen.getByText('Our Big Day')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /^aegean$/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /^marmara$/i })).toBeInTheDocument();
+    expect(screen.getAllByText('Wedding Soup').length).toBeGreaterThan(0);
     expect(screen.getByText('Lentil Salad')).toBeInTheDocument();
   });
 
-  it('renders "See all" links to /explore/<eventId>', async () => {
+  it('renders the region jump-nav with one chip per region rail', async () => {
     renderPage();
-    await screen.findByText('Wedding Soup');
+    await screen.findByRole('heading', { name: /^aegean$/i });
+    const nav = screen.getByRole('navigation', { name: /jump to region/i });
+    expect(nav).toBeInTheDocument();
+    expect(nav.querySelectorAll('a').length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('renders "See all" only on non-featured rails', async () => {
+    renderPage();
+    await screen.findByRole('heading', { name: /^aegean$/i });
     const seeAllLinks = screen.getAllByRole('link', { name: /see all/i });
-    expect(seeAllLinks).toHaveLength(2);
-    expect(seeAllLinks[0]).toHaveAttribute('href', '/explore/wedding');
-    expect(seeAllLinks[1]).toHaveAttribute('href', '/explore/newyear');
+    expect(seeAllLinks.map((a) => a.getAttribute('href'))).toEqual(
+      expect.arrayContaining(['/explore/region-aegean', '/explore/region-marmara']),
+    );
+    expect(seeAllLinks.some((a) => a.getAttribute('href') === '/explore/featured')).toBe(false);
   });
 
-  it('renders content cards pointing at /recipes/:id or /stories/:id', async () => {
-    renderPage();
-    await screen.findByText('Wedding Soup');
-    expect(screen.getByRole('link', { name: /wedding soup/i })).toHaveAttribute(
-      'href',
-      '/recipes/1',
-    );
-    expect(screen.getByRole('link', { name: /our big day/i })).toHaveAttribute(
-      'href',
-      '/stories/2',
-    );
-  });
-
-  it('renders no event sections when the API returns an empty list', async () => {
+  it('renders an empty state with CTAs when no rails have items', async () => {
     exploreService.fetchExploreEvents.mockResolvedValue([]);
     renderPage();
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /explore/i })).toBeInTheDocument();
+      expect(screen.getByText(/no recipes or stories yet/i)).toBeInTheDocument();
     });
-    expect(screen.queryAllByRole('link', { name: /see all/i })).toHaveLength(0);
+    expect(screen.getByRole('link', { name: /open the map/i })).toHaveAttribute('href', '/map');
+    expect(screen.getByRole('link', { name: /share a recipe/i })).toHaveAttribute('href', '/recipes/new');
+  });
+
+  it('shows the sign-in banner only when not authenticated', async () => {
+    renderPage({ user: null });
+    await screen.findByRole('heading', { name: /^aegean$/i });
+    expect(screen.getByText(/sign in/i)).toBeInTheDocument();
+  });
+
+  it('hides the sign-in banner when authenticated', async () => {
+    renderPage();
+    await screen.findByRole('heading', { name: /^aegean$/i });
+    expect(screen.queryByText(/sign in to see recipes/i)).not.toBeInTheDocument();
+  });
+
+  it('shows the bookmark button on recipe cards only when signed in', async () => {
+    renderPage();
+    await screen.findByRole('heading', { name: /^aegean$/i });
+    expect(screen.getAllByRole('button', { name: /save recipe/i }).length).toBeGreaterThan(0);
   });
 
   it('shows an error message when fetchExploreEvents rejects', async () => {
