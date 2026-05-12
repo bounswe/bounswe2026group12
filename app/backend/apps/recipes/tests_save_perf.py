@@ -54,7 +54,7 @@ def _seed_volume():
     cold-cache query plans for any related lookups in the response phase.
     """
     region, _ = Region.objects.get_or_create(name='Anatolia', defaults={'is_approved': True})
-    religion, _ = Religion.objects.get_or_create(name='Secular', defaults={'is_approved': True})
+    religion, _ = Religion.objects.get_or_create(name='Islam', defaults={'is_approved': True})
 
     ingredients = [
         Ingredient.objects.get_or_create(

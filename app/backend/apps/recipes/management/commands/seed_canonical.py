@@ -241,6 +241,7 @@ class Command(BaseCommand):
                 region=region,
                 language=s.get('language', 'en'),
                 is_published=s.get('is_published', True),
+                story_type=s.get('story_type', ''),
             )
             if s.get('dietary_tags'):
                 story.dietary_tags.set(
