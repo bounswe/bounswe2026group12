@@ -73,6 +73,19 @@ export async function fetchRecipes() {
   return response.data.results ?? response.data;
 }
 
+/**
+ * Fetch recipes filtered by `heritage_status` (#520). Backend accepts a
+ * comma-separated list (e.g. `endangered,revived`); we send a single value
+ * for the `/endangered` listing page.
+ */
+export async function fetchRecipesByHeritageStatus(status) {
+  if (USE_MOCK) return [];
+  const response = await apiClient.get('/api/recipes/', {
+    params: { heritage_status: status, page_size: 100 },
+  });
+  return response.data.results ?? response.data;
+}
+
 export async function fetchDietaryTags() {
   if (USE_MOCK) return [];
   const response = await apiClient.get('/api/dietary-tags/');

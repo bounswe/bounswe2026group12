@@ -1,0 +1,47 @@
+.heritage-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1.5px solid;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.heritage-status-sm {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+}
+
+.heritage-status-md {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.7rem;
+}
+
+.heritage-status-emoji {
+  font-size: 0.95em;
+  line-height: 1;
+}
+
+/* Amber — endangered */
+.heritage-status-endangered {
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #D97706;
+}
+
+/* Green — preserved */
+.heritage-status-preserved {
+  background: var(--color-accent-green-tint);
+  color: var(--color-accent-green-text);
+  border-color: var(--color-accent-green-border);
+}
+
+/* Blue — revived */
+.heritage-status-revived {
+  background: #DBEAFE;
+  color: #1E40AF;
+  border-color: #2563EB;
+}

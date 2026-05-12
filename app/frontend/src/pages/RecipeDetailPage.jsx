@@ -7,6 +7,7 @@ import { fetchSubstitutes } from '../services/ingredientService';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import HeritageBadge from '../components/HeritageBadge';
+import EndangeredHeritageSection from '../components/EndangeredHeritageSection';
 import CulturalFactCard from '../components/CulturalFactCard';
 import StarRating from '../components/StarRating';
 import { fetchCulturalFacts } from '../services/culturalFactService';
@@ -507,6 +508,11 @@ export default function RecipeDetailPage() {
           <HeritageBadge group={recipe.heritage_group} />
         </section>
       )}
+
+      <EndangeredHeritageSection
+        status={recipe.heritage_status}
+        notes={recipe.endangered_notes}
+      />
 
       {recipeFacts.length > 0 && (
         <section className="recipe-cultural-facts">

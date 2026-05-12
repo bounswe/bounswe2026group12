@@ -1,0 +1,150 @@
+.endangered-page-header {
+  margin-bottom: 1.5rem;
+}
+
+.endangered-page-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  margin: 0;
+  color: var(--color-text);
+}
+
+.endangered-page-subtitle {
+  color: var(--color-text-muted);
+  margin: 0.4rem 0 1rem;
+  max-width: 560px;
+  line-height: 1.5;
+}
+
+.endangered-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.endangered-page-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.endangered-page-tab:hover {
+  border-color: var(--color-primary);
+}
+
+.endangered-page-tab.is-active {
+  background: var(--color-primary-tint);
+  border-color: var(--color-primary);
+}
+
+.endangered-page-tab-label {
+  font-weight: 600;
+}
+
+.endangered-page-status {
+  margin: 2rem 0;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.endangered-page-error {
+  color: var(--color-error, #b91c1c);
+}
+
+.endangered-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.endangered-list-row {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.endangered-list-row:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 10px rgba(196, 82, 30, 0.08);
+}
+
+.endangered-list-link {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.endangered-list-thumb {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-dark);
+}
+
+.endangered-list-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.endangered-list-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-accent-green-tint), var(--color-primary-subtle));
+}
+
+.endangered-list-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.endangered-list-meta-top {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.endangered-list-region {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.endangered-list-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.endangered-list-author {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
