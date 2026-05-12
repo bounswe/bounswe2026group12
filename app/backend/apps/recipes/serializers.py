@@ -226,7 +226,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'public_id', 'title', 'description', 'steps', 'image', 'video',
             'region', 'region_name', 'latitude', 'longitude',
             'author', 'author_username', 'qa_enabled',
-            'is_published', 'is_heritage', 'heritage_notes', 'heritage_status',
+            'is_published', 'is_heritage', 'heritage_notes', 'heritage_status', 'meal_type',
             'average_rating', 'rating_count', 'user_rating',
             'created_at', 'updated_at',
             'ingredients', 'ingredients_write',

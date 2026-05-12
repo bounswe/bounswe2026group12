@@ -102,6 +102,26 @@ def apply_content_filters(qs, params, user=None):
             elif hasattr(qs.model, 'recipe_links'):
                 # For stories, match via linked recipes
                 qs = qs.filter(recipe_links__recipe__heritage_status__in=statuses)
+
+    # Meal type filter (#849)
+    meal_type = params.get('meal_type')
+    if meal_type:
+        if hasattr(qs.model, 'meal_type'):
+            if meal_type in {c for c, _ in Recipe.MealType.choices}:
+                qs = qs.filter(meal_type=meal_type)
+            else:
+                qs = qs.none()
+
+    # Story type filter (#849)
+    story_type = params.get('story_type')
+    if story_type:
+        if hasattr(qs.model, 'story_type'):
+            from apps.stories.models import Story
+            if story_type in {c for c, _ in Story.StoryType.choices}:
+                qs = qs.filter(story_type=story_type)
+            else:
+                qs = qs.none()
+
     # Bookmark filter (#706)
     bookmarked = params.get('bookmarked')
     if bookmarked == 'true' and user and user.is_authenticated:
