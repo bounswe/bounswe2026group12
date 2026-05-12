@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRegionStories } from '../services/culturalContentService';
+import ChipGroup from './ChipGroup';
 import './FloatingCulturalPrompt.css';
 
 const PROMPTS = [
@@ -124,7 +125,13 @@ export default function FloatingCulturalPrompt({ regions }) {
       <div className="floating-prompt" role="complementary" aria-label="Cultural discovery prompt">
         <button className="floating-prompt-close" onClick={handleDismiss} aria-label="Dismiss">×</button>
         <p className="floating-prompt-question">{prompt.question}</p>
-        <div className="floating-prompt-chips">
+        <ChipGroup
+          label=""
+          visibleCount={8}
+          className="floating-prompt-chip-group"
+          labelClassName="sr-only"
+          itemsClassName="floating-prompt-chips"
+        >
           {regions.map((r) => (
             <button
               key={r.id}
@@ -134,7 +141,7 @@ export default function FloatingCulturalPrompt({ regions }) {
               {r.name}
             </button>
           ))}
-        </div>
+        </ChipGroup>
       </div>
 
       {modalOpen && (

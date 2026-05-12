@@ -1,0 +1,35 @@
+.chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.chip-group-icon {
+  font-size: 0.95rem;
+  margin-right: 0.1rem;
+}
+
+.chip-group-toggle {
+  background: transparent;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+
+.chip-group-toggle:hover {
+  border-color: var(--color-primary);
+  background: rgba(196, 82, 30, 0.08);
+}
+
+.chip-group-toggle:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
