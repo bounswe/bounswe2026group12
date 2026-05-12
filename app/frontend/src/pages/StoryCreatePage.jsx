@@ -179,22 +179,27 @@ export default function StoryCreatePage() {
         </section>
 
         <div className="story-form-actions">
-          <button
-            type="button"
-            className="btn btn-outline"
-            disabled={submitting}
-            onClick={() => submit(false)}
-          >
-            Save as draft
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={submitting}
-            onClick={() => submit(true)}
-          >
-            {submitting ? 'Publishing…' : 'Publish Story'}
-          </button>
+          <div className="story-form-actions-buttons">
+            <button
+              type="button"
+              className="btn btn-outline"
+              disabled={submitting}
+              onClick={() => submit(false)}
+            >
+              Save as draft
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={submitting}
+              onClick={() => submit(true)}
+            >
+              {submitting ? 'Publishing…' : 'Publish Story'}
+            </button>
+          </div>
+          <p className="publish-note">
+            Drafts stay private to you. Published stories are visible to everyone.
+          </p>
         </div>
       </form>
 

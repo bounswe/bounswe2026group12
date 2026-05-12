@@ -139,25 +139,27 @@ export default function RecipeCreatePage() {
     return newUnit;
   }, []);
 
-  function validate() {
+  function validate(publish) {
     const e = {};
     if (!title.trim()) e.title = 'Title is required.';
-    if (!description.trim() && !video) e.content = 'A description or video is required.';
+    if (publish) {
+      if (!description.trim() && !video) e.content = 'A description or video is required.';
+      const filledRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+      if (filledRows.length === 0) e.ingredients = 'Please add at least one ingredient with an amount.';
+    }
     for (const row of rows) {
       if (row.amount !== '' && (isNaN(Number(row.amount)) || Number(row.amount) <= 0)) {
         e.amount = 'Amount must be a positive number.';
         break;
       }
     }
-    const filledRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
-    if (filledRows.length === 0) e.ingredients = 'Please add at least one ingredient with an amount.';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
   async function submit(publish) {
     if (submitting) return;
-    if (!validate()) {
+    if (!validate(publish)) {
       document.getElementById('error-summary')?.focus();
       return;
     }
@@ -411,22 +413,24 @@ export default function RecipeCreatePage() {
         </section>
 
         <div className="recipe-form-actions">
-          <button
-            type="button"
-            className="btn btn-outline"
-            disabled={submitting}
-            onClick={() => submit(false)}
-          >
-            Save as draft
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary publish-btn"
-            disabled={submitting}
-            onClick={() => submit(true)}
-          >
-            {submitting ? 'Publishing…' : 'Publish Recipe'}
-          </button>
+          <div className="recipe-form-actions-buttons">
+            <button
+              type="button"
+              className="btn btn-outline"
+              disabled={submitting}
+              onClick={() => submit(false)}
+            >
+              Save as draft
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary publish-btn"
+              disabled={submitting}
+              onClick={() => submit(true)}
+            >
+              {submitting ? 'Publishing…' : 'Publish Recipe'}
+            </button>
+          </div>
           <p className="publish-note">
             Drafts stay private to you. Published recipes are visible to everyone.
           </p>
