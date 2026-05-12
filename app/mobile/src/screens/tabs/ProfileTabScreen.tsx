@@ -94,7 +94,7 @@ export default function ProfileTabScreen() {
                   accessibilityLabel="Open messages"
                 />
                 <ActionRow
-                  icon="\u{1F6AA}"
+                  icon="🚪"
                   label="Log out"
                   onPress={() => void logout()}
                   accessibilityLabel="Log out"
