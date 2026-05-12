@@ -53,6 +53,7 @@ export default function CulturalHighlightPage() {
   }
 
   const kindLabel = item.kind ? KIND_LABEL[item.kind] ?? null : null;
+  const linked = relatedLink(item.link);
 
   return (
     <main className="page-card cultural-highlight">
@@ -67,6 +68,14 @@ export default function CulturalHighlightPage() {
 
       {item.body && <p className="cultural-highlight-body">{item.body}</p>}
 
+      {linked && (
+        <p className="cultural-highlight-related">
+          <Link to={linked.href} className="cultural-highlight-related-link">
+            {linked.label} →
+          </Link>
+        </p>
+      )}
+
       {item.tags && item.tags.length > 0 && (
         <ul className="cultural-highlight-tags" aria-label="Tags">
           {item.tags.map((tag) => (
@@ -76,4 +85,14 @@ export default function CulturalHighlightPage() {
       )}
     </main>
   );
+}
+
+function relatedLink(link) {
+  if (!link || !link.kind || link.id == null) return null;
+  switch (String(link.kind).toLowerCase()) {
+    case 'recipe': return { href: `/recipes/${link.id}`, label: 'View the linked recipe' };
+    case 'story':  return { href: `/stories/${link.id}`, label: 'Read the linked story' };
+    case 'event':  return { href: '/calendar',           label: 'See on the cultural calendar' };
+    default:       return null;
+  }
 }

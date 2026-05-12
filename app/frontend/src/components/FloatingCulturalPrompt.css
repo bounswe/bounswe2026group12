@@ -13,6 +13,8 @@
   border-radius: var(--radius-xl);
   padding: 1.25rem 1.5rem;
   max-width: 320px;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
   box-shadow: var(--shadow-md);
   animation: prompt-slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
