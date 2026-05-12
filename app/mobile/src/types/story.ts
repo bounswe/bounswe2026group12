@@ -17,5 +17,11 @@ export type StoryDetail = {
   rank_reason?: string | null;
   /** Heritage group surfaced by backend serializer when the story is grouped. */
   heritage_group?: { id: number; name: string } | null;
+  /**
+   * Set by backend #584 ("Stamp" model, #599) when the current user has
+   * saved this story to their cultural passport. Optional because older /
+   * minimal payloads can omit it — UI treats `undefined` as "not yet known".
+   */
+  saved_to_passport?: boolean;
 };
 
