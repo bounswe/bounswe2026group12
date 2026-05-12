@@ -10,6 +10,7 @@ export async function fetchMapRegions() {
 }
 
 export async function fetchMapRegionContent(regionId) {
+  if (USE_MOCK) return [];
   const response = await apiClient.get(`/api/map/regions/${regionId}/content/`);
   return response.data.results ?? response.data;
 }

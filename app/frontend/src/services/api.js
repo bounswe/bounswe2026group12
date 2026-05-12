@@ -42,6 +42,7 @@ apiClient.interceptors.response.use(
             const { access, refresh } = res.data;
             localStorage.setItem('token', access);
             if (refresh) localStorage.setItem('refresh_token', refresh);
+            window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { access, refresh } }));
             return access;
           })
           .finally(() => { refreshInFlight = null; });

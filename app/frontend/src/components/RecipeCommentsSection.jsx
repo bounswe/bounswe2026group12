@@ -245,9 +245,13 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
   }
 
   async function handleDelete(commentId) {
-    await deleteComment(commentId);
-    setComments((prev) => prev.filter((comment) => comment.id !== commentId && comment.parentComment !== commentId));
-    setOpenMenuId(null);
+    try {
+      await deleteComment(commentId);
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId && comment.parentComment !== commentId));
+      setOpenMenuId(null);
+    } catch {
+      setOpenMenuId(null);
+    }
   }
 
   async function handleToggleVote(commentId) {

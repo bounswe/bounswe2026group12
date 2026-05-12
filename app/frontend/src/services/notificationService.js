@@ -45,6 +45,7 @@ export async function markNotificationAsRead(notificationId) {
 }
 
 export async function markAllAsRead() {
+  if (USE_MOCK) return;
   await apiClient.post('/api/notifications/read-all/');
 }
 

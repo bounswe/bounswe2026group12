@@ -44,16 +44,20 @@ export default function IngredientRow({
   }
 
   async function handleAddIngredient() {
-    const newIngredient = await onNewIngredient(ingredientSearch);
-    if (newIngredient) {
-      handleSelectIngredient(newIngredient);
+    try {
+      const newIngredient = await onNewIngredient(ingredientSearch);
+      if (newIngredient) handleSelectIngredient(newIngredient);
+    } catch {
+      // onNewIngredient surfaces its own error to the parent
     }
   }
 
   async function handleAddUnit() {
-    const newUnit = await onNewUnit(unitSearch);
-    if (newUnit) {
-      handleSelectUnit(newUnit);
+    try {
+      const newUnit = await onNewUnit(unitSearch);
+      if (newUnit) handleSelectUnit(newUnit);
+    } catch {
+      // onNewUnit surfaces its own error to the parent
     }
   }
 

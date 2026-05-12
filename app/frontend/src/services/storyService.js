@@ -22,6 +22,7 @@ export async function createStory(data) {
 }
 
 export async function updateStory(id, data) {
+  if (USE_MOCK) return { id: Number(id) };
   const response = await apiClient.patch(`/api/stories/${id}/`, data);
   return response.data;
 }

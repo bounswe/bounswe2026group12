@@ -27,6 +27,15 @@ export function AuthProvider({ children }) {
   }, [refreshToken]);
 
   useEffect(() => {
+    function onTokenRefreshed(e) {
+      setToken(e.detail.access);
+      if (e.detail.refresh) setRefreshToken(e.detail.refresh);
+    }
+    window.addEventListener('auth:token-refreshed', onTokenRefreshed);
+    return () => window.removeEventListener('auth:token-refreshed', onTokenRefreshed);
+  }, []);
+
+  useEffect(() => {
     if (!token) {
       setLoading(false);
       return;
