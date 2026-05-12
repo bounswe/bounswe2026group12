@@ -59,7 +59,7 @@ export default function HeritagePage() {
 
       <section className="heritage-members">
         <h2 className="heritage-section-heading">Recipes & Stories</h2>
-        {group.members.length === 0 ? (
+        {!group.members || group.members.length === 0 ? (
           <p className="heritage-empty">This group has no linked recipes or stories yet.</p>
         ) : (
           <ul className="heritage-members-grid">
