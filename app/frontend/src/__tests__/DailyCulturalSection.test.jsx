@@ -57,9 +57,9 @@ test('Read more link points to /calendar when link.kind=event', () => {
   expect(screen.getByText('Read more →')).toHaveAttribute('href', '/calendar');
 });
 
-test('hides Read more entirely when the item has no link', () => {
+test('Read more falls back to /highlights/:id when no link is present', () => {
   wrap(<DailyCulturalSection items={[ITEMS[0]]} />);
-  expect(screen.queryByText('Read more →')).not.toBeInTheDocument();
+  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/highlights/1');
 });
 
 test('renders nothing when items is empty', () => {

@@ -12,15 +12,19 @@ const FALLBACK = { emoji: '🌍', colorClass: 'card-default', label: 'Culture' }
 // Backend ships an optional `link: { kind, id }` per card pointing at the
 // recipe / story / event that owns the highlight. Map that to a real route
 // so "Read more" actually opens something instead of dumping the title into
-// the search box.
-function targetForLink(link) {
-  if (!link || !link.kind || link.id == null) return null;
-  switch (String(link.kind).toLowerCase()) {
-    case 'recipe': return `/recipes/${link.id}`;
-    case 'story':  return `/stories/${link.id}`;
-    case 'event':  return '/calendar';
-    default:       return null;
+// the search box. Items without a link fall back to /highlights/:id which
+// renders the card's full body on a dedicated page.
+function targetForItem(item) {
+  const link = item?.link;
+  if (link && link.kind && link.id != null) {
+    switch (String(link.kind).toLowerCase()) {
+      case 'recipe': return `/recipes/${link.id}`;
+      case 'story':  return `/stories/${link.id}`;
+      case 'event':  return '/calendar';
+      default:       break;
+    }
   }
+  return `/highlights/${encodeURIComponent(item.id)}`;
 }
 
 export default function DailyCulturalSection({ items, personalized }) {
@@ -40,7 +44,7 @@ export default function DailyCulturalSection({ items, personalized }) {
       <div className="daily-cultural-grid">
         {items.map((item, index) => {
           const config = KIND_CONFIG[item.kind] ?? FALLBACK;
-          const href = targetForLink(item.link);
+          const href = targetForItem(item);
           return (
             <article
               key={item.id}
@@ -55,11 +59,9 @@ export default function DailyCulturalSection({ items, personalized }) {
               {item.body && <p className="card-body">{item.body}</p>}
               <div className="card-footer">
                 {item.region && <span className="card-region">{item.region}</span>}
-                {href && (
-                  <Link to={href} className="card-read-more">
-                    Read more →
-                  </Link>
-                )}
+                <Link to={href} className="card-read-more">
+                  Read more →
+                </Link>
               </div>
             </article>
           );
