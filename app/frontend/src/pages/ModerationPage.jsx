@@ -19,7 +19,7 @@ function formatDate(iso) {
 }
 
 export default function ModerationPage() {
-  const { user } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,12 +28,13 @@ export default function ModerationPage() {
   const [rejectReasons, setRejectReasons] = useState({});
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) { navigate('/login'); return; }
     if (!user.is_staff) { setLoading(false); return; }
     fetchModerationQueue()
       .then(setQueue)
       .finally(() => setLoading(false));
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handle = async (typeKey, id, action, reason = '') => {
     setProcessing(id);

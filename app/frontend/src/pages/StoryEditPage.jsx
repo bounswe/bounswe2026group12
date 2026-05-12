@@ -11,7 +11,7 @@ import './StoryEditPage.css';
 export default function StoryEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
 
   const [story, setStory] = useState(null);
   const [title, setTitle] = useState('');
@@ -42,7 +42,13 @@ export default function StoryEditPage() {
         setTitle(storyData.title);
         setBody(storyData.body || '');
         setLanguage(storyData.language || 'en');
-        setLinkedRecipe(storyData.linked_recipe || null);
+        const linkedId = storyData.linked_recipe;
+        if (linkedId) {
+          const found = recipes.find((r) => r.id === linkedId);
+          setLinkedRecipe(found ?? { id: linkedId, title: `Recipe #${linkedId}` });
+        } else {
+          setLinkedRecipe(null);
+        }
         setAllRecipes(recipes);
       })
       .catch(() => { if (!cancelled) setLoadError('Could not load story.'); })
@@ -80,7 +86,10 @@ export default function StoryEditPage() {
     formData.append('body', body);
     formData.append('language', language);
     formData.append('is_published', publish ? 'true' : 'false');
-    if (linkedRecipe) formData.append('linked_recipe', linkedRecipe.id);
+    if (linkedRecipe) {
+      const recipeId = typeof linkedRecipe === 'object' ? linkedRecipe.id : linkedRecipe;
+      formData.append('linked_recipe', recipeId);
+    }
     if (image) formData.append('image', image);
 
     try {
@@ -101,7 +110,7 @@ export default function StoryEditPage() {
     };
   }, []);
 
-  if (loading) return <p className="page-status">Loading…</p>;
+  if (loading || authLoading) return <p className="page-status">Loading…</p>;
   if (loadError) return <p className="page-status page-error">{loadError}</p>;
   const storyAuthorId = story?.author && typeof story.author === 'object' ? story.author.id : story?.author;
   const isAuthor = user && story && storyAuthorId != null && user.id === storyAuthorId;
