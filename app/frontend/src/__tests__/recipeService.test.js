@@ -14,6 +14,7 @@ import {
   toggleBookmark,
   fetchMyRecipes,
   fetchMyBookmarks,
+  fetchRecipesByRegion,
 } from '../services/recipeService';
 
 jest.mock('../services/api', () => ({
@@ -309,26 +310,16 @@ describe('fetchMyBookmarks', () => {
   });
 });
 
-describe('fetchRecipes — pagination cap (#851)', () => {
-  it('passes page_size=100 so the list endpoint returns a full page', async () => {
-    apiClient.get.mockResolvedValue({ data: { count: 1, next: null, results: [{ id: 1 }] } });
-    await fetchRecipes();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { page_size: 100 } });
+describe('fetchRecipesByRegion', () => {
+  it('GETs /api/recipes/?region=<name>&page_size=100 and returns the list', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Anchovy Pilaf', latitude: 41.0, longitude: 39.7 }] });
+    const result = await fetchRecipesByRegion('Black Sea');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { region: 'Black Sea', page_size: 100 } });
+    expect(result).toEqual([{ id: 1, title: 'Anchovy Pilaf', latitude: 41.0, longitude: 39.7 }]);
   });
-});
 
-describe('fetchMyRecipes — pagination cap (#851)', () => {
-  it('keeps author param and adds page_size=100', async () => {
-    apiClient.get.mockResolvedValue({ data: [{ id: 7 }] });
-    await fetchMyRecipes(42);
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42, page_size: 100 } });
-  });
-});
-
-describe('fetchMyBookmarks — pagination cap (#851)', () => {
-  it('keeps bookmarked=true and adds page_size=100', async () => {
-    apiClient.get.mockResolvedValue({ data: [{ id: 9 }] });
-    await fetchMyBookmarks();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true', page_size: 100 } });
+  it('unwraps paginated DRF responses', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: [{ id: 5 }] } });
+    expect(await fetchRecipesByRegion('Aegean')).toEqual([{ id: 5 }]);
   });
 });

@@ -58,3 +58,16 @@ export async function fetchMyStories(authorId) {
   const response = await apiClient.get('/api/stories/', { params: { author: authorId, page_size: 100 } });
   return response.data.results ?? response.data;
 }
+
+/**
+ * Stories attached to a region by name (#732 — map story-pin parity).
+ * Backend: `GET /api/stories/?region=<name>`. Returns items with optional
+ * `latitude` / `longitude` for plotting on the region map.
+ */
+export async function fetchStoriesByRegion(regionName) {
+  if (USE_MOCK) {
+    return MOCK_STORIES_LIST.filter((s) => s.region_name === regionName);
+  }
+  const response = await apiClient.get('/api/stories/', { params: { region: regionName, page_size: 100 } });
+  return response.data.results ?? response.data;
+}
