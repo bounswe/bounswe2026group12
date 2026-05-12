@@ -1,14 +1,16 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchRecipe, deleteRecipe } from '../services/recipeService';
+import { fetchRecipe, deleteRecipe, rateRecipe, unrateRecipe, toggleBookmark } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
 import { fetchSubstitutes } from '../services/ingredientService';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import HeritageBadge from '../components/HeritageBadge';
 import CulturalFactCard from '../components/CulturalFactCard';
+import StarRating from '../components/StarRating';
 import { fetchCulturalFacts } from '../services/culturalFactService';
+import { tryRecipe } from '../services/passportService';
 import './RecipeDetailPage.css';
 
 const MATCH_TYPE_LABELS = {
@@ -48,6 +50,87 @@ export default function RecipeDetailPage() {
   const [showShoppingList, setShowShoppingList] = useState(false);
 
   const [recipeFacts, setRecipeFacts] = useState([]);
+
+  // #590 — passport actions
+  const [tried, setTried] = useState(false);
+  const [tryingRecipe, setTryingRecipe] = useState(false);
+  const [tryError, setTryError] = useState('');
+
+  // #736 — rating
+  const [ratingBusy, setRatingBusy] = useState(false);
+
+  const handleRate = useCallback(async (nextScore) => {
+    if (ratingBusy || !recipe) return;
+    setRatingBusy(true);
+    const prev = {
+      user_rating: recipe.user_rating,
+      average_rating: recipe.average_rating,
+      rating_count: recipe.rating_count,
+    };
+    // Optimistic flip on the user's score; reconcile from the backend reply.
+    setRecipe((r) => (r ? { ...r, user_rating: nextScore } : r));
+    try {
+      const summary = nextScore == null
+        ? await unrateRecipe(id)
+        : await rateRecipe(id, nextScore);
+      setRecipe((r) => (r ? { ...r, ...summary } : r));
+    } catch {
+      setRecipe((r) => (r ? { ...r, ...prev } : r));
+    } finally {
+      setRatingBusy(false);
+    }
+  }, [ratingBusy, recipe, id]);
+
+  // #707 — bookmark
+  const [bookmarkBusy, setBookmarkBusy] = useState(false);
+
+  const handleBookmark = useCallback(async () => {
+    if (bookmarkBusy || !recipe) return;
+    setBookmarkBusy(true);
+    const prev = {
+      is_bookmarked: recipe.is_bookmarked,
+      bookmark_count: recipe.bookmark_count,
+    };
+    setRecipe((r) =>
+      r
+        ? {
+            ...r,
+            is_bookmarked: !r.is_bookmarked,
+            bookmark_count: (r.bookmark_count ?? 0) + (r.is_bookmarked ? -1 : 1),
+          }
+        : r,
+    );
+    try {
+      const summary = await toggleBookmark(id);
+      setRecipe((r) => (r ? { ...r, ...summary } : r));
+    } catch {
+      setRecipe((r) => (r ? { ...r, ...prev } : r));
+    } finally {
+      setBookmarkBusy(false);
+    }
+  }, [bookmarkBusy, recipe, id]);
+
+  const handleTryRecipe = useCallback(async () => {
+    if (tryingRecipe || tried) return;
+    setTryingRecipe(true);
+    setTryError('');
+    try {
+      await tryRecipe(id);
+      setTried(true);
+    } catch {
+      setTryError('Could not record. Try again.');
+    } finally {
+      setTryingRecipe(false);
+    }
+  }, [tryingRecipe, tried, id]);
+
+  useEffect(() => {
+    setChecked(new Set());
+    setShowShoppingList(false);
+    setOpenSubPanel(null);
+    setSubstitutes({});
+    setAppliedSubs({});
+  }, [id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -145,10 +228,10 @@ export default function RecipeDetailPage() {
   const isAuthor = user && user.id === recipe.author;
   const regionName = regions.find((r) => r.id === recipe.region)?.name;
 
-  const hasConverted = recipe.ingredients.some((ri) => ri.converted_amount);
+  const hasConverted = (recipe.ingredients ?? []).some((ri) => ri.converted_amount);
 
   // Shopping list: unchecked ingredients with substitutions applied
-  const shoppingItems = recipe.ingredients
+  const shoppingItems = (recipe.ingredients ?? [])
     .filter((ri) => !checked.has(ri.ingredient))
     .map((ri) => {
       const sub = appliedSubs[ri.ingredient];
@@ -172,8 +255,35 @@ export default function RecipeDetailPage() {
           {recipe.author_username && (
             <p className="recipe-author"><Link to={`/users/${recipe.author_username}`} className="recipe-author-link">By {recipe.author_username}</Link></p>
           )}
+          <div className="recipe-rating-row">
+            <StarRating
+              userScore={recipe.user_rating ?? null}
+              average={recipe.average_rating ?? null}
+              count={recipe.rating_count ?? 0}
+              size="lg"
+              onChange={user && !isAuthor ? handleRate : undefined}
+              disabledReason={
+                !user ? 'Log in to rate.'
+                  : isAuthor ? "You can't rate your own recipe."
+                  : ''
+              }
+            />
+          </div>
         </div>
         <div className="recipe-detail-actions">
+          {user && !isAuthor && (
+            <button
+              type="button"
+              className={`btn btn-sm recipe-bookmark-btn${recipe.is_bookmarked ? ' active' : ''}`}
+              onClick={handleBookmark}
+              disabled={bookmarkBusy}
+              aria-pressed={Boolean(recipe.is_bookmarked)}
+              aria-label={recipe.is_bookmarked ? 'Remove bookmark' : 'Bookmark this recipe'}
+            >
+              {recipe.is_bookmarked ? '🔖 Saved' : '🏷 Save'}
+              {typeof recipe.bookmark_count === 'number' && ` · ${recipe.bookmark_count}`}
+            </button>
+          )}
           {isAuthor && (
             <Link to={`/recipes/${recipe.id}/edit`} className="btn btn-outline btn-sm">
               Edit
@@ -197,13 +307,26 @@ export default function RecipeDetailPage() {
               className="btn btn-outline btn-sm"
               onClick={() =>
                 navigate(
-                  `/inbox?compose=true&to=${recipe.author}&toUsername=${recipe.author_username}` +
+                  `/inbox?compose=true&to=${recipe.author}&toUsername=${encodeURIComponent(recipe.author_username)}` +
                   `&recipeId=${recipe.id}&recipeTitle=${encodeURIComponent(recipe.title)}`
                 )
               }
             >
               Message @{recipe.author_username}
             </button>
+          )}
+          {user && (
+            <div className="recipe-passport-actions">
+              <button
+                className={`btn btn-sm recipe-passport-btn${tried ? ' active' : ''}`}
+                onClick={handleTryRecipe}
+                disabled={tried || tryingRecipe}
+                aria-pressed={tried}
+              >
+                {tried ? '✓ I Tried This' : tryingRecipe ? 'Saving…' : 'I Tried This'}
+              </button>
+              {tryError && <p className="recipe-passport-error" role="alert">{tryError}</p>}
+            </div>
           )}
         </div>
       </div>
@@ -218,6 +341,21 @@ export default function RecipeDetailPage() {
 
       {recipe.description && (
         <p className="recipe-description">{recipe.description}</p>
+      )}
+
+      {/* ── Steps (#805) ── */}
+      {Array.isArray(recipe.steps) && recipe.steps.length > 0 && (
+        <section className="recipe-steps">
+          <h2>Steps</h2>
+          <ol className="recipe-steps-list">
+            {recipe.steps.map((step, index) => (
+              <li key={index} className="recipe-steps-item">
+                <span className="recipe-steps-number" aria-hidden="true">{index + 1}</span>
+                <p className="recipe-steps-body">{step}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
       )}
 
       {/* ── Ingredients (#372 check-off, #370 substitution, #377 unit toggle) ── */}
@@ -253,7 +391,7 @@ export default function RecipeDetailPage() {
         </div>
 
         <ul className="ingredients-list">
-          {recipe.ingredients.map((ri) => {
+          {(recipe.ingredients ?? []).map((ri, index) => {
             const isChecked = checked.has(ri.ingredient);
             const sub = appliedSubs[ri.ingredient];
             const amount = useConverted && ri.converted_amount ? ri.converted_amount : ri.amount;
@@ -261,7 +399,7 @@ export default function RecipeDetailPage() {
             const isSubOpen = openSubPanel === ri.ingredient;
 
             return (
-              <li key={ri.ingredient} className={`ingredient-item${isChecked ? ' checked' : ''}`}>
+              <li key={`${ri.ingredient}-${index}`} className={`ingredient-item${isChecked ? ' checked' : ''}`}>
                 <div className="ingredient-row">
                   {user && (
                     <input

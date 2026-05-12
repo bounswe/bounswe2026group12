@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchStory, deleteStory, publishStory, unpublishStory } from '../services/storyService';
+import { saveStoryToPassport } from '../services/passportService';
 import HeritageBadge from '../components/HeritageBadge';
 import './StoryDetailPage.css';
 
@@ -16,6 +17,25 @@ export default function StoryDetailPage() {
   const [deleteError, setDeleteError] = useState('');
   const [togglingPublish, setTogglingPublish] = useState(false);
   const [publishError, setPublishError] = useState('');
+
+  // #590 — passport action
+  const [storySaved, setStorySaved] = useState(false);
+  const [savingStory, setSavingStory] = useState(false);
+  const [storySaveError, setStorySaveError] = useState('');
+
+  const handleSaveStory = useCallback(async () => {
+    if (savingStory || storySaved || !story) return;
+    setSavingStory(true);
+    setStorySaveError('');
+    try {
+      await saveStoryToPassport(story.id);
+      setStorySaved(true);
+    } catch {
+      setStorySaveError('Could not save. Try again.');
+    } finally {
+      setSavingStory(false);
+    }
+  }, [savingStory, storySaved, story]);
 
   useEffect(() => {
     let cancelled = false;
@@ -132,6 +152,20 @@ export default function StoryDetailPage() {
             <span className="linked-recipe-title">{story.recipe_title}</span>
           </Link>
         </section>
+      )}
+
+      {user && (
+        <div className="story-passport-actions">
+          <button
+            className={`btn btn-sm story-passport-btn${storySaved ? ' active' : ''}`}
+            onClick={handleSaveStory}
+            disabled={storySaved || savingStory}
+            aria-pressed={storySaved}
+          >
+            {storySaved ? '✓ Saved to Passport' : savingStory ? 'Saving…' : 'Save to Passport'}
+          </button>
+          {storySaveError && <p className="story-passport-error" role="alert">{storySaveError}</p>}
+        </div>
       )}
     </main>
   );

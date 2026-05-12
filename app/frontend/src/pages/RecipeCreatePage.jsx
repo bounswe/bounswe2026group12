@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import IngredientRow from '../components/IngredientRow';
+import StepsEditor from '../components/StepsEditor';
 import Toast from '../components/Toast';
 import DraftRestoreBanner from '../components/DraftRestoreBanner';
 import useDraftAutosave from '../hooks/useDraftAutosave';
@@ -51,15 +52,17 @@ export default function RecipeCreatePage() {
   const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState([makeRow()]);
+  const [steps, setSteps] = useState([]);
 
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
   const [regions, setRegions] = useState([]);
 
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
-  const draftState = { title, description, region, qaEnabled, rows };
+  const draftState = { title, description, region, qaEnabled, rows, steps };
   const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
 
   const isDirty = useRef(false);
@@ -94,8 +97,14 @@ export default function RecipeCreatePage() {
     if (draft.region !== undefined) setRegion(draft.region);
     if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
     if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    if (Array.isArray(draft.steps)) setSteps(draft.steps);
     clearDraft();
   }
+
+  const handleStepsChange = useCallback((next) => {
+    markDirty();
+    setSteps(next);
+  }, []);
 
   const handleRowChange = useCallback((rowId, field, value) => {
     markDirty();
@@ -137,18 +146,23 @@ export default function RecipeCreatePage() {
   }
 
   async function submit(publish) {
+    if (submitting) return;
     if (!validate()) {
       document.getElementById('error-summary')?.focus();
       return;
     }
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+    const cleanedSteps = steps
+      .map((s) => (typeof s === 'string' ? s.trim() : ''))
+      .filter((s) => s.length > 0);
     const payload = {
       title,
       description,
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
       is_published: publish,
+      steps: cleanedSteps,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -156,13 +170,22 @@ export default function RecipeCreatePage() {
       })),
     };
 
+    setSubmitting(true);
     try {
       const created = await createRecipe(payload);
       if (video || thumbnail) {
         const mediaData = new FormData();
         if (video) mediaData.append('video', video);
         if (thumbnail) mediaData.append('image', thumbnail);
-        await updateRecipe(created.id, mediaData);
+        try {
+          await updateRecipe(created.id, mediaData);
+        } catch {
+          clearDraft();
+          isDirty.current = false;
+          showToast('Recipe published but media upload failed — open it to retry.', 'error');
+          setTimeout(() => navigate(`/recipes/${created.id}`), 1500);
+          return;
+        }
       }
       clearDraft();
       isDirty.current = false;
@@ -173,6 +196,7 @@ export default function RecipeCreatePage() {
         publish ? 'Failed to publish recipe. Please try again.' : 'Failed to save draft. Please try again.',
         'error'
       );
+      setSubmitting(false);
     }
   }
 
@@ -310,10 +334,20 @@ export default function RecipeCreatePage() {
           </button>
         </section>
 
-        {/* ── Step 3: Media & options ── */}
+        {/* ── Step 3: Cooking steps ── */}
         <section className="form-step">
           <StepHeader
             number="3"
+            title="Steps"
+            hint="Walk readers through the recipe one step at a time. Order matters — use the arrows to reorder. Empty steps are skipped on save."
+          />
+          <StepsEditor value={steps} onChange={handleStepsChange} />
+        </section>
+
+        {/* ── Step 4: Media & options ── */}
+        <section className="form-step">
+          <StepHeader
+            number="4"
             title="Media & Options"
             hint="Upload a photo or video, and choose your settings."
           />
@@ -370,6 +404,7 @@ export default function RecipeCreatePage() {
           <button
             type="button"
             className="btn btn-outline"
+            disabled={submitting}
             onClick={() => submit(false)}
           >
             Save as draft
@@ -377,9 +412,10 @@ export default function RecipeCreatePage() {
           <button
             type="button"
             className="btn btn-primary publish-btn"
+            disabled={submitting}
             onClick={() => submit(true)}
           >
-            Publish Recipe
+            {submitting ? 'Publishing…' : 'Publish Recipe'}
           </button>
           <p className="publish-note">
             Drafts stay private to you. Published recipes are visible to everyone.

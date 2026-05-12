@@ -220,3 +220,45 @@ describe('RecipeEditPage — draft auto-save', () => {
     expect(screen.getByLabelText(/title/i).value).toBe('Restored Title');
   });
 });
+
+describe('RecipeEditPage — steps', () => {
+  it('pre-fills the StepsEditor from recipe.steps on load', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({
+      ...mockRecipe,
+      steps: ['First do this', 'Then that'],
+    });
+    renderPage();
+    await waitFor(() => expect(screen.getByLabelText('Step 1')).toHaveValue('First do this'));
+    expect(screen.getByLabelText('Step 2')).toHaveValue('Then that');
+  });
+
+  it('renders no step rows when recipe.steps is missing', async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByLabelText(/title/i)).toHaveValue('Baklava'));
+    expect(screen.queryByLabelText('Step 1')).not.toBeInTheDocument();
+  });
+
+  it('PATCHes the recipe with the trimmed steps array on save', async () => {
+    recipeService.fetchRecipe.mockResolvedValue({
+      ...mockRecipe,
+      steps: ['Old step'],
+    });
+    recipeService.updateRecipe.mockResolvedValue({});
+    renderPage();
+    await waitFor(() => screen.getByLabelText('Step 1'));
+
+    fireEvent.change(screen.getByLabelText('Step 1'), { target: { value: '  Updated step  ' } });
+    fireEvent.click(screen.getByRole('button', { name: /add step/i }));
+    fireEvent.change(screen.getByLabelText('Step 2'), { target: { value: 'Second step' } });
+    fireEvent.click(screen.getByRole('button', { name: /add step/i }));
+    // leave Step 3 blank — should be dropped
+
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    await waitFor(() =>
+      expect(recipeService.updateRecipe).toHaveBeenCalledWith(
+        '1',
+        expect.objectContaining({ steps: ['Updated step', 'Second step'] })
+      )
+    );
+  });
+});

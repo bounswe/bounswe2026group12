@@ -21,6 +21,12 @@ export type RecipeDetail = {
   /** Normalized to `{ id, username }`; raw API may send `author` as user pk only. */
   author?: number | { id: number; username?: string };
   ingredients?: RecipeIngredientRow[];
+  /**
+   * Ordered cooking steps surfaced by backend (#806). Each entry is a plain
+   * string; embedded newlines are preserved on render. Optional because older
+   * payloads omit the field — UI treats `undefined`/empty as "no steps".
+   */
+  steps?: string[];
   /** Matches web `RecipeEditPage` (`qa_enabled`). */
   qa_enabled?: boolean;
   rank_score?: number;
@@ -49,4 +55,11 @@ export type RecipeDetail = {
    */
   is_bookmarked?: boolean;
   bookmark_count?: number;
+  /**
+   * "I tried this" flag surfaced by backend #584 ("Stamp" model, #599).
+   * Optional because older / minimal payloads can omit it — UI treats
+   * `undefined` as "not yet known" rather than "false". A successful try
+   * also implicitly pins the recipe to the user's cultural passport.
+   */
+  is_tried?: boolean;
 };

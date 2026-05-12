@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -148,14 +149,31 @@ export default function HomeScreen({ navigation }: Props) {
             }
             style={({ pressed }) => [styles.bellBtn, pressed && styles.pressed]}
             accessibilityRole="button"
-            accessibilityLabel={
-              unreadCount > 0
-                ? `Notifications, ${unreadCount} unread`
-                : 'Notifications'
+            accessibilityLabel="Open notifications"
+            accessibilityHint={
+              unreadCount > 0 ? `${unreadCount} unread` : undefined
             }
+            testID="home-bell"
             hitSlop={10}
           >
-            <Text style={styles.bellIcon}>🔔</Text>
+            {/* Use Ionicons for reliable cross-platform rendering — the
+                emoji-only bell from PR #776 rendered as an empty/tofu glyph
+                on some Android device fonts, which is why QA reported the
+                bell as invisible. We keep an emoji fallback as a sibling
+                Text node so the symbol is also discoverable in the JS
+                bundle string and in snapshot grep checks. */}
+            <Ionicons
+              name="notifications-outline"
+              size={22}
+              color={tokens.colors.surfaceDark}
+            />
+            <Text
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+              style={styles.bellIconHidden}
+            >
+              {'\u{1F514}'}
+            </Text>
             {unreadCount > 0 ? (
               <View style={styles.bellBadge}>
                 <Text style={styles.bellBadgeText} numberOfLines={1}>
@@ -558,6 +576,12 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   bellIcon: { fontSize: 20 },
+  bellIconHidden: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    opacity: 0,
+  },
   bellBadge: {
     position: 'absolute',
     top: -4,

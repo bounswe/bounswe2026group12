@@ -5,6 +5,7 @@ import HeritageMapScreen from '../screens/HeritageMapScreen';
 import HeritageScreen from '../screens/HeritageScreen';
 import IngredientMigrationMapScreen from '../screens/IngredientMigrationMapScreen';
 import CulturalCalendarScreen from '../screens/CulturalCalendarScreen';
+import CultureDetailScreen from '../screens/CultureDetailScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -12,6 +13,7 @@ import MapDiscoveryScreen from '../screens/MapDiscoveryScreen';
 import MessageThreadScreen from '../screens/MessageThreadScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
@@ -21,7 +23,6 @@ import SearchScreen from '../screens/SearchScreen';
 import StoryCreateScreen from '../screens/StoryCreateScreen';
 import StoryDetailScreen from '../screens/StoryDetailScreen';
 import StoryEditScreen from '../screens/StoryEditScreen';
-import PassportScreen from '../screens/PassportScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import type { RootStackParamList } from './types';
 
@@ -89,11 +90,6 @@ export function PublicStackNavigator() {
         options={{ title: 'Profile' }}
       />
       <Stack.Screen
-        name="Passport"
-        component={PassportScreen}
-        options={{ title: 'Passport' }}
-      />
-      <Stack.Screen
         name="Inbox"
         component={InboxScreen}
         options={{ title: 'Messages' }}
@@ -107,6 +103,11 @@ export function PublicStackNavigator() {
         name="Onboarding"
         component={OnboardingScreen}
         options={{ title: 'Cultural Onboarding' }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: 'Edit profile', headerShown: false }}
       />
       <Stack.Screen
         name="MapDiscovery"
@@ -152,6 +153,11 @@ export function PublicStackNavigator() {
         name="Notifications"
         component={NotificationsScreen}
         options={{ title: 'Notifications' }}
+      />
+      <Stack.Screen
+        name="CultureDetail"
+        component={CultureDetailScreen}
+        options={{ title: 'Culture' }}
       />
     </Stack.Navigator>
   );

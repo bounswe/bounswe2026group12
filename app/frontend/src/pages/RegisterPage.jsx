@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const animationClass = location.state?.from === 'login' ? 'auth-enter-right' : 'auth-enter-left';
 
@@ -27,6 +28,7 @@ export default function RegisterPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (submitting) return;
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -34,12 +36,15 @@ export default function RegisterPage() {
     }
     setErrors({});
     setApiError('');
+    setSubmitting(true);
     try {
       const data = await registerRequest(username, email, password);
       login(data.user, data.access, data.refresh);
       navigate('/onboarding');
     } catch (err) {
       setApiError(extractApiError(err, 'Registration failed. Please try again.'));
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -78,7 +83,9 @@ export default function RegisterPage() {
           {errors.password && <span className="field-error">{errors.password}</span>}
         </div>
         {apiError && <p className="api-error">{apiError}</p>}
-        <button type="submit" className="btn btn-primary auth-submit">Register</button>
+        <button type="submit" className="btn btn-primary auth-submit" disabled={submitting}>
+          {submitting ? 'Registering…' : 'Register'}
+        </button>
       </form>
       <p className="auth-footer">Already have an account? <Link to="/login" state={{ from: 'register' }}>Log In</Link></p>
     </main>

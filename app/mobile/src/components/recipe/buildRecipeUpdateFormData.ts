@@ -10,6 +10,15 @@ export function buildRecipePatchJsonBody(input: {
   description: string;
   qaEnabled: boolean;
   rows: AuthoringIngredientRow[];
+  /**
+   * Already-trimmed cooking steps (#806). Caller is responsible for trimming
+   * and dropping empty rows via `trimStepsForPayload` so this builder stays
+   * dumb. Backend `Recipe.steps` is a JSONField, so it rides the JSON PATCH
+   * path alongside `ingredients_write` rather than the multipart upload used
+   * for media files. Omitted from the body when undefined so callers that
+   * don't touch steps don't accidentally clear the server value.
+   */
+  steps?: string[];
 }): Record<string, unknown> {
   // Require an ingredient + a non-empty amount. The unit is *not* required —
   // backend accepts `null` and we no longer silently drop unit-less rows
@@ -25,7 +34,7 @@ export function buildRecipePatchJsonBody(input: {
   // Including it here used to silently null the region on every edit because
   // `Number("Aegean")` is `NaN`. Until a proper region picker lands, leaving
   // the field out of the payload keeps the existing region untouched.
-  return {
+  const body: Record<string, unknown> = {
     title: input.title.trim(),
     description: input.description.trim(),
     qa_enabled: input.qaEnabled,
@@ -36,6 +45,10 @@ export function buildRecipePatchJsonBody(input: {
       unit: r.unit.id ?? null,
     })),
   };
+  if (input.steps !== undefined) {
+    body.steps = input.steps;
+  }
+  return body;
 }
 
 /** Multipart PATCH with only a new video file (after JSON patch saved other fields). */

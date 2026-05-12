@@ -117,7 +117,7 @@ export default function InboxPage() {
             <li key={thread.id}>
               <Link to={`/inbox/${thread.id}`} className="thread-row">
                 <div className="thread-avatar" aria-hidden="true">
-                  {thread.otherUser.username[0].toUpperCase()}
+                  {thread.otherUser.username?.[0]?.toUpperCase() ?? '?'}
                 </div>
                 <div className="thread-info">
                   <div className="thread-header-row">
