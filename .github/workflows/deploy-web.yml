@@ -73,10 +73,10 @@ jobs:
               docker stop genipe-db || true
             fi
 
-            # Bring up the compose stack. The backend entrypoint runs migrate,
-            # collectstatic, and the idempotent seed_* commands (RUN_SEEDERS,
-            # on by default) before gunicorn starts; that's covered by the
-            # backend healthcheck's 180s start_period.
+            # Bring up the compose stack. The backend entrypoint runs migrate
+            # and collectstatic automatically before gunicorn starts. Seeding
+            # is a separate manual step — see the "Seed database" workflow
+            # (.github/workflows/seed-db.yml) and ops/PROD.md.
             # --force-recreate guards against stale containers that survive a
             # config change (e.g. when the prod overlay adds ports or volumes
             # that compose's normal diff misses on already-running containers).
