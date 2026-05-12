@@ -19,7 +19,7 @@ from apps.notifications.models import Notification, DeviceToken
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, IngredientSubstitution, Unit,
     DietaryTag, EventTag, Religion, Comment, Vote, EndangeredNote,
-    RecipeCulturalContext, IngredientRoute
+    RecipeCulturalContext, IngredientRoute, Rating
 )
 from apps.stories.models import Story, StoryRecipeLink, StoryComment, StoryVote
 from apps.passport.models import Quest, UserQuest
@@ -52,6 +52,7 @@ class Command(BaseCommand):
         cultural_events_data = data.get('cultural_events', [])
         ingredient_routes_data = data.get('ingredient_routes', [])
         quests_data = data.get('quests', [])
+        recipe_ratings_data = data.get('recipe_ratings', [])
 
         if options['dry_run']:
             self.stdout.write(
@@ -60,6 +61,7 @@ class Command(BaseCommand):
                 f'{len(data["stories"])} stories, '
                 f'{len(data.get("recipe_comments", []))} recipe comments, '
                 f'{len(data.get("story_comments", []))} story comments, '
+                f'{len(recipe_ratings_data)} recipe ratings, '
                 f'{len(data["cultural_content"])} cultural content cards, '
                 f'{len(quests_data)} quests, '
                 f'{len(substitutions_data)} ingredient substitutions, '
@@ -76,6 +78,7 @@ class Command(BaseCommand):
             stories = self._seed_stories(data['stories'], users, recipes)
             self._seed_recipe_comments(data.get('recipe_comments', []), users, recipes)
             self._seed_story_comments(data.get('story_comments', []), users, stories)
+            rating_count = self._seed_recipe_ratings(recipe_ratings_data, users, recipes)
             cards = self._seed_cultural_content(data['cultural_content'], recipes, stories)
             quest_count = self._seed_quests(quests_data)
             sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
@@ -85,7 +88,8 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(users)} users, {len(recipes)} recipes, '
-            f'{len(stories)} stories, {len(cards)} cultural content cards, '
+            f'{len(stories)} stories, {rating_count} recipe ratings, '
+            f'{len(cards)} cultural content cards, '
             f'{quest_count} quests, '
             f'{sub_created} substitutions added ({sub_skipped} already present), '
             f'{heritage_stats["groups"]} heritage groups '
@@ -125,6 +129,7 @@ class Command(BaseCommand):
         Story.objects.all().delete()
         Vote.objects.all().delete()
         Comment.objects.all().delete()
+        Rating.objects.all().delete()
         RecipeIngredient.objects.all().delete()
         RecipeCulturalContext.objects.all().delete()
         Recipe.objects.all().delete()
@@ -321,6 +326,34 @@ class Command(BaseCommand):
             )
             if c.get('ref'):
                 id_map[c['ref']] = comment
+
+    def _seed_recipe_ratings(self, ratings_data, users, recipes):
+        """Seed 1-5 star recipe ratings.
+
+        Each Rating.objects.create() fires the post_save signal that refreshes
+        the recipe's average_rating / rating_count, so no explicit aggregate
+        update is needed here. Duplicate (user, recipe) pairs are skipped.
+        """
+        count = 0
+        seen = set()
+        for row in ratings_data:
+            recipe = recipes.get(row['recipe'])
+            if not recipe:
+                raise CommandError(
+                    f"recipe_ratings: recipe '{row['recipe']}' not found in fixture."
+                )
+            user = users.get(row['user'])
+            if not user:
+                raise CommandError(
+                    f"recipe_ratings: user '{row['user']}' not found in fixture."
+                )
+            key = (user.id, recipe.id)
+            if key in seen:
+                continue
+            seen.add(key)
+            Rating.objects.create(user=user, recipe=recipe, score=row['score'])
+            count += 1
+        return count
 
     def _seed_cultural_content(self, cards_data, recipes, stories):
         cards = []
