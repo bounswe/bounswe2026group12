@@ -2,6 +2,17 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Peer dependencies note
+
+The project uses React 19, but `react-simple-maps@3.0.0` (used by the passport
+world map) only declares peer compatibility up to React 18. Versions 3.1+ that
+support React 19 are not published yet, so we accept the unmet peer for now.
+
+To keep `npm install` / `npm ci` working without surprises, a local `.npmrc`
+sets `legacy-peer-deps=true`. The Docker build (`Dockerfile`) passes the same
+flag explicitly. If you ever bypass the `.npmrc` (e.g. running npm from a
+different cwd), use `npm install --legacy-peer-deps`.
+
 ## Available Scripts
 
 In the project directory, you can run:
