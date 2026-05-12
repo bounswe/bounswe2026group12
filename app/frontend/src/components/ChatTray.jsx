@@ -2,12 +2,12 @@ import { useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChatContext } from '../context/ChatContext';
 import { AuthContext } from '../context/AuthContext';
-import { fetchMessages, sendMessage, markThreadRead } from '../services/messageService';
+import { fetchMessages, sendMessage } from '../services/messageService';
 import './ChatTray.css';
 
 function relativeTime(isoString) {
   if (!isoString) return '';
-  const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
+  const diff = Math.max(0, Math.floor((Date.now() - new Date(isoString).getTime()) / 1000));
   if (diff < 60) return `${diff}s`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
@@ -27,7 +27,6 @@ function ChatConversation({ thread, currentUser, onBack }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
-    markThreadRead(thread.id).catch(() => {});
     fetchMessages(thread.id)
       .then(setMessages)
       .catch(() => {});
@@ -37,15 +36,7 @@ function ChatConversation({ thread, currentUser, onBack }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [body]);
-
-  async function handleSend() {
+  const handleSend = useCallback(async () => {
     const trimmed = body.trim();
     if (!trimmed || sending) return;
     setSending(true);
@@ -58,7 +49,14 @@ function ChatConversation({ thread, currentUser, onBack }) {
     } finally {
       setSending(false);
     }
-  }
+  }, [body, sending, thread.id]);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  }, [handleSend]);
 
   return (
     <div className="chat-conv">
