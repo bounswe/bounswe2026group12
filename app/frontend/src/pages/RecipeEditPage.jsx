@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
+import StepsEditor from '../components/StepsEditor';
 import Toast from '../components/Toast';
 import DraftRestoreBanner from '../components/DraftRestoreBanner';
 import useDraftAutosave from '../hooks/useDraftAutosave';
@@ -51,6 +52,7 @@ export default function RecipeEditPage() {
   const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(false);
   const [rows, setRows] = useState([]);
+  const [steps, setSteps] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -60,7 +62,7 @@ export default function RecipeEditPage() {
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   const draftKey = `draft:recipe:${id}`;
-  const draftState = { title, description, region, qaEnabled, rows };
+  const draftState = { title, description, region, qaEnabled, rows, steps };
   const { savedDraft, clearDraft } = useDraftAutosave(draftKey, draftState, { enabled: !loading });
 
   useEffect(() => {
@@ -79,6 +81,7 @@ export default function RecipeEditPage() {
             ? recipeData.ingredients.map(makeRowFromIngredient)
             : [makeEmptyRow()]
         );
+        setSteps(Array.isArray(recipeData.steps) ? recipeData.steps : []);
         setIngredients(ings);
         setUnits(uns);
       })
@@ -102,6 +105,7 @@ export default function RecipeEditPage() {
     if (draft.region !== undefined) setRegion(draft.region);
     if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
     if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    if (Array.isArray(draft.steps)) setSteps(draft.steps);
     clearDraft();
   }
 
@@ -147,12 +151,16 @@ export default function RecipeEditPage() {
     if (!validate()) return;
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+    const cleanedSteps = steps
+      .map((s) => (typeof s === 'string' ? s.trim() : ''))
+      .filter((s) => s.length > 0);
     const payload = {
       title,
       description,
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
       is_published: publish,
+      steps: cleanedSteps,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -283,6 +291,14 @@ export default function RecipeEditPage() {
           >
             + Add Ingredient
           </button>
+        </section>
+
+        <section className="recipe-edit-steps-section">
+          <h2>Steps</h2>
+          <p className="field-hint">
+            Walk readers through the recipe one step at a time. Order matters — use the arrows to reorder. Empty steps are skipped on save.
+          </p>
+          <StepsEditor value={steps} onChange={setSteps} />
         </section>
 
         <div className="recipe-form-actions">

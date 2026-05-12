@@ -345,3 +345,36 @@ describe('RecipeDetailPage cultural facts', () => {
     expect(culturalFactService.fetchCulturalFacts).not.toHaveBeenCalled();
   });
 });
+
+describe('RecipeDetailPage steps section', () => {
+  it('renders a numbered Steps section when recipe.steps has items', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      steps: ['Boil the water', 'Add the pasta', 'Drain and serve'],
+    });
+    renderPage();
+    await screen.findByText('Baklava');
+    expect(screen.getByRole('heading', { name: /^steps$/i })).toBeInTheDocument();
+    expect(screen.getByText('Boil the water')).toBeInTheDocument();
+    expect(screen.getByText('Add the pasta')).toBeInTheDocument();
+    expect(screen.getByText('Drain and serve')).toBeInTheDocument();
+  });
+
+  it('hides the Steps section when recipe.steps is empty', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      steps: [],
+    });
+    renderPage();
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('heading', { name: /^steps$/i })).not.toBeInTheDocument();
+  });
+
+  it('hides the Steps section when recipe.steps is missing entirely', async () => {
+    const { steps: _omit, ...recipeWithoutSteps } = { ...mockRecipe, steps: undefined };
+    recipeService.fetchRecipe.mockResolvedValueOnce(recipeWithoutSteps);
+    renderPage();
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('heading', { name: /^steps$/i })).not.toBeInTheDocument();
+  });
+});
