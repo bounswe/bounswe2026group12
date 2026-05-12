@@ -38,17 +38,18 @@ function renderMap(regions) {
   );
 }
 
-// Turkey → "Anatolia", Greece → "Aegean" per countryRegions.js.
+// Turkey → "Anatolian", Greece → "Greece" per countryRegions.js (names match
+// the backend seed in app/backend/apps/recipes/migrations/0004_seed_regions.py).
 const REGIONS = [
-  { id: 1, name: 'Anatolia', content_count: { recipes: 4,  stories: 2 } },
-  { id: 2, name: 'Aegean',   content_count: { recipes: 12, stories: 5 } },
+  { id: 1, name: 'Anatolian', content_count: { recipes: 4,  stories: 2 } },
+  { id: 2, name: 'Greece',    content_count: { recipes: 12, stories: 5 } },
 ];
 
 describe('RegionContentMap', () => {
   it('shows N recipes · M stories on hover for a mapped country', () => {
     renderMap(REGIONS);
     fireEvent.mouseEnter(screen.getByTestId('geo-Turkey'));
-    expect(screen.getByText(/anatolia/i)).toBeInTheDocument();
+    expect(screen.getByText(/anatolian/i)).toBeInTheDocument();
     expect(screen.getByText(/4 recipes.*2 stories/i)).toBeInTheDocument();
   });
 
