@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MapZoomControls } from '../components/map/MapZoomControls';
 import { ErrorView } from '../components/ui/ErrorView';
@@ -132,6 +132,17 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
 
   const topRegion = clusters[0] ?? null;
 
+  /** Visual base for the fan: mean of all region pin coords. */
+  const baseCoord = useMemo<LatLng | null>(() => {
+    if (clusters.length === 0) return null;
+    const sumLat = clusters.reduce((acc, c) => acc + c.coords.latitude, 0);
+    const sumLng = clusters.reduce((acc, c) => acc + c.coords.longitude, 0);
+    return {
+      latitude: sumLat / clusters.length,
+      longitude: sumLng / clusters.length,
+    };
+  }, [clusters]);
+
   // Seed expansion state: top region open, others collapsed.
   useEffect(() => {
     if (!topRegion) return;
@@ -243,6 +254,31 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
           style={styles.map}
           accessibilityLabel={`Heritage map for ${group.name}`}
         >
+          {baseCoord
+            ? clusters.map((cluster) => (
+                <Polyline
+                  key={`line-${cluster.region}`}
+                  coordinates={[baseCoord, cluster.coords]}
+                  strokeColor={tokens.colors.surfaceDark}
+                  strokeWidth={2}
+                />
+              ))
+            : null}
+
+          {baseCoord ? (
+            <Marker
+              key="heritage-base"
+              coordinate={baseCoord}
+              anchor={{ x: 0.5, y: 0.5 }}
+              title={group.name}
+              description={`${totalMembers} member${totalMembers === 1 ? '' : 's'} across ${clusters.length} region${clusters.length === 1 ? '' : 's'}`}
+            >
+              <View style={styles.heritageBase}>
+                <Text style={styles.heritageBaseGlyph}>🏛</Text>
+              </View>
+            </Marker>
+          ) : null}
+
           {clusters.map((cluster) => {
             const isTop = topRegion?.region === cluster.region;
             const size = markerSizeForCount(cluster.members.length);
@@ -433,6 +469,18 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: tokens.colors.surfaceDark,
   },
+  heritageBase: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 3,
+    borderColor: tokens.colors.surfaceDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.md,
+  },
+  heritageBaseGlyph: { fontSize: 20 },
   legend: {
     position: 'absolute',
     top: 16,
