@@ -25,6 +25,13 @@ export type RegionRecipePin = {
   coords: LatLng;
 };
 
+export type RegionStoryPin = {
+  id: number;
+  title: string;
+  coords: LatLng;
+  author: string | null;
+};
+
 export type UnlocatedRecipe = {
   id: string;
   title: string;
@@ -200,4 +207,58 @@ export async function fetchRegionRecipes(
   }
 
   return { located, unlocated, bbox, centroid };
+}
+
+/**
+ * Fetch stories scoped to a region and return only those with usable lat/lng
+ * (closes #731). Backend #730 added `latitude`/`longitude` to the Story
+ * serializer; DRF may serialize them as numbers OR strings depending on the
+ * underlying field type, so we coerce defensively. Stories without coords are
+ * silently dropped — until the seed data fills them in, this list will often
+ * be empty, and the screen should still show recipes as before.
+ */
+export async function fetchRegionStories(regionId: number): Promise<RegionStoryPin[]> {
+  const toNum = (v: unknown): number | null => {
+    if (v == null) return null;
+    if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+    if (typeof v === 'string') {
+      const n = parseFloat(v);
+      return Number.isFinite(n) ? n : null;
+    }
+    return null;
+  };
+
+  const collected: any[] = [];
+  let path: string | null = `/api/stories/?region=${encodeURIComponent(String(regionId))}`;
+  while (path) {
+    const data: any = await apiGetJson<any>(path);
+    if (Array.isArray(data)) {
+      collected.push(...data);
+      break;
+    }
+    if (data && Array.isArray(data.results)) {
+      collected.push(...data.results);
+      path = nextPagePath(data.next);
+    } else {
+      break;
+    }
+  }
+
+  const pins: RegionStoryPin[] = [];
+  for (const s of collected) {
+    const lat = toNum(s.latitude);
+    const lng = toNum(s.longitude);
+    if (lat == null || lng == null) continue;
+    const id = Number(s.id);
+    if (!Number.isFinite(id)) continue;
+    const title = typeof s.title === 'string' ? s.title : '';
+    const author =
+      typeof s.author_username === 'string'
+        ? s.author_username
+        : typeof s.author === 'string'
+          ? s.author
+          : null;
+    pins.push({ id, title, coords: { latitude: lat, longitude: lng }, author });
+  }
+  return pins;
 }
