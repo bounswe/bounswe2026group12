@@ -36,4 +36,10 @@ export type RecipeDetail = {
     source_url: string;
     created_at?: string;
   }>;
+  /** Aggregate star rating (1-5, decimal). Backend may serialize DecimalField as string. */
+  average_rating?: number | string | null;
+  /** Number of users who have rated this recipe. */
+  rating_count?: number;
+  /** Current user's submitted score (1-5) or null when not rated / unauthenticated. */
+  user_rating?: number | null;
 };

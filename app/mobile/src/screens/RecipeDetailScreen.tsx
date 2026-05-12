@@ -10,6 +10,8 @@ import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { IngredientSubstitutesSheet } from '../components/recipe/IngredientSubstitutesSheet';
 import { LinkedStoryPreviewCard } from '../components/recipe/LinkedStoryPreviewCard';
+import { StarRatingRow, type StarScore } from '../components/recipe/StarRatingRow';
+import { removeRating, submitRating } from '../services/ratingService';
 import { EndangeredHeritageSection } from '../components/heritage/EndangeredHeritageSection';
 import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
@@ -42,6 +44,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [culturalFacts, setCulturalFacts] = useState<CulturalFact[]>([]);
+  const [ratingBusy, setRatingBusy] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -236,6 +239,103 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
 
   /** Hide Edit until session is restored from storage (avoids flash for signed-in authors). */
   const canEdit = isReady && isAuthenticated && isRecipeAuthor(user, recipe);
+  const isOwnRecipe = isReady && isAuthenticated && isRecipeAuthor(user, recipe);
+
+  const avgRatingNum = (() => {
+    const v = recipe.average_rating;
+    if (v == null) return null;
+    if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+  })();
+  const ratingCount = recipe.rating_count ?? 0;
+  const userRating = recipe.user_rating ?? null;
+  const ratingInteractive = isReady && isAuthenticated && !isOwnRecipe;
+
+  async function handleRate(score: StarScore | 0) {
+    if (!recipe || ratingBusy) return;
+    if (!isAuthenticated) {
+      navigation.navigate('Login');
+      return;
+    }
+    if (isOwnRecipe) {
+      showToast('You cannot rate your own recipe.', 'error');
+      return;
+    }
+    // Snapshot for rollback.
+    const prevUser = recipe.user_rating ?? null;
+    const prevAvg = avgRatingNum;
+    const prevCount = ratingCount;
+
+    // Optimistic aggregate recompute (best-effort; backend response is authoritative).
+    let optimisticAvg = prevAvg;
+    let optimisticCount = prevCount;
+    if (score === 0) {
+      if (prevUser != null && prevCount > 0) {
+        const sum = (prevAvg ?? 0) * prevCount - prevUser;
+        optimisticCount = prevCount - 1;
+        optimisticAvg = optimisticCount > 0 ? sum / optimisticCount : null;
+      }
+    } else if (prevUser == null) {
+      const sum = (prevAvg ?? 0) * prevCount + score;
+      optimisticCount = prevCount + 1;
+      optimisticAvg = sum / optimisticCount;
+    } else {
+      const sum = (prevAvg ?? 0) * prevCount - prevUser + score;
+      optimisticAvg = prevCount > 0 ? sum / prevCount : score;
+    }
+
+    setRatingBusy(true);
+    setRecipe((r) =>
+      r
+        ? {
+            ...r,
+            user_rating: score === 0 ? null : score,
+            average_rating: optimisticAvg,
+            rating_count: optimisticCount,
+          }
+        : r,
+    );
+
+    try {
+      if (score === 0) {
+        await removeRating(recipe.id);
+        // 204 — refetch to get authoritative aggregate.
+        setReloadToken((t) => t + 1);
+      } else {
+        const next = await submitRating(recipe.id, score);
+        setRecipe((r) =>
+          r
+            ? {
+                ...r,
+                user_rating: next.user_rating ?? score,
+                average_rating: next.average_rating,
+                rating_count: next.rating_count,
+              }
+            : r,
+        );
+      }
+    } catch (e) {
+      // Rollback.
+      setRecipe((r) =>
+        r
+          ? {
+              ...r,
+              user_rating: prevUser,
+              average_rating: prevAvg,
+              rating_count: prevCount,
+            }
+          : r,
+      );
+      const msg = e instanceof Error ? e.message : 'Could not save rating.';
+      showToast(
+        msg.includes('cannot rate your own') ? 'You cannot rate your own recipe.' : 'Could not save rating.',
+        'error',
+      );
+    } finally {
+      setRatingBusy(false);
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -292,6 +392,29 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
               <Text style={styles.editLinkText}>Edit recipe</Text>
             </Pressable>
           ) : null}
+
+          <View style={styles.ratingBlock}>
+            <StarRatingRow
+              value={userRating ?? (ratingInteractive ? 0 : avgRatingNum)}
+              size="lg"
+              readOnly={!ratingInteractive}
+              onChange={ratingInteractive ? handleRate : undefined}
+              ariaLabel={
+                ratingInteractive
+                  ? userRating
+                    ? `Your rating: ${userRating} of 5`
+                    : 'Rate this recipe'
+                  : avgRatingNum != null
+                    ? `Average rating ${avgRatingNum.toFixed(1)} of 5`
+                    : 'Not rated yet'
+              }
+            />
+            <Text style={styles.ratingCaption}>
+              {ratingCount === 0
+                ? 'Not rated yet'
+                : `${(avgRatingNum ?? 0).toFixed(1)} ★ · ${ratingCount} rating${ratingCount === 1 ? '' : 's'}`}
+            </Text>
+          </View>
 
           {recipe.image ? (
             <View style={styles.imageWrap} accessibilityLabel="Recipe image">
@@ -602,6 +725,8 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.surfaceDark,
   },
   editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
+  ratingBlock: { marginTop: 14, gap: 4 },
+  ratingCaption: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '600' },
   imageWrap: {
     marginTop: 14,
     width: '100%',
