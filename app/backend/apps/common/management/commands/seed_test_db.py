@@ -140,7 +140,7 @@ class Command(BaseCommand):
                 'region': med_region,
                 'is_published': True,
                 'ingredients': [
-                    {'name': 'Tomato', 'amount': 2, 'unit': 'units'},
+                    {'name': 'Tomato', 'amount': 2, 'unit': 'pieces'},
                     {'name': 'Garlic', 'amount': 3, 'unit': 'cloves'},
                     {'name': 'Olive Oil', 'amount': 50, 'unit': 'ml'}
                 ]
@@ -153,7 +153,7 @@ class Command(BaseCommand):
                 'is_published': True,
                 'ingredients': [
                     {'name': 'Lentils', 'amount': 1, 'unit': 'cups'},
-                    {'name': 'Onion', 'amount': 1, 'unit': 'units'},
+                    {'name': 'Onion', 'amount': 1, 'unit': 'pieces'},
                     {'name': 'Olive Oil', 'amount': 2, 'unit': 'tablespoons'}
                 ]
             }
@@ -185,17 +185,16 @@ class Command(BaseCommand):
         self.stdout.write('Creating stories...')
         cook = User.objects.get(username='cook')
         recipe = Recipe.objects.first()
-        
+
         stories_data = [
             {
                 'title': 'Grandma\'s Kitchen Secrets',
                 'body': 'I remember the smell of fresh herbs and olive oil every Sunday... My grandmother used to tell me that the secret to a good Karn\u0131yar\u0131k is to salt the eggplants first.',
                 'author': cook,
-                'linked_recipe': recipe,
                 'is_published': True
             }
         ]
-        
+
         for s_info in stories_data:
             story, created = Story.objects.get_or_create(
                 title=s_info['title'],
@@ -203,6 +202,10 @@ class Command(BaseCommand):
                 defaults=s_info
             )
             if created:
+                # ``Story`` links recipes through a M2M (``linked_recipes``),
+                # so the association has to be set after the row exists.
+                if recipe:
+                    story.linked_recipes.add(recipe)
                 self.stdout.write(f'Created story: {story.title}')
             else:
                 self.stdout.write(f'Story already exists: {story.title}')
