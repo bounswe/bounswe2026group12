@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { NotificationContext } from '../context/NotificationContext';
 import NotificationTray from '../components/NotificationTray';
@@ -141,5 +142,59 @@ describe('NotificationTray', () => {
     fireEvent.click(screen.getByRole('link', { name: /click me/i }));
     expect(markRead).toHaveBeenCalledWith(99);
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  });
+});
+
+describe('NotificationTray — rating notifications (#739)', () => {
+  it('renders a star icon for type === "rating"', async () => {
+    renderTray({
+      notifications: [
+        {
+          id: 99,
+          type: 'rating',
+          message: 'alice rated your recipe.',
+          recipeId: 5,
+          recipeTitle: 'Mercimek',
+          actorUsername: 'alice',
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    });
+    await userEvent.click(screen.getByRole('button', { name: /notifications/i }));
+    expect(screen.getByText('★')).toBeInTheDocument();
+  });
+
+  it('links a rating notification to /recipes/<recipeId>', async () => {
+    renderTray({
+      notifications: [
+        {
+          id: 100,
+          type: 'rating',
+          message: 'bob rated your recipe.',
+          recipeId: 12,
+          recipeTitle: 'Pilav',
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    });
+    await userEvent.click(screen.getByRole('button', { name: /notifications/i }));
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', '/recipes/12');
+  });
+
+  it('keeps question / reply icons unchanged', async () => {
+    renderTray({
+      notifications: [
+        { id: 1, type: 'question', message: 'q', recipeId: 1, isRead: false, createdAt: new Date().toISOString() },
+        { id: 2, type: 'reply',    message: 'r', recipeId: 1, isRead: false, createdAt: new Date().toISOString() },
+        { id: 3, type: 'rating',   message: 't', recipeId: 1, isRead: false, createdAt: new Date().toISOString() },
+      ],
+    });
+    await userEvent.click(screen.getByRole('button', { name: /notifications/i }));
+    expect(screen.getByText('💬')).toBeInTheDocument();
+    expect(screen.getByText('↪')).toBeInTheDocument();
+    expect(screen.getByText('★')).toBeInTheDocument();
   });
 });

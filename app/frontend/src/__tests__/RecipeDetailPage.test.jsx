@@ -378,3 +378,100 @@ describe('RecipeDetailPage steps section', () => {
     expect(screen.queryByRole('heading', { name: /^steps$/i })).not.toBeInTheDocument();
   });
 });
+
+describe('RecipeDetailPage star rating', () => {
+  it('renders read-only stars with the average + count when present', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      average_rating: 4.5,
+      rating_count: 6,
+      user_rating: null,
+    });
+    renderPage('1', null);
+    expect(await screen.findByText('Baklava')).toBeInTheDocument();
+    expect(screen.getByText('4.5 (6)')).toBeInTheDocument();
+    // Anonymous: no interactive radios
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+  });
+
+  it('disables interactivity for the recipe author with a tooltip', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 3,
+      average_rating: 4,
+      rating_count: 2,
+    });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /can't rate your own recipe/i })).toBeInTheDocument();
+  });
+
+  it('lets a non-author authenticated user submit a rating via POST', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 99,
+      average_rating: null,
+      rating_count: 0,
+      user_rating: null,
+    });
+    recipeService.rateRecipe.mockResolvedValue({ average_rating: 5, rating_count: 1, user_rating: 5 });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    await userEvent.click(screen.getByRole('radio', { name: /5 stars/i }));
+    await waitFor(() => expect(recipeService.rateRecipe).toHaveBeenCalledWith('1', 5));
+  });
+});
+
+describe('RecipeDetailPage bookmark button', () => {
+  it('hides the bookmark button for anonymous viewers', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      is_bookmarked: false,
+      bookmark_count: 4,
+    });
+    renderPage('1', null);
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('button', { name: /bookmark|save/i })).not.toBeInTheDocument();
+  });
+
+  it('hides the bookmark button for the recipe author', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 3,
+      is_bookmarked: false,
+      bookmark_count: 1,
+    });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('button', { name: /bookmark|save/i })).not.toBeInTheDocument();
+  });
+
+  it('renders an unsaved bookmark button for a non-author authenticated viewer', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 99,
+      is_bookmarked: false,
+      bookmark_count: 2,
+    });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    const btn = screen.getByRole('button', { name: /bookmark this recipe/i });
+    expect(btn).toHaveTextContent(/save/i);
+  });
+
+  it('calls toggleBookmark and flips state on click', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 99,
+      is_bookmarked: false,
+      bookmark_count: 2,
+    });
+    recipeService.toggleBookmark.mockResolvedValue({ is_bookmarked: true, bookmark_count: 3 });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    await userEvent.click(screen.getByRole('button', { name: /bookmark this recipe/i }));
+    await waitFor(() => expect(recipeService.toggleBookmark).toHaveBeenCalledWith('1'));
+    expect(await screen.findByRole('button', { name: /remove bookmark/i })).toBeInTheDocument();
+  });
+});
