@@ -11,7 +11,7 @@ from PIL import Image
 
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, Unit,
-    DietaryTag, EventTag, Religion,
+    DietaryTag, EventTag, Religion, Rating,
 )
 from apps.stories.models import Story, StoryRecipeLink
 from apps.cultural_content.models import CulturalContent
@@ -99,6 +99,11 @@ MINIMAL_FIXTURE = {
             "region": "Aegean",
             "cultural_tags": ["test"]
         }
+    ],
+    "recipe_ratings": [
+        {"recipe": "Test Recipe One", "user": "testuser2", "score": 5},
+        {"recipe": "Test Recipe One", "user": "testuser1", "score": 3},
+        {"recipe": "Test Recipe Two", "user": "testuser1", "score": 4}
     ]
 }
 
@@ -285,3 +290,58 @@ class SeedCanonicalCommandTest(TestCase):
         self._run()
         recipe = Recipe.objects.get(title='Test Recipe One')
         self.assertEqual(recipe.meal_type, 'soup')
+
+    def test_seeds_recipe_ratings(self):
+        self._run()
+        self.assertEqual(Rating.objects.count(), 3)
+
+    def test_recipe_rating_aggregates_updated_after_seeding(self):
+        self._run()
+        recipe_one = Recipe.objects.get(title='Test Recipe One')
+        self.assertEqual(recipe_one.rating_count, 2)
+        self.assertEqual(float(recipe_one.average_rating), 4.0)  # (5 + 3) / 2
+        recipe_two = Recipe.objects.get(title='Test Recipe Two')
+        self.assertEqual(recipe_two.rating_count, 1)
+        self.assertEqual(float(recipe_two.average_rating), 4.0)
+
+    def test_recipe_ratings_associated_with_fixture_users_and_recipes(self):
+        self._run()
+        rating = Rating.objects.get(recipe__title='Test Recipe Two')
+        self.assertEqual(rating.user.username, 'testuser1')
+        self.assertEqual(rating.score, 4)
+
+    def test_duplicate_recipe_rating_is_skipped(self):
+        bad_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        bad_data['recipe_ratings'].append(
+            {"recipe": "Test Recipe One", "user": "testuser2", "score": 1}
+        )
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(bad_data, f)
+        self._run()
+        self.assertEqual(Rating.objects.count(), 3)
+        # first entry wins; the duplicate score=1 is ignored
+        self.assertEqual(
+            Rating.objects.get(recipe__title='Test Recipe One', user__username='testuser2').score, 5,
+        )
+
+    def test_missing_recipe_in_ratings_raises_error(self):
+        bad_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        bad_data['recipe_ratings'] = [
+            {"recipe": "Nonexistent Recipe", "user": "testuser1", "score": 4}
+        ]
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(bad_data, f)
+        with self.assertRaises(CommandError) as ctx:
+            self._run()
+        self.assertIn('Nonexistent Recipe', str(ctx.exception))
+
+    def test_missing_user_in_ratings_raises_error(self):
+        bad_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        bad_data['recipe_ratings'] = [
+            {"recipe": "Test Recipe One", "user": "ghost", "score": 4}
+        ]
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(bad_data, f)
+        with self.assertRaises(CommandError) as ctx:
+            self._run()
+        self.assertIn('ghost', str(ctx.exception))
