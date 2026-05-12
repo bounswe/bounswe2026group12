@@ -89,6 +89,63 @@ describe('CalendarPage', () => {
     expect(within(panel).getByRole('heading', { name: /nevruz/i })).toBeInTheDocument();
     expect(within(panel).getByRole('link', { name: /sumalak/i })).toHaveAttribute('href', '/recipes/10');
   });
+
+  it('tints the detail panel by event kind', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 1, name: 'Nevruz',      date_rule: 'fixed:03-21',    region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+      { id: 2, name: 'Eid al-Adha', date_rule: 'lunar:eid-adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+      { id: 3, name: 'Made-up',     date_rule: 'lunar:unknown',  region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    await userEvent.click(await screen.findByRole('button', { name: /open nevruz details/i }));
+    expect(screen.getByTestId('event-detail')).toHaveClass('tint-gregorian');
+    await userEvent.click(screen.getByRole('button', { name: /close details/i }));
+    await userEvent.click(screen.getByRole('button', { name: /open eid al-adha details/i }));
+    expect(screen.getByTestId('event-detail')).toHaveClass('tint-lunar');
+    await userEvent.click(screen.getByRole('button', { name: /close details/i }));
+    await userEvent.click(screen.getByRole('button', { name: /open made-up details/i }));
+    expect(screen.getByTestId('event-detail')).toHaveClass('tint-movable');
+  });
+
+  it('renders a date-rule legend below the header explaining badge colors', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([]);
+    renderPage();
+    const legend = await screen.findByLabelText(/date legend/i);
+    const { within } = require('@testing-library/react');
+    expect(within(legend).getByText(/gregorian date/i)).toBeInTheDocument();
+    expect(within(legend).getByText(/lunar.+movable/i)).toBeInTheDocument();
+  });
+
+  it('does NOT render the per-card lunar subline (replaced by the legend)', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 9, name: 'Eid al-Adha', date_rule: 'lunar:eid-adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    await screen.findByText(/eid al-adha/i);
+    expect(screen.queryByText(/on the lunar calendar/i)).not.toBeInTheDocument();
+  });
+
+  it('scrolls the detail panel into view when an event card is clicked', async () => {
+    const scrollSpy = jest.fn();
+    window.HTMLElement.prototype.scrollIntoView = scrollSpy;
+    renderPage();
+    const card = await screen.findByRole('button', { name: /open nevruz details/i });
+    await userEvent.click(card);
+    expect(scrollSpy).toHaveBeenCalled();
+  });
+
+  it('renders only the selected month panel when the month filter is set', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 100, name: 'Spring Equinox', date_rule: 'fixed:03-21', region: { id: 1, name: 'Anatolia' }, description: '', recipes: [] },
+    ]);
+    const { container } = renderPage();
+    await screen.findByText('Spring Equinox');
+    expect(container.querySelectorAll('[data-testid^="calendar-month-"]').length).toBe(12);
+    await userEvent.selectOptions(screen.getByLabelText(/month/i), '03');
+    await waitFor(() => expect(culturalEventService.fetchCulturalEvents).toHaveBeenLastCalledWith({ month: '03', region: '' }));
+    expect(container.querySelectorAll('[data-testid^="calendar-month-"]').length).toBe(1);
+    expect(container.querySelector('[data-testid="calendar-month-3"]')).toBeInTheDocument();
+  });
 });
 
 describe('CalendarPage — lunar resolution + subline (#669)', () => {
@@ -110,14 +167,6 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
     const monthPanel = screen.getByTestId(`calendar-month-${ramadanCurrentYear.month}`);
     const within = require('@testing-library/react').within;
     expect(within(monthPanel).getAllByText(/ramadan/i).length).toBeGreaterThan(0);
-  });
-
-  it('shows a lunar subline on every lunar event card', async () => {
-    culturalEventService.fetchCulturalEvents.mockResolvedValue([
-      { id: 2, name: 'Eid al-Adha', date_rule: 'lunar:eid-adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
-    ]);
-    renderPage();
-    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
   });
 
   it('keeps unresolved lunar events in a "Lunar / movable feasts" section with (movable)', async () => {
@@ -145,7 +194,7 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
       { id: 6, name: 'Eid al-Adha', date_rule: 'lunar:eid_al_adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
     ]);
     renderPage();
-    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
+    expect(await screen.findByText(/eid al-adha/i)).toBeInTheDocument();
     // (movable) only appears when unresolved; with the table entry it must NOT appear.
     expect(screen.queryByText(/\(movable\)/i)).not.toBeInTheDocument();
   });
@@ -155,15 +204,7 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
       { id: 7, name: 'Diwali', date_rule: 'lunar:diwali', region: { id: 1, name: 'Indian' }, description: '', recipes: [] },
     ]);
     renderPage();
-    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
+    expect(await screen.findByText(/diwali/i)).toBeInTheDocument();
     expect(screen.queryByText(/\(movable\)/i)).not.toBeInTheDocument();
-  });
-
-  it('shows the pretty event name in the subline rather than the raw slug', async () => {
-    culturalEventService.fetchCulturalEvents.mockResolvedValue([
-      { id: 8, name: 'Eid al-Adha', date_rule: 'lunar:eid_al_adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
-    ]);
-    renderPage();
-    expect(await screen.findByText(/On the lunar calendar: Eid al-Adha this year/i)).toBeInTheDocument();
   });
 });

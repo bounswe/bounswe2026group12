@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCulturalEvents } from '../services/culturalEventService';
 import { parseEventDate } from '../services/calendarService';
@@ -10,37 +10,19 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const LUNAR_PRETTY = {
-  'ramadan': 'Ramadan',
-  'eid-fitr': 'Eid al-Fitr',
-  'eid-al-fitr': 'Eid al-Fitr',
-  'eid-adha': 'Eid al-Adha',
-  'eid-al-adha': 'Eid al-Adha',
-  'kurban-bayrami': 'Eid al-Adha',
-  'mevlid': 'Mevlid',
-  'ashura': 'Ashura',
-  'diwali': 'Diwali',
-  'chuseok': 'Chuseok',
-  'carnaval': 'Carnaval',
-  'chinese-new-year': 'Chinese New Year',
-  'lunar-new-year': 'Lunar New Year',
-  'chunjie': 'Lunar New Year',
-  'homowo': 'Homowo',
-  'maslenitsa': 'Maslenitsa',
-};
-
-function prettyLunar(slug) {
-  if (!slug) return '';
-  const normalized = slug.toLowerCase().replace(/_/g, '-');
-  if (LUNAR_PRETTY[normalized]) return LUNAR_PRETTY[normalized];
-  return normalized.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
-}
-
 function ruleFromEvent(event) {
   const r = event.date_rule;
   if (typeof r !== 'string') return null;
   if (r.startsWith('fixed:')) return r.slice('fixed:'.length);
   return r;
+}
+
+function tintForEvent(event) {
+  const parsed = parseEventDate(ruleFromEvent(event));
+  if (!parsed) return 'tint-gregorian';
+  if (parsed.isLunar && parsed.lunarUnresolved) return 'tint-movable';
+  if (parsed.isLunar) return 'tint-lunar';
+  return 'tint-gregorian';
 }
 
 export default function CalendarPage() {
@@ -50,12 +32,20 @@ export default function CalendarPage() {
   const [month, setMonth] = useState('');
   const [region, setRegion] = useState('');
   const [selected, setSelected] = useState(null);
+  const detailRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
     fetchRegions().then((data) => { if (!cancelled) setRegions(data); }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    if (typeof detailRef.current?.scrollIntoView === 'function') {
+      detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [selected]);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,6 +84,17 @@ export default function CalendarPage() {
         </p>
       </header>
 
+      <ul className="calendar-legend" aria-label="Date legend">
+        <li>
+          <span className="calendar-event-badge" aria-hidden="true">Mar 21</span>
+          Gregorian date
+        </li>
+        <li>
+          <span className="calendar-event-badge is-lunar" aria-hidden="true">Mar 19</span>
+          Lunar / movable feast
+        </li>
+      </ul>
+
       <div className="calendar-filters">
         <label className="calendar-filter">
           <span>Month</span>
@@ -119,7 +120,11 @@ export default function CalendarPage() {
       {loading && <p className="page-status">Loading…</p>}
 
       <div className="calendar-grid">
-        {MONTHS.map((label, idx) => {
+        {(month
+          ? [parseInt(month, 10) - 1].filter((i) => i >= 0 && i <= 11)
+          : MONTHS.map((_, i) => i)
+        ).map((idx) => {
+          const label = MONTHS[idx];
           const monthEvents = grouped.byMonth[idx];
           return (
             <section
@@ -167,7 +172,11 @@ export default function CalendarPage() {
       )}
 
       {selected && (
-        <aside className="calendar-event-detail" data-testid="event-detail">
+        <aside
+          ref={detailRef}
+          className={`calendar-event-detail ${tintForEvent(selected)}`}
+          data-testid="event-detail"
+        >
           <button
             type="button"
             className="calendar-event-detail-close"
@@ -205,7 +214,6 @@ export default function CalendarPage() {
 function CalendarEventCard({ event, parsed, onSelect }) {
   const isLunar = Boolean(parsed?.isLunar);
   const isMovable = isLunar && parsed?.lunarUnresolved;
-  const pretty = isLunar ? prettyLunar(parsed.lunarName) : '';
   const dateLabel = isMovable
     ? '(movable)'
     : `${MONTHS[parsed.monthIndex].slice(0, 3)} ${parsed.day}`;
@@ -224,12 +232,6 @@ function CalendarEventCard({ event, parsed, onSelect }) {
         <span className="calendar-event-name">{event.name}</span>
         {event.region?.name && (
           <span className="calendar-event-region">{event.region.name}</span>
-        )}
-        {isLunar && (
-          <span className="calendar-event-lunar-subline">
-            ☾ On the lunar calendar: {pretty} this year
-            {isMovable ? ' (movable)' : ''}
-          </span>
         )}
       </button>
     </li>
