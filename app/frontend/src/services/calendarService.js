@@ -7,17 +7,35 @@ const USE_MOCK = process.env.REACT_APP_USE_MOCK === 'true';
 export const LUNAR_YEARLY = {
   2024: { ramadan: { month: 2, day: 10 }, 'eid-fitr': { month: 3, day: 10 }, 'eid-adha': { month: 5, day: 16 }, mevlid: { month: 9, day: 15 }, ashura: { month: 7, day: 17 } },
   2025: { ramadan: { month: 2, day: 28 }, 'eid-fitr': { month: 3, day: 30 }, 'eid-adha': { month: 5, day: 6 }, mevlid: { month: 9, day: 4 }, ashura: { month: 7, day: 5 } },
-  2026: { ramadan: { month: 2, day: 17 }, 'eid-fitr': { month: 3, day: 19 }, 'eid-adha': { month: 4, day: 26 }, mevlid: { month: 8, day: 24 }, ashura: { month: 6, day: 24 } },
+  2026: {
+    ramadan: { month: 2, day: 17 },
+    'eid-fitr': { month: 3, day: 19 },
+    'eid-al-fitr': { month: 3, day: 19 },
+    'eid-adha': { month: 5, day: 27 },
+    'eid-al-adha': { month: 5, day: 27 },
+    mevlid: { month: 8, day: 24 },
+    ashura: { month: 6, day: 24 },
+    diwali: { month: 11, day: 8 },
+    chuseok: { month: 9, day: 25 },
+    carnaval: { month: 2, day: 17 },
+    'chinese-new-year': { month: 2, day: 17 },
+    'lunar-new-year': { month: 2, day: 17 },
+    chunjie: { month: 2, day: 17 },
+    homowo: { month: 8, day: 30 },
+    maslenitsa: { month: 2, day: 16 },
+  },
 };
 
 
 // Extracts month index (0-based) and day from a date_rule string.
 // date_rule formats: "YYYY-MM-DD", "MM-DD", "lunar:ramadan", etc.
+// Lunar slugs are normalized (lowercased, `_` → `-`) before lookup so that
+// snake_case payloads from the backend (e.g. `lunar:eid_al_adha`) resolve.
 export function parseEventDate(rule) {
   if (!rule) return null;
 
   if (rule.startsWith('lunar:')) {
-    const lunarName = rule.replace('lunar:', '');
+    const lunarName = rule.replace('lunar:', '').toLowerCase().replace(/_/g, '-');
     const year = new Date().getFullYear();
     const yearTable = LUNAR_YEARLY[year];
     if (yearTable && yearTable[lunarName]) {

@@ -167,6 +167,19 @@ class Recipe(models.Model):
     is_published = models.BooleanField(default=False)
     is_heritage = models.BooleanField(default=False)
     heritage_notes = models.TextField(blank=True, default='')
+    
+    class MealType(models.TextChoices):
+        BREAKFAST = "breakfast", "Breakfast"
+        SOUP = "soup", "Soup"
+        MAIN_COURSE = "main_course", "Main Course"
+        DESSERT = "dessert", "Dessert"
+        SNACK = "snack", "Snack"
+        DRINK = "drink", "Drink"
+
+    meal_type = models.CharField(
+        max_length=20, choices=MealType.choices, blank=True, default=""
+    )
+    
     heritage_status = models.CharField(
         max_length=16, choices=HeritageStatus.choices, default=HeritageStatus.NONE,
         help_text='Endangered-heritage tag (#524).',
