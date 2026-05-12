@@ -3,10 +3,17 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CultureGrid } from '../components/passport/CultureGrid';
+import { JourneyTimeline } from '../components/passport/JourneyTimeline';
+import { PassportCover } from '../components/passport/PassportCover';
+import { PassportWorldMap } from '../components/passport/PassportWorldMap';
+import { QuestList } from '../components/passport/QuestList';
+import { StampCollection } from '../components/passport/StampCollection';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchPassport, type Passport } from '../services/passportService';
+import { resolveTheme } from '../utils/passportTheme';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Passport'>;
@@ -16,45 +23,14 @@ type TabKey = 'stamps' | 'cultures' | 'map' | 'timeline' | 'quests';
 type TabConfig = {
   key: TabKey;
   label: string;
-  /** Field on `Passport` used to derive the count badge / placeholder copy. */
-  countKey: 'stamps' | 'culture_summaries' | 'timeline' | 'active_quests' | null;
-  /** Placeholder body copy — sibling PRs (#601, #603, #604, #605) replace this. */
-  placeholder: (count: number) => string;
 };
 
 const TABS: TabConfig[] = [
-  {
-    key: 'stamps',
-    label: 'Stamps',
-    countKey: 'stamps',
-    placeholder: (n) => `Stamps coming soon — ${n} stamp${n === 1 ? '' : 's'} unlocked.`,
-  },
-  {
-    key: 'cultures',
-    label: 'Cultures',
-    countKey: 'culture_summaries',
-    placeholder: (n) => `Culture summaries coming soon — ${n} culture${n === 1 ? '' : 's'} explored.`,
-  },
-  {
-    key: 'map',
-    label: 'Map',
-    // Map view derives from culture summaries / stamps in sibling work — show
-    // a neutral placeholder count rather than guessing the source field here.
-    countKey: null,
-    placeholder: () => 'Passport map coming soon.',
-  },
-  {
-    key: 'timeline',
-    label: 'Timeline',
-    countKey: 'timeline',
-    placeholder: (n) => `Timeline coming soon — ${n} event${n === 1 ? '' : 's'} recorded.`,
-  },
-  {
-    key: 'quests',
-    label: 'Quests',
-    countKey: 'active_quests',
-    placeholder: (n) => `Quests coming soon — ${n} active quest${n === 1 ? '' : 's'}.`,
-  },
+  { key: 'stamps', label: 'Stamps' },
+  { key: 'cultures', label: 'Cultures' },
+  { key: 'map', label: 'Map' },
+  { key: 'timeline', label: 'Timeline' },
+  { key: 'quests', label: 'Quests' },
 ];
 
 /**
@@ -120,27 +96,17 @@ export default function PassportScreen({ route }: Props) {
   }
 
   const initial = username.slice(0, 1).toUpperCase();
-  const themeName = passport.active_theme?.name ?? 'Classic';
-  const activeTabConfig = TABS.find((t) => t.key === activeTab) ?? TABS[0];
-  const tabCount =
-    activeTabConfig.countKey == null
-      ? passport.culture_summaries.length
-      : passport[activeTabConfig.countKey].length;
+  const theme = resolveTheme(passport.active_theme, passport.level);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        {/* Placeholder cover band — sibling PR #600 swaps this for the real
-            themed PassportCover with stamps illustration and parchment styling. */}
-        <View style={styles.cover} accessibilityRole="header">
-          <Text style={styles.coverTitle}>🛂 PASSPORT</Text>
-          <View style={styles.levelPill}>
-            <Text style={styles.levelPillText}>
-              Level {passport.level} · {passport.total_points} points
-            </Text>
-          </View>
-          <Text style={styles.coverTheme}>Theme: {themeName}</Text>
-        </View>
+        <PassportCover
+          theme={theme}
+          level={passport.level}
+          totalPoints={passport.total_points}
+          username={username}
+        />
 
         <View style={styles.identityCard}>
           <View style={styles.avatar} accessibilityLabel="Passport holder avatar">
@@ -184,7 +150,15 @@ export default function PassportScreen({ route }: Props) {
         </View>
 
         <View style={styles.tabBody}>
-          <Text style={styles.tabBodyText}>{activeTabConfig.placeholder(tabCount)}</Text>
+          {activeTab === 'stamps' && <StampCollection stamps={passport.stamps} />}
+          {activeTab === 'cultures' && (
+            <CultureGrid cultures={passport.culture_summaries} username={username} />
+          )}
+          {activeTab === 'map' && <PassportWorldMap cultures={passport.culture_summaries} />}
+          {activeTab === 'timeline' && (
+            <JourneyTimeline username={username} initialEvents={passport.timeline} />
+          )}
+          {activeTab === 'quests' && <QuestList quests={passport.active_quests} />}
         </View>
       </ScrollView>
     </SafeAreaView>
