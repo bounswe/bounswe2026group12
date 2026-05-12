@@ -1,0 +1,70 @@
+.passport-map-wrapper {
+  position: relative;
+}
+
+.passport-map-svg {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+}
+
+.passport-map-region {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.passport-map-region:hover {
+  opacity: 0.8;
+}
+
+.passport-map-popover {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 0.875rem;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8125rem;
+  pointer-events: none;
+  min-width: 140px;
+}
+
+.passport-map-popover strong {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.passport-map-popover span {
+  color: var(--color-text-muted);
+}
+
+.passport-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.625rem;
+}
+
+.passport-map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.passport-map-legend-item::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--c);
+  border: 1px solid rgba(0,0,0,0.1);
+}

@@ -1,18 +1,39 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getPublicProfile } from '../services/passportService';
+import {
+  getPublicProfile,
+  getPassportStats,
+  getPassportStamps,
+  getPassportTimeline,
+  getPassportQuests,
+} from '../services/passportService';
 import { extractApiError } from '../services/api';
+import PassportCover from '../components/passport/PassportCover';
+import PassportStatsBar from '../components/passport/PassportStatsBar';
+import StampGrid from '../components/passport/StampGrid';
+import CultureGrid from '../components/passport/CultureGrid';
+import PassportMap from '../components/passport/PassportMap';
+import PassportTimeline from '../components/passport/PassportTimeline';
+import QuestList from '../components/passport/QuestList';
 import './UserProfilePage.css';
+
+const TABS = ['stamps', 'cultures', 'map', 'timeline', 'quests'];
 
 export default function UserProfilePage() {
   const { username } = useParams();
   const { user: currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [profile, setProfile]           = useState(null);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState('');
+
+  const [passportStats, setPassportStats]   = useState(null);
+  const [stamps, setStamps]                 = useState([]);
+  const [timeline, setTimeline]             = useState([]);
+  const [quests, setQuests]                 = useState([]);
+  const [tab, setTab]                       = useState('stamps');
 
   const isOwn = currentUser?.username === username;
 
@@ -30,6 +51,21 @@ export default function UserProfilePage() {
         }
       })
       .finally(() => setLoading(false));
+  }, [username]);
+
+  useEffect(() => {
+    if (!username) return;
+    Promise.allSettled([
+      getPassportStats(username),
+      getPassportStamps(username),
+      getPassportTimeline(username),
+      getPassportQuests(username),
+    ]).then(([statsRes, stampsRes, timelineRes, questsRes]) => {
+      if (statsRes.status    === 'fulfilled') setPassportStats(statsRes.value);
+      if (stampsRes.status   === 'fulfilled') setStamps(stampsRes.value);
+      if (timelineRes.status === 'fulfilled') setTimeline(timelineRes.value);
+      if (questsRes.status   === 'fulfilled') setQuests(questsRes.value);
+    });
   }, [username]);
 
   if (loading) return <p className="page-status">Loading…</p>;
@@ -97,12 +133,30 @@ export default function UserProfilePage() {
         </section>
       ))}
 
-      {/* Passport placeholder — future issues #591–#597 */}
-      <section className="user-profile-passport-placeholder">
-        <span className="user-profile-passport-icon">🗺</span>
-        <div>
-          <h2>Cultural Passport</h2>
-          <p>Stamps, quests, and journey timeline coming soon.</p>
+      {/* Cultural Passport */}
+      <section className="user-profile-passport">
+        <PassportCover profile={profile} level={passportStats?.level} />
+        <PassportStatsBar stats={passportStats} />
+
+        <nav className="passport-tab-nav" aria-label="Passport sections">
+          {TABS.map(t => (
+            <button
+              key={t}
+              className={`passport-tab-btn${tab === t ? ' active' : ''}`}
+              onClick={() => setTab(t)}
+              aria-current={tab === t ? 'true' : undefined}
+            >
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
+        </nav>
+
+        <div className="passport-tab-content">
+          {tab === 'stamps'   && <StampGrid stamps={stamps} />}
+          {tab === 'cultures' && <CultureGrid cultures={passportStats?.cultures} />}
+          {tab === 'map'      && <PassportMap cultures={passportStats?.cultures} />}
+          {tab === 'timeline' && <PassportTimeline events={timeline} />}
+          {tab === 'quests'   && <QuestList quests={quests} />}
         </div>
       </section>
 
