@@ -3,6 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { SearchResultItem } from '../../services/searchService';
 import { shadows, tokens } from '../../theme';
 import { RankReasonBadge } from '../personalization/RankReasonBadge';
+import { StarRatingRow } from '../recipe/StarRatingRow';
 
 type Props = {
   item: SearchResultItem;
@@ -51,6 +52,15 @@ export function SearchResultCard({ item, onPress }: Props) {
             </Text>
           </View>
         </View>
+        {item.kind === 'recipe' && item.averageRating != null ? (
+          <View style={styles.ratingRow}>
+            <StarRatingRow value={item.averageRating} size="sm" readOnly />
+            <Text style={styles.ratingText}>
+              {item.averageRating.toFixed(1)}
+              {item.ratingCount ? ` · ${item.ratingCount}` : ''}
+            </Text>
+          </View>
+        ) : null}
         <RankReasonBadge reason={item.rankReason} />
       </View>
       {item.isBookmarked ? (
@@ -101,6 +111,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   tagText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  ratingText: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '700' },
   // Top-right read-only indicator — tap on the card still routes to detail.
   // The card sets `overflow: hidden`, so this stays clipped to the rounded corner.
   bookmarkBadge: {
