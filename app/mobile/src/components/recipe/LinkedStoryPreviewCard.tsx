@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.9 },
   thumb: {
     width: 86,
+    aspectRatio: 1,
     backgroundColor: tokens.colors.accentGreen,
   },
   thumbFallback: { alignItems: 'center', justifyContent: 'center' },
