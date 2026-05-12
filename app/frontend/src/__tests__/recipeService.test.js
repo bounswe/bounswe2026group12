@@ -9,6 +9,9 @@ import {
   submitIngredient,
   submitUnit,
   fetchRecipes,
+  rateRecipe,
+  unrateRecipe,
+  toggleBookmark,
 } from '../services/recipeService';
 
 jest.mock('../services/api', () => ({
@@ -236,5 +239,42 @@ describe('fetchUnits — promise cache', () => {
     const result = await fetchUnits();
     expect(result[0].name).toBe('g');
     expect(calls).toBe(2);
+  });
+});
+
+describe('rateRecipe', () => {
+  it('POSTs /api/recipes/:id/rate/ with { score } and returns the summary', async () => {
+    apiClient.post.mockResolvedValue({ data: { average_rating: 4.5, rating_count: 2, user_rating: 5 } });
+    const result = await rateRecipe(42, 5);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/recipes/42/rate/', { score: 5 });
+    expect(result).toEqual({ average_rating: 4.5, rating_count: 2, user_rating: 5 });
+  });
+
+  it('propagates API errors', async () => {
+    apiClient.post.mockRejectedValue(new Error('forbidden'));
+    await expect(rateRecipe(1, 3)).rejects.toThrow('forbidden');
+  });
+});
+
+describe('unrateRecipe', () => {
+  it('DELETEs /api/recipes/:id/rate/ and returns the summary', async () => {
+    apiClient.delete.mockResolvedValue({ data: { average_rating: null, rating_count: 0, user_rating: null } });
+    const result = await unrateRecipe(42);
+    expect(apiClient.delete).toHaveBeenCalledWith('/api/recipes/42/rate/');
+    expect(result).toEqual({ average_rating: null, rating_count: 0, user_rating: null });
+  });
+});
+
+describe('toggleBookmark', () => {
+  it('POSTs /api/recipes/:id/bookmark/ and returns the toggle result', async () => {
+    apiClient.post.mockResolvedValue({ data: { is_bookmarked: true, bookmark_count: 7 } });
+    const result = await toggleBookmark(42);
+    expect(apiClient.post).toHaveBeenCalledWith('/api/recipes/42/bookmark/');
+    expect(result).toEqual({ is_bookmarked: true, bookmark_count: 7 });
+  });
+
+  it('propagates API errors', async () => {
+    apiClient.post.mockRejectedValue(new Error('Server error'));
+    await expect(toggleBookmark(1)).rejects.toThrow('Server error');
   });
 });
