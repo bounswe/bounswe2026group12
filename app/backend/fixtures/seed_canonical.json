@@ -6623,6 +6623,204 @@
         "heritage",
         "health"
       ]
+    },
+    {
+      "slug": "diwali-lights-and-sweets",
+      "kind": "holiday",
+      "title": "Diwali: Lights and Sweets",
+      "body": "Diwali is as much a festival of flavours as it is of lights. Homes are filled with the scent of ghee and cardamom as families prepare 'mithai' (sweets) to share with loved ones and neighbours, symbolising the sweetness of life.",
+      "region": "Indian",
+      "link": {
+        "kind": "recipe",
+        "title": "Indian Dal Tadka"
+      }
+    },
+    {
+      "slug": "italian-sunday-ragu-tradition",
+      "kind": "tradition",
+      "title": "The Italian Sunday Ragu",
+      "body": "In Italian households, Sunday is defined by the slow-simmering ragu that begins in the early morning. It is a ritual of patience, where the sauce thickens over hours, filling the home with an aroma that signals family time and shared heritage.",
+      "region": "Italian",
+      "link": {
+        "kind": "recipe",
+        "title": "Italian Sunday Ragu"
+      }
+    },
+    {
+      "slug": "japanese-onigiri-comfort",
+      "kind": "dish",
+      "title": "Onigiri: Japan's Ultimate Comfort Food",
+      "body": "Onigiri, or rice balls, are the heart of Japanese soul food. Simple yet profound, these hand-pressed triangles of seasoned rice wrapped in nori have sustained travellers, workers, and children for centuries, representing the care of the hands that made them.",
+      "region": "Japanese",
+      "link": {
+        "kind": "recipe",
+        "title": "Japanese Onigiri Rice Balls"
+      }
+    },
+    {
+      "slug": "feijoada-saturday-tradition",
+      "kind": "tradition",
+      "title": "Saturday Feijoada in Brazil",
+      "body": "Saturday in Brazil is synonymous with feijoada, a rich black bean and pork stew that is the country's national dish. It is a slow-cooked meal intended for long afternoons with friends and family, accompanied by music and cold drinks.",
+      "region": "Brazil",
+      "link": {
+        "kind": "recipe",
+        "title": "Feijoada"
+      }
+    },
+    {
+      "slug": "moroccan-spice-market",
+      "kind": "fact",
+      "title": "The Alchemy of the Moroccan Souk",
+      "body": "The spice markets of Morocco are more than just places of trade; they are sensory archives of history. From the complex 'ras el hanout' to the vibrant saffron, spices define the soul of Moroccan cooking and the identity of its regions.",
+      "region": "Morocco",
+      "link": {
+        "kind": "story",
+        "title": "The Souks of Marrakech: A Spice Education"
+      }
+    },
+    {
+      "slug": "korean-kimjang-season",
+      "kind": "tradition",
+      "title": "Kimjang: The Season of Community",
+      "body": "Kimjang is the annual tradition of collective kimchi making that prepares Korean households for winter. It is a time when neighbours and families gather to share the labour of salting, seasoning, and fermenting, reinforcing the bonds of community through food.",
+      "region": "South Korea",
+      "link": {
+        "kind": "story",
+        "title": "Kimjang: The Community Work of Kimchi"
+      }
+    },
+    {
+      "slug": "polish-twelve-dishes",
+      "kind": "holiday",
+      "title": "The Twelve Dishes of Wigilia",
+      "body": "In Poland, the Christmas Eve supper is a sacred ritual featuring exactly twelve meatless dishes, representing the twelve apostles. Each dish has deep symbolic meaning, and tradition dictates that one must taste every dish to ensure good luck for the coming year.",
+      "region": "Poland",
+      "link": {
+        "kind": "story",
+        "title": "Christmas Eve in Poland: The Twelve Dishes"
+      }
+    },
+    {
+      "slug": "ethiopian-coffee-ceremony",
+      "kind": "tradition",
+      "title": "The Ethiopian Coffee Ceremony",
+      "body": "The coffee ceremony is a core social ritual in Ethiopian life, symbolising hospitality and friendship. The process of roasting, grinding, and brewing the beans is performed with grace and patience, turning a simple drink into a profound communal experience.",
+      "region": "Ethiopia",
+      "link": {
+        "kind": "story",
+        "title": "The Ethiopian Coffee Ceremony"
+      }
+    },
+    {
+      "slug": "caribbean-melting-pot",
+      "kind": "fact",
+      "title": "The Caribbean Melting Pot",
+      "body": "Caribbean cuisine is a vibrant tapestry woven from Indigenous, African, European, and Asian influences. It is a 'melting pot' in the truest sense, where diverse culinary traditions have fused over centuries to create a flavour profile that is entirely unique to the islands.",
+      "region": "Caribbean",
+      "link": {
+        "kind": "story",
+        "title": "Caribbean Cooking: Where Continents Meet on a Plate"
+      }
+    },
+    {
+      "slug": "central-asian-plov-master",
+      "kind": "tradition",
+      "title": "The Art of the Plov Master",
+      "body": "In Central Asia, the 'oshpaz' or plov master is a respected figure who understands the delicate balance of rice, meat, and carrots. Cooking plov in a massive 'kazan' is a performance of skill and a gesture of hospitality that anchors all major life events.",
+      "region": "Uzbekistan",
+      "link": {
+        "kind": "recipe",
+        "title": "Plov"
+      }
+    },
+    {
+      "slug": "french-boulangerie-culture",
+      "kind": "tradition",
+      "title": "The Boulangerie: France's Social Anchor",
+      "body": "The local boulangerie is more than just a bakery in France; it is a democratic institution where people from all walks of life gather daily. The scent of fresh baguettes and croissants is the soundtrack to French morning life and a symbol of national pride.",
+      "region": "France",
+      "link": {
+        "kind": "story",
+        "title": "The Boulangerie: France's Most Democratic Institution"
+      }
+    },
+    {
+      "slug": "spanish-tapas-philosophy",
+      "kind": "fact",
+      "title": "Tapas: The Architecture of Sociability",
+      "body": "Tapas are not just small plates of food; they are a philosophy of dining that prioritises conversation and movement. 'Tapeo' — moving from bar to bar to share bites and drinks — is the fundamental social rhythm of Spanish life.",
+      "region": "Spain",
+      "link": {
+        "kind": "story",
+        "title": "Tapas: The Architecture of Spanish Sociability"
+      }
+    },
+    {
+      "slug": "nigerian-celebration-food",
+      "kind": "tradition",
+      "title": "Jollof Rice: Nigeria's Party Staple",
+      "body": "No Nigerian celebration is complete without a massive pot of smoky, spicy Jollof rice. It is the life of the party, a dish that brings people together and sparks spirited debates about whose recipe — and whose nation — makes the best version.",
+      "region": "Nigeria",
+      "link": {
+        "kind": "recipe",
+        "title": "Jollof Rice"
+      }
+    },
+    {
+      "slug": "silk-road-dumplings",
+      "kind": "fact",
+      "title": "The Silk Road Dumpling Trail",
+      "body": "From Manti to Pierogi, the dumpling is a culinary traveller that traces the ancient Silk Road. It is a testament to how a simple concept — filling wrapped in dough — can be adapted by a dozen different cultures into a signature national dish.",
+      "region": "Central Asian",
+      "link": {
+        "kind": "story",
+        "title": "The Silk Road: How Noodles Travelled the World"
+      }
+    },
+    {
+      "slug": "australian-bbq-culture",
+      "kind": "tradition",
+      "title": "The Australian Backyard BBQ",
+      "body": "The BBQ is a foundational myth of Australian sociability, a casual ritual of summer that brings communities together over the grill. It is a celebration of the outdoors and a relaxed, egalitarian approach to shared dining.",
+      "region": "Australia",
+      "link": {
+        "kind": "story",
+        "title": "The Australian Backyard BBQ: A National Myth"
+      }
+    },
+    {
+      "slug": "hungarian-paprika-story",
+      "kind": "fact",
+      "title": "Paprika: Hungary's Red Gold",
+      "body": "Paprika is the defining soul of Hungarian cuisine, brought to the region during the Ottoman era and transformed into a national symbol. Its vibrant red colour and range of heat profiles define everything from everyday stews to the canonical goulash.",
+      "region": "Hungary",
+      "link": {
+        "kind": "recipe",
+        "title": "Goulash"
+      }
+    },
+    {
+      "slug": "levantine-mezze-generosity",
+      "kind": "tradition",
+      "title": "The Generosity of the Mezze Table",
+      "body": "In the Levant, a table covered in mezze is the ultimate expression of hospitality and abundance. It is a style of eating that encourages sharing and ensures that no guest ever leaves hungry, reflecting a culture deeply rooted in generosity.",
+      "region": "Levantine",
+      "link": {
+        "kind": "recipe",
+        "title": "Lebanese Tabbouleh"
+      }
+    },
+    {
+      "slug": "peruvian-ceviche-culture",
+      "kind": "dish",
+      "title": "Ceviche: Peru's Coastal Pride",
+      "body": "Ceviche is more than a dish in Peru; it is a national identity defined by the freshness of the Pacific. The ritual of 'cooking' fish in citrus juice is a celebration of the coast's bounty and the cultural fusion that defines Peruvian history.",
+      "region": "Peru",
+      "link": {
+        "kind": "recipe",
+        "title": "Ceviche"
+      }
     }
   ],
   "recipe_comments": [
@@ -7529,7 +7727,7 @@
       "date_rule": "fixed:03-21",
       "region": "Persian",
       "description": "Celebrated on the spring equinox (around 21 March), Nowruz is a 3,000-year-old new year tradition observed across Iran, Afghanistan, Central Asia, parts of Turkey, and diaspora communities worldwide. The haft-sin table, set with seven symbolic items beginning with the Persian letter 's', is the visual centrepiece, while sabzi polo mahi (herb rice with fish) is the canonical new year dish.",
-      "linked_recipes": []
+      "linked_recipes": ["Ghormeh Sabzi", "Tahdig", "Fesenjan"]
     },
     {
       "name": "Hıdırellez",
@@ -7566,6 +7764,160 @@
       "linked_recipes": [
         "Kimchi Jjigae"
       ]
+    },
+    {
+      "name": "Diwali",
+      "date_rule": "lunar:diwali",
+      "region": "Indian",
+      "description": "Diwali, the Festival of Lights, is India's most significant holiday, celebrating the victory of light over darkness. Families clean their homes, light oil lamps, and share an abundance of sweets and savoury snacks. Traditional meals often feature rich lentil dishes, paneer specialities, and spiced vegetable curries.",
+      "linked_recipes": ["Indian Dal Tadka", "Paneer Tikka Masala", "Aloo Gobi"]
+    },
+    {
+      "name": "Lunar New Year / Chunjie",
+      "date_rule": "lunar:chinese_new_year",
+      "region": "Chinese",
+      "description": "The Spring Festival marks the beginning of the lunar calendar and is the most important traditional Chinese holiday. The New Year's Eve reunion dinner is a sacred ritual where families gather to eat symbolic foods like dumplings (representing wealth) and fish (representing surplus). Each region has its own canonical dishes that anchor the celebration.",
+      "linked_recipes": ["Xiaolongbao", "Mapo Tofu", "Char Siu"]
+    },
+    {
+      "name": "Eid al-Fitr",
+      "date_rule": "lunar:eid_al_fitr",
+      "region": "Arabian",
+      "description": "Eid al-Fitr, the 'Festival of Breaking the Fast', marks the end of Ramadan. It is a time of immense joy and gratitude, celebrated with communal prayers and festive feasts. The morning often begins with dates and sweets, followed by elaborate rice and meat dishes shared with extended family and neighbours.",
+      "linked_recipes": ["Kabsa", "Kunafa", "Shawarma"]
+    },
+    {
+      "name": "Eid al-Adha",
+      "date_rule": "lunar:eid_al_adha",
+      "region": "Levantine",
+      "description": "The 'Festival of Sacrifice' commemorates Ibrahim's willingness to sacrifice his son. It is a time of charity and communal sharing, where meat from sacrificed animals is divided among family, friends, and the less fortunate. Levantine tables feature hearty meat-based dishes like kibbeh and fresh hummus spreads.",
+      "linked_recipes": ["Levantine Kibbeh", "Lebanese Hummus"]
+    },
+    {
+      "name": "Thanksgiving",
+      "date_rule": "fixed:11-28",
+      "region": "North American",
+      "description": "Thanksgiving is a North American harvest festival focused on gratitude and family. The centrepiece of the celebration is a shared feast that typically includes roasted meats, seasonal vegetables, and savoury pies. It is a day defined by the abundance of the autumn harvest and the warmth of communal dining.",
+      "linked_recipes": ["Shepherd's Pie"]
+    },
+    {
+      "name": "La Tomatina",
+      "date_rule": "fixed:08-27",
+      "region": "Iberian",
+      "description": "Held in the town of Buñol, La Tomatina is a world-famous food fight festival where participants throw overripe tomatoes at each other. Beyond the chaos in the streets, the day is a celebration of the tomato harvest, with the town hosting paella cooking competitions and communal feasts featuring fresh Mediterranean produce.",
+      "linked_recipes": ["Gazpacho", "Paella"]
+    },
+    {
+      "name": "Bastille Day",
+      "date_rule": "fixed:07-14",
+      "region": "French",
+      "description": "The French National Day commemorates the storming of the Bastille and the birth of the Republic. Throughout France, communities celebrate with military parades, fireworks, and communal meals known as 'Banquet républicain'. Tables are filled with French classics that celebrate the country's diverse regional produce.",
+      "linked_recipes": ["Ratatouille", "Coq au Vin"]
+    },
+    {
+      "name": "St. Patrick's Day",
+      "date_rule": "fixed:03-17",
+      "region": "British Isles",
+      "description": "St. Patrick's Day celebrates the patron saint of Ireland and Irish culture worldwide. The holiday is marked by parades, traditional music, and the sharing of hearty Irish comfort foods. Soda bread, stews, and roasted meats are staples of the festive table, often shared in local pubs and family homes.",
+      "linked_recipes": ["Traditional Irish Soda Bread"]
+    },
+    {
+      "name": "Obon Festival",
+      "date_rule": "fixed:08-15",
+      "region": "Japanese",
+      "description": "Obon is a Japanese Buddhist custom to honour the spirits of one's ancestors. Families gather to visit graves, perform traditional dances, and share specific vegetarian offerings known as Shojin Ryori. Simple, comforting foods like miso soup and rice balls are central to the communal spirit of the festival.",
+      "linked_recipes": ["Japanese Miso Soup", "Japanese Onigiri Rice Balls"]
+    },
+    {
+      "name": "Midsommar",
+      "date_rule": "fixed:06-21",
+      "region": "Nordic",
+      "description": "Midsummer is one of the most celebrated holidays in Nordic cultures, marking the summer solstice. Communities gather around maypoles to sing and dance, often staying up through the white nights. The festive meal typically features herring, new potatoes, and iconic Swedish meatballs or cabbage rolls.",
+      "linked_recipes": ["Swedish Meatballs - Kottbullar", "Swedish Cabbage Rolls - Kaldolmar"]
+    },
+    {
+      "name": "Mesir Macunu Festival",
+      "date_rule": "fixed:03-21",
+      "region": "Aegean",
+      "description": "Held in Manisa, this festival commemorates the recovery of Ayşe Hafsa Sultan through a medicinal paste made of 41 different spices and herbs. The paste is scattered from the dome of the Sultan Mosque to the crowds below. It is a celebration of healing, history, and the rich spice traditions of the Aegean region.",
+      "linked_recipes": ["Manisa Mesir Paste"]
+    },
+    {
+      "name": "Oktoberfest",
+      "date_rule": "fixed:09-21",
+      "region": "Central European",
+      "description": "Originally a royal wedding celebration, Oktoberfest has evolved into the world's largest Volksfest. Millions gather in Munich to share traditional Bavarian food and drink under massive tents. The festive menu is dominated by hearty Central European staples like schnitzel, pretzels, and apple strudel.",
+      "linked_recipes": ["Wiener Schnitzel", "Apple Strudel"]
+    },
+    {
+      "name": "Wigilia (Christmas Eve)",
+      "date_rule": "fixed:12-24",
+      "region": "Eastern European",
+      "description": "Wigilia is the solemn Christmas Eve vigil in Poland and other Eastern European cultures. The meatless twelve-dish supper begins when the first star appears in the sky. Pierogi and borscht are central to the meal, which is eaten after sharing the oplatek Christmas wafer with family members.",
+      "linked_recipes": ["Pierogi", "Borscht"]
+    },
+    {
+      "name": "Maslenitsa",
+      "date_rule": "lunar:maslenitsa",
+      "region": "Russia",
+      "description": "Maslenitsa, or 'Butter Week', is an Eastern Slavic religious and folk holiday celebrated during the last week before Great Lent. It celebrates the end of winter with outdoor games and the consumption of blini — thin pancakes whose round, golden shape symbolises the sun.",
+      "linked_recipes": ["Blini"]
+    },
+    {
+      "name": "Timkat",
+      "date_rule": "fixed:01-19",
+      "region": "Ethiopia",
+      "description": "Timkat is the Ethiopian Orthodox celebration of Epiphany, commemorating the baptism of Jesus in the Jordan River. Pilgrims process with replicas of the Ark of the Covenant to bodies of water for blessing. Festive meals feature large platters of injera served with doro wat and other spicy stews.",
+      "linked_recipes": ["Injera", "Doro Wat"]
+    },
+    {
+      "name": "Homowo Festival",
+      "date_rule": "lunar:homowo",
+      "region": "Ghana",
+      "description": "The Homowo festival of the Ga people of Ghana literally means 'hooting at hunger'. It commemorates a period of great famine that was ended by a bumper harvest. The celebration centres on a special festive dish called kpokpoi, shared alongside light soups and fufu.",
+      "linked_recipes": ["Fufu with Light Soup"]
+    },
+    {
+      "name": "Día de los Muertos",
+      "date_rule": "fixed:11-01",
+      "region": "Central American",
+      "description": "Day of the Dead is a vibrant celebration where families welcome back the souls of their deceased relatives for a brief reunion. Altars (ofrendas) are decorated with photos, marigolds, and the favourite foods of the departed. Tamales and pan de muerto are essential offerings and festive staples.",
+      "linked_recipes": ["Tamales"]
+    },
+    {
+      "name": "Inti Raymi",
+      "date_rule": "fixed:06-24",
+      "region": "South American",
+      "description": "The Festival of the Sun is an Andean religious ceremony in honour of the god Inti, marking the winter solstice in the Southern Hemisphere. Ancient Inca rituals are reenacted in Cusco, accompanied by traditional music and the sharing of South American staples like empanadas and fresh ceviche.",
+      "linked_recipes": ["Empanadas", "Ceviche"]
+    },
+    {
+      "name": "Carnaval",
+      "date_rule": "lunar:carnaval",
+      "region": "Brazil",
+      "description": "Carnaval is Brazil's world-famous festival of music, dance, and parade held before the start of Lent. While the samba schools take centre stage, the streets are filled with food stalls serving feijoada and fried snacks. It is a time of communal indulgence and high-energy celebration.",
+      "linked_recipes": ["Feijoada", "Fried Plantain"]
+    },
+    {
+      "name": "Songkran",
+      "date_rule": "fixed:04-13",
+      "region": "Southeast Asian",
+      "description": "Songkran is the traditional Thai New Year, famous for its massive public water fights that symbolise ritual cleansing. Beyond the water, families gather to visit temples and share festive meals. Southeast Asian staples like Pad Thai and aromatic curries are central to the holiday's communal feasts.",
+      "linked_recipes": ["Pad Thai", "Rendang"]
+    },
+    {
+      "name": "Yalda Night",
+      "date_rule": "fixed:12-21",
+      "region": "Persian",
+      "description": "Shab-e Yalda is the Persian winter solstice celebration, marking the longest night of the year and the victory of light over darkness. Families stay awake all night, reading poetry and eating symbolic red foods like pomegranate and watermelon. The evening often features slow-cooked stews like fesenjan.",
+      "linked_recipes": ["Fesenjan"]
+    },
+    {
+      "name": "Australia Day BBQ",
+      "date_rule": "fixed:01-26",
+      "region": "Australia",
+      "description": "While its historical context is complex, Australia Day is widely marked by 'the great Australian BBQ'. Families and friends gather in backyards and parks to grill meats and share summer desserts like pavlova. It is a day defined by casual communal dining and the height of the Australian summer.",
+      "linked_recipes": ["Pavlova", "Meat Pie"]
     }
   ],
   "ingredient_routes": [
