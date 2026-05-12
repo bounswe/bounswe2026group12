@@ -154,3 +154,34 @@ describe('markThreadRead', () => {
     expect(apiClient.post).toHaveBeenCalledWith('/api/threads/42/read/');
   });
 });
+
+describe('fetchMessages — cursor pagination (#851)', () => {
+  it('follows the cursor `next` link and concatenates all pages', async () => {
+    apiClient.get
+      .mockResolvedValueOnce({
+        data: {
+          results: [{ id: 1, body: 'hi',    created_at: '2026-05-01T00:00:00Z', sender: 1, sender_username: 'a' }],
+          next: 'https://api.example.com/api/threads/9/messages/?cursor=abc',
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          results: [{ id: 2, body: 'there', created_at: '2026-05-01T00:00:01Z', sender: 2, sender_username: 'b' }],
+          next: null,
+        },
+      });
+
+    const result = await fetchMessages(9);
+    expect(apiClient.get).toHaveBeenNthCalledWith(1, '/api/threads/9/messages/');
+    expect(apiClient.get).toHaveBeenNthCalledWith(2, '/api/threads/9/messages/?cursor=abc');
+    expect(result).toHaveLength(2);
+    expect(result.map((m) => m.id)).toEqual([1, 2]);
+  });
+
+  it('falls back to a single-page array response', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 5, body: 'hello', created_at: '2026-05-01T00:00:00Z', sender: 1, sender_username: 'a' }] });
+    const result = await fetchMessages(9);
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(5);
+  });
+});
