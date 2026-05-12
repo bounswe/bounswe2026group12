@@ -67,9 +67,21 @@ export async function submitUnit(name) {
   return response.data;
 }
 
-export async function fetchRecipes() {
+export async function fetchRecipes(params = {}) {
   if (USE_MOCK) return MOCK_RECIPES_LIST;
-  const response = await apiClient.get('/api/recipes/');
+  const response = await apiClient.get('/api/recipes/', { params });
+  return response.data.results ?? response.data;
+}
+
+export async function fetchMyRecipes(userId) {
+  if (USE_MOCK) return MOCK_RECIPES_LIST;
+  const response = await apiClient.get('/api/recipes/', { params: { author: userId } });
+  return response.data.results ?? response.data;
+}
+
+export async function fetchBookmarkedRecipes() {
+  if (USE_MOCK) return [];
+  const response = await apiClient.get('/api/recipes/', { params: { bookmarked: 'true' } });
   return response.data.results ?? response.data;
 }
 
