@@ -155,7 +155,15 @@ export async function fetchRecipesList(filter?: { author?: number | string }): P
       break;
     }
   }
-  return collected.map((r) => {
+  // Defensive dedupe by id — see backend #770 (pagination ordering instability).
+  const byId = new Map<string | number, any>();
+  const idLess: any[] = [];
+  for (const r of collected) {
+    if (r && r.id != null) byId.set(r.id, r);
+    else idLess.push(r);
+  }
+  const deduped = [...byId.values(), ...idLess];
+  return deduped.map((r) => {
     const reg = r.region;
     const regionLabel =
       reg == null

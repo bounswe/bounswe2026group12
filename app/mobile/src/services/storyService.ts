@@ -86,7 +86,16 @@ export async function fetchStoriesList(filter?: { author?: number | string }): P
       break;
     }
   }
-  return collected;
+  // Defensive dedupe by id — backend pagination occasionally returns the
+  // same row on consecutive pages when ordering has no PK tiebreaker
+  // (backend #770). Last-write-wins by id so callers get a clean list.
+  const byId = new Map<string | number, any>();
+  const idLess: any[] = [];
+  for (const s of collected) {
+    if (s && s.id != null) byId.set(s.id, s);
+    else idLess.push(s);
+  }
+  return [...byId.values(), ...idLess];
 }
 
 /** Stories where `linked_recipe` matches the given recipe id. Filters client-side. */
