@@ -128,6 +128,30 @@ describe('RecipeCreatePage', () => {
     );
   });
 
+  it('saves draft with only a title — no description or ingredients required', async () => {
+    recipeService.createRecipe.mockResolvedValue({ id: 3 });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Incomplete Draft' } });
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    await waitFor(() =>
+      expect(screen.getByText(/draft saved/i)).toBeInTheDocument()
+    );
+    expect(recipeService.createRecipe).toHaveBeenCalledWith(
+      expect.objectContaining({ is_published: false, title: 'Incomplete Draft' })
+    );
+  });
+
+  it('draft save still rejects invalid ingredient amount', async () => {
+    renderPage();
+    await waitFor(() => screen.getByPlaceholderText('Amount'));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Draft' } });
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '-5' } });
+    fireEvent.click(screen.getByRole('button', { name: /save as draft/i }));
+    expect(screen.getByText(/amount must be a positive number/i)).toBeInTheDocument();
+    expect(recipeService.createRecipe).not.toHaveBeenCalled();
+  });
+
   it('shows error toast when API call fails', async () => {
     recipeService.createRecipe.mockRejectedValue(new Error('Server error'));
     renderPage();
