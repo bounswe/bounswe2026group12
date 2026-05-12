@@ -41,6 +41,6 @@ export async function search(q, region, language, filters = {}) {
 
 export async function fetchRegions() {
   if (USE_MOCK) return MOCK_REGIONS;
-  const response = await apiClient.get('/api/map/regions/', { params: { geo_only: true } });
+  const response = await apiClient.get('/api/regions/');
   return response.data;
 }
