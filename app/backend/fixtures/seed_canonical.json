@@ -1097,7 +1097,8 @@
           "unit": "tablespoons"
         }
       ],
-      "image": "swedish_kaldolmar.jpg"
+      "image": "swedish_kaldolmar.jpg",
+      "heritage_status": "revived"
     },
     {
       "title": "Lebanese Stuffed Grape Leaves with Lamb",
@@ -5240,22 +5241,67 @@
       "author": "fatma",
       "region": "Anatolian",
       "is_published": true,
-      "dietary_tags": ["Halal"],
-      "event_tags": [],
-      "religions": ["Islam"],
-      "ingredients": [
-        {"name": "Ground Beef", "amount": "300.00", "unit": "grams"},
-        {"name": "Ground Lamb", "amount": "200.00", "unit": "grams"},
-        {"name": "Fine Bulgur", "amount": "50.00", "unit": "grams"},
-        {"name": "Onion", "amount": "1.00", "unit": "pieces"},
-        {"name": "Garlic", "amount": "2.00", "unit": "cloves"},
-        {"name": "Cumin", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Red Pepper Flakes", "amount": "1.00", "unit": "teaspoons"},
-        {"name": "Parsley", "amount": "1.00", "unit": "bunch"},
-        {"name": "Salt", "amount": "1.50", "unit": "teaspoons"},
-        {"name": "Pepper", "amount": "0.50", "unit": "teaspoons"}
+      "dietary_tags": [
+        "Halal"
       ],
-      "image": "anatolian_kofte.jpg"
+      "event_tags": [],
+      "religions": [
+        "Islam"
+      ],
+      "ingredients": [
+        {
+          "name": "Ground Beef",
+          "amount": "300.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Ground Lamb",
+          "amount": "200.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Fine Bulgur",
+          "amount": "50.00",
+          "unit": "grams"
+        },
+        {
+          "name": "Onion",
+          "amount": "1.00",
+          "unit": "pieces"
+        },
+        {
+          "name": "Garlic",
+          "amount": "2.00",
+          "unit": "cloves"
+        },
+        {
+          "name": "Cumin",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Red Pepper Flakes",
+          "amount": "1.00",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Parsley",
+          "amount": "1.00",
+          "unit": "bunch"
+        },
+        {
+          "name": "Salt",
+          "amount": "1.50",
+          "unit": "teaspoons"
+        },
+        {
+          "name": "Pepper",
+          "amount": "0.50",
+          "unit": "teaspoons"
+        }
+      ],
+      "image": "anatolian_kofte.jpg",
+      "heritage_status": "revived"
     }
   ],
   "stories": [
@@ -5277,7 +5323,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_black_sea_sarma.jpg"
+      "image": "story_black_sea_sarma.jpg",
+      "story_type": "family"
     },
     {
       "title": "Summer Sarma in the Aegean",
@@ -5295,7 +5342,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_aegean_sarma.jpg"
+      "image": "story_aegean_sarma.jpg",
+      "story_type": "family"
     },
     {
       "title": "From Anatolia to Athens: The Dolma Trail",
@@ -5313,7 +5361,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_dolma_trail.jpg"
+      "image": "story_dolma_trail.jpg",
+      "story_type": "historical"
     },
     {
       "title": "How Swedish Cabbage Rolls Came from the Ottoman Empire",
@@ -5330,7 +5379,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_swedish_cabbage_rolls.jpg"
+      "image": "story_swedish_cabbage_rolls.jpg",
+      "story_type": "historical"
     },
     {
       "title": "The Buttermilk Substitute",
@@ -5346,7 +5396,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_buttermilk_substitute.jpg"
+      "image": "story_buttermilk_substitute.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Sunday Borek Ritual",
@@ -5364,7 +5415,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_sunday_borek.jpg"
+      "image": "story_sunday_borek.jpg",
+      "story_type": "family"
     },
     {
       "title": "Wedding Feasts of Southeastern Turkey",
@@ -5387,7 +5439,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_wedding_feast.jpg"
+      "image": "story_wedding_feast.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Miso: A Living Ingredient",
@@ -5407,7 +5460,8 @@
       "religions": [
         "Buddhism"
       ],
-      "image": "story_miso_living.jpg"
+      "image": "story_miso_living.jpg",
+      "story_type": "family"
     },
     {
       "title": "The Spice Road to Indian Kitchens",
@@ -5423,7 +5477,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_spice_road.jpg"
+      "image": "story_spice_road.jpg",
+      "story_type": "historical"
     },
     {
       "title": "My Grandmother's Manti",
@@ -5441,7 +5496,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_grandmothers_manti.jpg"
+      "image": "story_grandmothers_manti.jpg",
+      "story_type": "family"
     },
     {
       "title": "Italian Sundays",
@@ -5459,7 +5515,8 @@
       "religions": [
         "Christianity"
       ],
-      "image": "story_italian_sundays.jpg"
+      "image": "story_italian_sundays.jpg",
+      "story_type": "family"
     },
     {
       "title": "Istanbul Street Food Memories",
@@ -5475,7 +5532,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_istanbul_street.jpg"
+      "image": "story_istanbul_street.jpg",
+      "story_type": "personal"
     },
     {
       "title": "A Lebanese Table Is Never Empty",
@@ -5494,7 +5552,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_lebanese_table.jpg"
+      "image": "story_lebanese_table.jpg",
+      "story_type": "family"
     },
     {
       "title": "Baking Across the Atlantic",
@@ -5513,7 +5572,8 @@
       "religions": [
         "Christianity"
       ],
-      "image": "story_baking_atlantic.jpg"
+      "image": "story_baking_atlantic.jpg",
+      "story_type": "family"
     },
     {
       "title": "When Yogurt Connects Continents",
@@ -5530,7 +5590,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_yogurt_continents.jpg"
+      "image": "story_yogurt_continents.jpg",
+      "story_type": "historical"
     },
     {
       "title": "Fermentation East and West",
@@ -5547,7 +5608,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_fermentation.jpg"
+      "image": "story_fermentation.jpg",
+      "story_type": "historical"
     },
     {
       "title": "Nowruz: A Table Full of Meaning",
@@ -5565,7 +5627,8 @@
         "Religious Holiday"
       ],
       "religions": [],
-      "image": "story_persian_new_year.jpg"
+      "image": "story_persian_new_year.jpg",
+      "story_type": "festive"
     },
     {
       "title": "The Art of Persian Tea",
@@ -5583,7 +5646,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_persian_tea.jpg"
+      "image": "story_persian_tea.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Arabic Coffee and the Ethics of Hospitality",
@@ -5603,7 +5667,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_arabian_coffee.jpg"
+      "image": "story_arabian_coffee.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Dates: The Original Fast Food of the Desert",
@@ -5626,7 +5691,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_arabian_dates.jpg"
+      "image": "story_arabian_dates.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Dim Sum Sunday: A Cantonese Institution",
@@ -5642,7 +5708,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_chinese_dim_sum.jpg"
+      "image": "story_chinese_dim_sum.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Chinese New Year: Cooking for Luck",
@@ -5660,7 +5727,8 @@
         "Religious Holiday"
       ],
       "religions": [],
-      "image": "story_chinese_new_year.jpg"
+      "image": "story_chinese_new_year.jpg",
+      "story_type": "festive"
     },
     {
       "title": "Kimjang: The Community Work of Kimchi",
@@ -5676,7 +5744,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_korean_kimchi.jpg"
+      "image": "story_korean_kimchi.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Seoul Street Food After Midnight",
@@ -5692,7 +5761,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_korean_street.jpg"
+      "image": "story_korean_street.jpg",
+      "story_type": "personal"
     },
     {
       "title": "The Floating Markets of Thailand",
@@ -5708,7 +5778,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_thai_market.jpg"
+      "image": "story_thai_market.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Pho at Dawn in Hanoi",
@@ -5724,7 +5795,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_vietnamese_pho.jpg"
+      "image": "story_vietnamese_pho.jpg",
+      "story_type": "personal"
     },
     {
       "title": "The Souks of Marrakech: A Spice Education",
@@ -5744,7 +5816,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_moroccan_market.jpg"
+      "image": "story_moroccan_market.jpg",
+      "story_type": "personal"
     },
     {
       "title": "The Ethiopian Coffee Ceremony",
@@ -5762,7 +5835,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_ethiopian_coffee.jpg"
+      "image": "story_ethiopian_coffee.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "A Nigerian Celebration Table",
@@ -5786,7 +5860,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_nigerian_feast.jpg"
+      "image": "story_nigerian_feast.jpg",
+      "story_type": "festive"
     },
     {
       "title": "West African Markets: Abundance in Colour",
@@ -5802,7 +5877,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_west_african_market.jpg"
+      "image": "story_west_african_market.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Jerk and the Geography of Smoke",
@@ -5820,7 +5896,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_jamaican_jerk.jpg"
+      "image": "story_jamaican_jerk.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Caribbean Cooking: Where Continents Meet on a Plate",
@@ -5839,7 +5916,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_caribbean_rum.jpg"
+      "image": "story_caribbean_rum.jpg",
+      "story_type": "historical"
     },
     {
       "title": "The Asado: Argentina's Sacred Ritual",
@@ -5858,7 +5936,8 @@
         "Anniversary"
       ],
       "religions": [],
-      "image": "story_argentinian_asado.jpg"
+      "image": "story_argentinian_asado.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Peru's Market Kitchens: Ceviche Before Noon",
@@ -5877,7 +5956,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_peruvian_market.jpg"
+      "image": "story_peruvian_market.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Feijoada and the Brazilian Sense of Gathering",
@@ -5893,7 +5973,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_brazilian_feijoada.jpg"
+      "image": "story_brazilian_feijoada.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Pupusas: Made by Hand, Eaten with Family",
@@ -5911,7 +5992,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_salvadoran_pupusas.jpg"
+      "image": "story_salvadoran_pupusas.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "The Boulangerie: France's Most Democratic Institution",
@@ -5929,7 +6011,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_french_boulangerie.jpg"
+      "image": "story_french_boulangerie.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Bistrot Culture: Eating Simply, Eating Well",
@@ -5945,7 +6028,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_french_bistro.jpg"
+      "image": "story_french_bistro.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Tapas: The Architecture of Spanish Sociability",
@@ -5962,7 +6046,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_spanish_tapas.jpg"
+      "image": "story_spanish_tapas.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Salt Cod and the Portuguese Atlantic",
@@ -5978,7 +6063,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_portuguese_fishing.jpg"
+      "image": "story_portuguese_fishing.jpg",
+      "story_type": "historical"
     },
     {
       "title": "The British Pub and Its Comfort Food",
@@ -5995,7 +6081,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_british_pub.jpg"
+      "image": "story_british_pub.jpg",
+      "story_type": "personal"
     },
     {
       "title": "Afternoon Tea: Britain's Most Exportable Ceremony",
@@ -6013,7 +6100,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_british_tea.jpg"
+      "image": "story_british_tea.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "Christmas Markets and the Food of German Winter",
@@ -6033,7 +6121,8 @@
       "religions": [
         "Christianity"
       ],
-      "image": "story_german_christmas.jpg"
+      "image": "story_german_christmas.jpg",
+      "story_type": "festive"
     },
     {
       "title": "Hungarian Kitchen: Paprika Is Not a Spice, It Is a Philosophy",
@@ -6052,7 +6141,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_hungarian_kitchen.jpg"
+      "image": "story_hungarian_kitchen.jpg",
+      "story_type": "family"
     },
     {
       "title": "The Russian Dacha and Summer Preserving",
@@ -6068,7 +6158,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_russian_dacha.jpg"
+      "image": "story_russian_dacha.jpg",
+      "story_type": "family"
     },
     {
       "title": "Christmas Eve in Poland: The Twelve Dishes",
@@ -6091,7 +6182,8 @@
       "religions": [
         "Christianity"
       ],
-      "image": "story_polish_christmas.jpg"
+      "image": "story_polish_christmas.jpg",
+      "story_type": "festive"
     },
     {
       "title": "The Bazaar at Samarkand",
@@ -6111,7 +6203,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_uzbek_bazaar.jpg"
+      "image": "story_uzbek_bazaar.jpg",
+      "story_type": "personal"
     },
     {
       "title": "The Silk Road: How Noodles Travelled the World",
@@ -6131,7 +6224,8 @@
       "religions": [
         "Islam"
       ],
-      "image": "story_silk_road_food.jpg"
+      "image": "story_silk_road_food.jpg",
+      "story_type": "historical"
     },
     {
       "title": "The Australian Backyard BBQ: A National Myth",
@@ -6149,7 +6243,8 @@
         "Birthday"
       ],
       "religions": [],
-      "image": "story_australian_bbq.jpg"
+      "image": "story_australian_bbq.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "The Olive Harvest: A Mediterranean September",
@@ -6168,7 +6263,8 @@
       ],
       "event_tags": [],
       "religions": [],
-      "image": "story_mediterranean_harvest.jpg"
+      "image": "story_mediterranean_harvest.jpg",
+      "story_type": "traditional"
     },
     {
       "title": "How Köfte Became Köttbullar",
@@ -6185,7 +6281,8 @@
       "dietary_tags": [],
       "event_tags": [],
       "religions": [],
-      "image": "story_kofte_kottbullar.jpg"
+      "image": "story_kofte_kottbullar.jpg",
+      "story_type": "historical"
     }
   ],
   "cultural_content": [
@@ -6839,55 +6936,349 @@
     }
   ],
   "ingredient_substitutions": [
-    {"from": "Butter", "to": "Olive Oil", "match_type": "flavor", "closeness": "0.70", "notes": "Use ~75% volume; expect milder result"},
-    {"from": "Butter", "to": "Olive Oil", "match_type": "texture", "closeness": "0.60", "notes": ""},
-    {"from": "Chicken", "to": "Lamb", "match_type": "flavor", "closeness": "0.45", "notes": "Much richer; reduce fat elsewhere"},
-    {"from": "Cinnamon", "to": "Cumin", "match_type": "flavor", "closeness": "0.30", "notes": "Savoury rather than sweet; very different result"},
-    {"from": "Cream", "to": "Yogurt", "match_type": "texture", "closeness": "0.75", "notes": "Tangier; reduce other acids"},
-    {"from": "Eggplant", "to": "Zucchini", "match_type": "texture", "closeness": "0.60", "notes": "Cooks faster; reduce roast time"},
-    {"from": "Feta Cheese", "to": "Mozzarella", "match_type": "flavor", "closeness": "0.45", "notes": "Much milder; consider adding lemon"},
-    {"from": "Feta Cheese", "to": "Mozzarella", "match_type": "texture", "closeness": "0.70", "notes": "Lower salt content; salt to taste"},
-    {"from": "Flour", "to": "Lentils", "match_type": "chemical", "closeness": "0.30", "notes": "Use lentil flour only; whole lentils will not bind"},
-    {"from": "Garlic", "to": "Onion", "match_type": "flavor", "closeness": "0.50", "notes": "Sweeter; double the volume for similar punch"},
-    {"from": "Ginger", "to": "Garlic", "match_type": "flavor", "closeness": "0.30", "notes": "Very different profile; only viable in some marinades"},
-    {"from": "Green Pepper", "to": "Red Pepper Flakes", "match_type": "flavor", "closeness": "0.45", "notes": "Use sparingly; flakes are dry heat"},
-    {"from": "Ground Beef", "to": "Ground Lamb", "match_type": "flavor", "closeness": "0.80", "notes": "More gamey; reduce added spices"},
-    {"from": "Ground Lamb", "to": "Ground Beef", "match_type": "flavor", "closeness": "0.80", "notes": "Add cumin to mimic gaminess"},
-    {"from": "Honey", "to": "Sugar", "match_type": "flavor", "closeness": "0.65", "notes": "Drier substitute; reduce other liquids by ~20%"},
-    {"from": "Lamb", "to": "Chicken", "match_type": "texture", "closeness": "0.55", "notes": "Drier; brine before cooking"},
-    {"from": "Lemon", "to": "Sumac", "match_type": "flavor", "closeness": "0.65", "notes": "Sumac is dry — adjust acidity in liquids"},
-    {"from": "Mint", "to": "Parsley", "match_type": "flavor", "closeness": "0.50", "notes": "Less sweet; brighter color"},
-    {"from": "Mozzarella", "to": "Feta Cheese", "match_type": "flavor", "closeness": "0.50", "notes": "Saltier and tangier"},
-    {"from": "Mozzarella", "to": "Feta Cheese", "match_type": "texture", "closeness": "0.65", "notes": "Crumblier; will not stretch"},
-    {"from": "Olive Oil", "to": "Butter", "match_type": "flavor", "closeness": "0.65", "notes": "Adds dairy depth; reduce salt"},
-    {"from": "Olive Oil", "to": "Butter", "match_type": "texture", "closeness": "0.55", "notes": "Solid at room temperature"},
-    {"from": "Onion", "to": "Garlic", "match_type": "flavor", "closeness": "0.45", "notes": "Sharper; halve the volume"},
-    {"from": "Oregano", "to": "Thyme", "match_type": "flavor", "closeness": "0.80", "notes": "Earthier; usable 1:1"},
-    {"from": "Paprika", "to": "Red Pepper Flakes", "match_type": "flavor", "closeness": "0.60", "notes": "Hotter; reduce quantity"},
-    {"from": "Parsley", "to": "Mint", "match_type": "flavor", "closeness": "0.50", "notes": "Sweeter; pairs differently with lamb"},
-    {"from": "Pasta", "to": "Rice", "match_type": "texture", "closeness": "0.55", "notes": "Absorbs more liquid; adjust stock"},
-    {"from": "Phyllo Dough", "to": "Flour", "match_type": "chemical", "closeness": "0.20", "notes": "Only as a base for fresh dough; not a like-for-like swap"},
-    {"from": "Pine Nuts", "to": "Walnuts", "match_type": "flavor", "closeness": "0.55", "notes": "Toast lightly to mimic resinous notes"},
-    {"from": "Pistachios", "to": "Walnuts", "match_type": "flavor", "closeness": "0.75", "notes": ""},
-    {"from": "Pistachios", "to": "Walnuts", "match_type": "texture", "closeness": "0.85", "notes": ""},
-    {"from": "Red Pepper Flakes", "to": "Paprika", "match_type": "flavor", "closeness": "0.65", "notes": "Less heat, more sweetness"},
-    {"from": "Rice", "to": "Pasta", "match_type": "texture", "closeness": "0.55", "notes": "Cooks faster; absorbs less liquid"},
-    {"from": "Sesame Seeds", "to": "Pine Nuts", "match_type": "texture", "closeness": "0.55", "notes": "Smaller; adds nuttiness in different distribution"},
-    {"from": "Sugar", "to": "Honey", "match_type": "flavor", "closeness": "0.65", "notes": "Wetter substitute; reduce other liquids"},
-    {"from": "Sumac", "to": "Lemon", "match_type": "flavor", "closeness": "0.65", "notes": "Wetter; reduce other liquids"},
-    {"from": "Tahini", "to": "Yogurt", "match_type": "chemical", "closeness": "0.55", "notes": "Increase liquid in dressings"},
-    {"from": "Thyme", "to": "Oregano", "match_type": "flavor", "closeness": "0.80", "notes": "Slightly more floral; usable 1:1"},
-    {"from": "Tomato", "to": "Tomato Paste", "match_type": "chemical", "closeness": "0.55", "notes": "Much more concentrated; dilute with water"},
-    {"from": "Tomato Paste", "to": "Tomato", "match_type": "chemical", "closeness": "0.55", "notes": "Much more liquid; reduce other liquids"},
-    {"from": "Turmeric", "to": "Cumin", "match_type": "flavor", "closeness": "0.25", "notes": "Different family; only loosely interchangeable"},
-    {"from": "Walnuts", "to": "Pine Nuts", "match_type": "flavor", "closeness": "0.55", "notes": "Milder; use in pesto / garnish"},
-    {"from": "Walnuts", "to": "Pistachios", "match_type": "flavor", "closeness": "0.75", "notes": ""},
-    {"from": "Walnuts", "to": "Pistachios", "match_type": "texture", "closeness": "0.85", "notes": ""},
-    {"from": "Yogurt", "to": "Cream", "match_type": "texture", "closeness": "0.85", "notes": "Strain yogurt for a thicker result"},
-    {"from": "Yogurt", "to": "Tahini", "match_type": "chemical", "closeness": "0.55", "notes": "Different binding; reduce liquid"},
-    {"from": "Zucchini", "to": "Eggplant", "match_type": "texture", "closeness": "0.60", "notes": "Salt and drain to remove bitterness"},
-    {"from": "Einkorn Wheat (Siyez)", "to": "Flour", "match_type": "texture", "closeness": "0.85", "notes": "Einkorn is denser and nuttier; use 1:1 for a heritage result."},
-    {"from": "Traditional Tarhana", "to": "Lentils", "match_type": "flavor", "closeness": "0.40", "notes": "Very different flavor profile; use only as a thickener alternative."}
+    {
+      "from": "Butter",
+      "to": "Olive Oil",
+      "match_type": "flavor",
+      "closeness": "0.70",
+      "notes": "Use ~75% volume; expect milder result"
+    },
+    {
+      "from": "Butter",
+      "to": "Olive Oil",
+      "match_type": "texture",
+      "closeness": "0.60",
+      "notes": ""
+    },
+    {
+      "from": "Chicken",
+      "to": "Lamb",
+      "match_type": "flavor",
+      "closeness": "0.45",
+      "notes": "Much richer; reduce fat elsewhere"
+    },
+    {
+      "from": "Cinnamon",
+      "to": "Cumin",
+      "match_type": "flavor",
+      "closeness": "0.30",
+      "notes": "Savoury rather than sweet; very different result"
+    },
+    {
+      "from": "Cream",
+      "to": "Yogurt",
+      "match_type": "texture",
+      "closeness": "0.75",
+      "notes": "Tangier; reduce other acids"
+    },
+    {
+      "from": "Eggplant",
+      "to": "Zucchini",
+      "match_type": "texture",
+      "closeness": "0.60",
+      "notes": "Cooks faster; reduce roast time"
+    },
+    {
+      "from": "Feta Cheese",
+      "to": "Mozzarella",
+      "match_type": "flavor",
+      "closeness": "0.45",
+      "notes": "Much milder; consider adding lemon"
+    },
+    {
+      "from": "Feta Cheese",
+      "to": "Mozzarella",
+      "match_type": "texture",
+      "closeness": "0.70",
+      "notes": "Lower salt content; salt to taste"
+    },
+    {
+      "from": "Flour",
+      "to": "Lentils",
+      "match_type": "chemical",
+      "closeness": "0.30",
+      "notes": "Use lentil flour only; whole lentils will not bind"
+    },
+    {
+      "from": "Garlic",
+      "to": "Onion",
+      "match_type": "flavor",
+      "closeness": "0.50",
+      "notes": "Sweeter; double the volume for similar punch"
+    },
+    {
+      "from": "Ginger",
+      "to": "Garlic",
+      "match_type": "flavor",
+      "closeness": "0.30",
+      "notes": "Very different profile; only viable in some marinades"
+    },
+    {
+      "from": "Green Pepper",
+      "to": "Red Pepper Flakes",
+      "match_type": "flavor",
+      "closeness": "0.45",
+      "notes": "Use sparingly; flakes are dry heat"
+    },
+    {
+      "from": "Ground Beef",
+      "to": "Ground Lamb",
+      "match_type": "flavor",
+      "closeness": "0.80",
+      "notes": "More gamey; reduce added spices"
+    },
+    {
+      "from": "Ground Lamb",
+      "to": "Ground Beef",
+      "match_type": "flavor",
+      "closeness": "0.80",
+      "notes": "Add cumin to mimic gaminess"
+    },
+    {
+      "from": "Honey",
+      "to": "Sugar",
+      "match_type": "flavor",
+      "closeness": "0.65",
+      "notes": "Drier substitute; reduce other liquids by ~20%"
+    },
+    {
+      "from": "Lamb",
+      "to": "Chicken",
+      "match_type": "texture",
+      "closeness": "0.55",
+      "notes": "Drier; brine before cooking"
+    },
+    {
+      "from": "Lemon",
+      "to": "Sumac",
+      "match_type": "flavor",
+      "closeness": "0.65",
+      "notes": "Sumac is dry — adjust acidity in liquids"
+    },
+    {
+      "from": "Mint",
+      "to": "Parsley",
+      "match_type": "flavor",
+      "closeness": "0.50",
+      "notes": "Less sweet; brighter color"
+    },
+    {
+      "from": "Mozzarella",
+      "to": "Feta Cheese",
+      "match_type": "flavor",
+      "closeness": "0.50",
+      "notes": "Saltier and tangier"
+    },
+    {
+      "from": "Mozzarella",
+      "to": "Feta Cheese",
+      "match_type": "texture",
+      "closeness": "0.65",
+      "notes": "Crumblier; will not stretch"
+    },
+    {
+      "from": "Olive Oil",
+      "to": "Butter",
+      "match_type": "flavor",
+      "closeness": "0.65",
+      "notes": "Adds dairy depth; reduce salt"
+    },
+    {
+      "from": "Olive Oil",
+      "to": "Butter",
+      "match_type": "texture",
+      "closeness": "0.55",
+      "notes": "Solid at room temperature"
+    },
+    {
+      "from": "Onion",
+      "to": "Garlic",
+      "match_type": "flavor",
+      "closeness": "0.45",
+      "notes": "Sharper; halve the volume"
+    },
+    {
+      "from": "Oregano",
+      "to": "Thyme",
+      "match_type": "flavor",
+      "closeness": "0.80",
+      "notes": "Earthier; usable 1:1"
+    },
+    {
+      "from": "Paprika",
+      "to": "Red Pepper Flakes",
+      "match_type": "flavor",
+      "closeness": "0.60",
+      "notes": "Hotter; reduce quantity"
+    },
+    {
+      "from": "Parsley",
+      "to": "Mint",
+      "match_type": "flavor",
+      "closeness": "0.50",
+      "notes": "Sweeter; pairs differently with lamb"
+    },
+    {
+      "from": "Pasta",
+      "to": "Rice",
+      "match_type": "texture",
+      "closeness": "0.55",
+      "notes": "Absorbs more liquid; adjust stock"
+    },
+    {
+      "from": "Phyllo Dough",
+      "to": "Flour",
+      "match_type": "chemical",
+      "closeness": "0.20",
+      "notes": "Only as a base for fresh dough; not a like-for-like swap"
+    },
+    {
+      "from": "Pine Nuts",
+      "to": "Walnuts",
+      "match_type": "flavor",
+      "closeness": "0.55",
+      "notes": "Toast lightly to mimic resinous notes"
+    },
+    {
+      "from": "Pistachios",
+      "to": "Walnuts",
+      "match_type": "flavor",
+      "closeness": "0.75",
+      "notes": ""
+    },
+    {
+      "from": "Pistachios",
+      "to": "Walnuts",
+      "match_type": "texture",
+      "closeness": "0.85",
+      "notes": ""
+    },
+    {
+      "from": "Red Pepper Flakes",
+      "to": "Paprika",
+      "match_type": "flavor",
+      "closeness": "0.65",
+      "notes": "Less heat, more sweetness"
+    },
+    {
+      "from": "Rice",
+      "to": "Pasta",
+      "match_type": "texture",
+      "closeness": "0.55",
+      "notes": "Cooks faster; absorbs less liquid"
+    },
+    {
+      "from": "Sesame Seeds",
+      "to": "Pine Nuts",
+      "match_type": "texture",
+      "closeness": "0.55",
+      "notes": "Smaller; adds nuttiness in different distribution"
+    },
+    {
+      "from": "Sugar",
+      "to": "Honey",
+      "match_type": "flavor",
+      "closeness": "0.65",
+      "notes": "Wetter substitute; reduce other liquids"
+    },
+    {
+      "from": "Sumac",
+      "to": "Lemon",
+      "match_type": "flavor",
+      "closeness": "0.65",
+      "notes": "Wetter; reduce other liquids"
+    },
+    {
+      "from": "Tahini",
+      "to": "Yogurt",
+      "match_type": "chemical",
+      "closeness": "0.55",
+      "notes": "Increase liquid in dressings"
+    },
+    {
+      "from": "Thyme",
+      "to": "Oregano",
+      "match_type": "flavor",
+      "closeness": "0.80",
+      "notes": "Slightly more floral; usable 1:1"
+    },
+    {
+      "from": "Tomato",
+      "to": "Tomato Paste",
+      "match_type": "chemical",
+      "closeness": "0.55",
+      "notes": "Much more concentrated; dilute with water"
+    },
+    {
+      "from": "Tomato Paste",
+      "to": "Tomato",
+      "match_type": "chemical",
+      "closeness": "0.55",
+      "notes": "Much more liquid; reduce other liquids"
+    },
+    {
+      "from": "Turmeric",
+      "to": "Cumin",
+      "match_type": "flavor",
+      "closeness": "0.25",
+      "notes": "Different family; only loosely interchangeable"
+    },
+    {
+      "from": "Walnuts",
+      "to": "Pine Nuts",
+      "match_type": "flavor",
+      "closeness": "0.55",
+      "notes": "Milder; use in pesto / garnish"
+    },
+    {
+      "from": "Walnuts",
+      "to": "Pistachios",
+      "match_type": "flavor",
+      "closeness": "0.75",
+      "notes": ""
+    },
+    {
+      "from": "Walnuts",
+      "to": "Pistachios",
+      "match_type": "texture",
+      "closeness": "0.85",
+      "notes": ""
+    },
+    {
+      "from": "Yogurt",
+      "to": "Cream",
+      "match_type": "texture",
+      "closeness": "0.85",
+      "notes": "Strain yogurt for a thicker result"
+    },
+    {
+      "from": "Yogurt",
+      "to": "Tahini",
+      "match_type": "chemical",
+      "closeness": "0.55",
+      "notes": "Different binding; reduce liquid"
+    },
+    {
+      "from": "Zucchini",
+      "to": "Eggplant",
+      "match_type": "texture",
+      "closeness": "0.60",
+      "notes": "Salt and drain to remove bitterness"
+    },
+    {
+      "from": "Einkorn Wheat (Siyez)",
+      "to": "Flour",
+      "match_type": "texture",
+      "closeness": "0.85",
+      "notes": "Einkorn is denser and nuttier; use 1:1 for a heritage result."
+    },
+    {
+      "from": "Traditional Tarhana",
+      "to": "Lentils",
+      "match_type": "flavor",
+      "closeness": "0.40",
+      "notes": "Very different flavor profile; use only as a thickener alternative."
+    }
   ],
   "heritage": {
     "groups": [
@@ -7181,19 +7572,59 @@
     {
       "ingredient": "Tomato",
       "waypoints": [
-        {"lat": -9.19, "lng": -75.01, "era": "Ancestral", "label": "Andes (Peru)"},
-        {"lat": 19.43, "lng": -99.13, "era": "Pre-Columbian", "label": "Mexico (Aztecs)"},
-        {"lat": 40.41, "lng": -3.70, "era": "1540s", "label": "Spain"},
-        {"lat": 41.90, "lng": 12.49, "era": "1600s", "label": "Italy (Pomodoro)"},
-        {"lat": 41.01, "lng": 28.97, "era": "1800s", "label": "Istanbul (Ottoman)"}
+        {
+          "lat": -9.19,
+          "lng": -75.01,
+          "era": "Ancestral",
+          "label": "Andes (Peru)"
+        },
+        {
+          "lat": 19.43,
+          "lng": -99.13,
+          "era": "Pre-Columbian",
+          "label": "Mexico (Aztecs)"
+        },
+        {
+          "lat": 40.41,
+          "lng": -3.7,
+          "era": "1540s",
+          "label": "Spain"
+        },
+        {
+          "lat": 41.9,
+          "lng": 12.49,
+          "era": "1600s",
+          "label": "Italy (Pomodoro)"
+        },
+        {
+          "lat": 41.01,
+          "lng": 28.97,
+          "era": "1800s",
+          "label": "Istanbul (Ottoman)"
+        }
       ]
     },
     {
       "ingredient": "Lentils",
       "waypoints": [
-        {"lat": 37.00, "lng": 38.00, "era": "Ancient (Neolithic)", "label": "Fertile Crescent"},
-        {"lat": 30.00, "lng": 31.00, "era": "3000 BC", "label": "Ancient Egypt"},
-        {"lat": 41.00, "lng": 29.00, "era": "Ottoman Era", "label": "Anatolia / Istanbul"}
+        {
+          "lat": 37.0,
+          "lng": 38.0,
+          "era": "Ancient (Neolithic)",
+          "label": "Fertile Crescent"
+        },
+        {
+          "lat": 30.0,
+          "lng": 31.0,
+          "era": "3000 BC",
+          "label": "Ancient Egypt"
+        },
+        {
+          "lat": 41.0,
+          "lng": 29.0,
+          "era": "Ottoman Era",
+          "label": "Anatolia / Istanbul"
+        }
       ]
     }
   ]
