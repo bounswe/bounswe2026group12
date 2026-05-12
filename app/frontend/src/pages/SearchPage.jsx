@@ -58,6 +58,7 @@ export default function SearchPage() {
   const event = searchParams.get('event') || '';
   const eventExclude = searchParams.get('event_exclude') || '';
   const mealType = searchParams.get('meal_type') || '';
+  const storyType = searchParams.get('story_type') || '';
   const language = searchParams.get('language') || '';
 
   const [localQ, setLocalQ] = useState(q);
@@ -129,11 +130,24 @@ export default function SearchPage() {
     ].some((list) => Array.isArray(list) && list.length > 0);
   }, [user]);
 
-  const displayResults = mealType.trim()
-    ? results.filter((r) =>
-        r.title.toLowerCase().includes(mealType.toLowerCase())
-      )
-    : results;
+  // Client-side filters that complement the backend search:
+  //   * meal_type — Recipe.meal_type is not yet a backend field; we fall back to
+  //     a title substring match. Tracked in #849 (backend will add the field
+  //     and the same filter at the API layer).
+  //   * story_type — Story.story_type exists on the backend but the unified
+  //     /api/search/ endpoint does not yet pass the query param through (also
+  //     #849). Filter story results by story_type here until backend lands.
+  // Recipes are never filtered out by story_type, stories are never filtered
+  // out by meal_type — each filter only applies to its own content type.
+  const displayResults = results.filter((r) => {
+    if (mealType.trim() && r.type === 'recipe') {
+      if (!r.title.toLowerCase().includes(mealType.toLowerCase())) return false;
+    }
+    if (storyType.trim() && r.type === 'story') {
+      if ((r.story_type || '').toLowerCase() !== storyType.toLowerCase()) return false;
+    }
+    return true;
+  });
 
   function removeFilter(paramKey) {
     const next = new URLSearchParams(searchParams);
@@ -149,6 +163,7 @@ export default function SearchPage() {
     event && { label: `Event+: ${event}`, key: 'event' },
     eventExclude && { label: `Event-: ${eventExclude}`, key: 'event_exclude' },
     mealType && { label: `Meal type: ${mealType}`, key: 'meal_type' },
+    storyType && { label: `Story type: ${storyType}`, key: 'story_type' },
     region && { label: `Region: ${region}`, key: 'region' },
   ].filter(Boolean);
 
@@ -183,7 +198,9 @@ export default function SearchPage() {
       `&diet_exclude=${encodeURIComponent(formatCsv(localDietExclude))}` +
       `&event=${encodeURIComponent(formatCsv(localEventInclude))}` +
       `&event_exclude=${encodeURIComponent(formatCsv(localEventExclude))}` +
-      `&meal_type=${encodeURIComponent(localMealType)}&language=${encodeURIComponent(language)}`
+      `&meal_type=${encodeURIComponent(localMealType)}` +
+      `&story_type=${encodeURIComponent(storyType)}` +
+      `&language=${encodeURIComponent(language)}`
     );
   }
 
