@@ -137,3 +137,16 @@ export async function fetchMyBookmarks() {
   const response = await apiClient.get('/api/recipes/', { params: { bookmarked: 'true' } });
   return response.data.results ?? response.data;
 }
+
+/**
+ * Recipes attached to a region by name (#732 — map story-pin parity).
+ * Backend: `GET /api/recipes/?region=<name>`. Returns items with optional
+ * `latitude` / `longitude` for plotting on the region map.
+ */
+export async function fetchRecipesByRegion(regionName) {
+  if (USE_MOCK) {
+    return MOCK_RECIPES_LIST.filter((r) => r.region_name === regionName);
+  }
+  const response = await apiClient.get('/api/recipes/', { params: { region: regionName } });
+  return response.data.results ?? response.data;
+}
