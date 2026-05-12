@@ -44,6 +44,8 @@ type RawTimelineEvent = {
   // backend extras that we fold into payload for the title composer
   related_recipe?: number | string | null;
   related_story?: number | string | null;
+  recipe_title?: string | null;
+  story_title?: string | null;
   stamp_rarity?: string | null;
 };
 
@@ -89,6 +91,12 @@ export function normalizeEvent(raw: RawTimelineEvent | null | undefined): Timeli
   }
   if (raw.related_story !== undefined && raw.related_story !== null) {
     payload.related_story = raw.related_story;
+  }
+  if (typeof raw.recipe_title === 'string' && raw.recipe_title) {
+    payload.recipe_title = raw.recipe_title;
+  }
+  if (typeof raw.story_title === 'string' && raw.story_title) {
+    payload.story_title = raw.story_title;
   }
   if (raw.stamp_rarity !== undefined && raw.stamp_rarity !== null) {
     payload.stamp_rarity = raw.stamp_rarity;

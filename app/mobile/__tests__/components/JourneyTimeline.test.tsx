@@ -239,6 +239,34 @@ describe('JourneyTimeline', () => {
     expect(queryByText(/Story #/)).toBeNull();
   });
 
+  it('renders Recipe pill with title from payload when backend provides recipe_title (#871)', async () => {
+    const ev = makeEvent({
+      id: 30,
+      message: 'Saved a recipe',
+      payload: { related_recipe: 99, recipe_title: 'Trabzon Butter Kuymak' },
+    });
+    mockPaginationSync([ev]);
+    const { getByText, queryByText } = render(
+      <JourneyTimeline username="ayse" initialEvents={[ev]} />,
+    );
+    expect(getByText('Trabzon Butter Kuymak →')).toBeTruthy();
+    expect(queryByText('Recipe #99 →')).toBeNull();
+  });
+
+  it('renders Story pill with title from payload when backend provides story_title (#871)', async () => {
+    const ev = makeEvent({
+      id: 31,
+      message: 'Saved a story',
+      payload: { related_story: 12, story_title: 'When Yogurt Connects Continents' },
+    });
+    mockPaginationSync([ev]);
+    const { getByText, queryByText } = render(
+      <JourneyTimeline username="ayse" initialEvents={[ev]} />,
+    );
+    expect(getByText('When Yogurt Connects Continents →')).toBeTruthy();
+    expect(queryByText('Story #12 →')).toBeNull();
+  });
+
   it('skips the Recipe pill when the message already mentions Recipe #', async () => {
     const ev = makeEvent({
       id: 24,
