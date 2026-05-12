@@ -7,6 +7,10 @@ import ChipGroup from '../components/ChipGroup';
 import DailyCulturalSection from '../components/DailyCulturalSection';
 import FloatingCulturalPrompt from '../components/FloatingCulturalPrompt';
 import RandomCulturalFact from '../components/RandomCulturalFact';
+import HomeRegionMapSection from '../components/HomeRegionMapSection';
+import HomeWeeklySection from '../components/HomeWeeklySection';
+import FeedbackBar from '../components/FeedbackBar';
+import HomeClosingBanner from '../components/HomeClosingBanner';
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import './HomePage.css';
 
@@ -188,6 +192,10 @@ export default function HomePage() {
       <aside className="home-random-fact" aria-label="Cultural fact of the moment">
         <RandomCulturalFact />
       </aside>
+      <HomeRegionMapSection />
+      <HomeWeeklySection />
+      <FeedbackBar />
+      <HomeClosingBanner />
       <FloatingCulturalPrompt regions={regions} />
     </main>
   );

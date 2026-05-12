@@ -5,10 +5,16 @@ import HomePage from '../pages/HomePage';
 import * as searchService from '../services/searchService';
 import * as culturalContentService from '../services/culturalContentService';
 import * as culturalFactService from '../services/culturalFactService';
+import * as mapService from '../services/mapService';
+import * as recipeService from '../services/recipeService';
+import * as storyService from '../services/storyService';
 
 jest.mock('../services/searchService');
 jest.mock('../services/culturalContentService');
 jest.mock('../services/culturalFactService');
+jest.mock('../services/mapService');
+jest.mock('../services/recipeService');
+jest.mock('../services/storyService');
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -28,6 +34,9 @@ beforeEach(() => {
     id: 99, text: 'Köfte traveled to Sweden.', source_url: '',
     heritage_group: null, region: null,
   });
+  mapService.fetchMapRegions.mockResolvedValue([]);
+  recipeService.fetchFeaturedRecipes.mockResolvedValue([]);
+  storyService.fetchFeaturedStories.mockResolvedValue([]);
 });
 
 function renderPage(user = null) {
@@ -122,5 +131,29 @@ describe('HomePage random cultural fact', () => {
     // Wait for the page baseline to settle — region chips finish loading.
     await screen.findByRole('button', { name: 'Aegean' });
     expect(screen.queryByText(/köfte traveled to sweden/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('HomePage — redesign sections (#876)', () => {
+  it('renders the Explore by region section', async () => {
+    renderPage();
+    expect(await screen.findByRole('heading', { name: /explore by region/i })).toBeInTheDocument();
+  });
+
+  it("renders the This week's recipes and This week's stories rails", async () => {
+    renderPage();
+    expect(await screen.findByRole('heading', { name: /this week's recipes/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /this week's stories/i })).toBeInTheDocument();
+  });
+
+  it('renders the Feedback Bar with the prompt and Send button', async () => {
+    renderPage();
+    expect(await screen.findByLabelText(/what would you like to see on genipe/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /send/i })).toBeInTheDocument();
+  });
+
+  it('renders the closing brand banner', async () => {
+    renderPage();
+    expect(await screen.findByRole('region', { name: /sharing cultures/i })).toBeInTheDocument();
   });
 });

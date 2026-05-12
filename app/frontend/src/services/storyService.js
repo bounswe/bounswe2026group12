@@ -72,3 +72,12 @@ export async function fetchStoriesByRegion(regionName) {
   const response = await apiClient.get('/api/stories/', { params: { region: regionName, page_size: 100 } });
   return response.data.results ?? response.data;
 }
+
+/**
+ * Top N stories for the home page weekly rail (#876).
+ * Wraps fetchStories() and slices client-side.
+ */
+export async function fetchFeaturedStories(limit = 6) {
+  const list = await fetchStories();
+  return list.slice(0, limit);
+}

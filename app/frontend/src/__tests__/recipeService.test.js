@@ -15,6 +15,7 @@ import {
   fetchMyRecipes,
   fetchMyBookmarks,
   fetchRecipesByRegion,
+  fetchFeaturedRecipes,
 } from '../services/recipeService';
 
 jest.mock('../services/api', () => ({
@@ -321,5 +322,20 @@ describe('fetchRecipesByRegion', () => {
   it('unwraps paginated DRF responses', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [{ id: 5 }] } });
     expect(await fetchRecipesByRegion('Aegean')).toEqual([{ id: 5 }]);
+  });
+});
+
+describe('fetchFeaturedRecipes', () => {
+  it('returns the first <limit> recipes from the list endpoint', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: Array.from({ length: 10 }, (_, i) => ({ id: i + 1 })) } });
+    const result = await fetchFeaturedRecipes(6);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { page_size: 100 } });
+    expect(result).toHaveLength(6);
+    expect(result.map((r) => r.id)).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('defaults limit to 6 when not provided', async () => {
+    apiClient.get.mockResolvedValue({ data: Array.from({ length: 12 }, (_, i) => ({ id: i + 1 })) });
+    expect(await fetchFeaturedRecipes()).toHaveLength(6);
   });
 });
