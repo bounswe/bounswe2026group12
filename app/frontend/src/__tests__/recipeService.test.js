@@ -12,6 +12,8 @@ import {
   rateRecipe,
   unrateRecipe,
   toggleBookmark,
+  fetchMyRecipes,
+  fetchMyBookmarks,
 } from '../services/recipeService';
 
 jest.mock('../services/api', () => ({
@@ -276,5 +278,33 @@ describe('toggleBookmark', () => {
   it('propagates API errors', async () => {
     apiClient.post.mockRejectedValue(new Error('Server error'));
     await expect(toggleBookmark(1)).rejects.toThrow('Server error');
+  });
+});
+
+describe('fetchMyRecipes', () => {
+  it('GETs /api/recipes/?author=<id> and returns the list', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Mine' }] });
+    const result = await fetchMyRecipes(42);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42 } });
+    expect(result).toEqual([{ id: 1, title: 'Mine' }]);
+  });
+
+  it('unwraps paginated DRF responses', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: [{ id: 7 }] } });
+    expect(await fetchMyRecipes(42)).toEqual([{ id: 7 }]);
+  });
+});
+
+describe('fetchMyBookmarks', () => {
+  it('GETs /api/recipes/?bookmarked=true and returns the list', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 9, title: 'Saved' }] });
+    const result = await fetchMyBookmarks();
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true' } });
+    expect(result).toEqual([{ id: 9, title: 'Saved' }]);
+  });
+
+  it('unwraps paginated DRF responses', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: [{ id: 10 }] } });
+    expect(await fetchMyBookmarks()).toEqual([{ id: 10 }]);
   });
 });

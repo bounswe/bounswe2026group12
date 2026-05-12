@@ -117,3 +117,23 @@ export async function toggleBookmark(id) {
   const response = await apiClient.post(`/api/recipes/${id}/bookmark/`);
   return response.data;
 }
+
+/**
+ * Recipes authored by a specific user (#709 — "My recipes" section).
+ * Backend: `GET /api/recipes/?author=<userId>`.
+ */
+export async function fetchMyRecipes(authorId) {
+  if (USE_MOCK) return MOCK_RECIPES_LIST.filter((r) => r.author === authorId);
+  const response = await apiClient.get('/api/recipes/', { params: { author: authorId } });
+  return response.data.results ?? response.data;
+}
+
+/**
+ * Recipes the current user has bookmarked (#709 — "Saved recipes").
+ * Backend: `GET /api/recipes/?bookmarked=true` (requires authentication).
+ */
+export async function fetchMyBookmarks() {
+  if (USE_MOCK) return [];
+  const response = await apiClient.get('/api/recipes/', { params: { bookmarked: 'true' } });
+  return response.data.results ?? response.data;
+}
