@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, LogoutView, MeView, PublicUserView, TokenRefreshView
+from .views import RegisterView, LoginView, LogoutView, MeView, PublicUserView, TokenRefreshView, AvatarUploadView
 
 urlpatterns = [
     path('auth/register/', RegisterView.as_view(), name='register'),
@@ -9,5 +9,6 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # `users/me/` must stay before `users/<username>/` so the literal route wins.
     path('users/me/', MeView.as_view(), name='me'),
+    path('users/me/avatar/', AvatarUploadView.as_view(), name='me-avatar'),
     path('users/<str:username>/', PublicUserView.as_view(), name='public-user-profile'),
 ]

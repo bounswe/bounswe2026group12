@@ -192,6 +192,8 @@ class EndangeredNoteSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    author_display_name = serializers.ReadOnlyField(source='author.display_name')
+    author_avatar_url = serializers.SerializerMethodField()
     region_name = serializers.ReadOnlyField(source='region.name')
     ingredients = RecipeIngredientSerializer(source='recipe_ingredients', many=True, read_only=True)
     ingredients_write = RecipeIngredientWriteSerializer(many=True, write_only=True, required=False)
@@ -225,7 +227,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'public_id', 'title', 'description', 'steps', 'image', 'video',
             'region', 'region_name', 'latitude', 'longitude',
-            'author', 'author_username', 'qa_enabled',
+            'author', 'author_username', 'author_display_name', 'author_avatar_url', 'qa_enabled',
             'is_published', 'is_heritage', 'heritage_notes', 'heritage_status', 'meal_type',
             'average_rating', 'rating_count', 'user_rating',
             'created_at', 'updated_at',
@@ -259,6 +261,14 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_user_rating(self, obj):
         return getattr(obj, 'user_rating', None)
+
+    def get_author_avatar_url(self, obj):
+        if not obj.author or not obj.author.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.author.avatar.url)
+        return obj.author.avatar.url
 
     def validate(self, data):
         if self.context['request'].method == 'POST':
@@ -332,14 +342,16 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    author_display_name = serializers.ReadOnlyField(source='author.display_name')
+    author_avatar_url = serializers.SerializerMethodField()
     helpful_count = serializers.IntegerField(read_only=True, default=0)
     has_voted = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
         fields = [
-            'id', 'recipe', 'author', 'author_username', 'parent_comment',
-            'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted'
+            'id', 'recipe', 'author', 'author_username', 'author_display_name', 'author_avatar_url',
+            'parent_comment', 'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted'
         ]
         read_only_fields = ['recipe', 'author', 'created_at', 'updated_at']
 
@@ -351,6 +363,14 @@ class CommentSerializer(serializers.ModelSerializer):
             # Fallback if not annotated
             return obj.votes.filter(user=request.user).exists()
         return False
+
+    def get_author_avatar_url(self, obj):
+        if not obj.author or not obj.author.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.author.avatar.url)
+        return obj.author.avatar.url
 
     def validate(self, attrs):
         parent = attrs.get('parent_comment')

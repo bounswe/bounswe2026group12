@@ -24,12 +24,14 @@ class MessageSerializer(serializers.ModelSerializer):
     that the conversation flow remains coherent without leaking content.
     """
     sender_username = serializers.ReadOnlyField(source='sender.username')
+    sender_display_name = serializers.ReadOnlyField(source='sender.display_name')
+    sender_avatar_url = serializers.SerializerMethodField()
     body = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
         fields = [
-            'id', 'thread', 'sender', 'sender_username',
+            'id', 'thread', 'sender', 'sender_username', 'sender_display_name', 'sender_avatar_url',
             'body', 'created_at', 'is_deleted', 'deleted_at',
         ]
         read_only_fields = ['thread', 'sender', 'created_at', 'is_deleted', 'deleted_at']
@@ -38,6 +40,14 @@ class MessageSerializer(serializers.ModelSerializer):
         if obj.is_deleted:
             return DELETED_BODY_PLACEHOLDER
         return obj.body
+
+    def get_sender_avatar_url(self, obj):
+        if not obj.sender or not obj.sender.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.sender.avatar.url)
+        return obj.sender.avatar.url
 
 
 class ThreadSerializer(serializers.ModelSerializer):
@@ -50,6 +60,8 @@ class ThreadSerializer(serializers.ModelSerializer):
     """
     other_user_id = serializers.SerializerMethodField()
     other_username = serializers.SerializerMethodField()
+    other_display_name = serializers.SerializerMethodField()
+    other_avatar_url = serializers.SerializerMethodField()
     unread_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -58,6 +70,8 @@ class ThreadSerializer(serializers.ModelSerializer):
             'id',
             'other_user_id',
             'other_username',
+            'other_display_name',
+            'other_avatar_url',
             'last_message_at',
             'last_message_preview',
             'unread_count',
@@ -88,6 +102,19 @@ class ThreadSerializer(serializers.ModelSerializer):
     def get_other_username(self, obj):
         p = self._other_participant(obj)
         return p.user.username if p else None
+
+    def get_other_display_name(self, obj):
+        p = self._other_participant(obj)
+        return p.user.display_name if p else None
+
+    def get_other_avatar_url(self, obj):
+        p = self._other_participant(obj)
+        if not p or not p.user.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(p.user.avatar.url)
+        return p.user.avatar.url
 
     def get_unread_count(self, obj):
         request = self.context['request']

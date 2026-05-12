@@ -29,20 +29,30 @@ class LoginSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     bookmark_count = serializers.SerializerMethodField()
+    avatar_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'username', 'bio', 'region', 'preferred_language', 'role', 'created_at',
+            'id', 'email', 'username', 'display_name', 'avatar_url', 'bio', 'region',
+            'preferred_language', 'role', 'created_at',
             'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
             'is_contactable', 'bookmark_count',
         ]
         read_only_fields = [
-            'id', 'email', 'username', 'role', 'created_at',
+            'id', 'email', 'username', 'role', 'created_at', 'avatar_url',
         ]
 
     def get_bookmark_count(self, obj):
         return obj.bookmarks.count()
+
+    def get_avatar_url(self, obj):
+        if not obj.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.avatar.url)
+        return obj.avatar.url
 
 
 class PublicUserSerializer(serializers.ModelSerializer):
@@ -54,11 +64,14 @@ class PublicUserSerializer(serializers.ModelSerializer):
     """
     recipe_count = serializers.SerializerMethodField()
     story_count = serializers.SerializerMethodField()
+    avatar_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             'username',
+            'display_name',
+            'avatar_url',
             'bio',
             'region',
             'cultural_interests',
@@ -74,6 +87,14 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     def get_story_count(self, obj):
         return obj.stories.filter(is_published=True).count()
+
+    def get_avatar_url(self, obj):
+        if not obj.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.avatar.url)
+        return obj.avatar.url
 
 
 class StringTagListField(serializers.ListField):
@@ -111,7 +132,7 @@ class UserPreferencesUpdateSerializer(serializers.ModelSerializer):
         fields = [
             'cultural_interests', 'regional_ties', 'religious_preferences', 'event_interests',
             'is_contactable',
-            'username', 'bio', 'region', 'preferred_language',
+            'username', 'display_name', 'bio', 'region', 'preferred_language',
         ]
 
     def validate_username(self, value):

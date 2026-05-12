@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -131,3 +132,23 @@ class PublicUserView(generics.RetrieveAPIView):
     serializer_class = PublicUserSerializer
     queryset = get_user_model().objects.all()
     lookup_field = 'username'
+
+
+class AvatarUploadView(APIView):
+    """POST /api/users/me/avatar/ — multipart image upload (#807)."""
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        user = request.user
+        file_obj = request.data.get('avatar')
+        if not file_obj:
+            return Response({'detail': 'No image provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.avatar = file_obj
+        user.save(update_fields=['avatar'])
+        
+        # DRF's ImageField serializer can handle absolute URLs, but since we are
+        # returning a manual response, we use request.build_absolute_uri.
+        avatar_url = request.build_absolute_uri(user.avatar.url)
+        return Response({'avatar_url': avatar_url}, status=status.HTTP_200_OK)

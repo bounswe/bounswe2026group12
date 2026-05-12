@@ -18,6 +18,8 @@ class StoryRecipeLinkSerializer(serializers.ModelSerializer):
 
 class StorySerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    author_display_name = serializers.ReadOnlyField(source='author.display_name')
+    author_avatar_url = serializers.SerializerMethodField()
     
     # --- BACKWARD COMPAT: old single-value fields ---
     linked_recipe = serializers.SerializerMethodField()    # read: first recipe ID or null
@@ -63,6 +65,7 @@ class StorySerializer(serializers.ModelSerializer):
         model = Story
         fields = [
             'id', 'public_id', 'title', 'summary', 'body', 'image', 'author', 'author_username',
+            'author_display_name', 'author_avatar_url',
             'linked_recipe', 'recipe_title',    # backward compat (read)
             'linked_recipes',                   # new array (read)
             'linked_recipe_id', 'linked_recipe_ids',  # write aliases
@@ -92,6 +95,14 @@ class StorySerializer(serializers.ModelSerializer):
 
     def get_rank_reason(self, obj):
         return getattr(obj, 'rank_reason', None)
+
+    def get_author_avatar_url(self, obj):
+        if not obj.author or not obj.author.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.author.avatar.url)
+        return obj.author.avatar.url
 
     def to_internal_value(self, data):
         """Shim to handle legacy 'linked_recipe' as 'linked_recipe_id'."""
@@ -194,14 +205,16 @@ class StorySerializer(serializers.ModelSerializer):
 
 class StoryCommentSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
+    author_display_name = serializers.ReadOnlyField(source='author.display_name')
+    author_avatar_url = serializers.SerializerMethodField()
     helpful_count = serializers.IntegerField(read_only=True, default=0)
     has_voted = serializers.SerializerMethodField()
 
     class Meta:
         model = StoryComment
         fields = [
-            'id', 'story', 'author', 'author_username', 'parent_comment',
-            'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted',
+            'id', 'story', 'author', 'author_username', 'author_display_name', 'author_avatar_url',
+            'parent_comment', 'body', 'type', 'created_at', 'updated_at', 'helpful_count', 'has_voted',
         ]
         read_only_fields = ['story', 'author', 'created_at', 'updated_at']
 
@@ -212,6 +225,14 @@ class StoryCommentSerializer(serializers.ModelSerializer):
                 return obj.user_has_voted
             return obj.votes.filter(user=request.user).exists()
         return False
+
+    def get_author_avatar_url(self, obj):
+        if not obj.author or not obj.author.avatar:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.author.avatar.url)
+        return obj.author.avatar.url
 
     def validate(self, attrs):
         parent = attrs.get('parent_comment')
