@@ -20,6 +20,7 @@ import SearchScreen from '../screens/SearchScreen';
 import StoryCreateScreen from '../screens/StoryCreateScreen';
 import StoryDetailScreen from '../screens/StoryDetailScreen';
 import StoryEditScreen from '../screens/StoryEditScreen';
+import PassportScreen from '../screens/PassportScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import type { RootStackParamList } from './types';
 
@@ -85,6 +86,11 @@ export function PublicStackNavigator() {
         name="UserProfile"
         component={UserProfileScreen}
         options={{ title: 'Profile' }}
+      />
+      <Stack.Screen
+        name="Passport"
+        component={PassportScreen}
+        options={{ title: 'Passport' }}
       />
       <Stack.Screen
         name="Inbox"
