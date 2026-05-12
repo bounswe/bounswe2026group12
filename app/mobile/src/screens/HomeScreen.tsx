@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingView } from '../components/ui/LoadingView';
@@ -23,7 +23,6 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
   const { isAuthenticated, isReady } = useAuth();
-  const [query, setQuery] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
 
   const [stories, setStories] = useState<any[]>([]);
@@ -185,18 +184,14 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.searchWrap}>
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search recipes and stories…"
-            placeholderTextColor="#94a3b8"
-            style={styles.searchInput}
-            accessibilityLabel="Search query"
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="search"
-            onSubmitEditing={() => navigation.navigate('Search', { query: query.trim() })}
-          />
+          <Pressable
+            onPress={() => navigation.navigate('Search', { autoFocus: true })}
+            style={({ pressed }) => [styles.searchInput, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Open search"
+          >
+            <Text style={styles.searchPlaceholder}>Search recipes and stories…</Text>
+          </Pressable>
         </View>
 
         <Pressable
@@ -485,10 +480,12 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 16,
     backgroundColor: tokens.colors.surfaceInput,
-    color: tokens.colors.text,
     ...shadows.sm,
+  },
+  searchPlaceholder: {
+    fontSize: 16,
+    color: '#94a3b8',
   },
   section: { marginTop: 10, marginBottom: 18 },
   sectionHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 10 },

@@ -121,12 +121,14 @@ const styles = StyleSheet.create({
   },
   pillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   recipePill: {
-    backgroundColor: tokens.colors.surfaceDark,
+    backgroundColor: '#b3ae69',
     borderRadius: tokens.radius.pill,
     paddingVertical: 4,
     paddingHorizontal: 10,
     maxWidth: '70%',
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
   },
-  recipePillText: { fontSize: 12, color: tokens.colors.textOnDark, fontWeight: '800' },
+  recipePillText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   footer: { marginTop: 6 },
 });

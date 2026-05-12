@@ -182,6 +182,7 @@ export default function SearchScreen({ navigation, route }: Props) {
           accessibilityLabel="Search filter"
           autoCapitalize="none"
           autoCorrect={false}
+          autoFocus={route.params?.autoFocus === true}
         />
 
         <View style={styles.filtersRow}>
