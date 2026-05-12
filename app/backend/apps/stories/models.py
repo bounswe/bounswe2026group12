@@ -82,6 +82,12 @@ class Story(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        # Newest first, with a primary-key tiebreaker so paginated queries are
+        # deterministic even when rows share a created_at to the microsecond
+        # (seed_canonical inserts every story in one transaction). See #770.
+        ordering = ['-created_at', '-id']
+
     def __str__(self):
         return self.title
 

@@ -186,6 +186,12 @@ class Recipe(models.Model):
     average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     rating_count = models.IntegerField(default=0)
 
+    class Meta:
+        # Newest first, with a primary-key tiebreaker so paginated queries are
+        # deterministic even when rows share a created_at to the microsecond
+        # (seed_canonical inserts every recipe in one transaction). See #770.
+        ordering = ['-created_at', '-id']
+
     def __str__(self):
         return self.title
 

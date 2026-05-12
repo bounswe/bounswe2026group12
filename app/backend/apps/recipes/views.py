@@ -167,7 +167,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         if self.action == 'list':
             qs = apply_recipe_filters(qs, self.request.query_params, user=user)
-        return qs
+        # The Count() annotations above add a GROUP BY, and Django's default
+        # ordering (Recipe.Meta.ordering) is intentionally not applied to
+        # GROUP BY queries. Re-apply the same ordering explicitly so paginated
+        # list responses stay deterministic and never repeat a row across page
+        # boundaries (#770).
+        return qs.order_by('-created_at', '-id')
 
     def list(self, request, *args, **kwargs):
         personalize = request.query_params.get('personalize') != '0'
@@ -451,7 +456,7 @@ class RegionViewSet(CulturalTagSubmissionMixin, ModeratedLookupViewSet):
         location" bar. Both lists are ordered newest first.
         """
         region = get_object_or_404(Region, pk=pk, is_approved=True)
-        recipes = region.recipes.select_related('author').order_by('-created_at')
+        recipes = region.recipes.select_related('author').order_by('-created_at', '-id')
 
         located, unlocated = [], []
         for recipe in recipes:
