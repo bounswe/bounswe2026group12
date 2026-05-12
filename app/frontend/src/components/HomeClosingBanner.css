@@ -1,0 +1,23 @@
+.home-closing-banner {
+  max-width: 1100px;
+  margin: 3rem auto 2.5rem;
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(196, 82, 30, 0.06), rgba(250, 247, 239, 0.0));
+  border-top: 1px solid var(--color-border, #e0d8c8);
+  border-bottom: 1px solid var(--color-border, #e0d8c8);
+}
+
+.home-closing-banner-lead {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display, Fraunces, serif);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--color-surface-dark, #3D1500);
+  font-weight: 700;
+}
+
+.home-closing-banner-tag {
+  margin: 0;
+  color: var(--color-text-muted, #6b6b6b);
+  font-size: 1rem;
+}
