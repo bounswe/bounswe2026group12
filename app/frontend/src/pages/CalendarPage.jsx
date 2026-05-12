@@ -13,16 +13,27 @@ const MONTHS = [
 const LUNAR_PRETTY = {
   'ramadan': 'Ramadan',
   'eid-fitr': 'Eid al-Fitr',
+  'eid-al-fitr': 'Eid al-Fitr',
   'eid-adha': 'Eid al-Adha',
+  'eid-al-adha': 'Eid al-Adha',
   'kurban-bayrami': 'Eid al-Adha',
   'mevlid': 'Mevlid',
   'ashura': 'Ashura',
+  'diwali': 'Diwali',
+  'chuseok': 'Chuseok',
+  'carnaval': 'Carnaval',
+  'chinese-new-year': 'Chinese New Year',
+  'lunar-new-year': 'Lunar New Year',
+  'chunjie': 'Lunar New Year',
+  'homowo': 'Homowo',
+  'maslenitsa': 'Maslenitsa',
 };
 
 function prettyLunar(slug) {
   if (!slug) return '';
-  if (LUNAR_PRETTY[slug]) return LUNAR_PRETTY[slug];
-  return slug.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  const normalized = slug.toLowerCase().replace(/_/g, '-');
+  if (LUNAR_PRETTY[normalized]) return LUNAR_PRETTY[normalized];
+  return normalized.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }
 
 function ruleFromEvent(event) {

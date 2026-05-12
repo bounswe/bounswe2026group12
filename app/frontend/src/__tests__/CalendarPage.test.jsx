@@ -139,4 +139,31 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
     expect(container.querySelectorAll('.calendar-event-badge.is-lunar').length).toBeGreaterThan(0);
     expect(container.querySelectorAll('.calendar-event-badge:not(.is-lunar)').length).toBeGreaterThan(0);
   });
+
+  it('resolves backend snake_case slugs (eid_al_adha) the same as kebab-case', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 6, name: 'Eid al-Adha', date_rule: 'lunar:eid_al_adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
+    // (movable) only appears when unresolved; with the table entry it must NOT appear.
+    expect(screen.queryByText(/\(movable\)/i)).not.toBeInTheDocument();
+  });
+
+  it('resolves Diwali (newly added to the lookup) instead of marking it movable', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 7, name: 'Diwali', date_rule: 'lunar:diwali', region: { id: 1, name: 'Indian' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
+    expect(screen.queryByText(/\(movable\)/i)).not.toBeInTheDocument();
+  });
+
+  it('shows the pretty event name in the subline rather than the raw slug', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 8, name: 'Eid al-Adha', date_rule: 'lunar:eid_al_adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    expect(await screen.findByText(/On the lunar calendar: Eid al-Adha this year/i)).toBeInTheDocument();
+  });
 });
