@@ -6369,6 +6369,111 @@
       "story_type": "historical"
     }
   ],
+  "messaging_threads": [
+    {
+      "participants": [
+        "emily",
+        "fatma"
+      ],
+      "messages": [
+        {
+          "sender": "emily",
+          "body": "Hi! I tried your Baklava recipe and wanted to ask about the syrup temperature.",
+          "created_at": "2026-05-08T08:55:00Z"
+        },
+        {
+          "sender": "fatma",
+          "body": "Pour cooled syrup over hot pastry in stages so the top stays crisp.",
+          "created_at": "2026-05-08T09:10:00Z"
+        },
+        {
+          "sender": "emily",
+          "body": "That helps a lot. Should I rest it before cutting, or serve it as soon as it cools?",
+          "created_at": "2026-05-08T09:23:00Z"
+        },
+        {
+          "sender": "emily",
+          "body": "Also, would pistachio work better than walnut for the version in the fixture?",
+          "created_at": "2026-05-08T09:45:00Z"
+        }
+      ],
+      "last_read_at": {
+        "emily": "2026-05-08T09:45:00Z",
+        "fatma": "2026-05-08T09:10:00Z"
+      }
+    },
+    {
+      "participants": [
+        "mehmet",
+        "leila"
+      ],
+      "messages": [
+        {
+          "sender": "mehmet",
+          "body": "I am testing the Lamb Tagine seed recipe. Do you toast the spice mix before it goes into the pot?",
+          "created_at": "2026-05-07T17:20:00Z"
+        },
+        {
+          "sender": "leila",
+          "body": "Yes, just for thirty seconds in olive oil. It wakes the cumin and cinnamon up without making them bitter.",
+          "created_at": "2026-05-07T17:42:00Z"
+        },
+        {
+          "sender": "mehmet",
+          "body": "Perfect, thanks. I already have preserved lemon ready, so I think I can keep this version close to the original.",
+          "created_at": "2026-05-07T18:10:00Z"
+        }
+      ],
+      "last_read_at": {
+        "mehmet": "2026-05-07T18:10:00Z",
+        "leila": "2026-05-07T18:10:00Z"
+      }
+    },
+    {
+      "participants": [
+        "elif",
+        "dimitris"
+      ],
+      "messages": [
+        {
+          "sender": "dimitris",
+          "body": "Your olive oil stuffed grape leaves reminded me of the dolmadakia I grew up with in Athens.",
+          "created_at": "2026-05-05T18:00:00Z"
+        },
+        {
+          "sender": "elif",
+          "body": "That makes sense. We finish ours with plenty of lemon and let them cool in the pot before serving.",
+          "created_at": "2026-05-05T18:14:00Z"
+        },
+        {
+          "sender": "dimitris",
+          "body": "We do the same. I was curious whether you keep cinnamon in the filling or leave the herbs to lead it.",
+          "created_at": "2026-05-05T18:30:00Z"
+        },
+        {
+          "sender": "elif",
+          "body": "Only a whisper of cinnamon. Mint, parsley, currants, and pine nuts should stay in front.",
+          "created_at": "2026-05-06T16:02:00Z"
+        },
+        {
+          "sender": "dimitris",
+          "body": "That balance sounds right. I will try your ratio the next time I cook a mezze spread for friends.",
+          "created_at": "2026-05-06T16:25:00Z"
+        }
+      ],
+      "last_read_at": {
+        "elif": "2026-05-06T16:25:00Z",
+        "dimitris": "2026-05-06T16:25:00Z"
+      }
+    },
+    {
+      "participants": [
+        "lars",
+        "maria"
+      ],
+      "messages": []
+    }
+  ],
   "cultural_content": [
     {
       "slug": "sunday-borek-mornings",

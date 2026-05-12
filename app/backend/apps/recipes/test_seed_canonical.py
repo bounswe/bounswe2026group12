@@ -7,8 +7,10 @@ from django.test import TestCase
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.contrib.auth import get_user_model
+from django.utils.dateparse import parse_datetime
 from PIL import Image
 
+from apps.messaging.models import Message, Thread, ThreadParticipant
 from apps.recipes.models import (
     Recipe, RecipeIngredient, Region, Ingredient, Unit,
     DietaryTag, EventTag, Religion,
@@ -129,6 +131,10 @@ class SeedCanonicalCommandTest(TestCase):
     def _run(self, **kwargs):
         call_command('seed_canonical', fixture=self.fixture_path, **kwargs)
 
+    def _write_fixture(self, data):
+        with open(self.fixture_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f)
+
     def test_creates_expected_counts(self):
         self._run()
         self.assertEqual(User.objects.filter(is_staff=False, is_superuser=False).count(), 2)
@@ -149,6 +155,70 @@ class SeedCanonicalCommandTest(TestCase):
         self._run()
         self.assertEqual(StoryRecipeLink.objects.count(), 1)
         self.assertEqual(StoryRecipeLink.objects.first().recipe.title, 'Test Recipe One')
+
+    def test_seeds_messaging_threads_with_preview_and_read_cursors(self):
+        fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        fixture_data['messaging_threads'] = [
+            {
+                'participants': ['testuser1', 'testuser2'],
+                'messages': [
+                    {
+                        'sender': 'testuser1',
+                        'body': 'Hi, can I ask about the rice ratio?',
+                        'created_at': '2026-05-09T08:00:00Z',
+                    },
+                    {
+                        'sender': 'testuser2',
+                        'body': 'Sure, I usually start at one part rice to one and a half parts water.',
+                        'created_at': '2026-05-09T08:05:00Z',
+                    },
+                    {
+                        'sender': 'testuser1',
+                        'body': 'Perfect, thank you. I will try it tonight.',
+                        'created_at': '2026-05-09T08:11:00Z',
+                    },
+                ],
+                'last_read_at': {
+                    'testuser1': '2026-05-09T08:11:00Z',
+                    'testuser2': '2026-05-09T08:05:00Z',
+                },
+            }
+        ]
+        self._write_fixture(fixture_data)
+
+        self._run()
+
+        self.assertEqual(Thread.objects.count(), 1)
+        self.assertEqual(Message.objects.count(), 3)
+        thread = Thread.objects.get()
+        self.assertEqual(
+            thread.last_message_preview,
+            'Perfect, thank you. I will try it tonight.',
+        )
+        self.assertEqual(
+            thread.last_message_at,
+            parse_datetime('2026-05-09T08:11:00Z'),
+        )
+
+        tp1 = ThreadParticipant.objects.get(thread=thread, user__username='testuser1')
+        tp2 = ThreadParticipant.objects.get(thread=thread, user__username='testuser2')
+        self.assertEqual(tp1.last_read_at, parse_datetime('2026-05-09T08:11:00Z'))
+        self.assertEqual(tp2.last_read_at, parse_datetime('2026-05-09T08:05:00Z'))
+
+    def test_rejects_messaging_thread_with_unknown_participant(self):
+        fixture_data = json.loads(json.dumps(MINIMAL_FIXTURE))
+        fixture_data['messaging_threads'] = [
+            {
+                'participants': ['testuser1', 'ghost_user'],
+                'messages': [],
+            }
+        ]
+        self._write_fixture(fixture_data)
+
+        with self.assertRaises(CommandError) as ctx:
+            self._run()
+
+        self.assertIn('ghost_user', str(ctx.exception))
 
     def test_sets_taxonomy_tags_on_recipe(self):
         self._run()

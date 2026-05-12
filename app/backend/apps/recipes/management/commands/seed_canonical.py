@@ -7,6 +7,8 @@ from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 MEDIA_DIR = Path(__file__).resolve().parents[4] / 'fixtures' / 'media'
 
@@ -52,12 +54,18 @@ class Command(BaseCommand):
         cultural_events_data = data.get('cultural_events', [])
         ingredient_routes_data = data.get('ingredient_routes', [])
         quests_data = data.get('quests', [])
+        messaging_threads_data = data.get('messaging_threads', [])
+        messaging_message_count = sum(
+            len(thread.get('messages', [])) for thread in messaging_threads_data
+        )
 
         if options['dry_run']:
             self.stdout.write(
                 f'DRY RUN: Would create {len(data["users"])} users, '
                 f'{len(data["recipes"])} recipes, '
                 f'{len(data["stories"])} stories, '
+                f'{len(messaging_threads_data)} messaging threads '
+                f'({messaging_message_count} messages), '
                 f'{len(data.get("recipe_comments", []))} recipe comments, '
                 f'{len(data.get("story_comments", []))} story comments, '
                 f'{len(data["cultural_content"])} cultural content cards, '
@@ -74,6 +82,7 @@ class Command(BaseCommand):
             users = self._seed_users(data['users'])
             recipes = self._seed_recipes(data['recipes'], users)
             stories = self._seed_stories(data['stories'], users, recipes)
+            messaging_stats = self._seed_messaging(messaging_threads_data, users)
             self._seed_recipe_comments(data.get('recipe_comments', []), users, recipes)
             self._seed_story_comments(data.get('story_comments', []), users, stories)
             cards = self._seed_cultural_content(data['cultural_content'], recipes, stories)
@@ -85,7 +94,10 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(
             f'Created {len(users)} users, {len(recipes)} recipes, '
-            f'{len(stories)} stories, {len(cards)} cultural content cards, '
+            f'{len(stories)} stories, '
+            f'{messaging_stats["threads"]} messaging threads '
+            f'({messaging_stats["messages"]} messages), '
+            f'{len(cards)} cultural content cards, '
             f'{quest_count} quests, '
             f'{sub_created} substitutions added ({sub_skipped} already present), '
             f'{heritage_stats["groups"]} heritage groups '
@@ -144,6 +156,14 @@ class Command(BaseCommand):
 
     def _resolve_many(self, model, names):
         return [self._resolve(model, n) for n in names]
+
+    def _parse_fixture_datetime(self, value, context):
+        dt = parse_datetime(value)
+        if dt is None:
+            raise CommandError(f"{context}: invalid datetime '{value}'.")
+        if timezone.is_naive(dt):
+            dt = timezone.make_aware(dt, timezone.get_current_timezone())
+        return dt
 
     def _seed_users(self, users_data):
         users = {}
@@ -285,6 +305,83 @@ class Command(BaseCommand):
                         self.style.WARNING(f"Image not found: {img_path}")
                     )
         return stories
+
+    def _seed_messaging(self, threads_data, users):
+        if not threads_data:
+            return {'threads': 0, 'messages': 0}
+
+        thread_count = 0
+        message_count = 0
+
+        for index, entry in enumerate(threads_data, start=1):
+            participant_names = entry.get('participants', [])
+            if len(participant_names) != 2 or len(set(participant_names)) != 2:
+                raise CommandError(
+                    f"messaging_threads[{index}] must contain exactly two distinct participants."
+                )
+
+            missing = [name for name in participant_names if name not in users]
+            if missing:
+                raise CommandError(
+                    f"messaging_threads[{index}] references unknown participant(s): "
+                    f"{', '.join(missing)}."
+                )
+
+            thread = Thread.objects.create()
+            participants = {}
+            for username in participant_names:
+                participants[username] = ThreadParticipant.objects.create(
+                    thread=thread,
+                    user=users[username],
+                )
+
+            newest_at = None
+            newest_body = ''
+            for msg_index, msg_data in enumerate(entry.get('messages', []), start=1):
+                sender_name = msg_data.get('sender')
+                if sender_name not in participants:
+                    raise CommandError(
+                        f"messaging_threads[{index}].messages[{msg_index}] sender "
+                        f"'{sender_name}' is not a thread participant."
+                    )
+
+                created_at = self._parse_fixture_datetime(
+                    msg_data['created_at'],
+                    f"messaging_threads[{index}].messages[{msg_index}].created_at",
+                )
+                message = Message.objects.create(
+                    thread=thread,
+                    sender=users[sender_name],
+                    body=msg_data['body'],
+                )
+                Message.objects.filter(pk=message.pk).update(created_at=created_at)
+                if newest_at is None or created_at >= newest_at:
+                    newest_at = created_at
+                    newest_body = message.body
+                message_count += 1
+
+            for username, last_read_value in entry.get('last_read_at', {}).items():
+                if username not in participants:
+                    raise CommandError(
+                        f"messaging_threads[{index}].last_read_at references "
+                        f"non-participant '{username}'."
+                    )
+                ThreadParticipant.objects.filter(pk=participants[username].pk).update(
+                    last_read_at=self._parse_fixture_datetime(
+                        last_read_value,
+                        f"messaging_threads[{index}].last_read_at.{username}",
+                    )
+                )
+
+            if newest_at is not None:
+                Thread.objects.filter(pk=thread.pk).update(
+                    last_message_at=newest_at,
+                    last_message_preview=newest_body[:120],
+                )
+
+            thread_count += 1
+
+        return {'threads': thread_count, 'messages': message_count}
 
     def _seed_recipe_comments(self, comments_data, users, recipes):
         """Seed recipe comments/questions with optional nested replies."""
