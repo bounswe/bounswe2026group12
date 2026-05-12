@@ -49,4 +49,11 @@ export type RecipeDetail = {
    */
   is_bookmarked?: boolean;
   bookmark_count?: number;
+  /**
+   * "I tried this" flag surfaced by backend #584 ("Stamp" model, #599).
+   * Optional because older / minimal payloads can omit it — UI treats
+   * `undefined` as "not yet known" rather than "false". A successful try
+   * also implicitly pins the recipe to the user's cultural passport.
+   */
+  is_tried?: boolean;
 };

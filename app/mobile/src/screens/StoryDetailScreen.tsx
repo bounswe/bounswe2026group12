@@ -7,7 +7,9 @@ import { LinkedRecipePreviewCard } from '../components/story/LinkedRecipePreview
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
+import { saveStoryToPassport } from '../services/passportActionService';
 import { fetchStoryById } from '../services/storyService';
 import type { StoryDetail } from '../types/story';
 import { shadows, tokens } from '../theme';
@@ -22,6 +24,8 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const [passportBusy, setPassportBusy] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     let cancelled = false;
@@ -69,6 +73,37 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   }
 
   const canEdit = isReady && isAuthenticated && isStoryAuthor(user, story);
+
+  /**
+   * Passport-action toggle (#599). Active state comes from `saved_to_passport`
+   * on the story payload (surfaced by backend #584). Optimistic toggle +
+   * rollback on error, same shape the recipe detail screen uses.
+   */
+  const savedToPassport = story.saved_to_passport === true;
+
+  const onTogglePassport = async () => {
+    if (!isAuthenticated) {
+      navigation.navigate('Login');
+      return;
+    }
+    if (passportBusy) return;
+    const prevFlag = savedToPassport;
+    const nextFlag = !prevFlag;
+    setPassportBusy(true);
+    setStory((prev) => (prev ? { ...prev, saved_to_passport: nextFlag } : prev));
+    try {
+      const result = await saveStoryToPassport(id, nextFlag);
+      setStory((prev) => (prev ? { ...prev, saved_to_passport: result.saved } : prev));
+    } catch (e) {
+      setStory((prev) => (prev ? { ...prev, saved_to_passport: prevFlag } : prev));
+      showToast(
+        e instanceof Error ? e.message : 'Could not update passport.',
+        'error',
+      );
+    } finally {
+      setPassportBusy(false);
+    }
+  };
 
   const authorObj =
     story.author && typeof story.author === 'object' && story.author.username && story.author.id != null
@@ -118,16 +153,46 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
           ) : story.author ? (
             <Text style={styles.meta}>By Author</Text>
           ) : null}
-          {canEdit ? (
-            <Pressable
-              onPress={() => navigation.navigate('StoryEdit', { id })}
-              style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
-              accessibilityRole="button"
-              accessibilityLabel="Edit story"
-            >
-              <Text style={styles.editLinkText}>Edit story</Text>
-            </Pressable>
-          ) : null}
+          <View style={styles.actionRow}>
+            {canEdit ? (
+              <Pressable
+                onPress={() => navigation.navigate('StoryEdit', { id })}
+                style={({ pressed }) => [styles.editLink, pressed && { opacity: 0.85 }]}
+                accessibilityRole="button"
+                accessibilityLabel="Edit story"
+              >
+                <Text style={styles.editLinkText}>Edit story</Text>
+              </Pressable>
+            ) : null}
+            {isAuthenticated ? (
+              <Pressable
+                onPress={() => void onTogglePassport()}
+                disabled={passportBusy}
+                style={({ pressed }) => [
+                  styles.passportBtn,
+                  savedToPassport && styles.passportBtnActive,
+                  pressed && { opacity: 0.85 },
+                  passportBusy && { opacity: 0.6 },
+                ]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: savedToPassport, busy: passportBusy }}
+                accessibilityLabel={
+                  savedToPassport ? 'Remove story from passport' : 'Save story to passport'
+                }
+                hitSlop={8}
+              >
+                <Text style={styles.passportIcon}>🛂</Text>
+                <Text
+                  style={[
+                    styles.passportText,
+                    savedToPassport && styles.passportTextOnDark,
+                  ]}
+                >
+                  {savedToPassport ? 'Saved to Passport' : 'Save to Passport'}
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
           {story.language ? (
             <Text style={styles.meta}>Language: {story.language.toUpperCase()}</Text>
           ) : null}
@@ -230,4 +295,31 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.surfaceDark,
   },
   editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
+  actionRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+  },
+  passportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.surface,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  passportBtnActive: { backgroundColor: tokens.colors.accentMustard },
+  passportIcon: { fontSize: 16 },
+  passportText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    letterSpacing: 0.3,
+  },
+  passportTextOnDark: { color: tokens.colors.textOnDark },
 });

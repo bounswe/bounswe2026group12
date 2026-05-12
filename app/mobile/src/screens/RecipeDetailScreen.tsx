@@ -20,6 +20,7 @@ import { fetchCulturalFactsByRegion, type CulturalFact } from '../services/cultu
 import type { RootStackParamList } from '../navigation/types';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import { toggleBookmark } from '../services/bookmarkService';
+import { tryRecipe } from '../services/passportActionService';
 import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
 import { fetchConversion } from '../services/unitConversionService';
@@ -47,6 +48,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [culturalFacts, setCulturalFacts] = useState<CulturalFact[]>([]);
   const [ratingBusy, setRatingBusy] = useState(false);
   const [bookmarkBusy, setBookmarkBusy] = useState(false);
+  const [triedBusy, setTriedBusy] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -378,6 +380,41 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const bookmarkCount =
     typeof recipe.bookmark_count === 'number' ? recipe.bookmark_count : undefined;
 
+  /**
+   * "I Tried This" toggle (#599). Active state is sourced from the recipe
+   * payload (`is_tried`, surfaced by backend #584) so a fresh load reflects
+   * the user's existing stamp. Optimistic toggle + rollback on error,
+   * mirroring the bookmark pattern above. The backend's `/try/` endpoint
+   * idempotently records the action and pins the recipe to the passport,
+   * so a separate "Add to passport" affordance would target a non-existent
+   * route — see review on PR #783.
+   */
+  const isTried = recipe.is_tried === true;
+
+  const onToggleTried = async () => {
+    if (!isAuthenticated) {
+      navigation.navigate('Login');
+      return;
+    }
+    if (triedBusy) return;
+    const prevFlag = isTried;
+    const nextFlag = !prevFlag;
+    setTriedBusy(true);
+    setRecipe((prev) => (prev ? { ...prev, is_tried: nextFlag } : prev));
+    try {
+      const result = await tryRecipe(id, nextFlag);
+      setRecipe((prev) => (prev ? { ...prev, is_tried: result.is_tried } : prev));
+    } catch (e) {
+      setRecipe((prev) => (prev ? { ...prev, is_tried: prevFlag } : prev));
+      showToast(
+        e instanceof Error ? e.message : 'Could not update tried status.',
+        'error',
+      );
+    } finally {
+      setTriedBusy(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -457,26 +494,57 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             </Text>
           </View>
 
-          <Pressable
-            onPress={() => void onToggleBookmark()}
-            disabled={bookmarkBusy}
-            style={({ pressed }) => [
-              styles.bookmarkBtn,
-              isBookmarked && styles.bookmarkBtnActive,
-              pressed && { opacity: 0.85 },
-              bookmarkBusy && { opacity: 0.6 },
-            ]}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isBookmarked, busy: bookmarkBusy }}
-            accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Save recipe to bookmarks'}
-            hitSlop={8}
-          >
-            <Text style={styles.bookmarkIcon}>{isBookmarked ? '🔖' : '🏷'}</Text>
-            <Text style={[styles.bookmarkText, isBookmarked && styles.bookmarkTextActive]}>
-              {isBookmarked ? 'Saved' : 'Save'}
-              {bookmarkCount != null ? ` · ${bookmarkCount}` : ''}
-            </Text>
-          </Pressable>
+          <View style={styles.actionRow}>
+            <Pressable
+              onPress={() => void onToggleBookmark()}
+              disabled={bookmarkBusy}
+              style={({ pressed }) => [
+                styles.bookmarkBtn,
+                isBookmarked && styles.bookmarkBtnActive,
+                pressed && { opacity: 0.85 },
+                bookmarkBusy && { opacity: 0.6 },
+              ]}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isBookmarked, busy: bookmarkBusy }}
+              accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Save recipe to bookmarks'}
+              hitSlop={8}
+            >
+              <Text style={styles.bookmarkIcon}>{isBookmarked ? '🔖' : '🏷'}</Text>
+              <Text style={[styles.bookmarkText, isBookmarked && styles.bookmarkTextActive]}>
+                {isBookmarked ? 'Saved' : 'Save'}
+                {bookmarkCount != null ? ` · ${bookmarkCount}` : ''}
+              </Text>
+            </Pressable>
+
+            {isAuthenticated ? (
+              <Pressable
+                onPress={() => void onToggleTried()}
+                disabled={triedBusy}
+                style={({ pressed }) => [
+                  styles.passportBtn,
+                  isTried && styles.triedBtnActive,
+                  pressed && { opacity: 0.85 },
+                  triedBusy && { opacity: 0.6 },
+                ]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isTried, busy: triedBusy }}
+                accessibilityLabel={
+                  isTried ? 'Mark as not tried' : "Mark 'I tried this'"
+                }
+                hitSlop={8}
+              >
+                <Text style={styles.passportIcon}>{isTried ? '✓' : '🍴'}</Text>
+                <Text
+                  style={[
+                    styles.passportText,
+                    isTried && styles.passportTextOnDark,
+                  ]}
+                >
+                  {isTried ? 'Tried' : 'I Tried This'}
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
 
           {recipe.image ? (
             <View style={styles.imageWrap} accessibilityLabel="Recipe image">
@@ -789,12 +857,17 @@ const styles = StyleSheet.create({
   editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
   ratingBlock: { marginTop: 14, gap: 4 },
   ratingCaption: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '600' },
+  actionRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+  },
   bookmarkBtn: {
-    alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: tokens.radius.pill,
@@ -802,6 +875,28 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: tokens.colors.surfaceDark,
   },
+  passportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.surface,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  triedBtnActive: {
+    backgroundColor: tokens.colors.accentGreen,
+  },
+  passportIcon: { fontSize: 16 },
+  passportText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    letterSpacing: 0.3,
+  },
+  passportTextOnDark: { color: tokens.colors.textOnDark },
   bookmarkBtnActive: {
     backgroundColor: tokens.colors.accentGreenTint,
   },
