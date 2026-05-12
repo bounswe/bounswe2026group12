@@ -17,6 +17,14 @@ function ruleFromEvent(event) {
   return r;
 }
 
+function tintForEvent(event) {
+  const parsed = parseEventDate(ruleFromEvent(event));
+  if (!parsed) return 'tint-gregorian';
+  if (parsed.isLunar && parsed.lunarUnresolved) return 'tint-movable';
+  if (parsed.isLunar) return 'tint-lunar';
+  return 'tint-gregorian';
+}
+
 export default function CalendarPage() {
   const [regions, setRegions] = useState([]);
   const [events, setEvents] = useState([]);
@@ -164,7 +172,11 @@ export default function CalendarPage() {
       )}
 
       {selected && (
-        <aside ref={detailRef} className="calendar-event-detail" data-testid="event-detail">
+        <aside
+          ref={detailRef}
+          className={`calendar-event-detail ${tintForEvent(selected)}`}
+          data-testid="event-detail"
+        >
           <button
             type="button"
             className="calendar-event-detail-close"

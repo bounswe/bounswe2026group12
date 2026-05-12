@@ -232,3 +232,16 @@
   align-items: center;
   gap: 0.5rem;
 }
+
+.calendar-event-detail.tint-gregorian {
+  background: rgba(196, 82, 30, 0.06);
+  border-left: 4px solid #C4521E;
+}
+.calendar-event-detail.tint-lunar {
+  background: rgba(61, 21, 0, 0.06);
+  border-left: 4px solid #3D1500;
+}
+.calendar-event-detail.tint-movable {
+  background: rgba(212, 168, 48, 0.10);
+  border-left: 4px solid #D4A830;
+}

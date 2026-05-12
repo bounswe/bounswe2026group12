@@ -90,6 +90,23 @@ describe('CalendarPage', () => {
     expect(within(panel).getByRole('link', { name: /sumalak/i })).toHaveAttribute('href', '/recipes/10');
   });
 
+  it('tints the detail panel by event kind', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 1, name: 'Nevruz',      date_rule: 'fixed:03-21',    region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+      { id: 2, name: 'Eid al-Adha', date_rule: 'lunar:eid-adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+      { id: 3, name: 'Made-up',     date_rule: 'lunar:unknown',  region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    await userEvent.click(await screen.findByRole('button', { name: /open nevruz details/i }));
+    expect(screen.getByTestId('event-detail')).toHaveClass('tint-gregorian');
+    await userEvent.click(screen.getByRole('button', { name: /close details/i }));
+    await userEvent.click(screen.getByRole('button', { name: /open eid al-adha details/i }));
+    expect(screen.getByTestId('event-detail')).toHaveClass('tint-lunar');
+    await userEvent.click(screen.getByRole('button', { name: /close details/i }));
+    await userEvent.click(screen.getByRole('button', { name: /open made-up details/i }));
+    expect(screen.getByTestId('event-detail')).toHaveClass('tint-movable');
+  });
+
   it('renders a date-rule legend below the header explaining badge colors', async () => {
     culturalEventService.fetchCulturalEvents.mockResolvedValue([]);
     renderPage();
