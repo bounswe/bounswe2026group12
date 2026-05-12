@@ -1,4 +1,30 @@
-import { coordsForRegion, INITIAL_MAP_REGION } from '../../src/utils/regionGeo';
+import { coordsForRegion, INITIAL_MAP_REGION, regionFromPinCoordinates } from '../../src/utils/regionGeo';
+
+describe('regionFromPinCoordinates', () => {
+  it('returns INITIAL_MAP_REGION when there are no pins', () => {
+    expect(regionFromPinCoordinates([])).toEqual(INITIAL_MAP_REGION);
+  });
+
+  it('returns a broad single-pin camera', () => {
+    const r = regionFromPinCoordinates([{ latitude: 39, longitude: 32 }]);
+    expect(r.latitude).toBeCloseTo(39);
+    expect(r.longitude).toBeCloseTo(32);
+    expect(r.latitudeDelta).toBeGreaterThanOrEqual(8);
+    expect(r.longitudeDelta).toBeGreaterThanOrEqual(10);
+  });
+
+  it('frames multiple pins with bounded deltas', () => {
+    const r = regionFromPinCoordinates([
+      { latitude: 38.5, longitude: 27 },
+      { latitude: 40.7, longitude: 28.5 },
+      { latitude: 41, longitude: 36.5 },
+    ]);
+    expect(r.latitudeDelta).toBeGreaterThan(3);
+    expect(r.longitudeDelta).toBeGreaterThan(4);
+    expect(r.latitudeDelta).toBeLessThanOrEqual(45);
+    expect(r.longitudeDelta).toBeLessThanOrEqual(55);
+  });
+});
 
 describe('coordsForRegion', () => {
   it('returns coordinates for a known region', () => {

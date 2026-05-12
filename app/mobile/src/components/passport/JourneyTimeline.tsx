@@ -67,6 +67,13 @@ function messageMentions(message: string | undefined, kind: 'Recipe' | 'Story'):
   return message.includes(`${kind} #`);
 }
 
+/** First N ids in `seed` match `page` in order (same length or seed longer). */
+function timelinePageIsPrefixOfSeed(seed: TimelineEvent[], page: TimelineEvent[]): boolean {
+  if (page.length === 0) return true;
+  if (seed.length < page.length) return false;
+  return page.every((e, i) => String(e.id) === String(seed[i]?.id));
+}
+
 type Props = {
   username: string;
   /**
@@ -77,6 +84,12 @@ type Props = {
    * service's pagination.
    */
   initialEvents?: TimelineEvent[];
+  /**
+   * When true, render timeline rows in a plain column (no `FlatList`) so the
+   * component can live inside a parent `ScrollView` without VirtualizedList
+   * nesting warnings. Use pull-free actions: "Refresh" / "Load more" buttons.
+   */
+  embeddedInParentScroll?: boolean;
 };
 
 const ICONS: Record<string, string> = {
@@ -224,14 +237,16 @@ function TimelineRow({ event, isFirst, isLast }: RowProps) {
   );
 }
 
-export function JourneyTimeline({ username, initialEvents }: Props) {
+export function JourneyTimeline({
+  username,
+  initialEvents,
+  embeddedInParentScroll = false,
+}: Props) {
   const seedEvents = useMemo(() => initialEvents ?? [], [initialEvents]);
 
   const [events, setEvents] = useState<TimelineEvent[]>(seedEvents);
   const [cursor, setCursor] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState<boolean>(
-    initialEvents !== undefined ? false : true,
-  );
+  const [hasMore, setHasMore] = useState<boolean>(initialEvents === undefined);
   const [loading, setLoading] = useState<boolean>(initialEvents === undefined);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -240,6 +255,11 @@ export function JourneyTimeline({ username, initialEvents }: Props) {
   // Guard against firing a second `onEndReached` while one is in flight —
   // FlatList likes to fire it twice during fast scrolls.
   const loadingMoreRef = useRef(false);
+
+  useEffect(() => {
+    if (initialEvents === undefined) return;
+    setEvents(seedEvents);
+  }, [initialEvents, seedEvents]);
 
   const loadFirstPage = useCallback(async () => {
     setLoading(true);
@@ -261,6 +281,36 @@ export function JourneyTimeline({ username, initialEvents }: Props) {
     void loadFirstPage();
   }, [initialEvents, loadFirstPage]);
 
+  /**
+   * When the parent seeds `initialEvents` from the passport bundle, we still
+   * need the paginated endpoint's `next` cursor so "load more" works. One
+   * fetch reconciles cursor/hasMore; we keep the seed list when it is a
+   * superset prefix of the first API page (passport often embeds >20 events).
+   */
+  useEffect(() => {
+    if (initialEvents === undefined) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const page = await fetchTimeline(username);
+        if (cancelled) return;
+        const seed = seedEvents;
+        if (timelinePageIsPrefixOfSeed(seed, page.events) && seed.length > 0) {
+          setEvents(seed.length >= page.events.length ? seed : page.events);
+        } else if (page.events.length > 0) {
+          setEvents(page.events);
+        }
+        setCursor(page.nextCursor);
+        setHasMore(page.nextCursor !== null);
+      } catch {
+        if (!cancelled) setHasMore(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [username, initialEvents, seedEvents]);
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     setError(null);
@@ -276,7 +326,7 @@ export function JourneyTimeline({ username, initialEvents }: Props) {
     }
   }, [username]);
 
-  const onEndReached = useCallback(async () => {
+  const appendNextPage = useCallback(async () => {
     if (loadingMoreRef.current) return;
     if (!hasMore) return;
     if (!cursor) return;
@@ -284,18 +334,24 @@ export function JourneyTimeline({ username, initialEvents }: Props) {
     setLoadingMore(true);
     try {
       const page = await fetchTimeline(username, { cursor });
-      setEvents((prev) => [...prev, ...page.events]);
+      setEvents((prev) => {
+        const seen = new Set(prev.map((e) => String(e.id)));
+        const next = page.events.filter((e) => !seen.has(String(e.id)));
+        return [...prev, ...next];
+      });
       setCursor(page.nextCursor);
       setHasMore(page.nextCursor !== null);
     } catch {
-      // Soft-fail pagination: keep the existing list, drop hasMore so we don't
-      // hammer the failing endpoint on every scroll wiggle.
       setHasMore(false);
     } finally {
       loadingMoreRef.current = false;
       setLoadingMore(false);
     }
   }, [cursor, hasMore, username]);
+
+  const onEndReached = useCallback(() => {
+    void appendNextPage();
+  }, [appendNextPage]);
 
   if (loading && events.length === 0) {
     return <LoadingView message="Loading journey…" />;
@@ -319,6 +375,50 @@ export function JourneyTimeline({ username, initialEvents }: Props) {
         <Text style={styles.emptyBody}>
           Start exploring recipes and cultures to fill your passport.
         </Text>
+      </View>
+    );
+  }
+
+  if (embeddedInParentScroll) {
+    return (
+      <View style={styles.embeddedRoot} accessibilityLabel="Journey timeline">
+        <Pressable
+          onPress={() => void onRefresh()}
+          disabled={refreshing}
+          style={({ pressed }) => [styles.embeddedBtn, pressed && styles.pillPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Refresh journey timeline"
+        >
+          <Text style={styles.embeddedBtnText}>
+            {refreshing ? 'Refreshing…' : 'Refresh journey'}
+          </Text>
+        </Pressable>
+        <View style={styles.list}>
+          {events.map((item, index) => (
+            <TimelineRow
+              key={String(item.id)}
+              event={item}
+              isFirst={index === 0}
+              isLast={index === events.length - 1}
+            />
+          ))}
+        </View>
+        {error && events.length > 0 ? (
+          <Text style={styles.inlineError}>{error}</Text>
+        ) : null}
+        {hasMore && cursor ? (
+          <Pressable
+            onPress={() => void appendNextPage()}
+            disabled={loadingMore}
+            style={({ pressed }) => [styles.loadMoreBtn, pressed && styles.pillPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Load more journey events"
+          >
+            <Text style={styles.loadMoreText}>
+              {loadingMore ? 'Loading…' : 'Load more'}
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     );
   }
@@ -356,7 +456,7 @@ export function JourneyTimeline({ username, initialEvents }: Props) {
           <View style={styles.footer}>
             <Pressable
               onPress={() => {
-                void onEndReached();
+                void appendNextPage();
               }}
             >
               <Text style={styles.footerError}>Couldn't load more — tap to retry</Text>
@@ -476,5 +576,43 @@ const styles = StyleSheet.create({
     color: tokens.colors.error,
     textAlign: 'center',
     paddingVertical: 8,
+  },
+  embeddedRoot: {
+    gap: 10,
+  },
+  embeddedBtn: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+    backgroundColor: tokens.colors.bg,
+  },
+  embeddedBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: tokens.colors.text,
+  },
+  loadMoreBtn: {
+    alignSelf: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginTop: 4,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreenTint,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  loadMoreText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: tokens.colors.text,
+  },
+  inlineError: {
+    fontSize: 13,
+    color: tokens.colors.error,
+    textAlign: 'center',
+    paddingVertical: 6,
   },
 });

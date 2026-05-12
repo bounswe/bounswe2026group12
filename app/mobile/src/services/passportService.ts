@@ -1,4 +1,8 @@
+import { normalizeStamp, type Stamp } from '../components/passport/StampCollection';
 import { apiGetJson } from './httpClient';
+import { normalizeCulture, type CultureSummary } from './passportCultureService';
+import { normalizeEvent, type TimelineEvent } from './passportTimelineService';
+import { parseQuest, type Quest } from './passportQuestService';
 
 /**
  * Active passport theme — the API currently returns either a bare string
@@ -11,21 +15,19 @@ export type PassportTheme = {
 } | null;
 
 /**
- * Shape of `GET /api/users/<username>/passport/`. Sibling PRs (#600–#605)
- * fill in the per-section UIs — for #598 we only need counts + bare values
- * for the scaffold (cover band, stats bar, tab pills).
- *
- * All collections default to empty arrays so the screen can mount safely
- * even when the backend omits a key.
+ * Shape of `GET /api/users/<username>/passport/`. Collections are normalized
+ * at the boundary so screens consume stable types (#860).
  */
 export type Passport = {
   level: number;
   total_points: number;
-  stamps: any[];
-  culture_summaries: any[];
-  timeline: any[];
+  stamps: Stamp[];
+  culture_summaries: CultureSummary[];
+  timeline: TimelineEvent[];
   stats: Record<string, number>;
-  active_quests: any[];
+  /** When the API sends `stats.level_name` (string), surfaced for level badge copy. */
+  stats_level_name?: string;
+  active_quests: Quest[];
   active_theme: PassportTheme;
 };
 
@@ -42,7 +44,7 @@ function normalizeTheme(raw: unknown): PassportTheme {
   return null;
 }
 
-function asArray(value: unknown): any[] {
+function asArray(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
 }
 
@@ -61,6 +63,12 @@ function asNumberRecord(value: unknown): Record<string, number> {
   return out;
 }
 
+function asOptionalLevelName(statsRaw: unknown): string | undefined {
+  if (statsRaw == null || typeof statsRaw !== 'object') return undefined;
+  const v = (statsRaw as Record<string, unknown>).level_name;
+  return typeof v === 'string' && v.trim() ? v.trim() : undefined;
+}
+
 /**
  * Fetch the passport bundle for a username. Defensive against partial
  * payloads — missing keys collapse to empty arrays / null / 0 so the
@@ -70,14 +78,26 @@ export async function fetchPassport(username: string): Promise<Passport> {
   const raw = await apiGetJson<Record<string, unknown>>(
     `/api/users/${encodeURIComponent(username)}/passport/`,
   );
+  const stampsRaw = asArray(raw?.stamps);
+  const culturesRaw = asArray(raw?.culture_summaries);
+  const timelineRaw = asArray(raw?.timeline);
+  const questsRaw = asArray(raw?.active_quests);
+
   return {
     level: asNumber(raw?.level),
     total_points: asNumber(raw?.total_points),
-    stamps: asArray(raw?.stamps),
-    culture_summaries: asArray(raw?.culture_summaries),
-    timeline: asArray(raw?.timeline),
+    stamps: stampsRaw.map((s) => normalizeStamp(s)),
+    culture_summaries: culturesRaw
+      .map((c) => normalizeCulture(c))
+      .filter((c): c is CultureSummary => c !== null),
+    timeline: timelineRaw
+      .map((e) => normalizeEvent(e as Record<string, unknown>))
+      .filter((e): e is TimelineEvent => Boolean(e)),
     stats: asNumberRecord(raw?.stats),
-    active_quests: asArray(raw?.active_quests),
+    stats_level_name: asOptionalLevelName(raw?.stats),
+    active_quests: questsRaw.map((q) =>
+      parseQuest((q ?? {}) as Parameters<typeof parseQuest>[0]),
+    ),
     active_theme: normalizeTheme(raw?.active_theme),
   };
 }

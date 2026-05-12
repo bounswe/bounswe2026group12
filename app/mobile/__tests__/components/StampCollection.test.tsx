@@ -160,11 +160,27 @@ describe('normalizeStamp', () => {
     expect(s.earned_at).toBe('2026-04-04T00:00:00Z');
   });
 
+  it('preserves source_recipe and source_story from API-shaped rows', () => {
+    const s = normalizeStamp({
+      id: 3,
+      culture: 'Marmara',
+      category: 'recipe',
+      rarity: 'gold',
+      earned_at: '2026-03-01T00:00:00Z',
+      source_recipe: 12,
+      source_story: 88,
+    });
+    expect(s.source_recipe).toBe(12);
+    expect(s.source_story).toBe(88);
+  });
+
   it('falls back to safe defaults for missing fields', () => {
     const s = normalizeStamp({});
     expect(s.name).toBe('Stamp');
     expect(s.category).toBe('other');
     expect(s.rarity).toBe('bronze');
     expect(s.earned_at).toBeNull();
+    expect(s.source_recipe).toBeNull();
+    expect(s.source_story).toBeNull();
   });
 });

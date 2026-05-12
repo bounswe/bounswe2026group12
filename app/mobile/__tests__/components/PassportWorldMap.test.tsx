@@ -1,32 +1,33 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
+import * as ReactNavigation from '@react-navigation/native';
 
-// Mock react-native-maps with plain RN views so jest-expo (jsdom-ish RN env)
-// can render the component without the native module. We forward `pinColor`,
-// `coordinate`, `title`, `description` and `testID` so the tests can still
-// assert on pin count + colour computation through props.
+// Mock react-native-maps — forward pinColor for colour tests and onPress for selection.
 jest.mock('react-native-maps', () => {
   const ReactInner = require('react');
-  const { View: RNView, Text: RNText } = require('react-native');
-  const MapView = ReactInner.forwardRef(
-    ({ children, ...rest }: any, ref: any) =>
-      ReactInner.createElement(RNView, { ref, ...rest, testID: rest.testID ?? 'mock-map' }, children),
-  );
+  const { View: RNView } = require('react-native');
+  const MapView = ReactInner.forwardRef(({ children, ...rest }: any, ref: any) => {
+    ReactInner.useImperativeHandle(ref, () => ({
+      fitToCoordinates: jest.fn(),
+      animateToRegion: jest.fn(),
+    }));
+    return ReactInner.createElement(RNView, { ref, ...rest, testID: rest.testID ?? 'mock-map' }, children);
+  });
   const Marker = (props: any) =>
-    ReactInner.createElement(
-      RNView,
-      {
-        testID: props.testID ?? `marker-${props.title ?? ''}`,
-        accessibilityLabel: `marker:${props.title ?? ''}:${props.pinColor ?? ''}`,
-      },
-      props.children,
-    );
-  const Callout = (props: any) => ReactInner.createElement(RNView, null, props.children);
-  return { __esModule: true, default: MapView, MapView, Marker, Callout };
+    ReactInner.createElement(RNView, {
+      testID: props.testID ?? 'marker',
+      accessibilityLabel: `marker:${props.pinColor ?? ''}`,
+      onPress: props.onPress,
+    }, props.children);
+  return { __esModule: true, default: MapView, MapView, Marker };
 });
 
-import { PassportWorldMap, type CultureSummary } from '../../src/components/passport/PassportWorldMap';
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn(),
+}));
+
+import { PassportWorldMap, recipeAndStoryIdsForCulture, type CultureSummary } from '../../src/components/passport/PassportWorldMap';
+import type { Stamp } from '../../src/components/passport/StampCollection';
 
 function makeCulture(over: Partial<CultureSummary>): CultureSummary {
   return {
@@ -40,7 +41,49 @@ function makeCulture(over: Partial<CultureSummary>): CultureSummary {
   };
 }
 
+describe('recipeAndStoryIdsForCulture', () => {
+  it('returns nulls when stamps are missing', () => {
+    expect(recipeAndStoryIdsForCulture(undefined, 'Aegean')).toEqual({
+      recipeId: null,
+      storyId: null,
+    });
+  });
+
+  it('matches stamp culture name case-insensitively and prefers latest earned', () => {
+    const stamps = [
+      {
+        id: 1,
+        name: 'aegean',
+        category: 'recipe',
+        rarity: 'bronze',
+        earned_at: '2026-01-01T00:00:00Z',
+        source_recipe: 10,
+        source_story: null,
+      },
+      {
+        id: 2,
+        name: 'Aegean',
+        category: 'story',
+        rarity: 'silver',
+        earned_at: '2026-06-01T00:00:00Z',
+        source_recipe: 99,
+        source_story: 7,
+      },
+    ] as Stamp[];
+    expect(recipeAndStoryIdsForCulture(stamps, 'Aegean')).toEqual({
+      recipeId: '99',
+      storyId: '7',
+    });
+  });
+});
+
 describe('PassportWorldMap', () => {
+  beforeEach(() => {
+    (ReactNavigation.useNavigation as jest.Mock).mockReturnValue({
+      navigate: jest.fn(),
+    });
+  });
+
   it('renders one Marker per culture with engagement + known coords', () => {
     const cultures: CultureSummary[] = [
       makeCulture({ culture_name: 'Aegean', stamp_rarity: 'silver', stories_saved: 2 }),
@@ -91,7 +134,51 @@ describe('PassportWorldMap', () => {
     const { getByText } = render(<PassportWorldMap cultures={[]} />);
     expect(getByText(/No cultures with map coordinates yet/i)).toBeTruthy();
   });
-});
 
-// Silence the unused-import warning when this file is tree-shaken in CI.
-export const _keepAlive = { View, Text };
+  it('opens selection card on marker press and shows link buttons when stamps have ids', () => {
+    const navigate = jest.fn();
+    (ReactNavigation.useNavigation as jest.Mock).mockReturnValue({ navigate });
+    const stamps = [
+      {
+        id: 1,
+        name: 'Aegean',
+        category: 'recipe',
+        rarity: 'bronze',
+        earned_at: '2026-01-01T00:00:00Z',
+        source_recipe: 42,
+        source_story: 5,
+      },
+    ] as Stamp[];
+    const cultures: CultureSummary[] = [
+      makeCulture({ culture_name: 'Aegean', stamp_rarity: 'silver', stories_saved: 1 }),
+    ];
+    const { getByTestId, getByText } = render(<PassportWorldMap cultures={cultures} stamps={stamps} />);
+    fireEvent.press(getByTestId('passport-pin-Aegean'));
+    expect(getByTestId('passport-map-selection-card')).toBeTruthy();
+    expect(getByText('Open recipe →')).toBeTruthy();
+    expect(getByText('Open story →')).toBeTruthy();
+  });
+
+  it('navigates to recipe when Open recipe is pressed', () => {
+    const navigate = jest.fn();
+    (ReactNavigation.useNavigation as jest.Mock).mockReturnValue({ navigate });
+    const stamps = [
+      {
+        id: 1,
+        name: 'Aegean',
+        category: 'recipe',
+        rarity: 'bronze',
+        earned_at: '2026-01-01T00:00:00Z',
+        source_recipe: 42,
+        source_story: null,
+      },
+    ] as Stamp[];
+    const cultures: CultureSummary[] = [
+      makeCulture({ culture_name: 'Aegean', stamp_rarity: 'silver', stories_saved: 1 }),
+    ];
+    const { getByTestId, getByText } = render(<PassportWorldMap cultures={cultures} stamps={stamps} />);
+    fireEvent.press(getByTestId('passport-pin-Aegean'));
+    fireEvent.press(getByText('Open recipe →'));
+    expect(navigate).toHaveBeenCalledWith('RecipeDetail', { id: '42' });
+  });
+});

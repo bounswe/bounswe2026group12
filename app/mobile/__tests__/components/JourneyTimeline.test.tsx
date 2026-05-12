@@ -122,6 +122,14 @@ describe('JourneyTimeline', () => {
     mockNavigate.mockReset();
   });
 
+  /** Passport-embed path calls `fetchTimeline` once to attach pagination cursor. */
+  function mockPaginationSync(seed: TimelineEvent[], nextCursor: string | null = null) {
+    mockedFetch.mockResolvedValueOnce({
+      events: seed.map((e) => ({ ...e })),
+      nextCursor,
+    });
+  }
+
   it('renders the empty state when there are no events', async () => {
     mockedFetch.mockResolvedValueOnce({ events: [], nextCursor: null });
     const { findByText } = render(<JourneyTimeline username="ayse" />);
@@ -136,6 +144,7 @@ describe('JourneyTimeline', () => {
       makeEvent({ id: 4, event_type: 'quest_completed', message: 'Quest done' }),
       makeEvent({ id: 5, event_type: 'mystery', message: 'Strange thing' }),
     ];
+    mockPaginationSync(events);
     const { getByText } = render(<JourneyTimeline username="ayse" initialEvents={events} />);
     expect(getByText('🏷')).toBeTruthy();
     expect(getByText('🍴')).toBeTruthy();
@@ -145,17 +154,36 @@ describe('JourneyTimeline', () => {
     expect(getByText('Tried Sarma')).toBeTruthy();
   });
 
-  it('skips the initial fetch when initialEvents is supplied', async () => {
+  it('calls fetchTimeline once when initialEvents is supplied (pagination sync)', async () => {
+    const events: TimelineEvent[] = [makeEvent({ id: 1, message: 'cached' })];
+    mockPaginationSync(events);
     render(
       <JourneyTimeline
         username="ayse"
         initialEvents={[makeEvent({ id: 1, message: 'cached' })]}
       />,
     );
-    // Let any pending microtasks settle.
     await waitFor(() => {
-      expect(mockedFetch).not.toHaveBeenCalled();
+      expect(mockedFetch).toHaveBeenCalledTimes(1);
+      expect(mockedFetch).toHaveBeenCalledWith('ayse');
     });
+  });
+
+  it('embeddedInParentScroll shows Refresh journey and Load more when API has next page', async () => {
+    const ev = makeEvent({ id: 1, message: 'one' });
+    mockedFetch.mockResolvedValueOnce({
+      events: [ev],
+      nextCursor: 'cursor-next',
+    });
+    const { findByText } = render(
+      <JourneyTimeline
+        username="ayse"
+        initialEvents={[ev]}
+        embeddedInParentScroll
+      />,
+    );
+    expect(await findByText('Refresh journey')).toBeTruthy();
+    expect(await findByText('Load more')).toBeTruthy();
   });
 
   it('fetches on mount when no initialEvents are supplied', async () => {
@@ -174,6 +202,7 @@ describe('JourneyTimeline', () => {
       message: 'Tried Sarma',
       payload: { related_recipe: 99 },
     });
+    mockPaginationSync([ev]);
     const { getByText } = render(
       <JourneyTimeline username="ayse" initialEvents={[ev]} />,
     );
@@ -189,6 +218,7 @@ describe('JourneyTimeline', () => {
       message: 'Linked event',
       payload: { related_recipe: 5, related_story: 8 },
     });
+    mockPaginationSync([ev]);
     const { getByText } = render(
       <JourneyTimeline username="ayse" initialEvents={[ev]} />,
     );
@@ -201,6 +231,7 @@ describe('JourneyTimeline', () => {
 
   it('renders no pill when payload has no related ids', async () => {
     const ev = makeEvent({ id: 23, message: 'Plain event', payload: {} });
+    mockPaginationSync([ev]);
     const { queryByText } = render(
       <JourneyTimeline username="ayse" initialEvents={[ev]} />,
     );
@@ -214,6 +245,7 @@ describe('JourneyTimeline', () => {
       message: 'Linked to Recipe #99 yesterday',
       payload: { related_recipe: 99 },
     });
+    mockPaginationSync([ev]);
     const { queryByText } = render(
       <JourneyTimeline username="ayse" initialEvents={[ev]} />,
     );
@@ -225,6 +257,7 @@ describe('JourneyTimeline', () => {
     jest.setSystemTime(new Date('2026-05-12T12:00:00Z'));
     try {
       const ev = makeEvent({ created_at: '2026-05-12T11:55:00Z', message: 'just now' });
+      mockPaginationSync([ev]);
       const { getByText } = render(
         <JourneyTimeline username="ayse" initialEvents={[ev]} />,
       );
