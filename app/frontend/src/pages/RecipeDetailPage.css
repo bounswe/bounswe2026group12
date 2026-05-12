@@ -457,3 +457,10 @@
   white-space: pre-wrap;
   flex: 1;
 }
+
+/* ── Rating (#736) ── */
+.recipe-rating-row {
+  margin-top: 0.6rem;
+  display: flex;
+  align-items: center;
+}

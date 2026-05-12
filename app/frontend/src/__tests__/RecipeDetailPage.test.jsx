@@ -378,3 +378,47 @@ describe('RecipeDetailPage steps section', () => {
     expect(screen.queryByRole('heading', { name: /^steps$/i })).not.toBeInTheDocument();
   });
 });
+
+describe('RecipeDetailPage star rating', () => {
+  it('renders read-only stars with the average + count when present', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      average_rating: 4.5,
+      rating_count: 6,
+      user_rating: null,
+    });
+    renderPage('1', null);
+    expect(await screen.findByText('Baklava')).toBeInTheDocument();
+    expect(screen.getByText('4.5 (6)')).toBeInTheDocument();
+    // Anonymous: no interactive radios
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+  });
+
+  it('disables interactivity for the recipe author with a tooltip', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 3,
+      average_rating: 4,
+      rating_count: 2,
+    });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /can't rate your own recipe/i })).toBeInTheDocument();
+  });
+
+  it('lets a non-author authenticated user submit a rating via POST', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      author: 99,
+      average_rating: null,
+      rating_count: 0,
+      user_rating: null,
+    });
+    recipeService.rateRecipe.mockResolvedValue({ average_rating: 5, rating_count: 1, user_rating: 5 });
+    renderPage('1', { id: 3, username: 'eren' });
+    await screen.findByText('Baklava');
+    await userEvent.click(screen.getByRole('radio', { name: /5 stars/i }));
+    await waitFor(() => expect(recipeService.rateRecipe).toHaveBeenCalledWith('1', 5));
+  });
+});

@@ -1,13 +1,14 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { fetchRecipe, deleteRecipe } from '../services/recipeService';
+import { fetchRecipe, deleteRecipe, rateRecipe, unrateRecipe } from '../services/recipeService';
 import { fetchRegions } from '../services/searchService';
 import { fetchSubstitutes } from '../services/ingredientService';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
 import HeritageBadge from '../components/HeritageBadge';
 import CulturalFactCard from '../components/CulturalFactCard';
+import StarRating from '../components/StarRating';
 import { fetchCulturalFacts } from '../services/culturalFactService';
 import { tryRecipe } from '../services/passportService';
 import './RecipeDetailPage.css';
@@ -54,6 +55,31 @@ export default function RecipeDetailPage() {
   const [tried, setTried] = useState(false);
   const [tryingRecipe, setTryingRecipe] = useState(false);
   const [tryError, setTryError] = useState('');
+
+  // #736 — rating
+  const [ratingBusy, setRatingBusy] = useState(false);
+
+  const handleRate = useCallback(async (nextScore) => {
+    if (ratingBusy || !recipe) return;
+    setRatingBusy(true);
+    const prev = {
+      user_rating: recipe.user_rating,
+      average_rating: recipe.average_rating,
+      rating_count: recipe.rating_count,
+    };
+    // Optimistic flip on the user's score; reconcile from the backend reply.
+    setRecipe((r) => (r ? { ...r, user_rating: nextScore } : r));
+    try {
+      const summary = nextScore == null
+        ? await unrateRecipe(id)
+        : await rateRecipe(id, nextScore);
+      setRecipe((r) => (r ? { ...r, ...summary } : r));
+    } catch {
+      setRecipe((r) => (r ? { ...r, ...prev } : r));
+    } finally {
+      setRatingBusy(false);
+    }
+  }, [ratingBusy, recipe, id]);
 
   const handleTryRecipe = useCallback(async () => {
     if (tryingRecipe || tried) return;
@@ -200,6 +226,20 @@ export default function RecipeDetailPage() {
           {recipe.author_username && (
             <p className="recipe-author"><Link to={`/users/${recipe.author_username}`} className="recipe-author-link">By {recipe.author_username}</Link></p>
           )}
+          <div className="recipe-rating-row">
+            <StarRating
+              userScore={recipe.user_rating ?? null}
+              average={recipe.average_rating ?? null}
+              count={recipe.rating_count ?? 0}
+              size="lg"
+              onChange={user && !isAuthor ? handleRate : undefined}
+              disabledReason={
+                !user ? 'Log in to rate.'
+                  : isAuthor ? "You can't rate your own recipe."
+                  : ''
+              }
+            />
+          </div>
         </div>
         <div className="recipe-detail-actions">
           {isAuthor && (
