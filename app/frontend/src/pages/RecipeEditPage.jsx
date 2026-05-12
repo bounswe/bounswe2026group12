@@ -130,7 +130,7 @@ export default function RecipeEditPage() {
   function validate() {
     const e = {};
     if (!title.trim()) e.title = 'Title is required.';
-    if (!description.trim() && !video) e.content = 'A description or video is required.';
+    if (!description.trim() && !video && !recipe?.video) e.content = 'A description or video is required.';
     for (const row of rows) {
       if (row.amount !== '' && (isNaN(Number(row.amount)) || Number(row.amount) <= 0)) {
         e.amount = 'Amount must be a positive number.';

@@ -93,7 +93,7 @@ export default function ThreadPage() {
                 <div key={msg.id} className={`bubble-row ${isMine ? 'mine' : 'theirs'}`}>
                   {!isMine && (
                     <div className="bubble-avatar" aria-hidden="true">
-                      {msg.sender.username[0].toUpperCase()}
+                      {msg.sender.username?.[0]?.toUpperCase() ?? '?'}
                     </div>
                   )}
                   <div className="bubble-wrap">
