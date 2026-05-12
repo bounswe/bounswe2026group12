@@ -10,6 +10,7 @@ import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
 import MapDiscoveryScreen from '../screens/MapDiscoveryScreen';
 import MessageThreadScreen from '../screens/MessageThreadScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
@@ -140,6 +141,11 @@ export function PublicStackNavigator() {
         name="IngredientMigrationMap"
         component={IngredientMigrationMapScreen}
         options={{ title: 'Migration routes' }}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{ title: 'Notifications' }}
       />
     </Stack.Navigator>
   );

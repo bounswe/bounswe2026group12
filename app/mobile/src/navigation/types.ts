@@ -27,6 +27,7 @@ export type RootStackParamList = {
   CulturalCalendar: undefined;
   RegionMapDetail: { regionId: number; regionName: string };
   IngredientMigrationMap: undefined;
+  Notifications: undefined;
 };
 
 declare global {

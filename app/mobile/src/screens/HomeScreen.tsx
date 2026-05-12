@@ -8,6 +8,8 @@ import { shadows, tokens } from '../theme';
 import { fetchRecipesList } from '../services/recipeService';
 import { fetchStoriesList } from '../services/storyService';
 import { fetchDailyCultural } from '../services/dailyCulturalService';
+import { fetchUnreadCount } from '../services/notificationService';
+import { useAuth } from '../context/AuthContext';
 import { fetchRecommendations, type RecommendationItem } from '../services/recommendationsService';
 import { DailyCulturalSection } from '../components/home/DailyCulturalSection';
 import { RecommendationsRail } from '../components/home/RecommendationsRail';
@@ -19,7 +21,9 @@ import type { RootStackParamList } from '../navigation/types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
+  const { isAuthenticated, isReady } = useAuth();
   const [query, setQuery] = useState('');
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const [stories, setStories] = useState<any[]>([]);
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -74,6 +78,30 @@ export default function HomeScreen({ navigation }: Props) {
     }, [loadFeed]),
   );
 
+  // Bell badge — refresh on focus and on auth state changes. Unauthenticated
+  // callers would just get a 401 from `/api/notifications/`, so we short
+  // circuit to 0 instead of pinging the server.
+  const refreshUnread = useCallback(async () => {
+    if (!isReady) return;
+    if (!isAuthenticated) {
+      setUnreadCount(0);
+      return;
+    }
+    try {
+      const n = await fetchUnreadCount();
+      setUnreadCount(n);
+    } catch {
+      // Bell badge is decorative — silently ignore fetch failures so the
+      // home feed remains usable even if the notifications endpoint is down.
+    }
+  }, [isAuthenticated, isReady]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void refreshUnread();
+    }, [refreshUnread]),
+  );
+
   const onRecommendationPress = (item: RecommendationItem) => {
     if (item.kind === 'recipe') {
       navigation.navigate('RecipeDetail', { id: item.id });
@@ -114,6 +142,28 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.heading} accessibilityRole="header">
             Search
           </Text>
+          <Pressable
+            onPress={() =>
+              navigation.navigate(isAuthenticated ? 'Notifications' : 'Login')
+            }
+            style={({ pressed }) => [styles.bellBtn, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel={
+              unreadCount > 0
+                ? `Notifications, ${unreadCount} unread`
+                : 'Notifications'
+            }
+            hitSlop={10}
+          >
+            <Text style={styles.bellIcon}>🔔</Text>
+            {unreadCount > 0 ? (
+              <View style={styles.bellBadge}>
+                <Text style={styles.bellBadgeText} numberOfLines={1}>
+                  {unreadCount > 99 ? '99+' : String(unreadCount)}
+                </Text>
+              </View>
+            ) : null}
+          </Pressable>
         </View>
 
         <View style={styles.searchWrap}>
@@ -496,4 +546,36 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 12, fontWeight: '800', color: tokens.colors.text },
   link: { fontSize: 15, color: tokens.colors.text, fontWeight: '800' },
   recipeBadge: { marginLeft: 12, marginBottom: 12 },
+  bellBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: tokens.colors.bg,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
+  },
+  bellIcon: { fontSize: 20 },
+  bellBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 20,
+    height: 20,
+    paddingHorizontal: 5,
+    borderRadius: 10,
+    backgroundColor: tokens.colors.accentMustard,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bellBadgeText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: tokens.colors.surfaceDark,
+    lineHeight: 14,
+  },
 });
