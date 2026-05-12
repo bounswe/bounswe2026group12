@@ -38,10 +38,10 @@ describe('OnboardingPage', () => {
     authService.updateMe.mockResolvedValue({
       id: 1,
       username: 'alice',
-      cultural_interests: ['Ottoman'],
+      cultural_interests: ['Turkish cuisine'],
       regional_ties: ['Aegean'],
       religious_preferences: ['Halal'],
-      event_interests: ['Ramadan'],
+      event_interests: ['Wedding'],
     });
   });
 
@@ -60,20 +60,20 @@ describe('OnboardingPage', () => {
   it('submits all preference fields on finish', async () => {
     renderPage();
 
-    fireEvent.click(screen.getByLabelText(/ottoman/i));
+    fireEvent.click(screen.getByLabelText(/turkish cuisine/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    fireEvent.click(screen.getByLabelText(/aegean/i));
+    fireEvent.click(screen.getByLabelText(/^aegean$/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    fireEvent.click(screen.getByLabelText(/halal/i));
+    fireEvent.click(screen.getByLabelText(/^halal$/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    fireEvent.click(screen.getByLabelText(/ramadan/i));
+    fireEvent.click(screen.getByLabelText(/^wedding$/i));
     fireEvent.click(screen.getByRole('button', { name: /finish/i }));
 
     await waitFor(() => expect(authService.updateMe).toHaveBeenCalledWith({
-      cultural_interests: ['Ottoman'],
+      cultural_interests: ['Turkish cuisine'],
       regional_ties: ['Aegean'],
       religious_preferences: ['Halal'],
-      event_interests: ['Ramadan'],
+      event_interests: ['Wedding'],
     }));
     expect(mockUpdateUser).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/');

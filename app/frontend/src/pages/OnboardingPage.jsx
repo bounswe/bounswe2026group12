@@ -5,30 +5,74 @@ import { extractApiError } from '../services/api';
 import { updateMe } from '../services/authService';
 import './OnboardingPage.css';
 
+// Option strings are sourced from the canonical seed in
+// `app/backend/fixtures/seed_canonical.json` (#883). Casing and wording must
+// match exactly — the recommendations engine joins user preferences against
+// recipe/story tags by string equality, so a "ghost" tag here silently
+// breaks personalisation.
 const STEPS = [
   {
     key: 'cultural_interests',
     title: 'Cultural Interests',
     description: 'Choose cuisines and traditions you want to explore.',
-    options: ['Ottoman', 'Anatolian', 'Balkan', 'Levantine', 'Mediterranean', 'Central Asian'],
+    // Matches `users[].cultural_interests` values used in the seed.
+    options: [
+      'Turkish cuisine',
+      'Mediterranean diet',
+      'Levantine cuisine',
+      'Aegean cuisine',
+      'Black Sea traditions',
+      'street food',
+      'food history',
+      'fermentation',
+    ],
   },
   {
     key: 'regional_ties',
     title: 'Regional Ties',
     description: 'Select regions connected to your family or roots.',
-    options: ['Aegean', 'Marmara', 'Central Anatolia', 'Black Sea', 'Mediterranean', 'Southeastern Anatolia'],
+    // Matches canonical `Region.name` values (see
+    // `app/backend/apps/recipes/migrations/0004_seed_regions.py`).
+    options: [
+      'Aegean',
+      'Marmara',
+      'Black Sea',
+      'Anatolian',
+      'Mediterranean',
+      'Levantine',
+      'North African',
+      'Southeastern Anatolia',
+    ],
   },
   {
     key: 'religious_preferences',
     title: 'Dietary / Religious Preferences',
     description: 'Pick preferences to personalize recommendations.',
-    options: ['Halal', 'Kosher', 'Vegetarian', 'Vegan', 'Pescetarian', 'No Preference'],
+    // Mix of canonical `dietary_tags` and `religions` values used in the seed.
+    options: [
+      'Halal',
+      'Vegan',
+      'Vegetarian',
+      'Gluten-Free',
+      'Dairy-Free',
+      'Kosher',
+      'Islam',
+      'Christianity',
+    ],
   },
   {
     key: 'event_interests',
     title: 'Event Interests',
     description: 'Choose occasions you cook for most often.',
-    options: ['Ramadan', 'Eid', 'Weddings', 'Family Gatherings', 'Religious Holidays', 'Weeknight Meals'],
+    // Matches canonical `event_tags` values used in the seed.
+    options: [
+      'Religious Holiday',
+      'Wedding',
+      'Birthday',
+      'Anniversary',
+      'Funeral',
+      'Graduation',
+    ],
   },
 ];
 

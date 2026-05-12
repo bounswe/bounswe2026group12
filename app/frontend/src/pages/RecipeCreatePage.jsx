@@ -4,6 +4,8 @@ import IngredientRow from '../components/IngredientRow';
 import StepsEditor from '../components/StepsEditor';
 import Toast from '../components/Toast';
 import DraftRestoreBanner from '../components/DraftRestoreBanner';
+import CulturalStoryForm from '../components/CulturalStoryForm';
+import { trimCulturalStoryForPayload } from '../components/culturalStoryFields';
 import useDraftAutosave from '../hooks/useDraftAutosave';
 import {
   createRecipe,
@@ -53,6 +55,7 @@ export default function RecipeCreatePage() {
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState([makeRow()]);
   const [steps, setSteps] = useState([]);
+  const [culturalStory, setCulturalStory] = useState({});
 
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
@@ -168,6 +171,7 @@ export default function RecipeCreatePage() {
     const cleanedSteps = steps
       .map((s) => (typeof s === 'string' ? s.trim() : ''))
       .filter((s) => s.length > 0);
+    const culturalPayload = trimCulturalStoryForPayload(culturalStory);
     const payload = {
       title,
       description,
@@ -180,6 +184,9 @@ export default function RecipeCreatePage() {
         amount: r.amount,
         unit: r.unitId,
       })),
+      ...(Object.keys(culturalPayload).length > 0
+        ? { cultural_context: culturalPayload }
+        : {}),
     };
 
     setSubmitting(true);
@@ -354,6 +361,14 @@ export default function RecipeCreatePage() {
             hint="Walk readers through the recipe one step at a time. Order matters — use the arrows to reorder. Empty steps are skipped on save."
           />
           <StepsEditor value={steps} onChange={handleStepsChange} />
+
+          <CulturalStoryForm
+            values={culturalStory}
+            onChange={(key, value) => {
+              markDirty();
+              setCulturalStory((prev) => ({ ...prev, [key]: value }));
+            }}
+          />
         </section>
 
         {/* ── Step 4: Media & options ── */}

@@ -1,0 +1,78 @@
+.endangered-heritage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.endangered-heritage-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid;
+}
+
+.endangered-heritage-endangered {
+  background: #FFFBEB;
+  border-color: #D97706;
+}
+
+.endangered-heritage-preserved {
+  background: var(--color-accent-green-tint);
+  border-color: var(--color-accent-green-border);
+}
+
+.endangered-heritage-revived {
+  background: #EFF6FF;
+  border-color: #2563EB;
+}
+
+.endangered-heritage-blurb {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.endangered-heritage-notes-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+}
+
+.endangered-heritage-note-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.endangered-heritage-note {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+}
+
+.endangered-heritage-note-text {
+  margin: 0 0 0.4rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.endangered-heritage-note-source {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.endangered-heritage-note-source:hover {
+  text-decoration: underline;
+}
