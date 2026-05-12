@@ -55,17 +55,17 @@ describe('ProfilePage', () => {
 });
 
 describe('ProfilePage — my recipes / stories / bookmarks', () => {
-  it('renders three section headings (My recipes, My stories, Saved recipes)', async () => {
+  it('renders three tab buttons (My Recipes, My Stories, Saved Recipes)', async () => {
     recipeService.fetchMyRecipes.mockResolvedValue([]);
     storyService.fetchMyStories.mockResolvedValue([]);
     recipeService.fetchMyBookmarks.mockResolvedValue([]);
     renderPage({ user: { id: 7, username: 'me', email: 'me@x.com', is_contactable: true } });
-    expect(await screen.findByRole('heading', { name: /my recipes/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /my stories/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /saved recipes/i })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: /my recipes/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /my stories/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /saved recipes/i })).toBeInTheDocument();
   });
 
-  it('renders one card per recipe / story / bookmark with a link to detail', async () => {
+  it('shows recipe card on the default tab and switches to other tabs for stories / bookmarks', async () => {
     recipeService.fetchMyRecipes.mockResolvedValue([
       { id: 1, title: 'My Sarma', region_name: 'Black Sea' },
     ]);
@@ -76,32 +76,51 @@ describe('ProfilePage — my recipes / stories / bookmarks', () => {
       { id: 3, title: 'Saved Pasta' },
     ]);
     renderPage({ user: { id: 7, username: 'me', email: 'me@x.com', is_contactable: true } });
+
+    // Default tab: My Recipes
     expect(await screen.findByRole('link', { name: /my sarma/i }))
       .toHaveAttribute('href', '/recipes/1');
-    expect(screen.getByRole('link', { name: /my memory/i }))
+
+    // Switch to My Stories
+    await userEvent.click(screen.getByRole('tab', { name: /my stories/i }));
+    expect(await screen.findByRole('link', { name: /my memory/i }))
       .toHaveAttribute('href', '/stories/2');
-    expect(screen.getByRole('link', { name: /saved pasta/i }))
+
+    // Switch to Saved Recipes
+    await userEvent.click(screen.getByRole('tab', { name: /saved recipes/i }));
+    expect(await screen.findByRole('link', { name: /saved pasta/i }))
       .toHaveAttribute('href', '/recipes/3');
   });
 
-  it('shows an empty-state hint when a section has no items', async () => {
+  it('shows an empty-state hint on each tab when there are no items', async () => {
     recipeService.fetchMyRecipes.mockResolvedValue([]);
     storyService.fetchMyStories.mockResolvedValue([]);
     recipeService.fetchMyBookmarks.mockResolvedValue([]);
     renderPage({ user: { id: 7, username: 'me', email: 'me@x.com', is_contactable: true } });
-    await screen.findByRole('heading', { name: /my recipes/i });
-    expect(screen.getByText(/no recipes yet/i)).toBeInTheDocument();
-    expect(screen.getByText(/no stories yet/i)).toBeInTheDocument();
-    expect(screen.getByText(/no saved recipes yet/i)).toBeInTheDocument();
+
+    // Default: My Recipes tab
+    expect(await screen.findByText(/you haven't published any recipes yet/i)).toBeInTheDocument();
+
+    // My Stories tab
+    await userEvent.click(screen.getByRole('tab', { name: /my stories/i }));
+    expect(await screen.findByText(/you haven't published any stories yet/i)).toBeInTheDocument();
+
+    // Saved Recipes tab
+    await userEvent.click(screen.getByRole('tab', { name: /saved recipes/i }));
+    expect(await screen.findByText(/no saved recipes yet/i)).toBeInTheDocument();
   });
 
-  it('handles per-section fetch failures gracefully (other sections still render)', async () => {
+  it('shows the recipe card when recipes load and stories fetch fails', async () => {
     recipeService.fetchMyRecipes.mockResolvedValue([{ id: 1, title: 'Mine' }]);
     storyService.fetchMyStories.mockRejectedValue(new Error('boom'));
     recipeService.fetchMyBookmarks.mockResolvedValue([]);
     renderPage({ user: { id: 7, username: 'me', email: 'me@x.com', is_contactable: true } });
+
+    // Recipes tab (default) renders fine
     expect(await screen.findByRole('link', { name: /mine/i })).toBeInTheDocument();
-    expect(screen.getByText(/could not load stories/i)).toBeInTheDocument();
-    expect(screen.getByText(/no saved recipes yet/i)).toBeInTheDocument();
+
+    // Stories tab falls back to empty state (error is caught silently)
+    await userEvent.click(screen.getByRole('tab', { name: /my stories/i }));
+    expect(await screen.findByText(/you haven't published any stories yet/i)).toBeInTheDocument();
   });
 });

@@ -15,12 +15,6 @@ export async function fetchStories() {
   return response.data.results ?? response.data;
 }
 
-export async function fetchMyStories(userId) {
-  if (USE_MOCK) return MOCK_STORIES_LIST;
-  const response = await apiClient.get('/api/stories/', { params: { author: userId } });
-  return response.data.results ?? response.data;
-}
-
 export async function createStory(data) {
   if (USE_MOCK) return mockCreateStory(data);
   const response = await apiClient.post('/api/stories/', data);
