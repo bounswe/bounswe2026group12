@@ -431,3 +431,108 @@ class StoryAuthorFilterTest(APITestCase):
         results = response.data.get('results', response.data)
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['title'], 'Story 3')
+
+
+class StoryGeoCoordinatesAPITest(APITestCase):
+    """Tests for Story.latitude / Story.longitude fields (#730)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="geo@example.com", username="geo", password="Pass123!"
+        )
+        self.region = Region.objects.create(name="Anatolia")
+        self.recipe = Recipe.objects.create(
+            title="Mantı", description="Dumplings",
+            region=self.region, author=self.user, is_published=True,
+        )
+        self.list_url = reverse('story-list')
+
+    def _detail_url(self, story):
+        return reverse('story-detail', kwargs={'pk': story.id})
+
+    def test_detail_includes_null_coordinates_by_default(self):
+        story = Story.objects.create(
+            title="No coords", body="Body", author=self.user, is_published=True,
+        )
+        response = self.client.get(self._detail_url(story))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('latitude', response.data)
+        self.assertIn('longitude', response.data)
+        self.assertIsNone(response.data['latitude'])
+        self.assertIsNone(response.data['longitude'])
+
+    def test_patch_sets_coordinates(self):
+        self.client.force_authenticate(user=self.user)
+        story = Story.objects.create(
+            title="Patchable coords", body="Body", author=self.user, is_published=True,
+        )
+        url = self._detail_url(story)
+        response = self.client.patch(
+            url, {"latitude": "41.008200", "longitude": "28.978400"}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(str(response.data['latitude']), "41.008200")
+        self.assertEqual(str(response.data['longitude']), "28.978400")
+
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(str(get_response.data['latitude']), "41.008200")
+        self.assertEqual(str(get_response.data['longitude']), "28.978400")
+
+    def test_patch_clears_coordinates(self):
+        self.client.force_authenticate(user=self.user)
+        story = Story.objects.create(
+            title="Clearable coords", body="Body", author=self.user, is_published=True,
+            latitude="38.423700", longitude="27.142800",
+        )
+        url = self._detail_url(story)
+        response = self.client.patch(
+            url, {"latitude": None, "longitude": None}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data['latitude'])
+        self.assertIsNone(response.data['longitude'])
+
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(get_response.data['latitude'])
+        self.assertIsNone(get_response.data['longitude'])
+
+    def test_coordinates_independent_of_region_and_linked_recipes(self):
+        """A story may carry coordinates with or without a region / linked recipes."""
+        self.client.force_authenticate(user=self.user)
+        # No region, no linked recipe.
+        bare = self.client.post(self.list_url, {
+            "title": "Bare with coords", "body": "Body",
+            "latitude": "40.000000", "longitude": "29.000000",
+        }, format='json')
+        self.assertEqual(bare.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(str(bare.data['latitude']), "40.000000")
+        self.assertEqual(str(bare.data['longitude']), "29.000000")
+        self.assertIsNone(bare.data['region'])
+
+        # With region and linked recipe.
+        linked = self.client.post(self.list_url, {
+            "title": "Linked with coords", "body": "Body",
+            "region": self.region.id, "linked_recipe_id": self.recipe.id,
+            "latitude": "41.500000", "longitude": "30.500000",
+        }, format='json')
+        self.assertEqual(linked.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(str(linked.data['latitude']), "41.500000")
+        self.assertEqual(str(linked.data['longitude']), "30.500000")
+        self.assertEqual(linked.data['region'], self.region.id)
+
+    def test_list_includes_coordinate_fields(self):
+        Story.objects.create(
+            title="Listed", body="Body", author=self.user, is_published=True,
+            latitude="39.925000", longitude="32.866900",
+        )
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.data.get('results', response.data)
+        self.assertGreaterEqual(len(results), 1)
+        self.assertIn('latitude', results[0])
+        self.assertIn('longitude', results[0])
+        match = next(r for r in results if r['title'] == "Listed")
+        self.assertEqual(str(match['latitude']), "39.925000")
+        self.assertEqual(str(match['longitude']), "32.866900")

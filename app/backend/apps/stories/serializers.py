@@ -69,6 +69,7 @@ class StorySerializer(serializers.ModelSerializer):
             'dietary_tags', 'event_tags', 'religions',
             'dietary_tag_ids', 'event_tag_ids', 'religion_ids',
             'language', 'region', 'region_name',
+            'latitude', 'longitude',
             'story_type',
             'is_published', 'created_at', 'updated_at',
             'rank_score', 'rank_reason',

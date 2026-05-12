@@ -59,6 +59,11 @@ class Story(models.Model):
         related_name='stories',
         help_text='Geographic/cultural region for map discovery. Falls back to linked_recipe.region if null.',
     )
+    # Optional per-story map coordinates (#730). Mirrors Recipe.latitude/longitude.
+    # Independent of region and linked_recipes; a story may have coordinates with
+    # or without either. Stories without coordinates remain valid.
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     language = models.CharField(max_length=10, blank=True, default='en')
     story_type = models.CharField(
         max_length=20,
