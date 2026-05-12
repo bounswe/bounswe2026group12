@@ -257,6 +257,7 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <View style={styles.fill}>
+        <View style={styles.mapContainer}>
         <MapView
           ref={mapRef}
           style={styles.map}
@@ -296,6 +297,7 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
             {clusters.length} region{clusters.length === 1 ? '' : 's'} · {totalMembers} member
             {totalMembers === 1 ? '' : 's'}
           </Text>
+        </View>
         </View>
 
         <View style={[styles.sheet, { paddingBottom: sheetBottomInset + 12 }]}>
@@ -451,11 +453,12 @@ const styles = StyleSheet.create({
   },
   legendBody: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '700' },
   zoomControls: { top: 90 },
+  mapContainer: { flex: 1 },
   sheet: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 0,
+    flexBasis: '50%',
+    maxHeight: '60%',
+    minHeight: 240,
     backgroundColor: tokens.colors.bg,
     borderTopLeftRadius: tokens.radius.xl,
     borderTopRightRadius: tokens.radius.xl,
@@ -463,8 +466,6 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.surfaceDark,
     paddingTop: 8,
     paddingHorizontal: 16,
-    maxHeight: '75%',
-    minHeight: 240,
     ...shadows.lg,
   },
   sheetHandle: {
