@@ -142,6 +142,18 @@ export default function UserProfileScreen({ route, navigation }: Props) {
           <Text style={styles.username} accessibilityRole="header">
             {username ?? `User #${userIdStr}`}
           </Text>
+          {username ? (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Passport', { username, isOwn: isOwnProfile })
+              }
+              style={({ pressed }) => [styles.passportPill, pressed && styles.pressed]}
+              accessibilityRole="button"
+              accessibilityLabel={`Open ${isOwnProfile ? 'your' : `${username}'s`} passport`}
+            >
+              <Text style={styles.passportPillText}>🛂 Passport</Text>
+            </Pressable>
+          ) : null}
         </View>
 
         {canMessage ? (
@@ -399,4 +411,19 @@ const styles = StyleSheet.create({
   rowTitle: { fontSize: 15, fontWeight: '700', color: tokens.colors.text, flexShrink: 1 },
   rowMeta: { marginTop: 4, fontSize: 12, color: tokens.colors.textMuted },
   savedCentered: { paddingVertical: 24, alignItems: 'center' },
+  passportPill: {
+    marginLeft: 'auto',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentMustard,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  passportPillText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    letterSpacing: 0.3,
+  },
 });
