@@ -33,6 +33,10 @@ function renderPage(username, currentUser = null) {
 beforeEach(() => {
   jest.clearAllMocks();
   passportService.getPublicProfile.mockResolvedValue(mockProfile);
+  // UserProfilePage also fires getPassport in a separate effect; without a
+  // resolved mock the auto-mocked function returns undefined and the .then
+  // call crashes before the .catch handler can swallow it.
+  passportService.getPassport.mockResolvedValue(null);
 });
 
 describe('UserProfilePage', () => {
