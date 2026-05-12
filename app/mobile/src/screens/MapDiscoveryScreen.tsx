@@ -109,16 +109,14 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
 
         <MapZoomControls mapRef={mapRef} />
 
-        <View style={styles.searchPillWrap} pointerEvents="box-none">
-          <Pressable
-            onPress={() => navigation.navigate('Search', { region: '' })}
-            style={({ pressed }) => [styles.searchPill, pressed && styles.searchPillPressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Search regions"
-          >
-            <Text style={styles.searchPillText}>Search regions →</Text>
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={() => navigation.navigate('Search', { region: '' })}
+          style={({ pressed }) => [styles.searchPill, pressed && styles.searchPillPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Search for a specific region"
+        >
+          <Text style={styles.searchPillText}>Search regions →</Text>
+        </Pressable>
 
         <View style={styles.routesCtaWrap} pointerEvents="box-none">
           <Pressable
@@ -180,20 +178,17 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   hintText: { fontSize: 13, color: tokens.colors.text, fontWeight: '700' },
-  searchPillWrap: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    right: 16,
-    alignItems: 'center',
-  },
   searchPill: {
-    paddingVertical: 10,
-    paddingHorizontal: 18,
+    position: 'absolute',
+    top: 12,
+    alignSelf: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     borderRadius: tokens.radius.pill,
     backgroundColor: tokens.colors.bg,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: tokens.colors.surfaceDark,
+    zIndex: 10,
     ...shadows.md,
   },
   searchPillPressed: { opacity: 0.85 },
