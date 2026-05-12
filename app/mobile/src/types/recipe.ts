@@ -21,6 +21,12 @@ export type RecipeDetail = {
   /** Normalized to `{ id, username }`; raw API may send `author` as user pk only. */
   author?: number | { id: number; username?: string };
   ingredients?: RecipeIngredientRow[];
+  /**
+   * Ordered cooking steps surfaced by backend (#806). Each entry is a plain
+   * string; embedded newlines are preserved on render. Optional because older
+   * payloads omit the field — UI treats `undefined`/empty as "no steps".
+   */
+  steps?: string[];
   /** Matches web `RecipeEditPage` (`qa_enabled`). */
   qa_enabled?: boolean;
   rank_score?: number;
