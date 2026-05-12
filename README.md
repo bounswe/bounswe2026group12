@@ -1,6 +1,6 @@
 # genipe — Cross-Generational Recipe & Food Heritage Platform
 
-CMPE 354 / 451 — Group 12 (Spring 2026).
+CMPE 354 — Group 12 (Spring 2026).
 
 genipe is a recipe and food-heritage platform that pairs traditional
 recipes with the stories behind them. Authors publish recipes (video +
