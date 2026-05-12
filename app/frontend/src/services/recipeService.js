@@ -69,7 +69,7 @@ export async function submitUnit(name) {
 
 export async function fetchRecipes() {
   if (USE_MOCK) return MOCK_RECIPES_LIST;
-  const response = await apiClient.get('/api/recipes/');
+  const response = await apiClient.get('/api/recipes/', { params: { page_size: 100 } });
   return response.data.results ?? response.data;
 }
 
@@ -124,7 +124,7 @@ export async function toggleBookmark(id) {
  */
 export async function fetchMyRecipes(authorId) {
   if (USE_MOCK) return MOCK_RECIPES_LIST.filter((r) => r.author === authorId);
-  const response = await apiClient.get('/api/recipes/', { params: { author: authorId } });
+  const response = await apiClient.get('/api/recipes/', { params: { author: authorId, page_size: 100 } });
   return response.data.results ?? response.data;
 }
 
@@ -134,7 +134,7 @@ export async function fetchMyRecipes(authorId) {
  */
 export async function fetchMyBookmarks() {
   if (USE_MOCK) return [];
-  const response = await apiClient.get('/api/recipes/', { params: { bookmarked: 'true' } });
+  const response = await apiClient.get('/api/recipes/', { params: { bookmarked: 'true', page_size: 100 } });
   return response.data.results ?? response.data;
 }
 
@@ -147,6 +147,6 @@ export async function fetchRecipesByRegion(regionName) {
   if (USE_MOCK) {
     return MOCK_RECIPES_LIST.filter((r) => r.region_name === regionName);
   }
-  const response = await apiClient.get('/api/recipes/', { params: { region: regionName } });
+  const response = await apiClient.get('/api/recipes/', { params: { region: regionName, page_size: 100 } });
   return response.data.results ?? response.data;
 }

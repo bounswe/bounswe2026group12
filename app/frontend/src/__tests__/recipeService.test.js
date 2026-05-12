@@ -126,7 +126,7 @@ describe('fetchRecipes', () => {
   it('calls GET /api/recipes/ and returns data', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Baklava' }] });
     const result = await fetchRecipes();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Baklava' }]);
   });
 });
@@ -286,7 +286,7 @@ describe('fetchMyRecipes', () => {
   it('GETs /api/recipes/?author=<id> and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Mine' }] });
     const result = await fetchMyRecipes(42);
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42 } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42, page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Mine' }]);
   });
 
@@ -300,7 +300,7 @@ describe('fetchMyBookmarks', () => {
   it('GETs /api/recipes/?bookmarked=true and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 9, title: 'Saved' }] });
     const result = await fetchMyBookmarks();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true' } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true', page_size: 100 } });
     expect(result).toEqual([{ id: 9, title: 'Saved' }]);
   });
 
@@ -311,10 +311,10 @@ describe('fetchMyBookmarks', () => {
 });
 
 describe('fetchRecipesByRegion', () => {
-  it('GETs /api/recipes/?region=<name> and returns the list', async () => {
+  it('GETs /api/recipes/?region=<name>&page_size=100 and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Anchovy Pilaf', latitude: 41.0, longitude: 39.7 }] });
     const result = await fetchRecipesByRegion('Black Sea');
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { region: 'Black Sea' } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { region: 'Black Sea', page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Anchovy Pilaf', latitude: 41.0, longitude: 39.7 }]);
   });
 
