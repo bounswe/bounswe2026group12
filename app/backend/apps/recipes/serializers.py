@@ -218,6 +218,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     cultural_context = CulturalContextSerializer(required=False, allow_null=True)
     is_bookmarked = serializers.BooleanField(read_only=True, allow_null=True)
     bookmark_count = serializers.IntegerField(read_only=True, default=0)
+    user_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -226,6 +227,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'region', 'region_name', 'latitude', 'longitude',
             'author', 'author_username', 'qa_enabled',
             'is_published', 'is_heritage', 'heritage_notes', 'heritage_status',
+            'average_rating', 'rating_count', 'user_rating',
             'created_at', 'updated_at',
             'ingredients', 'ingredients_write',
             'dietary_tags', 'event_tags', 'religions',
@@ -254,6 +256,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_rank_reason(self, obj):
         return getattr(obj, 'rank_reason', None)
+
+    def get_user_rating(self, obj):
+        return getattr(obj, 'user_rating', None)
 
     def validate(self, data):
         if self.context['request'].method == 'POST':
@@ -353,6 +358,16 @@ class CommentSerializer(serializers.ModelSerializer):
         if parent and recipe and parent.recipe_id != recipe.id:
             raise serializers.ValidationError({'parent_comment': 'Must belong to the same recipe.'})
         return attrs
+
+
+class RecipeRatingWriteSerializer(serializers.Serializer):
+    score = serializers.IntegerField(min_value=1, max_value=5)
+
+
+class RecipeRatingSummarySerializer(serializers.Serializer):
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2, allow_null=True)
+    rating_count = serializers.IntegerField()
+    user_rating = serializers.IntegerField(allow_null=True)
 
 
 class IngredientSubstituteSerializer(serializers.Serializer):

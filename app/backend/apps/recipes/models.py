@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.conf import settings
 from apps.common.ids import generate_ulid, validate_ulid
@@ -182,6 +183,8 @@ class Recipe(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    rating_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -315,6 +318,36 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Vote by {self.user.username} on Comment {self.comment.id}"
+
+
+class Rating(models.Model):
+    """A user's 1-5 star rating for a recipe (#734)."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='recipe_ratings',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ratings',
+    )
+    score = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_rating_per_user_recipe',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.recipe.title} {self.score}/5"
 
 class RecipeCulturalContext(models.Model):
     """Beyond the Recipe, seven optional narrative notes about a dish (#521).
