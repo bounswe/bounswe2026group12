@@ -53,10 +53,11 @@ describe('HomePage', () => {
 
   it('populates region chips from API', async () => {
     renderPage();
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Aegean' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Mediterranean' })).toBeInTheDocument();
-    });
+    // Use findByRole so the assertion races with a single retried query
+    // instead of waitFor polling — the latter interleaves with async state
+    // updates from RandomCulturalFact and DailyCulturalSection and flakes.
+    expect(await screen.findByRole('button', { name: 'Aegean' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Mediterranean' })).toBeInTheDocument();
   });
 
   it('renders meal type chip buttons', () => {
