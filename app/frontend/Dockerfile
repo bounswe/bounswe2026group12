@@ -11,6 +11,8 @@ COPY . .
 
 ARG REACT_APP_API_URL=http://localhost
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ARG REACT_APP_USE_MOCK=false
+ENV REACT_APP_USE_MOCK=$REACT_APP_USE_MOCK
 RUN npm run build
 
 # ---- Stage 2: serve ----

@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import SkipLink from './components/SkipLink';
+import ChatTray from './components/ChatTray';
 import ProtectedRoute from './components/ProtectedRoute';
 import GridMotion from './components/GridMotion';
 import HomePage from './pages/HomePage';
@@ -72,6 +73,7 @@ export default function App() {
         </>
       )}
       <Navbar />
+      <ChatTray />
       <div className="page-wrapper" id="main-content">
         <Routes>
           <Route path="/" element={<HomePage />} />
