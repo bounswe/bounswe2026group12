@@ -10,7 +10,11 @@
     "test": "jest"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/mocks/**"
+    ]
   },
   "dependencies": {
     "@expo-google-fonts/dm-sans": "^0.4.2",
