@@ -6821,6 +6821,406 @@
         "kind": "recipe",
         "title": "Ceviche"
       }
+    },
+    {
+      "slug": "black-sea-butter-tradition",
+      "kind": "tradition",
+      "title": "The Black Sea Butter Ritual",
+      "body": "In the Black Sea region, butter is more than an ingredient—it is a cultural marker. The sound of the wooden churn (yayık) is the heartbeat of a traditional mountain home. High-altitude pastures (yaylas) produce butter with a distinctive yellow hue and a floral aroma that defines local breakfast rituals.",
+      "region": "Black Sea",
+      "link": {
+        "kind": "recipe",
+        "title": "Trabzon Butter Kuymak"
+      },
+      "cultural_tags": [
+        "Black Sea",
+        "Turkish",
+        "butter",
+        "breakfast"
+      ]
+    },
+    {
+      "slug": "persian-new-year-feast",
+      "kind": "holiday",
+      "title": "Nowruz Kitchen: Cooking for Renewal",
+      "body": "Nowruz, the Persian New Year, begins at the exact moment of the spring equinox. The celebration is anchored by the 'Haft-Sin' table, but the kitchen is where the labor of renewal happens. Families gather to cook dishes like Sabzi Polo (herb rice) and Kuku Sabzi, symbolizing the greening of the earth and the cycle of life.",
+      "region": "Persian",
+      "link": {
+        "kind": "story",
+        "title": "Nowruz: A Table Full of Meaning"
+      },
+      "cultural_tags": [
+        "Persian",
+        "Nowruz",
+        "new year",
+        "spring"
+      ]
+    },
+    {
+      "slug": "southeast-asian-street-food",
+      "kind": "fact",
+      "title": "Street Food as Cultural Archive",
+      "body": "Across Southeast Asia, street food carts are more than convenient places to eat—they are living archives of migration and adaptation. A single bowl of noodles or a stir-fry can trace centuries of trade between China, India, and the indigenous cultures of the islands and mainland.",
+      "region": "Southeast Asian",
+      "link": {
+        "kind": "recipe",
+        "title": "Pad Thai"
+      },
+      "cultural_tags": [
+        "Southeast Asian",
+        "Thai",
+        "street food",
+        "history"
+      ]
+    },
+    {
+      "slug": "east-african-communal-dining",
+      "kind": "tradition",
+      "title": "Breaking Bread on Injera",
+      "body": "In East Africa, specifically Ethiopia and Eritrea, the concept of 'gursha'—hand-feeding a fellow diner—is a profound act of love and respect. This communal style of dining centers around the injera, a large sourdough flatbread that serves as both plate and utensil, bringing everyone together around a single source of nourishment.",
+      "region": "East African",
+      "link": {
+        "kind": "recipe",
+        "title": "Injera"
+      },
+      "cultural_tags": [
+        "East African",
+        "Ethiopian",
+        "communal dining",
+        "tradition"
+      ]
+    },
+    {
+      "slug": "south-american-empanada-trail",
+      "kind": "dish",
+      "title": "The Empanada: A Continent's Pocket of History",
+      "body": "From the high Andes to the streets of Buenos Aires, the empanada is South America's versatile pocket of history. Each region has its own dough, its own crimp (repulgue), and its own filling. Whether baked or fried, it represents the fusion of Spanish influence with local ingredients and communal gathering (peñas).",
+      "region": "South American",
+      "link": {
+        "kind": "recipe",
+        "title": "Empanadas"
+      },
+      "cultural_tags": [
+        "South American",
+        "Argentine",
+        "empanada",
+        "street food"
+      ]
+    },
+    {
+      "slug": "french-terroir-croissant",
+      "kind": "fact",
+      "title": "The Croissant: Not Originally French",
+      "body": "While the croissant is the quintessential French pastry, its ancestor, the kipferl, was born in Austria. French bakers took the simple crescent-shaped bread and transformed it through the technique of lamination (layering dough with butter), creating the flaky, buttery icon of the French boulangerie we know today.",
+      "region": "French",
+      "link": {
+        "kind": "recipe",
+        "title": "Croissant"
+      },
+      "cultural_tags": [
+        "French",
+        "baking",
+        "history",
+        "Austrian"
+      ]
+    },
+    {
+      "slug": "central-american-maize-heritage",
+      "kind": "tradition",
+      "title": "Maize: The Sacred Grain of the Americas",
+      "body": "For the indigenous peoples of Central America, maize is not just a crop—it is the material of creation. The process of nixtamalization, which turns corn into masa, is an ancient scientific achievement that allowed civilizations to flourish. Today, this heritage lives on in every tortilla and tamale made by hand.",
+      "region": "Central American",
+      "link": {
+        "kind": "recipe",
+        "title": "Tamales"
+      },
+      "cultural_tags": [
+        "Central American",
+        "maize",
+        "heritage",
+        "indigenous"
+      ]
+    },
+    {
+      "slug": "korean-fermentation-wisdom",
+      "kind": "fact",
+      "title": "Korea's Fermentation Science",
+      "body": "Korean cuisine is built on the logic of fermentation. Beyond taste, the 'jang' (sauces) and kimchi are products of time, temperature, and microbial balance. This 'living food' reflects a deep cultural wisdom that values patience and the relationship between human health and the natural world.",
+      "region": "Korean",
+      "link": {
+        "kind": "recipe",
+        "title": "Kimchi Jjigae"
+      },
+      "cultural_tags": [
+        "Korean",
+        "fermentation",
+        "kimchi",
+        "science"
+      ]
+    },
+    {
+      "slug": "caribbean-spice-fusion",
+      "kind": "dish",
+      "title": "Jerk: Smoke, Spice, and Memory",
+      "body": "Jerk is Jamaica's gift to the world, a cooking style born of necessity and resistance. Maroon communities used pimento wood, scotch bonnet peppers, and secret spice blends to preserve and cook meat in hidden pits. Today, the smoke of a jerk pan is the aroma of Jamaican resilience and culinary creativity.",
+      "region": "Caribbean",
+      "link": {
+        "kind": "recipe",
+        "title": "Jerk Chicken"
+      },
+      "cultural_tags": [
+        "Caribbean",
+        "Jamaican",
+        "jerk",
+        "spice",
+        "smoke"
+      ]
+    },
+    {
+      "slug": "north-african-tagine-heritage",
+      "kind": "tradition",
+      "title": "Slow Fire, Patient Hands: The Way of the Tagine",
+      "body": "The tagine is both a vessel and a dish, designed for the slow, gentle cooking required in arid climates. The conical lid allows steam to circulate and condense, returning moisture to the meat and vegetables. It is a philosophy of cooking that rewards patience and honors the delicate balance of spices like saffron, ginger, and turmeric.",
+      "region": "North African",
+      "link": {
+        "kind": "recipe",
+        "title": "Lamb Tagine"
+      },
+      "cultural_tags": [
+        "North African",
+        "Moroccan",
+        "tagine",
+        "slow cooking"
+      ]
+    }
+  ],
+  "quests": [
+    {
+      "name": "Aegean Explorer",
+      "description": "Try 3 Aegean recipes to discover the light, olive-oil centered flavors of the coast.",
+      "category": "discovery",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Aegean",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Spice Road Wanderer",
+      "description": "The Silk Road carried more than silk—it carried the flavors that define us. Try 5 recipes from any region.",
+      "category": "discovery",
+      "target_count": 5,
+      "filter_criteria": {
+        "action": "recipe_try"
+      },
+      "reward_type": "theme",
+      "reward_value": "spice_road_wanderer",
+      "is_event_quest": false
+    },
+    {
+      "name": "Story Seeker",
+      "description": "Cultural heritage is carried in stories as much as in pots. Save 3 stories to your passport.",
+      "category": "discovery",
+      "target_count": 3,
+      "filter_criteria": {
+        "action": "story_save"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Mediterranean Taster",
+      "description": "From the shores of Greece to the coast of Turkey, discover the Mediterranean diet. Try 2 Mediterranean recipes.",
+      "category": "discovery",
+      "target_count": 2,
+      "filter_criteria": {
+        "region": "Mediterranean",
+        "action": "recipe_try"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Mediterranean Shores",
+      "is_event_quest": false
+    },
+    {
+      "name": "Far East Flavors",
+      "description": "Explore the precision and tradition of Japanese cooking. Try 3 Japanese recipes.",
+      "category": "discovery",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Japanese",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Heritage Guardian",
+      "description": "Preserve the traditions that are at risk of being forgotten. Try 3 heritage recipes.",
+      "category": "heritage",
+      "target_count": 3,
+      "filter_criteria": {
+        "heritage": true,
+        "action": "recipe_try"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Heritage Guardian",
+      "is_event_quest": false
+    },
+    {
+      "name": "Black Sea Traditions",
+      "description": "The rugged Black Sea coast holds unique heritage. Interact with 2 Black Sea heritage items.",
+      "category": "heritage",
+      "target_count": 2,
+      "filter_criteria": {
+        "region": "Black Sea",
+        "heritage": true
+      },
+      "reward_type": "theme",
+      "reward_value": "black_sea_keeper",
+      "is_event_quest": false
+    },
+    {
+      "name": "Anatolian Roots",
+      "description": "Anatolia is a cradle of civilizations. Interact with 2 Anatolian recipes or stories.",
+      "category": "heritage",
+      "target_count": 2,
+      "filter_criteria": {
+        "region": "Anatolian"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Living Recipe Keeper",
+      "description": "Become a steward of our shared culinary history. Interact with 5 heritage items.",
+      "category": "heritage",
+      "target_count": 5,
+      "filter_criteria": {
+        "heritage": true
+      },
+      "reward_type": "theme",
+      "reward_value": "living_archive",
+      "is_event_quest": false
+    },
+    {
+      "name": "Silk Road Journey",
+      "description": "Trace the ancient trade routes through Central Asia. Try 3 Central Asian recipes.",
+      "category": "journey",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Central Asian",
+        "action": "recipe_try"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Silk Road Traveler",
+      "is_event_quest": false
+    },
+    {
+      "name": "Levantine Passage",
+      "description": "Discover the communal generosity of the Levant. Interact with 4 Levantine recipes or stories.",
+      "category": "journey",
+      "target_count": 4,
+      "filter_criteria": {
+        "region": "Levantine"
+      },
+      "reward_type": "theme",
+      "reward_value": "levantine_voyager",
+      "is_event_quest": false
+    },
+    {
+      "name": "Around the World in 10 Recipes",
+      "description": "A global culinary adventure. Try 10 recipes from any region.",
+      "category": "journey",
+      "target_count": 10,
+      "filter_criteria": {
+        "action": "recipe_try"
+      },
+      "reward_type": "theme",
+      "reward_value": "globe_trotter",
+      "is_event_quest": false
+    },
+    {
+      "name": "Korean Kitchen",
+      "description": "Master the art of fermentation and balance. Try 3 Korean recipes.",
+      "category": "journey",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Korean",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Persian Treasures",
+      "description": "Experience the sophisticated flavors of Persian cuisine. Interact with 3 Persian items.",
+      "category": "journey",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Persian"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Persian Garden",
+      "is_event_quest": false
+    },
+    {
+      "name": "Community Storyteller",
+      "description": "Stories are the threads that bind us. Save 5 stories from any region.",
+      "category": "community",
+      "target_count": 5,
+      "filter_criteria": {
+        "action": "story_save"
+      },
+      "reward_type": "stamp",
+      "reward_value": "Community Storyteller",
+      "is_event_quest": false
+    },
+    {
+      "name": "West African Explorer",
+      "description": "Bold, spicy, and communal. Try 3 West African recipes.",
+      "category": "community",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "West African",
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": false
+    },
+    {
+      "name": "Indian Culinary Journey",
+      "description": "Navigate the spice trails of the subcontinent. Try 3 Indian recipes.",
+      "category": "community",
+      "target_count": 3,
+      "filter_criteria": {
+        "region": "Indian",
+        "action": "recipe_try"
+      },
+      "reward_type": "theme",
+      "reward_value": "indian_spice_trail",
+      "is_event_quest": false
+    },
+    {
+      "name": "Ramadan Recipe Quest",
+      "description": "Share the spirit of reflection and community. Try 2 recipes during the holy month.",
+      "category": "community",
+      "target_count": 2,
+      "filter_criteria": {
+        "action": "recipe_try"
+      },
+      "reward_type": "points",
+      "reward_value": "",
+      "is_event_quest": true,
+      "event_start": "2026-02-17T00:00:00Z",
+      "event_end": "2026-03-19T23:59:59Z"
     }
   ],
   "recipe_comments": [
