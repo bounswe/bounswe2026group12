@@ -73,7 +73,7 @@ class Command(BaseCommand):
             stories = self._seed_stories(data['stories'], users, recipes)
             self._seed_recipe_comments(data.get('recipe_comments', []), users, recipes)
             self._seed_story_comments(data.get('story_comments', []), users, stories)
-            cards = self._seed_cultural_content(data['cultural_content'])
+            cards = self._seed_cultural_content(data['cultural_content'], recipes, stories)
             sub_created, sub_skipped = self._seed_substitutions(substitutions_data)
             heritage_stats = self._seed_heritage(heritage_data, recipes, stories)
             event_stats = self._seed_cultural_events(cultural_events_data, recipes)
@@ -312,7 +312,7 @@ class Command(BaseCommand):
             if c.get('ref'):
                 id_map[c['ref']] = comment
 
-    def _seed_cultural_content(self, cards_data):
+    def _seed_cultural_content(self, cards_data, recipes, stories):
         cards = []
         for c in cards_data:
             region = self._resolve(Region, c['region']) if c.get('region') else None
@@ -324,6 +324,25 @@ class Command(BaseCommand):
                 region=region,
                 cultural_tags=c.get('cultural_tags', []),
             )
+            link = c.get('link')
+            if link:
+                if link['kind'] == 'recipe':
+                    if link['title'] not in recipes:
+                        raise CommandError(
+                            f"Cultural content '{c['slug']}' references recipe "
+                            f"'{link['title']}' not found in fixture."
+                        )
+                    card.link_kind = CulturalContent.LinkKind.RECIPE
+                    card.link_id = recipes[link['title']].id
+                elif link['kind'] == 'story':
+                    if link['title'] not in stories:
+                        raise CommandError(
+                            f"Cultural content '{c['slug']}' references story "
+                            f"'{link['title']}' not found in fixture."
+                        )
+                    card.link_kind = CulturalContent.LinkKind.STORY
+                    card.link_id = stories[link['title']].id
+                card.save(update_fields=['link_kind', 'link_id'])
             cards.append(card)
         return cards
 
