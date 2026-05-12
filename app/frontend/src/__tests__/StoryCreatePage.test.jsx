@@ -85,6 +85,13 @@ describe('StoryCreatePage', () => {
     expect(fd.get('is_published')).toBe('false');
   });
 
+  it('renders hint text below action buttons', async () => {
+    renderPage();
+    expect(
+      screen.getByText(/drafts stay private to you\. published stories are visible to everyone\./i)
+    ).toBeInTheDocument();
+  });
+
   it('navigates to story detail page after successful submission', async () => {
     renderPage();
     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'My Story' } });
