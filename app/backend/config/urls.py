@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/drafts/', include('apps.drafts.urls')),
     path('api/', include('apps.heritage.urls')),
     path('api/', include('apps.passport.urls')),
+    path('api/', include('apps.feedback.urls')),
 ]
 
 if settings.DEBUG:
