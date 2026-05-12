@@ -1,7 +1,7 @@
 export const tokens = {
   colors: {
     bg: '#FAF7EF',
-    surface: '#E69138',
+    surface: '#e8a45a',
     surfaceDark: '#3D1500',
     surfaceInput: '#E69138',
     text: '#000000',
@@ -9,7 +9,7 @@ export const tokens = {
     textOnDark: '#000000',
     primary: '#E69138',
     primaryHover: '#B8732D',
-    accentGreen: '#4A7722',
+    accentGreen: '#95c26e',
     accentMustard: '#D4A830',
     border: '#1A1A1A',
     error: '#DC2626',

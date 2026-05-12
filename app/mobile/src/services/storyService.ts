@@ -164,6 +164,10 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
         typeof raw === 'object' && raw !== null && typeof (raw as { region?: string }).region === 'string'
           ? (raw as { region: string }).region
           : undefined,
+      image:
+        typeof raw === 'object' && raw !== null && typeof (raw as { image?: string }).image === 'string'
+          ? (raw as { image: string }).image
+          : null,
     };
   }
 
