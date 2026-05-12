@@ -1,0 +1,87 @@
+.heritage-journey {
+  margin: 2rem 0;
+}
+
+.heritage-journey-heading {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #4A2208;
+}
+
+.heritage-journey-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.heritage-journey-list::before {
+  content: '';
+  position: absolute;
+  left: 1.1rem;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  width: 2px;
+  background: linear-gradient(180deg, #C4521E 0%, #FAF1DE 100%);
+  z-index: 0;
+}
+
+.heritage-journey-step {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 0;
+}
+
+.heritage-journey-marker {
+  position: relative;
+  z-index: 1;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: #C4521E;
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.heritage-journey-card {
+  background: #FAF7EF;
+  border: 1px solid #EADCBB;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  flex: 1;
+}
+
+.heritage-journey-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.heritage-journey-location {
+  font-weight: 600;
+  color: #4A2208;
+}
+
+.heritage-journey-era {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8C4A1C;
+  background: #F2E0BF;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.heritage-journey-story {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #3A2613;
+}

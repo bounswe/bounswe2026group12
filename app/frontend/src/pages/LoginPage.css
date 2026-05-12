@@ -1,17 +1,3 @@
-.login-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
-
-.login-filter {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  background: rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-}
-
 .auth-page {
   max-width: 440px;
   margin: 0 auto;

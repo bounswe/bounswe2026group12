@@ -1,0 +1,194 @@
+.user-profile-page {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.user-profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-profile-identity {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-profile-username {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.user-profile-region,
+.user-profile-joined {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.user-profile-edit-btn {
+  margin-left: auto;
+}
+
+.user-profile-bio {
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0 0 1.5rem 0;
+}
+
+.user-profile-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.8rem;
+  padding: 0.9rem 1.2rem;
+  background: var(--color-surface-alt, #f2ede3);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.user-profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.user-profile-stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.user-profile-stat-label {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.user-profile-pref-section {
+  margin-bottom: 1.2rem;
+}
+
+.user-profile-pref-title {
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.user-profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.user-profile-tag {
+  display: inline-block;
+  background: var(--color-primary-tint, rgba(196, 82, 30, 0.08));
+  border: 1px solid rgba(196, 82, 30, 0.25);
+  color: var(--color-primary);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.user-profile-passport-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.8rem;
+  padding: 1rem 1.2rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  color: var(--color-text-muted);
+}
+
+.user-profile-passport-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.user-profile-passport-placeholder h2 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1rem;
+}
+
+.user-profile-passport-placeholder p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.user-profile-404 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.user-profile-passport {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1.5px solid var(--color-border);
+}
+
+.passport-tab-nav {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  border-bottom: 1.5px solid var(--color-border);
+  padding-bottom: 0;
+}
+
+.passport-tab-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1.5px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.passport-tab-btn:hover {
+  color: var(--color-text);
+}
+
+.passport-tab-btn.active {
+  color: var(--color-primary-text);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.passport-tab-content {
+  padding-top: 0.25rem;
+}
+
+.passport-empty {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  padding: 2rem 0;
+  text-align: center;
+}

@@ -1,0 +1,48 @@
+.cultural-fact-card {
+  background: #FFF8E7;
+  border: 1px solid #E8D27A;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.cultural-fact-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cultural-fact-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.cultural-fact-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8C6A1C;
+}
+
+.cultural-fact-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #3A2613;
+}
+
+.cultural-fact-source {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  color: #8C4A1C;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cultural-fact-source:hover,
+.cultural-fact-source:focus-visible {
+  text-decoration: underline;
+}

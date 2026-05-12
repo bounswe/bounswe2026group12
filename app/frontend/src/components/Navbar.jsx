@@ -56,24 +56,38 @@ export default function Navbar() {
               <p className="navbar-hover-desc">Find cultural food events and experiences near you</p>
             </div>
           </div>
+          <div className="navbar-browse-link-wrap">
+            <NavLink to="/calendar" className="navbar-link">Calendar</NavLink>
+            <div className="navbar-hover-card">
+              <span className="navbar-hover-icon">📅</span>
+              <strong className="navbar-hover-title">Calendar</strong>
+              <p className="navbar-hover-desc">Trace which dishes belong to which seasons, rituals, and feast days</p>
+            </div>
+          </div>
         </div>
         <div className="navbar-links">
           {user ? (
             <>
               <NotificationTray />
               <div className="navbar-user-menu" ref={menuRef}>
-                <button
-                  className="navbar-user-btn"
-                  onClick={() => setMenuOpen(o => !o)}
-                  aria-expanded={menuOpen}
-                  aria-haspopup="true"
-                >
-                  <span className="navbar-avatar">
-                    {user.username[0].toUpperCase()}
-                  </span>
-                  <span className="navbar-username">@{user.username}</span>
-                  <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
-                </button>
+                <div className="navbar-user-btn-area">
+                  <button
+                    className="navbar-user-btn"
+                    onClick={() => setMenuOpen(o => !o)}
+                    aria-expanded={menuOpen}
+                    aria-haspopup="true"
+                    aria-label={`User menu for @${user.username}`}
+                  >
+                    <span className="navbar-avatar">
+                      {user.username?.[0]?.toUpperCase() ?? '?'}
+                    </span>
+                    <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
+                  </button>
+                  <Link
+                    to={`/users/${user.username}`}
+                    className="navbar-username"
+                  >@{user.username}</Link>
+                </div>
                 {menuOpen && (
                   <div className="navbar-dropdown" role="menu">
                     <Link
@@ -103,13 +117,6 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                     >
                       New Story
-                    </Link>
-                    <Link
-                      to="/inbox"
-                      className="navbar-dropdown-item"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      Inbox
                     </Link>
                     <div className="navbar-dropdown-divider" />
                     <button

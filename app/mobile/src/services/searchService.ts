@@ -13,6 +13,9 @@ export type SearchResultItem = {
   /** Aggregate star rating, only populated for recipes when backend supplies it. */
   averageRating?: number | null;
   ratingCount?: number;
+  /** Surfaced only when the producer knows the state (e.g. Saved tab); leave
+   * undefined for search responses that don't include the field. */
+  isBookmarked?: boolean;
 };
 
 type BackendSearchResponse = {

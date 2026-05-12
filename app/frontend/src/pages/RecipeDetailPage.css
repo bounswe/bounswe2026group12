@@ -357,3 +357,23 @@
   font-size: 0.9rem;
   color: var(--color-text-muted);
 }
+
+.recipe-heritage {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.recipe-cultural-facts {
+  margin: 1.5rem 0;
+}
+
+.recipe-cultural-facts-heading {
+  font-size: 1.25rem;
+  margin: 0 0 0.75rem;
+  color: #4A2208;
+}
+
+.recipe-cultural-facts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}

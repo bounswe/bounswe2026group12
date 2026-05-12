@@ -1,0 +1,61 @@
+.passport-cover {
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-surface-dark) 100%);
+  color: var(--color-text-on-dark);
+  display: flex;
+  align-items: center;
+}
+
+.passport-cover-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.passport-cover-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.passport-cover-title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 900;
+  margin: 0 0 0.2rem;
+  color: inherit;
+}
+
+.passport-cover-theme {
+  font-size: 0.8125rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Calendar-event overrides */
+.passport-cover--ramadan,
+.passport-cover--eid_al_fitr,
+.passport-cover--eid_al_adha {
+  background: linear-gradient(135deg, #1a3a5c 0%, #2d6a4f 100%);
+}
+
+.passport-cover--lunar_new_year {
+  background: linear-gradient(135deg, #8b0000 0%, #c9a800 100%);
+}
+
+.passport-cover--nowruz {
+  background: linear-gradient(135deg, #2d6a4f 0%, #c9a800 100%);
+}
+
+.passport-cover--diwali {
+  background: linear-gradient(135deg, #8b4513 0%, #c9a800 100%);
+}
+
+.passport-cover--hanukkah,
+.passport-cover--christmas,
+.passport-cover--easter {
+  background: linear-gradient(135deg, #1a3a5c 0%, #4a8c6f 100%);
+}

@@ -6,6 +6,9 @@ import { fetchRegions } from '../services/searchService';
 import { fetchSubstitutes } from '../services/ingredientService';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
 import RecipeCommentsSection from '../components/RecipeCommentsSection';
+import HeritageBadge from '../components/HeritageBadge';
+import CulturalFactCard from '../components/CulturalFactCard';
+import { fetchCulturalFacts } from '../services/culturalFactService';
 import './RecipeDetailPage.css';
 
 const MATCH_TYPE_LABELS = {
@@ -44,6 +47,8 @@ export default function RecipeDetailPage() {
   // #373 — shopping list
   const [showShoppingList, setShowShoppingList] = useState(false);
 
+  const [recipeFacts, setRecipeFacts] = useState([]);
+
   useEffect(() => {
     let cancelled = false;
     fetchRegions().then((r) => { if (!cancelled) setRegions(r); }).catch(() => {});
@@ -62,6 +67,19 @@ export default function RecipeDetailPage() {
       .catch(() => {});
     return () => { cancelled = true; };
   }, [user, id]);
+
+  useEffect(() => {
+    const groupId = recipe?.heritage_group?.id;
+    if (!groupId) {
+      setRecipeFacts([]);
+      return;
+    }
+    let cancelled = false;
+    fetchCulturalFacts({ heritageGroup: groupId })
+      .then((data) => { if (!cancelled) setRecipeFacts(data); })
+      .catch(() => { if (!cancelled) setRecipeFacts([]); });
+    return () => { cancelled = true; };
+  }, [recipe?.heritage_group?.id]);
 
   const toggleCheck = useCallback(async (ingredientId) => {
     if (!user) return;
@@ -152,7 +170,7 @@ export default function RecipeDetailPage() {
           {regionName && <span className="recipe-region-tag">{regionName}</span>}
           <h1 className="recipe-title">{recipe.title}</h1>
           {recipe.author_username && (
-            <p className="recipe-author">By {recipe.author_username}</p>
+            <p className="recipe-author"><Link to={`/users/${recipe.author_username}`} className="recipe-author-link">By {recipe.author_username}</Link></p>
           )}
         </div>
         <div className="recipe-detail-actions">
@@ -345,6 +363,23 @@ export default function RecipeDetailPage() {
           </div>
         )}
       </section>
+
+      {recipe.heritage_group && (
+        <section className="recipe-heritage">
+          <HeritageBadge group={recipe.heritage_group} />
+        </section>
+      )}
+
+      {recipeFacts.length > 0 && (
+        <section className="recipe-cultural-facts">
+          <h2 className="recipe-cultural-facts-heading">Did You Know?</h2>
+          <div className="recipe-cultural-facts-list">
+            {recipeFacts.map((fact) => (
+              <CulturalFactCard key={fact.id} fact={fact} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <RecipeCommentsSection
         recipeId={recipe.id}

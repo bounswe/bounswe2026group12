@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { fetchStory, deleteStory, publishStory, unpublishStory } from '../services/storyService';
+import HeritageBadge from '../components/HeritageBadge';
 import './StoryDetailPage.css';
 
 export default function StoryDetailPage() {
@@ -105,7 +106,7 @@ export default function StoryDetailPage() {
       )}
 
       {(story.author?.username || story.author_username) && (
-        <p className="story-author">By {story.author?.username || story.author_username}</p>
+        <p className="story-author"><Link to={`/users/${story.author?.username || story.author_username}`} className="story-author-link">By {story.author?.username || story.author_username}</Link></p>
       )}
 
       {story.image && (
@@ -117,6 +118,12 @@ export default function StoryDetailPage() {
       )}
 
       <p className="story-body">{story.body}</p>
+
+      {story.heritage_group && (
+        <section className="story-heritage">
+          <HeritageBadge group={story.heritage_group} />
+        </section>
+      )}
 
       {story.linked_recipe && (
         <section className="story-linked-recipe">

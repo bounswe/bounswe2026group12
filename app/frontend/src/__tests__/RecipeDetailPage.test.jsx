@@ -8,12 +8,14 @@ import * as searchService from '../services/searchService';
 import * as commentService from '../services/commentService';
 import * as checkOffService from '../services/checkOffService';
 import * as ingredientService from '../services/ingredientService';
+import * as culturalFactService from '../services/culturalFactService';
 
 jest.mock('../services/recipeService');
 jest.mock('../services/searchService');
 jest.mock('../services/commentService');
 jest.mock('../services/checkOffService');
 jest.mock('../services/ingredientService');
+jest.mock('../services/culturalFactService');
 
 const mockRecipe = {
   id: 1,
@@ -53,6 +55,7 @@ beforeEach(() => {
   checkOffService.fetchCheckedIngredients.mockResolvedValue([]);
   checkOffService.toggleCheckedIngredient.mockResolvedValue([]);
   ingredientService.fetchSubstitutes.mockResolvedValue([]);
+  culturalFactService.fetchCulturalFacts.mockResolvedValue([]);
 });
 
 describe('RecipeDetailPage', () => {
@@ -291,5 +294,54 @@ describe('RecipeDetailPage', () => {
       expect(screen.queryByText('Flavor Match')).not.toBeInTheDocument();
       expect(screen.queryByText('flavor')).not.toBeInTheDocument();
     });
+  });
+});
+
+// — Heritage badge (#500) —
+describe('RecipeDetailPage heritage badge', () => {
+  it('renders the heritage badge when recipe.heritage_group is present', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      heritage_group: { id: 1, name: 'Sarma' },
+    });
+    renderPage();
+    const link = await screen.findByRole('link', { name: /heritage: sarma/i });
+    expect(link).toHaveAttribute('href', '/heritage/1');
+  });
+
+  it('renders no heritage badge when recipe.heritage_group is null', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      heritage_group: null,
+    });
+    renderPage();
+    await screen.findByText('Baklava');
+    expect(screen.queryByText(/heritage:/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('RecipeDetailPage cultural facts', () => {
+  it('fetches and renders facts when recipe has a heritage_group', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      heritage_group: { id: 5, name: 'Köfte' },
+    });
+    culturalFactService.fetchCulturalFacts.mockResolvedValueOnce([
+      { id: 1, text: 'Köfte spread to Sweden as köttbullar.', source_url: '',
+        heritage_group: { id: 5, name: 'Köfte' }, region: null },
+    ]);
+    renderPage();
+    expect(await screen.findByText(/köfte spread to sweden/i)).toBeInTheDocument();
+    expect(culturalFactService.fetchCulturalFacts).toHaveBeenCalledWith({ heritageGroup: 5 });
+  });
+
+  it('does not call the facts service when recipe has no heritage_group', async () => {
+    recipeService.fetchRecipe.mockResolvedValueOnce({
+      ...mockRecipe,
+      heritage_group: null,
+    });
+    renderPage();
+    await screen.findByText('Baklava');
+    expect(culturalFactService.fetchCulturalFacts).not.toHaveBeenCalled();
   });
 });

@@ -15,4 +15,5 @@ boto3==1.38.11
 exponent-server-sdk==2.1.0
 django-cors-headers==4.9.0
 coverage==7.13.5
+tblib==3.2.2  # lets `manage.py test --parallel` pickle subprocess tracebacks
 requests==2.32.3  # used by scripts/download_fixture_images.py

@@ -42,4 +42,11 @@ export type RecipeDetail = {
   rating_count?: number;
   /** Current user's submitted score (1-5) or null when not rated / unauthenticated. */
   user_rating?: number | null;
+  /**
+   * Bookmark fields surfaced by backend (#706). Optional because older
+   * responses and minimal-list shapes can omit them — UI must treat
+   * `undefined` as "not yet known" rather than "false".
+   */
+  is_bookmarked?: boolean;
+  bookmark_count?: number;
 };

@@ -63,6 +63,11 @@ export function SearchResultCard({ item, onPress }: Props) {
         ) : null}
         <RankReasonBadge reason={item.rankReason} />
       </View>
+      {item.isBookmarked ? (
+        <View style={styles.bookmarkBadge} accessibilityLabel="Bookmarked recipe">
+          <Text style={styles.bookmarkBadgeIcon}>🔖</Text>
+        </View>
+      ) : null}
     </Pressable>
   );
 }
@@ -108,5 +113,21 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 12, color: tokens.colors.text, fontWeight: '800' },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   ratingText: { fontSize: 12, color: tokens.colors.textMuted, fontWeight: '700' },
+  // Top-right read-only indicator — tap on the card still routes to detail.
+  // The card sets `overflow: hidden`, so this stays clipped to the rounded corner.
+  bookmarkBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: tokens.colors.surface,
+    borderWidth: 1.5,
+    borderColor: tokens.colors.surfaceDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bookmarkBadgeIcon: { fontSize: 14 },
 });
 

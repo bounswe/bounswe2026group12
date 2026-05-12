@@ -19,6 +19,7 @@ import { DidYouKnowSection } from '../components/cultural/DidYouKnowSection';
 import { fetchCulturalFactsByRegion, type CulturalFact } from '../services/culturalFactService';
 import type { RootStackParamList } from '../navigation/types';
 import { fetchCheckedIngredients, toggleCheckedIngredient } from '../services/checkOffService';
+import { toggleBookmark } from '../services/bookmarkService';
 import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoriesForRecipe, type StoryListItem } from '../services/storyService';
 import { fetchConversion } from '../services/unitConversionService';
@@ -45,6 +46,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [culturalFacts, setCulturalFacts] = useState<CulturalFact[]>([]);
   const [ratingBusy, setRatingBusy] = useState(false);
+  const [bookmarkBusy, setBookmarkBusy] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -337,6 +339,45 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
     }
   }
 
+  const onToggleBookmark = async () => {
+    // Auth gate mirrors the create-screen convention — unauthenticated users
+    // are routed to Login instead of seeing a silent no-op tap.
+    if (!isAuthenticated) {
+      navigation.navigate('Login');
+      return;
+    }
+    if (bookmarkBusy) return;
+    const prevFlag = recipe.is_bookmarked === true;
+    const prevCount = typeof recipe.bookmark_count === 'number' ? recipe.bookmark_count : 0;
+    const nextFlag = !prevFlag;
+    const optimisticCount = Math.max(0, prevCount + (nextFlag ? 1 : -1));
+    setBookmarkBusy(true);
+    setRecipe((prev) =>
+      prev ? { ...prev, is_bookmarked: nextFlag, bookmark_count: optimisticCount } : prev,
+    );
+    try {
+      const result = await toggleBookmark(id);
+      setRecipe((prev) =>
+        prev
+          ? { ...prev, is_bookmarked: result.is_bookmarked, bookmark_count: result.bookmark_count }
+          : prev,
+      );
+    } catch (e) {
+      // Rollback to the pre-tap state and surface the failure via the same
+      // toast channel the rest of the screen uses for errors.
+      setRecipe((prev) =>
+        prev ? { ...prev, is_bookmarked: prevFlag, bookmark_count: prevCount } : prev,
+      );
+      showToast(e instanceof Error ? e.message : 'Could not update bookmark.', 'error');
+    } finally {
+      setBookmarkBusy(false);
+    }
+  };
+
+  const isBookmarked = recipe.is_bookmarked === true;
+  const bookmarkCount =
+    typeof recipe.bookmark_count === 'number' ? recipe.bookmark_count : undefined;
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -415,6 +456,27 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                 : `${(avgRatingNum ?? 0).toFixed(1)} ★ · ${ratingCount} rating${ratingCount === 1 ? '' : 's'}`}
             </Text>
           </View>
+
+          <Pressable
+            onPress={() => void onToggleBookmark()}
+            disabled={bookmarkBusy}
+            style={({ pressed }) => [
+              styles.bookmarkBtn,
+              isBookmarked && styles.bookmarkBtnActive,
+              pressed && { opacity: 0.85 },
+              bookmarkBusy && { opacity: 0.6 },
+            ]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isBookmarked, busy: bookmarkBusy }}
+            accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Save recipe to bookmarks'}
+            hitSlop={8}
+          >
+            <Text style={styles.bookmarkIcon}>{isBookmarked ? '🔖' : '🏷'}</Text>
+            <Text style={[styles.bookmarkText, isBookmarked && styles.bookmarkTextActive]}>
+              {isBookmarked ? 'Saved' : 'Save'}
+              {bookmarkCount != null ? ` · ${bookmarkCount}` : ''}
+            </Text>
+          </Pressable>
 
           {recipe.image ? (
             <View style={styles.imageWrap} accessibilityLabel="Recipe image">
@@ -727,6 +789,30 @@ const styles = StyleSheet.create({
   editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
   ratingBlock: { marginTop: 14, gap: 4 },
   ratingCaption: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '600' },
+  bookmarkBtn: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.surface,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+  },
+  bookmarkBtnActive: {
+    backgroundColor: tokens.colors.accentGreenTint,
+  },
+  bookmarkIcon: { fontSize: 16 },
+  bookmarkText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    letterSpacing: 0.3,
+  },
+  bookmarkTextActive: { color: tokens.colors.text },
   imageWrap: {
     marginTop: 14,
     width: '100%',

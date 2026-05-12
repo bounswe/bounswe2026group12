@@ -263,3 +263,26 @@ describe('StoryDetailPage', () => {
     });
   });
 });
+
+// — Heritage badge (#500) —
+describe('StoryDetailPage heritage badge', () => {
+  it('renders the heritage badge when story.heritage_group is present', async () => {
+    storyService.fetchStory.mockResolvedValueOnce({
+      ...mockStory,
+      heritage_group: { id: 4, name: 'Dolmadakia' },
+    });
+    renderPage();
+    const link = await screen.findByRole('link', { name: /heritage: dolmadakia/i });
+    expect(link).toHaveAttribute('href', '/heritage/4');
+  });
+
+  it('renders no heritage badge when story.heritage_group is null', async () => {
+    storyService.fetchStory.mockResolvedValueOnce({
+      ...mockStory,
+      heritage_group: null,
+    });
+    renderPage();
+    await screen.findByText("Grandma's Sunday Kitchen");
+    expect(screen.queryByText(/heritage:/i)).not.toBeInTheDocument();
+  });
+});

@@ -12,6 +12,13 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
   const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
 
   useLayoutEffect(() => {
+    // Respect prefers-reduced-motion: skip the scrolling animation entirely
+    // for users who have asked the OS to reduce motion.
+    const reduceMotion = typeof window !== 'undefined'
+      && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
     const tweens = [];
 
     rowRefs.current.forEach((row, index) => {

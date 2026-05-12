@@ -22,6 +22,24 @@ export default function ProfileTabScreen() {
               <Text style={styles.subtitle}>
                 Signed in{user ? ` as ${user.username}` : ''}.
               </Text>
+              {user ? (
+                <>
+                  <Pressable
+                    onPress={() =>
+                      navigation.navigate('Feed', {
+                        screen: 'UserProfile',
+                        params: { userId: user.id, username: user.username },
+                      })
+                    }
+                    style={({ pressed }) => [styles.actionBtn, styles.myProfileBtn, pressed && styles.pressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel="View my profile"
+                  >
+                    <Text style={styles.myProfileBtnText}>My profile</Text>
+                  </Pressable>
+                  <View style={{ height: 12 }} />
+                </>
+              ) : null}
               <Pressable
                 onPress={() => navigation.navigate('Feed', { screen: 'Inbox' })}
                 style={({ pressed }) => [styles.actionBtn, styles.messagesBtn, pressed && styles.pressed]}
@@ -139,6 +157,8 @@ const styles = StyleSheet.create({
     width: '100%',
     ...shadows.md,
   },
+  myProfileBtn: { backgroundColor: tokens.colors.accentMustard },
+  myProfileBtnText: { color: tokens.colors.surfaceDark, fontSize: 16, fontWeight: '800' },
   messagesBtn: { backgroundColor: "#C8E5EB" },
   messagesBtnText: { color: tokens.colors.surfaceDark, fontSize: 16, fontWeight: '800' },
   culturalBtn: { backgroundColor: '#C8E5EB' },
