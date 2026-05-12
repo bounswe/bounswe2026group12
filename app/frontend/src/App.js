@@ -30,6 +30,7 @@ import ModerationPage from './pages/ModerationPage';
 import HeritagePage from './pages/HeritagePage';
 import HeritageMapPage from './pages/HeritageMapPage';
 import CalendarPage from './pages/CalendarPage';
+import CulturalHighlightPage from './pages/CulturalHighlightPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -104,6 +105,7 @@ export default function App() {
           <Route path="/heritage/:id" element={<HeritagePage />} />
           <Route path="/heritage/:id/map" element={<HeritageMapPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/highlights/:id" element={<CulturalHighlightPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
