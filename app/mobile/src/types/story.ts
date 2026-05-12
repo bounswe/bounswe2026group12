@@ -5,7 +5,7 @@ export type StoryDetail = {
   language?: 'en' | 'tr' | string;
   /** Normalized to `{ id, username }`; raw API may send `author` as user pk only. */
   author?: number | { id?: number; username: string };
-  linked_recipe?: { id: string; title: string; region?: string } | null;
+  linked_recipe?: { id: string; title: string; region?: string; image?: string | null } | null;
   is_published?: boolean;
   /** Optional image URL/uri (mock uses remote url). */
   image?: string | null;

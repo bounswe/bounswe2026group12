@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import type { RootStackParamList } from '../navigation/types';
 import { saveStoryToPassport } from '../services/passportActionService';
+import { fetchRecipeById } from '../services/recipeService';
 import { fetchStoryById } from '../services/storyService';
 import type { StoryDetail } from '../types/story';
 import { shadows, tokens } from '../theme';
@@ -21,6 +22,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
   const { id } = route.params;
   const { user, isAuthenticated, isReady } = useAuth();
   const [story, setStory] = useState<StoryDetail | null>(null);
+  const [linkedRecipeImage, setLinkedRecipeImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
@@ -31,6 +33,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
     let cancelled = false;
     setLoading(true);
     setError(null);
+    setLinkedRecipeImage(null);
     fetchStoryById(id)
       .then((data) => {
         if (!cancelled) setStory(data);
@@ -48,6 +51,28 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
       cancelled = true;
     };
   }, [id, reloadToken]);
+
+  // Backend's story serializer only exposes `linked_recipe` as an integer ID,
+  // so to render the recipe's image in the preview card we have to fetch the
+  // recipe by id separately. One extra request per story view, accepted cost.
+  useEffect(() => {
+    const linkedId = story?.linked_recipe?.id;
+    if (!linkedId) {
+      setLinkedRecipeImage(null);
+      return;
+    }
+    let cancelled = false;
+    fetchRecipeById(String(linkedId))
+      .then((r) => {
+        if (!cancelled) setLinkedRecipeImage(r.image ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setLinkedRecipeImage(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [story?.linked_recipe?.id]);
 
   if (loading) {
     return (
@@ -205,7 +230,7 @@ export default function StoryDetailScreen({ route, navigation }: Props) {
                 onPress={() =>
                   navigation.navigate('RecipeDetail', { id: story.linked_recipe!.id })
                 }
-                recipe={story.linked_recipe}
+                recipe={{ ...story.linked_recipe, image: linkedRecipeImage }}
               />
             ) : (
               <Text style={styles.noLinked}>No recipe is linked to the story.</Text>

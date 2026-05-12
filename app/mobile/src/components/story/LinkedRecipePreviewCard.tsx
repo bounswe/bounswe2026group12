@@ -54,10 +54,12 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.9 },
   thumb: {
-    width: 78,
+    width: 96,
+    height: 96,
     backgroundColor: tokens.colors.surfaceDark,
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
   },
   thumbImage: { width: '100%', height: '100%' },
   thumbText: { color: tokens.colors.text, fontSize: 22, fontWeight: '900' },

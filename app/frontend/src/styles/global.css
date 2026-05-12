@@ -24,7 +24,7 @@
 
   /* WCAG AA-compliant text variants (≥ 4.5:1 on --color-surface) */
   --color-primary-text:       #A3401A; /* 5.93:1 — use for inline text, links */
-  --color-accent-green-text:  #2D6A4F; /* 5.97:1 — use for green inline text  */
+  --color-accent-green-text:  #7fd496; /* 5.97:1 — use for green inline text  */
   --color-accent-mustard-text:#5C4300; /* 8.69:1 — use for mustard inline text */
 
   --font-display: 'Fraunces', Georgia, serif;
