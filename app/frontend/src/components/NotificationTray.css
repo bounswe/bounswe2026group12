@@ -106,3 +106,10 @@
   color: #9f2930;
 }
 
+.notification-icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-block;
+}
+

@@ -12,7 +12,6 @@ export type RootStackParamList = {
   /** Recipe authoring shell — ingredient/unit selection UI (full form later). */
   RecipeCreate: undefined;
   UserProfile: { userId: number | string; username?: string };
-  Passport: { username: string; isOwn?: boolean };
   Inbox: undefined;
   MessageThread: {
     threadId?: number | string;
@@ -20,6 +19,7 @@ export type RootStackParamList = {
     otherUsername?: string;
   };
   Onboarding: undefined;
+  EditProfile: undefined;
   MapDiscovery: undefined;
   Explore: undefined;
   EventDetail: { eventId: number; eventName: string };

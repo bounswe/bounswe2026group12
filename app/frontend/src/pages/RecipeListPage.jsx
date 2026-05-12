@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRecipes } from '../services/recipeService';
+import StarRating from '../components/StarRating';
 import './RecipeListPage.css';
 
 export default function RecipeListPage() {
@@ -39,12 +40,29 @@ export default function RecipeListPage() {
               {recipe.region_name && (
                 <span className="recipe-browse-region">{recipe.region_name}</span>
               )}
+              <span
+                className={`recipe-browse-bookmark${recipe.is_bookmarked ? ' active' : ''}`}
+                aria-label={
+                  recipe.is_bookmarked
+                    ? `Bookmarked, ${recipe.bookmark_count ?? 0} saves`
+                    : 'Not bookmarked'
+                }
+              >
+                {recipe.is_bookmarked ? '🔖' : '🏷'}
+              </span>
               <h2 className="recipe-browse-title">
                 <Link to={`/recipes/${recipe.id}`} className="recipe-browse-link">{recipe.title}</Link>
               </h2>
               {recipe.author_username && (
                 <p className="recipe-browse-author">By {recipe.author_username}</p>
               )}
+              <div className="recipe-browse-rating">
+                <StarRating
+                  average={recipe.average_rating ?? null}
+                  count={recipe.rating_count ?? 0}
+                  size="sm"
+                />
+              </div>
             </div>
           </article>
         ))}

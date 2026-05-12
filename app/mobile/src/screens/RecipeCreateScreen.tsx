@@ -5,6 +5,10 @@ import { Image, Pressable, ScrollView, Switch, Text, TextInput, View } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { RecipeIngredientRowsSection } from '../components/recipe/RecipeIngredientRowsSection';
+import {
+  RecipeStepsRepeater,
+  trimStepsForPayload,
+} from '../components/recipe/RecipeStepsRepeater';
 import { RecipeVideoSection } from '../components/recipe/RecipeVideoSection';
 import {
   isPositiveNumberString,
@@ -40,6 +44,7 @@ export default function RecipeCreateScreen({ navigation }: Props) {
     const r = makeEmptyIngredientRow();
     return [{ ...r, key: 'row-1' }];
   });
+  const [steps, setSteps] = useState<string[]>([]);
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -155,6 +160,7 @@ export default function RecipeCreateScreen({ navigation }: Props) {
         ingredient: r.ingredient,
         unit: r.unit,
       })),
+      steps: trimStepsForPayload(steps),
     };
 
     void (async () => {
@@ -171,6 +177,7 @@ export default function RecipeCreateScreen({ navigation }: Props) {
             ingredient: x.ingredient?.id ?? x.ingredient,
             unit: x.unit?.id ?? x.unit,
           })),
+          steps: payload.steps,
         });
         createdId = created.id;
       } catch {
@@ -295,6 +302,8 @@ export default function RecipeCreateScreen({ navigation }: Props) {
             />
             {attemptedSubmit ? <InlineFieldError message={errors.description} /> : null}
           </View>
+
+          <RecipeStepsRepeater steps={steps} onChange={setSteps} />
 
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
             <Switch

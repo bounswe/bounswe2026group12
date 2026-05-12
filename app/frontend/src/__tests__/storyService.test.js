@@ -1,4 +1,5 @@
 import * as storyService from '../services/storyService';
+import { fetchMyStories } from '../services/storyService';
 import { apiClient } from '../services/api';
 
 jest.mock('../services/api', () => ({
@@ -89,5 +90,19 @@ describe('publishStory / unpublishStory', () => {
   it('unpublishStory propagates API errors', async () => {
     apiClient.post.mockRejectedValue(new Error('boom'));
     await expect(storyService.unpublishStory(5)).rejects.toThrow('boom');
+  });
+});
+
+describe('fetchMyStories', () => {
+  it('GETs /api/stories/?author=<id> and returns the list', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 3, title: 'Mine' }] });
+    const result = await fetchMyStories(42);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { author: 42 } });
+    expect(result).toEqual([{ id: 3, title: 'Mine' }]);
+  });
+
+  it('unwraps paginated DRF responses', async () => {
+    apiClient.get.mockResolvedValue({ data: { results: [{ id: 8 }] } });
+    expect(await fetchMyStories(42)).toEqual([{ id: 8 }]);
   });
 });

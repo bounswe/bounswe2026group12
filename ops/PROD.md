@@ -45,11 +45,19 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-re
 # 6. Wait for healthchecks (≤60s) and smoke
 docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 curl -fsS https://genipe.app/
+
+# 7. Seed the DB (one-time — see "Seeding" below). On a brand-new box:
+docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+  exec backend sh -c 'for c in seed_canonical seed_region_geodata seed_region_geo \
+    seed_story_coordinates seed_cultural_facts seed_cultural_content \
+    seed_ingredient_densities seed_ingredient_routes; do python manage.py "$c"; done'
 ```
 
 `db`, `backend`, and `web` should all report `(healthy)`. The backend
-entrypoint runs `migrate` and `collectstatic` automatically before gunicorn
-starts; that's covered by the backend healthcheck's 40s `start_period`.
+entrypoint runs `migrate` and `collectstatic` before gunicorn starts; that's
+covered by the backend healthcheck's 40s `start_period`. Seeding is **not**
+done by the entrypoint or the deploy — it's the separate step above (and the
+"Seed database" workflow), run once after first bring-up.
 
 ## Required environment variables
 
@@ -104,6 +112,51 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 docker compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100 backend web db
 ```
 
+## Seeding
+
+Seeding is a deliberate, occasional operation — **not** part of the deploy.
+`seed_canonical` *wipes and rebuilds* users / recipes / stories / heritage /
+cultural content, so running it on every deploy would destroy anything created
+on prod since the last deploy and (because `web` waits on `backend` being
+healthy) take the site down for the duration. Run seeding once after first
+bring-up, and again only when seed fixtures or commands change — in that case
+deploy first (so the rebuilt backend image carries the new fixtures), then
+seed.
+
+The commands, in dependency order:
+
+```
+seed_canonical            # base data: regions, ingredients, recipes, stories,
+                          #   heritage groups, cultural content/events, …
+                          #   (DESTRUCTIVE — wipes & rebuilds the above)
+seed_region_geodata       # built-in geo coords for known regions
+seed_region_geo           # region bbox + per-recipe map coords (fixture)
+seed_story_coordinates    # per-story map pins (needs region bbox)
+seed_cultural_facts       # region-tied "Did You Know?" facts
+seed_cultural_content     # culture cards
+seed_ingredient_densities # g/ml for unit conversions
+seed_ingredient_routes    # ingredient migration map overlays
+```
+
+Everything except `seed_canonical` is an idempotent upsert (keyed on natural
+keys) — safe to rerun. `seed_test_db` is **not** in this list: it's a
+mock-data seeder for throwaway test DBs, not for prod.
+
+Two ways to run it:
+
+1. **"Seed database" GitHub Action** (`.github/workflows/seed-db.yml`) —
+   `workflow_dispatch`. Pick `mode=safe` (everything except `seed_canonical`)
+   or `mode=full` (includes the destructive `seed_canonical`; requires
+   `confirm=yes`).
+2. **Directly on the box** (take a DB dump first — see `ops/ROLLBACK.md`):
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+     exec backend sh -c 'for c in seed_canonical seed_region_geodata seed_region_geo \
+       seed_story_coordinates seed_cultural_facts seed_cultural_content \
+       seed_ingredient_densities seed_ingredient_routes; do python manage.py "$c"; done'
+   ```
+
 ## Rollback
 
 Three rollback paths (quick reset to a previous good commit, full revert to
@@ -120,8 +173,11 @@ All three services report container-level health to compose:
 - `backend`: Python `urllib.request.urlopen("http://localhost:8000/admin/login/")` —
   the admin login page renders without a DB query, so this is a clean
   liveness probe for gunicorn. 15s interval, 40s `start_period` to cover
-  migrate + collectstatic.
-- `web`: `wget -qO- http://localhost/`, 10s interval
+  migrate + collectstatic (gunicorn starts after the entrypoint finishes them).
+- `web`: in prod, `wget --no-check-certificate https://127.0.0.1/` (overridden
+  in `docker-compose.prod.yml`); the base/dev healthcheck uses plain HTTP, but
+  `nginx-prod.conf` only listens on `0.0.0.0` and `:80` redirects to https, so
+  the prod check hits https on loopback. 10s interval.
 
 `backend` waits on `db: service_healthy`; `web` waits on `backend:
 service_healthy`. Compose will not mark the stack up until each dependency
