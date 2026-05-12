@@ -72,16 +72,20 @@ describe('SearchPage', () => {
         diet_exclude: '',
         event: '',
         event_exclude: '',
+        meal_type: '',
       });
     });
   });
 
-  it('applies meal_type client-side to filter results by title', async () => {
-    searchService.search.mockResolvedValue(mockResults);
-    renderPage('?q=&region=&ingredient=yogurt&meal_type=soup');
-    await waitFor(() => screen.getByText('Yogurt Soup'));
-    expect(screen.getByText('Yogurt Soup')).toBeInTheDocument();
-    expect(screen.queryByText('Yogurt Salad')).not.toBeInTheDocument();
+  it('passes meal_type server-side to the search API (#700)', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage('?q=&region=&ingredient=yogurt&meal_type=breakfast');
+    await waitFor(() => {
+      expect(searchService.search).toHaveBeenCalledWith('', '', '', expect.objectContaining({
+        ingredient: 'yogurt',
+        meal_type: 'breakfast',
+      }));
+    });
   });
 
   it('applies story_type client-side to filter story results only', async () => {
@@ -168,6 +172,7 @@ describe('SearchPage', () => {
         diet_exclude: '',
         event: '',
         event_exclude: '',
+        meal_type: '',
       });
     });
   });
@@ -193,6 +198,7 @@ describe('SearchPage', () => {
         diet_exclude: '',
         event: '',
         event_exclude: 'Wedding',
+        meal_type: '',
       });
     });
     expect(screen.getByText(/diet\+: vegan/i)).toBeInTheDocument();

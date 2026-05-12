@@ -15,6 +15,7 @@ export default function EventDetailPage() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setTab('all');
     fetchEventDetail(eventId)
       .then((data) => { if (!cancelled) setEvent(data); })
       .catch(() => { if (!cancelled) setError('Could not load event content.'); })

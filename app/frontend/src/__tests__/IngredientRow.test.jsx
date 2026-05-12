@@ -88,4 +88,20 @@ describe('IngredientRow', () => {
     fireEvent.click(screen.getByRole('button', { name: /remove/i }));
     expect(onRemove).toHaveBeenCalledWith('row-1');
   });
+
+  it('surfaces an inline error when onNewIngredient rejects (#699)', async () => {
+    const { onNewIngredient } = renderRow();
+    onNewIngredient.mockRejectedValue(new Error('boom'));
+    fireEvent.change(screen.getByPlaceholderText('Ingredient'), { target: { value: 'Turmeric' } });
+    fireEvent.click(screen.getByText(/add "Turmeric"/i));
+    expect(await screen.findByText(/could not add "Turmeric"/i)).toBeInTheDocument();
+  });
+
+  it('surfaces an inline error when onNewUnit rejects (#699)', async () => {
+    const { onNewUnit } = renderRow();
+    onNewUnit.mockRejectedValue(new Error('boom'));
+    fireEvent.change(screen.getByPlaceholderText('Unit'), { target: { value: 'pinch' } });
+    fireEvent.click(screen.getByText(/add "pinch"/i));
+    expect(await screen.findByText(/could not add "pinch"/i)).toBeInTheDocument();
+  });
 });

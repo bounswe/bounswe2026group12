@@ -107,7 +107,8 @@ export default function SearchPage() {
     diet_exclude: dietExclude,
     event,
     event_exclude: eventExclude,
-  }), [ingredient, ingredientExclude, diet, dietExclude, event, eventExclude]);
+    meal_type: mealType,
+  }), [ingredient, ingredientExclude, diet, dietExclude, event, eventExclude, mealType]);
 
   useEffect(() => {
     let cancelled = false;
@@ -130,24 +131,13 @@ export default function SearchPage() {
     ].some((list) => Array.isArray(list) && list.length > 0);
   }, [user]);
 
-  // Client-side filters that complement the backend search:
-  //   * meal_type — Recipe.meal_type is not yet a backend field; we fall back to
-  //     a title substring match. Tracked in #849 (backend will add the field
-  //     and the same filter at the API layer).
-  //   * story_type — Story.story_type exists on the backend but the unified
-  //     /api/search/ endpoint does not yet pass the query param through (also
-  //     #849). Filter story results by story_type here until backend lands.
-  // Recipes are never filtered out by story_type, stories are never filtered
-  // out by meal_type — each filter only applies to its own content type.
-  const displayResults = results.filter((r) => {
-    if (mealType.trim() && r.type === 'recipe') {
-      if (!r.title.toLowerCase().includes(mealType.toLowerCase())) return false;
-    }
-    if (storyType.trim() && r.type === 'story') {
-      if ((r.story_type || '').toLowerCase() !== storyType.toLowerCase()) return false;
-    }
-    return true;
-  });
+  // Client-side filter for story_type: Story.story_type exists on the backend
+  // but the unified /api/search/ endpoint does not yet pass the query param
+  // through. Apply it here until the backend lands. meal_type is now handled
+  // server-side via the filters memo above.
+  const displayResults = storyType.trim()
+    ? results.filter((r) => r.type !== 'story' || (r.story_type || '').toLowerCase() === storyType.toLowerCase())
+    : results;
 
   function removeFilter(paramKey) {
     const next = new URLSearchParams(searchParams);

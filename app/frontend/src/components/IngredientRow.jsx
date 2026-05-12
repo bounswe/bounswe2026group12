@@ -14,6 +14,8 @@ export default function IngredientRow({
   const [unitSearch, setUnitSearch] = useState(row.unitName || '');
   const [showIngredientList, setShowIngredientList] = useState(false);
   const [showUnitList, setShowUnitList] = useState(false);
+  const [addIngredientError, setAddIngredientError] = useState('');
+  const [addUnitError, setAddUnitError] = useState('');
 
   const filteredIngredients = ingredients.filter((i) =>
     i.name.toLowerCase().includes(ingredientSearch.toLowerCase())
@@ -44,16 +46,22 @@ export default function IngredientRow({
   }
 
   async function handleAddIngredient() {
-    const newIngredient = await onNewIngredient(ingredientSearch);
-    if (newIngredient) {
-      handleSelectIngredient(newIngredient);
+    setAddIngredientError('');
+    try {
+      const newIngredient = await onNewIngredient(ingredientSearch);
+      if (newIngredient) handleSelectIngredient(newIngredient);
+    } catch {
+      setAddIngredientError(`Could not add "${ingredientSearch}". Please try again.`);
     }
   }
 
   async function handleAddUnit() {
-    const newUnit = await onNewUnit(unitSearch);
-    if (newUnit) {
-      handleSelectUnit(newUnit);
+    setAddUnitError('');
+    try {
+      const newUnit = await onNewUnit(unitSearch);
+      if (newUnit) handleSelectUnit(newUnit);
+    } catch {
+      setAddUnitError(`Could not add "${unitSearch}". Please try again.`);
     }
   }
 
@@ -87,6 +95,7 @@ export default function IngredientRow({
             )}
           </ul>
         )}
+        {addIngredientError && <p className="combobox-error" role="alert">{addIngredientError}</p>}
       </div>
 
       <input
@@ -126,6 +135,7 @@ export default function IngredientRow({
             )}
           </ul>
         )}
+        {addUnitError && <p className="combobox-error" role="alert">{addUnitError}</p>}
       </div>
 
       <button type="button" onClick={() => onRemove(row.id)}>

@@ -33,6 +33,14 @@ describe('search', () => {
     });
   });
 
+  it('sends meal_type to the API when provided (#700)', async () => {
+    apiClient.get.mockResolvedValue({ data: [] });
+    await search('soup', '', '', { meal_type: 'breakfast' });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/search/', {
+      params: { q: 'soup', meal_type: 'breakfast' },
+    });
+  });
+
   it('omits region and language from params when not provided', async () => {
     apiClient.get.mockResolvedValue({ data: [] });
     await search('soup', '', '');
@@ -76,10 +84,10 @@ describe('search', () => {
 });
 
 describe('fetchRegions', () => {
-  it('calls GET /api/regions/ and returns data', async () => {
+  it('calls GET /api/map/regions/ with geo_only and returns data', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, name: 'Aegean' }] });
     const result = await fetchRegions();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/regions/');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/map/regions/', { params: { geo_only: true } });
     expect(result).toEqual([{ id: 1, name: 'Aegean' }]);
   });
 

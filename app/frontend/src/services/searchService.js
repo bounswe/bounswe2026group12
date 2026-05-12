@@ -27,6 +27,7 @@ export async function search(q, region, language, filters = {}) {
     'event_exclude',
     'ingredient',
     'ingredient_exclude',
+    'meal_type',
   ];
   filterKeys.forEach((key) => {
     if (filters[key]) params[key] = filters[key];
@@ -41,6 +42,6 @@ export async function search(q, region, language, filters = {}) {
 
 export async function fetchRegions() {
   if (USE_MOCK) return MOCK_REGIONS;
-  const response = await apiClient.get('/api/regions/');
+  const response = await apiClient.get('/api/map/regions/', { params: { geo_only: true } });
   return response.data;
 }
