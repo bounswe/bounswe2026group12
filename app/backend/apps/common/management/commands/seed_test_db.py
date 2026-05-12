@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timedelta
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from apps.recipes.models import Region, Ingredient, Unit, Recipe, RecipeIngredient
 from apps.stories.models import Story
 from apps.messaging.models import Thread, ThreadParticipant, Message
@@ -204,34 +207,68 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f'Story already exists: {story.title}')
 
+    # A realistic 1:1 conversation between `student` and `cook`, grounded in
+    # the seeded "Stuffed Eggplant (Karnıyarık)" recipe authored by `cook`.
+    # Ordered, alternating turns so the inbox preview, thread ordering and
+    # reply flow can be exercised with more than a single placeholder message.
+    MESSAGING_THREAD = [
+        ('student', "Hi! I tried your Stuffed Eggplant (Karnıyarık) recipe last night and it turned out great. Quick question: can I swap the ground meat for something vegetarian?"),
+        ('cook', "So glad you liked it! Yes — a mix of cooked green lentils and chopped walnuts works really well. Use roughly the same volume as the meat and add an extra splash of olive oil so the filling doesn't dry out."),
+        ('student', "Perfect, thanks. One more thing — how long should the eggplants roast before I stuff them? Mine were still a bit firm in the middle."),
+        ('cook', "Roast them at 200°C for about 25–30 minutes, until the flesh is fully soft and just starting to collapse. If they go in firm they'll stay firm after stuffing."),
+        ('student', "Got it. Last question — would you call this a Mediterranean or an Anatolian dish? I want to tag my version correctly when I share it."),
+        ('cook', "It's Ottoman in origin but it's cooked all over Turkey. I filed it under the Mediterranean region, so I'd go with that. Send me a photo when yours is done!"),
+        ('student', "Will do — thanks so much for all the help!"),
+    ]
+
     def seed_messaging(self):
         self.stdout.write('Creating messages...')
         cook = User.objects.get(username='cook')
         student = User.objects.get(username='student')
+        users_by_name = {'cook': cook, 'student': student}
 
-        # Create thread
-        thread, created = Thread.objects.get_or_create(
-            participants__user=cook,
-            defaults={'last_message_preview': 'Hello student!'}
+        # Find the existing 1:1 thread between the two participants, or create
+        # one. Doing the lookup by *both* participants keeps this idempotent.
+        thread = (
+            Thread.objects
+            .filter(participants__user=cook)
+            .filter(participants__user=student)
+            .first()
         )
-        # Check if thread exists by looking at both participants
-        if not Thread.objects.filter(participants__user=cook).filter(participants__user=student).exists():
+        if thread is None:
             thread = Thread.objects.create()
             ThreadParticipant.objects.create(thread=thread, user=cook)
             ThreadParticipant.objects.create(thread=thread, user=student)
-            
-            # Create message
-            msg = Message.objects.create(
+            self.stdout.write('Created thread between cook and student.')
+
+        canonical_bodies = [body for _, body in self.MESSAGING_THREAD]
+        # Drop any stale messages left over from earlier seed versions
+        # (e.g. the old single "Hello student!" placeholder).
+        thread.messages.exclude(body__in=canonical_bodies).delete()
+
+        # Deterministic timestamps: a fixed base plus a constant per-turn
+        # offset, so re-running the seed never shifts the conversation.
+        base = timezone.make_aware(datetime(2026, 4, 20, 9, 0))
+        for index, (sender_name, body) in enumerate(self.MESSAGING_THREAD):
+            ts = base + timedelta(minutes=41 * index)
+            msg, created = Message.objects.get_or_create(
                 thread=thread,
-                sender=cook,
-                body='Hello student! Welcome to the platform.'
+                sender=users_by_name[sender_name],
+                body=body,
             )
-            
-            # Update thread index
-            thread.last_message_at = msg.created_at
-            thread.last_message_preview = msg.body[:120]
-            thread.save()
-            
-            self.stdout.write('Created thread and message between cook and student.')
-        else:
-            self.stdout.write('Thread between cook and student already exists.')
+            if created:
+                # ``created_at`` is auto_now_add, so it can only be fixed up
+                # with a follow-up UPDATE rather than at insert time.
+                Message.objects.filter(pk=msg.pk).update(created_at=ts)
+
+        # Refresh the denormalized inbox index from the newest message.
+        newest = thread.messages.order_by('-created_at').first()
+        if newest:
+            thread.last_message_at = newest.created_at
+            thread.last_message_preview = newest.body[:120]
+            thread.save(update_fields=['last_message_at', 'last_message_preview'])
+
+        self.stdout.write(
+            f'Seeded conversation between cook and student '
+            f'({thread.messages.count()} messages).'
+        )
