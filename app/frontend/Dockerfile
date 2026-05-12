@@ -5,7 +5,10 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# react-simple-maps@3 declares its peer as react 16/17/18 only, but runs
+# fine against react 19 (the wrapper only uses refs + useState). Use
+# --legacy-peer-deps so `npm ci` doesn't reject the resolved tree.
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 

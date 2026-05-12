@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import IngredientRow from '../components/IngredientRow';
+import StepsEditor from '../components/StepsEditor';
 import Toast from '../components/Toast';
 import DraftRestoreBanner from '../components/DraftRestoreBanner';
 import useDraftAutosave from '../hooks/useDraftAutosave';
@@ -46,12 +47,12 @@ export default function RecipeEditPage() {
   const [recipe, setRecipe] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [steps, setSteps] = useState(['']);
   const [region, setRegion] = useState('');
   const [video, setVideo] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(false);
   const [rows, setRows] = useState([]);
+  const [steps, setSteps] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -61,7 +62,7 @@ export default function RecipeEditPage() {
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   const draftKey = `draft:recipe:${id}`;
-  const draftState = { title, description, steps, region, qaEnabled, rows };
+  const draftState = { title, description, region, qaEnabled, rows, steps };
   const { savedDraft, clearDraft } = useDraftAutosave(draftKey, draftState, { enabled: !loading });
 
   useEffect(() => {
@@ -73,7 +74,6 @@ export default function RecipeEditPage() {
         setRecipe(recipeData);
         setTitle(recipeData.title);
         setDescription(recipeData.description || '');
-        setSteps(Array.isArray(recipeData.steps) && recipeData.steps.length > 0 ? recipeData.steps : ['']);
         setRegion(recipeData.region || '');
         setQaEnabled(recipeData.qa_enabled ?? true);
         setRows(
@@ -81,6 +81,7 @@ export default function RecipeEditPage() {
             ? recipeData.ingredients.map(makeRowFromIngredient)
             : [makeEmptyRow()]
         );
+        setSteps(Array.isArray(recipeData.steps) ? recipeData.steps : []);
         setIngredients(ings);
         setUnits(uns);
       })
@@ -101,10 +102,10 @@ export default function RecipeEditPage() {
   function handleRestore(draft) {
     if (draft.title !== undefined) setTitle(draft.title);
     if (draft.description !== undefined) setDescription(draft.description);
-    if (Array.isArray(draft.steps)) setSteps(draft.steps);
     if (draft.region !== undefined) setRegion(draft.region);
     if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
     if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    if (Array.isArray(draft.steps)) setSteps(draft.steps);
     clearDraft();
   }
 
@@ -150,13 +151,16 @@ export default function RecipeEditPage() {
     if (!validate()) return;
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+    const cleanedSteps = steps
+      .map((s) => (typeof s === 'string' ? s.trim() : ''))
+      .filter((s) => s.length > 0);
     const payload = {
       title,
       description,
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
       is_published: publish,
-      steps: steps.map((s) => s.trim()).filter(Boolean),
+      steps: cleanedSteps,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -264,42 +268,6 @@ export default function RecipeEditPage() {
           </label>
         </div>
 
-        <section className="steps-section">
-          <h2>Cooking Steps</h2>
-          <ol className="recipe-steps-editor" aria-label="Cooking steps">
-            {steps.map((step, i) => (
-              <li key={i} className="recipe-step-row">
-                <span className="recipe-step-number">{i + 1}</span>
-                <textarea
-                  className="recipe-step-input"
-                  rows={2}
-                  value={step}
-                  placeholder={`Step ${i + 1}…`}
-                  onChange={(e) => setSteps((prev) => prev.map((s, idx) => idx === i ? e.target.value : s))}
-                  aria-label={`Step ${i + 1}`}
-                />
-                {steps.length > 1 && (
-                  <button
-                    type="button"
-                    className="recipe-step-remove"
-                    onClick={() => setSteps((prev) => prev.filter((_, idx) => idx !== i))}
-                    aria-label={`Remove step ${i + 1}`}
-                  >
-                    ×
-                  </button>
-                )}
-              </li>
-            ))}
-          </ol>
-          <button
-            type="button"
-            className="btn btn-outline add-step-btn"
-            onClick={() => setSteps((prev) => [...prev, ''])}
-          >
-            + Add Step
-          </button>
-        </section>
-
         <section className="ingredients-section">
           <h2>Ingredients</h2>
           {rows.map((row) => (
@@ -323,6 +291,14 @@ export default function RecipeEditPage() {
           >
             + Add Ingredient
           </button>
+        </section>
+
+        <section className="recipe-edit-steps-section">
+          <h2>Steps</h2>
+          <p className="field-hint">
+            Walk readers through the recipe one step at a time. Order matters — use the arrows to reorder. Empty steps are skipped on save.
+          </p>
+          <StepsEditor value={steps} onChange={setSteps} />
         </section>
 
         <div className="recipe-form-actions">

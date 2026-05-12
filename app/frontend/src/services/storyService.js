@@ -48,3 +48,13 @@ export async function unpublishStory(id) {
   const response = await apiClient.post(`/api/stories/${id}/unpublish/`);
   return response.data;
 }
+
+/**
+ * Stories authored by a specific user (#709 — "My stories" section).
+ * Backend: `GET /api/stories/?author=<userId>`.
+ */
+export async function fetchMyStories(authorId) {
+  if (USE_MOCK) return MOCK_STORIES_LIST.filter((s) => s.author === authorId);
+  const response = await apiClient.get('/api/stories/', { params: { author: authorId } });
+  return response.data.results ?? response.data;
+}

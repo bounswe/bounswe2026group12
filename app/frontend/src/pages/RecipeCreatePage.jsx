@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import IngredientRow from '../components/IngredientRow';
+import StepsEditor from '../components/StepsEditor';
 import Toast from '../components/Toast';
 import DraftRestoreBanner from '../components/DraftRestoreBanner';
 import useDraftAutosave from '../hooks/useDraftAutosave';
@@ -51,7 +52,7 @@ export default function RecipeCreatePage() {
   const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState([makeRow()]);
-  const [steps, setSteps] = useState(['']);
+  const [steps, setSteps] = useState([]);
 
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
@@ -100,6 +101,11 @@ export default function RecipeCreatePage() {
     clearDraft();
   }
 
+  const handleStepsChange = useCallback((next) => {
+    markDirty();
+    setSteps(next);
+  }, []);
+
   const handleRowChange = useCallback((rowId, field, value) => {
     markDirty();
     setRows((prev) =>
@@ -147,13 +153,16 @@ export default function RecipeCreatePage() {
     }
 
     const validRows = rows.filter((r) => r.ingredientId && r.amount && r.unitId);
+    const cleanedSteps = steps
+      .map((s) => (typeof s === 'string' ? s.trim() : ''))
+      .filter((s) => s.length > 0);
     const payload = {
       title,
       description,
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
       is_published: publish,
-      steps: steps.map((s) => s.trim()).filter(Boolean),
+      steps: cleanedSteps,
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -326,47 +335,13 @@ export default function RecipeCreatePage() {
         </section>
 
         {/* ── Step 3: Cooking steps ── */}
-        <section className="form-step steps-section">
+        <section className="form-step">
           <StepHeader
             number="3"
-            title="Cooking Steps"
-            hint="Break the recipe into numbered steps. Each step should be one clear action."
+            title="Steps"
+            hint="Walk readers through the recipe one step at a time. Order matters — use the arrows to reorder. Empty steps are skipped on save."
           />
-          <ol className="recipe-steps-editor" aria-label="Cooking steps">
-            {steps.map((step, i) => (
-              <li key={i} className="recipe-step-row">
-                <span className="recipe-step-number">{i + 1}</span>
-                <textarea
-                  className="recipe-step-input"
-                  rows={2}
-                  value={step}
-                  placeholder={`Step ${i + 1}…`}
-                  onChange={(e) => {
-                    markDirty();
-                    setSteps((prev) => prev.map((s, idx) => idx === i ? e.target.value : s));
-                  }}
-                  aria-label={`Step ${i + 1}`}
-                />
-                {steps.length > 1 && (
-                  <button
-                    type="button"
-                    className="recipe-step-remove"
-                    onClick={() => setSteps((prev) => prev.filter((_, idx) => idx !== i))}
-                    aria-label={`Remove step ${i + 1}`}
-                  >
-                    ×
-                  </button>
-                )}
-              </li>
-            ))}
-          </ol>
-          <button
-            type="button"
-            className="btn btn-outline add-step-btn"
-            onClick={() => { markDirty(); setSteps((prev) => [...prev, '']); }}
-          >
-            + Add Step
-          </button>
+          <StepsEditor value={steps} onChange={handleStepsChange} />
         </section>
 
         {/* ── Step 4: Media & options ── */}

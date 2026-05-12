@@ -227,4 +227,85 @@ describe('RecipeCreatePage — draft auto-save', () => {
     fireEvent.click(screen.getByRole('button', { name: /discard/i }));
     expect(screen.queryByText(/unsaved draft found/i)).not.toBeInTheDocument();
   });
+
+  it('includes typed steps in the create payload (trimmed, empties dropped)', async () => {
+    recipeService.createRecipe.mockResolvedValue({ id: 9 });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'With Steps' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A recipe.' } });
+
+    // Add three step rows (1 + 2 clicks of "Add step")
+    fireEvent.click(screen.getByRole('button', { name: /add step/i }));
+    fireEvent.click(screen.getByRole('button', { name: /add step/i }));
+    fireEvent.click(screen.getByRole('button', { name: /add step/i }));
+    fireEvent.change(screen.getByLabelText('Step 1'), { target: { value: 'Boil water' } });
+    fireEvent.change(screen.getByLabelText('Step 2'), { target: { value: '   ' } }); // whitespace-only — should be dropped
+    fireEvent.change(screen.getByLabelText('Step 3'), { target: { value: '  Add pasta  ' } }); // trimmed
+
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
+
+    fireEvent.click(screen.getByRole('button', { name: /publish recipe/i }));
+    await waitFor(() =>
+      expect(recipeService.createRecipe).toHaveBeenCalledWith(
+        expect.objectContaining({ steps: ['Boil water', 'Add pasta'] })
+      )
+    );
+  });
+
+  it('sends an empty steps array when no steps are added', async () => {
+    recipeService.createRecipe.mockResolvedValue({ id: 10 });
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/title/i));
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Stepless' } });
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'A recipe.' } });
+
+    const ingredientInput = screen.getByPlaceholderText('Ingredient');
+    fireEvent.focus(ingredientInput);
+    fireEvent.change(ingredientInput, { target: { value: 'Salt' } });
+    await waitFor(() => screen.getByText('Salt'));
+    fireEvent.click(screen.getByText('Salt'));
+    fireEvent.change(screen.getByPlaceholderText('Amount'), { target: { value: '1' } });
+    const unitInput = screen.getByPlaceholderText('Unit');
+    fireEvent.focus(unitInput);
+    fireEvent.change(unitInput, { target: { value: 'cup' } });
+    await waitFor(() => screen.getByText('cup'));
+    fireEvent.click(screen.getByText('cup'));
+
+    fireEvent.click(screen.getByRole('button', { name: /publish recipe/i }));
+    await waitFor(() =>
+      expect(recipeService.createRecipe).toHaveBeenCalledWith(
+        expect.objectContaining({ steps: [] })
+      )
+    );
+  });
+
+  it('restores draft steps when Restore is clicked', async () => {
+    localStorage.setItem(
+      'draft:recipe:new',
+      JSON.stringify({
+        title: 'With drafted steps',
+        description: '',
+        region: '',
+        qaEnabled: true,
+        rows: [],
+        steps: ['Step one', 'Step two'],
+      })
+    );
+    renderPage();
+    await waitFor(() => screen.getByText(/unsaved draft found/i));
+    fireEvent.click(screen.getByRole('button', { name: /restore/i }));
+    expect(screen.getByLabelText('Step 1')).toHaveValue('Step one');
+    expect(screen.getByLabelText('Step 2')).toHaveValue('Step two');
+  });
 });

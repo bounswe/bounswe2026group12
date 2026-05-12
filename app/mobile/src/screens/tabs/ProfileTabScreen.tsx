@@ -1,26 +1,15 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
-  Alert,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  ToastAndroid,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { shadows, tokens } from '../../theme';
-
-function showComingSoon() {
-  if (Platform.OS === 'android') {
-    ToastAndroid.show('Coming soon', ToastAndroid.SHORT);
-  } else {
-    Alert.alert('Coming soon', 'Edit profile is not available yet.');
-  }
-}
 
 type ActionRowProps = {
   icon: string;
@@ -131,7 +120,7 @@ export default function ProfileTabScreen() {
                 <ActionRow
                   icon="✏️"
                   label="Edit profile"
-                  onPress={showComingSoon}
+                  onPress={() => navigation.navigate('Feed', { screen: 'EditProfile' })}
                   accessibilityLabel="Edit profile"
                 />
                 <ActionRow

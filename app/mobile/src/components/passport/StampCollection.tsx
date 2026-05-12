@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { tokens } from '../../theme';
+import StampCard from './StampCard';
 
 /**
- * Stamp collection tab body for the user passport (#601).
+ * Stamp collection tab body for the user passport (#601, #832).
  *
- * Standalone, reusable component — does NOT touch PassportScreen. PR #781
- * scaffolds the passport tab bar and will import this component into the
- * Stamps tab body.
+ * Mirrors web `StampGrid`: per-category sections (always open, no accordion)
+ * with a 2-column grid of `StampCard`s inside.
  *
  * Backend probe of GET /api/users/<username>/passport/ returned items with
  * keys: { id, culture, category, rarity, earned_at, source_recipe,
@@ -47,14 +47,6 @@ type Props = {
   loading?: boolean;
 };
 
-const RARITY_COLOURS: Record<string, string> = {
-  bronze: '#CD7F32',
-  silver: '#C0C0C0',
-  gold: '#FFD700',
-  emerald: '#50C878',
-  legendary: '#9B59B6',
-};
-
 const CATEGORY_ORDER: StampCategory[] = [
   'recipe',
   'story',
@@ -69,6 +61,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   heritage: 'Heritage',
   exploration: 'Exploration',
   community: 'Community',
+  other: 'Other',
 };
 
 const titleCase = (s: string): string =>
@@ -76,32 +69,6 @@ const titleCase = (s: string): string =>
 
 const categoryLabel = (cat: string): string =>
   CATEGORY_LABELS[cat] || titleCase(cat || 'Other');
-
-const rarityLabel = (rarity: string): string => titleCase(rarity || 'Stamp');
-
-const rarityColour = (rarity: string): string =>
-  RARITY_COLOURS[(rarity || '').toLowerCase()] || tokens.colors.primary;
-
-const formatEarned = (iso: string | null | undefined): string => {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  return `${months[d.getMonth()]} ${d.getFullYear()}`;
-};
 
 /**
  * Map a raw stamp object from the backend (or anywhere) onto the shape this
@@ -151,7 +118,6 @@ function groupByCategory(stamps: Stamp[]): Array<[string, Stamp[]]> {
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(s);
   }
-  // Sort: known categories first in declared order, then alphabetical for the rest.
   const keys = Array.from(map.keys());
   keys.sort((a, b) => {
     const ai = CATEGORY_ORDER.indexOf(a as StampCategory);
@@ -166,10 +132,6 @@ function groupByCategory(stamps: Stamp[]): Array<[string, Stamp[]]> {
 
 export function StampCollection({ stamps, loading = false }: Props) {
   const groups = useMemo(() => groupByCategory(stamps || []), [stamps]);
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-
-  const toggle = (cat: string) =>
-    setCollapsed((c) => ({ ...c, [cat]: !c[cat] }));
 
   if (loading) {
     return (
@@ -195,109 +157,26 @@ export function StampCollection({ stamps, loading = false }: Props) {
 
   return (
     <View style={styles.container} accessibilityLabel="Stamp collection">
-      {groups.map(([category, items]) => {
-        const isOpen = !collapsed[category];
-        return (
-          <View key={category} style={styles.group}>
-            <Pressable
-              onPress={() => toggle(category)}
-              accessibilityRole="button"
-              accessibilityLabel={`${categoryLabel(category)} stamps, ${items.length} ${
-                isOpen ? 'expanded' : 'collapsed'
-              }`}
-              style={({ pressed }) => [
-                styles.groupHeader,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={styles.groupTitle}>{categoryLabel(category)}</Text>
-              <View style={styles.headerRight}>
-                <View style={styles.countBadge}>
-                  <Text style={styles.countBadgeText}>{items.length}</Text>
-                </View>
-                <Text style={styles.chevron}>{isOpen ? '▾' : '▸'}</Text>
-              </View>
-            </Pressable>
-
-            {isOpen ? (
-              <View style={styles.rows}>
-                {items.map((stamp) => {
-                  const locked = isLocked(stamp);
-                  const swatch = rarityColour(stamp.rarity);
-                  const dateStr = formatEarned(stamp.earned_at);
-                  const progress =
-                    typeof stamp.progress_percent === 'number'
-                      ? Math.max(0, Math.min(100, stamp.progress_percent))
-                      : null;
-                  const a11y = [
-                    stamp.name,
-                    rarityLabel(stamp.rarity),
-                    locked
-                      ? 'locked'
-                      : dateStr
-                        ? `earned ${dateStr}`
-                        : 'earned',
-                  ].join(', ');
-                  return (
-                    <View
-                      key={String(stamp.id)}
-                      accessibilityLabel={a11y}
-                      style={[styles.row, locked && styles.rowLocked]}
-                    >
-                      <View
-                        style={[
-                          styles.swatch,
-                          {
-                            backgroundColor: locked ? '#B8B8B8' : swatch,
-                            borderColor: locked ? '#8A8A8A' : '#1A1A1A',
-                          },
-                        ]}
-                      >
-                        {locked ? <Text style={styles.lockGlyph}>🔒</Text> : null}
-                      </View>
-                      <View style={styles.rowBody}>
-                        <Text
-                          style={[styles.rowName, locked && styles.rowNameLocked]}
-                          numberOfLines={1}
-                        >
-                          {stamp.name}
-                        </Text>
-                        <View style={styles.rowMetaRow}>
-                          <Text style={styles.rowMeta}>
-                            {rarityLabel(stamp.rarity)}
-                          </Text>
-                          {!locked && dateStr ? (
-                            <>
-                              <Text style={styles.dot}>·</Text>
-                              <Text style={styles.rowMeta}>{dateStr}</Text>
-                            </>
-                          ) : null}
-                        </View>
-                        {progress != null ? (
-                          <View
-                            style={styles.progressTrack}
-                            accessibilityLabel={`progress ${progress} percent`}
-                          >
-                            <View
-                              style={[
-                                styles.progressFill,
-                                {
-                                  width: `${progress}%`,
-                                  backgroundColor: locked ? '#8A8A8A' : swatch,
-                                },
-                              ]}
-                            />
-                          </View>
-                        ) : null}
-                      </View>
-                    </View>
-                  );
-                })}
-              </View>
-            ) : null}
+      {groups.map(([category, items]) => (
+        <View key={category} style={styles.group}>
+          <Text
+            style={styles.groupTitle}
+            accessibilityRole="header"
+            accessibilityLabel={`${categoryLabel(category)} stamps, ${items.length}`}
+          >
+            {categoryLabel(category)}
+          </Text>
+          <View style={styles.grid} testID={`stamp-grid-${category}`}>
+            {items.map((stamp) => (
+              <StampCard
+                key={String(stamp.id)}
+                stamp={stamp}
+                locked={isLocked(stamp)}
+              />
+            ))}
           </View>
-        );
-      })}
+        </View>
+      ))}
     </View>
   );
 }
@@ -309,7 +188,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 24,
-    gap: 12,
+    gap: 20,
   },
   loadingText: {
     ...tokens.typography.body,
@@ -337,119 +216,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   group: {
-    borderRadius: tokens.radius.md,
-    borderWidth: 1,
-    borderColor: tokens.colors.primaryBorder,
-    backgroundColor: tokens.colors.bg,
-    overflow: 'hidden',
-  },
-  groupHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    backgroundColor: tokens.colors.primarySubtle,
-  },
-  pressed: {
-    opacity: 0.7,
+    gap: 12,
   },
   groupTitle: {
     ...tokens.typography.display,
-    fontSize: 16,
+    fontSize: 18,
     color: tokens.colors.text,
   },
-  headerRight: {
+  grid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  countBadge: {
-    minWidth: 24,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: tokens.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  countBadgeText: {
-    ...tokens.typography.body,
-    color: tokens.colors.textOnDark,
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  chevron: {
-    ...tokens.typography.body,
-    color: tokens.colors.text,
-    fontSize: 14,
-  },
-  rows: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    gap: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 12,
-    padding: 10,
-    borderRadius: tokens.radius.sm,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: tokens.colors.primaryBorder,
-  },
-  rowLocked: {
-    backgroundColor: '#ECECEC',
-    borderColor: '#CFCFCF',
-  },
-  swatch: {
-    width: 36,
-    height: 36,
-    borderRadius: tokens.radius.pill,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lockGlyph: {
-    fontSize: 16,
-  },
-  rowBody: {
-    flex: 1,
-    gap: 2,
-  },
-  rowName: {
-    ...tokens.typography.body,
-    fontSize: 15,
-    fontWeight: '600',
-    color: tokens.colors.text,
-  },
-  rowNameLocked: {
-    color: '#6B6B6B',
-  },
-  rowMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  rowMeta: {
-    ...tokens.typography.body,
-    fontSize: 12,
-    color: tokens.colors.textMuted,
-  },
-  dot: {
-    color: tokens.colors.textMuted,
-    fontSize: 12,
-  },
-  progressTrack: {
-    marginTop: 6,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(0,0,0,0.08)',
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
   },
 });

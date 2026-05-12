@@ -44,6 +44,7 @@ services:
     restart: unless-stopped
     # /admin/login/ renders without hitting the DB, so this is a clean
     # liveness probe for gunicorn. urlopen raises on non-2xx, exiting non-zero.
+    # start_period covers migrate + collectstatic, which gunicorn starts after.
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/admin/login/')"]
       interval: 15s
@@ -66,8 +67,11 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
+    # NOTE: prod overrides this — see docker-compose.prod.yml. The prod nginx
+    # config (ops/nginx-prod.conf) only listens on 0.0.0.0 and :80 redirects
+    # to https, so this plain-http check only works for the dev/default image.
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 3

@@ -74,7 +74,9 @@ jobs:
             fi
 
             # Bring up the compose stack. The backend entrypoint runs migrate
-            # and collectstatic automatically before gunicorn starts.
+            # and collectstatic automatically before gunicorn starts. Seeding
+            # is a separate manual step — see the "Seed database" workflow
+            # (.github/workflows/seed-db.yml) and ops/PROD.md.
             # --force-recreate guards against stale containers that survive a
             # config change (e.g. when the prod overlay adds ports or volumes
             # that compose's normal diff misses on already-running containers).

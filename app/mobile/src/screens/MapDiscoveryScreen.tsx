@@ -15,10 +15,15 @@ import { shadows, tokens, useTheme } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MapDiscovery'>;
 
-/** Slight zoom-in when a pin is selected. react-native-maps' `animateCamera`
- * uses Google Maps zoom levels (higher = closer); 5 lands roughly at a country
- * frame, which feels good after the global initial view. */
-const FOCUS_ZOOM = 5;
+/** Regional zoom-in when a pin is selected. react-native-maps' `animateCamera`
+ * uses Google Maps zoom levels (higher = closer); zoom 9 lands at a roughly
+ * 10 km regional frame — close enough to feel like we're "going there" but
+ * still wide enough to read the surrounding geography rather than dropping
+ * the user on top of a single building. */
+const FOCUS_ZOOM = 9;
+/** Camera animation duration. Matches the navigation push delay so the camera
+ * visibly settles before RegionMapDetail mounts. */
+const FOCUS_ANIM_MS = 700;
 
 export default function MapDiscoveryScreen({ navigation }: Props) {
   const [pins, setPins] = useState<RegionPin[]>([]);
@@ -28,12 +33,25 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
   const [reloadToken, setReloadToken] = useState(0);
   const { setFocusedRegion } = useTheme();
   const mapRef = useRef<MapView | null>(null);
+  const navTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setFocusedRegion(focused?.name ?? null);
   }, [focused, setFocusedRegion]);
 
   useEffect(() => () => setFocusedRegion(null), [setFocusedRegion]);
+
+  // If the screen unmounts mid-animation (e.g. user backs out), make sure the
+  // queued navigation push doesn't fire on a dead component.
+  useEffect(
+    () => () => {
+      if (navTimeoutRef.current) {
+        clearTimeout(navTimeoutRef.current);
+        navTimeoutRef.current = null;
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -90,18 +108,26 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
               pin={pin}
               isFocused={focused?.id === pin.id}
               onPress={() => {
-                setFocused(pin);
-                // Smooth zoom-in on the tapped pin before diving into the
-                // per-region map. Animation runs in parallel with navigation
-                // so the transition feels continuous instead of janky.
+                // NOTE: deliberately do NOT call setFocused(pin) here.
+                // The user is about to navigate away — mounting the region
+                // bottom sheet for ~50ms only to tear it down again when
+                // RegionMapDetail pushes causes a visible flicker (#825).
+                // Smooth regional zoom on the tapped pin, then push the next
+                // screen once the animation has visibly settled.
                 mapRef.current?.animateCamera(
                   { center: pin.coords, zoom: FOCUS_ZOOM },
-                  { duration: 450 },
+                  { duration: FOCUS_ANIM_MS },
                 );
-                navigation.navigate('RegionMapDetail', {
-                  regionId: pin.id,
-                  regionName: pin.name,
-                });
+                if (navTimeoutRef.current) {
+                  clearTimeout(navTimeoutRef.current);
+                }
+                navTimeoutRef.current = setTimeout(() => {
+                  navTimeoutRef.current = null;
+                  navigation.navigate('RegionMapDetail', {
+                    regionId: pin.id,
+                    regionName: pin.name,
+                  });
+                }, FOCUS_ANIM_MS);
               }}
             />
           ))}
@@ -109,16 +135,14 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
 
         <MapZoomControls mapRef={mapRef} />
 
-        <View style={styles.searchPillWrap} pointerEvents="box-none">
-          <Pressable
-            onPress={() => navigation.navigate('Search', { region: '' })}
-            style={({ pressed }) => [styles.searchPill, pressed && styles.searchPillPressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Search regions"
-          >
-            <Text style={styles.searchPillText}>Search regions →</Text>
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={() => navigation.navigate('Search', { region: '' })}
+          style={({ pressed }) => [styles.searchPill, pressed && styles.searchPillPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Search for a specific region"
+        >
+          <Text style={styles.searchPillText}>Search regions →</Text>
+        </Pressable>
 
         <View style={styles.routesCtaWrap} pointerEvents="box-none">
           <Pressable
@@ -180,20 +204,17 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   hintText: { fontSize: 13, color: tokens.colors.text, fontWeight: '700' },
-  searchPillWrap: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    right: 16,
-    alignItems: 'center',
-  },
   searchPill: {
-    paddingVertical: 10,
-    paddingHorizontal: 18,
+    position: 'absolute',
+    top: 12,
+    alignSelf: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     borderRadius: tokens.radius.pill,
     backgroundColor: tokens.colors.bg,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: tokens.colors.surfaceDark,
+    zIndex: 10,
     ...shadows.md,
   },
   searchPillPressed: { opacity: 0.85 },

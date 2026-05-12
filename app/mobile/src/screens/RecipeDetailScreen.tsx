@@ -15,6 +15,7 @@ import { removeRating, submitRating } from '../services/ratingService';
 import { EndangeredHeritageSection } from '../components/heritage/EndangeredHeritageSection';
 import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
+import { RecipeStepsSection } from '../components/recipe/RecipeStepsSection';
 import { DidYouKnowSection } from '../components/cultural/DidYouKnowSection';
 import { fetchCulturalFactsByRegion, type CulturalFact } from '../services/culturalFactService';
 import type { RootStackParamList } from '../navigation/types';
@@ -492,6 +493,9 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
                 ? 'Not rated yet'
                 : `${(avgRatingNum ?? 0).toFixed(1)} ★ · ${ratingCount} rating${ratingCount === 1 ? '' : 's'}`}
             </Text>
+            {isOwnRecipe ? (
+              <Text style={styles.ratingHint}>You can't rate your own recipe</Text>
+            ) : null}
           </View>
 
           <View style={styles.actionRow}>
@@ -571,6 +575,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           ) : (
             <Text style={styles.muted}>No description.</Text>
           )}
+
+          <RecipeStepsSection steps={recipe.steps ?? []} />
 
           <View style={styles.ingredientsHeader}>
             <Text style={styles.sectionTitle}>Ingredients</Text>
@@ -857,6 +863,7 @@ const styles = StyleSheet.create({
   editLinkText: { fontSize: 14, color: tokens.colors.textOnDark, fontWeight: '800', letterSpacing: 0.3 },
   ratingBlock: { marginTop: 14, gap: 4 },
   ratingCaption: { fontSize: 13, color: tokens.colors.textMuted, fontWeight: '600' },
+  ratingHint: { fontSize: 12, color: tokens.colors.textMuted, marginTop: 4 },
   actionRow: {
     marginTop: 12,
     flexDirection: 'row',

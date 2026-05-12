@@ -53,4 +53,30 @@ describe('StampGrid', () => {
     render(<StampGrid stamps={[stamps[2]]} />);
     expect(screen.getByText('🔒')).toBeInTheDocument();
   });
+
+  it('groups stamps by the backend lowercase category value', () => {
+    // Backend ships `category` lowercase (e.g. 'recipe', 'story'); we still
+    // render the human-readable header. Earlier code did a strict PascalCase
+    // match and dumped everything into "Other".
+    const backendShape = [
+      { id: 10, culture: 'Black Sea',  category: 'recipe',    rarity: 'bronze',    earned_at: '2026-05-12T00:00:00Z' },
+      { id: 11, culture: 'Anatolian',  category: 'heritage',  rarity: 'gold',      earned_at: '2026-05-12T00:00:00Z' },
+      { id: 12, culture: 'World Tour', category: 'community', rarity: 'legendary', earned_at: null },
+    ];
+    render(<StampGrid stamps={backendShape} />);
+    // Headers render in their canonical capitalised form even though backend
+    // sent lowercase keys.
+    expect(screen.getByRole('heading', { name: 'Recipe' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Heritage' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Community' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Other' })).not.toBeInTheDocument();
+  });
+
+  it('puts stamps with unknown categories under "Other"', () => {
+    render(<StampGrid stamps={[
+      { id: 20, culture: 'Mystery', category: 'mystery_category', rarity: 'bronze', earned_at: '2026-05-12T00:00:00Z' },
+    ]} />);
+    expect(screen.getByRole('heading', { name: 'Other' })).toBeInTheDocument();
+    expect(screen.getByText('Mystery')).toBeInTheDocument();
+  });
 });

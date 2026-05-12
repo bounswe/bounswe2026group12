@@ -7,6 +7,9 @@ export type AuthUser = {
   id: string;
   username: string;
   email: string;
+  bio?: string | null;
+  region?: string | null;
+  preferred_language?: string | null;
   cultural_interests?: string[];
   regional_ties?: string[];
   religious_preferences?: string[];
