@@ -43,78 +43,29 @@ function resolveCoords(member: HeritageMember): LatLng | null {
   return null;
 }
 
-/** Three-tier size scale for region pins by member count. */
-function markerSizeForCount(count: number): number {
-  if (count >= 5) return 56;
-  if (count >= 2) return 44;
-  return 32;
-}
 
-/** Just the colored dot — hardware-textured + offscreen-composited so Android
- * properly rounds the corners when it snapshots the view into the marker
- * bitmap (without this, borderRadius is silently dropped and the marker
- * renders as a coloured square). */
-function HeritageRegionDot({ size, isTop }: { size: number; isTop: boolean }) {
-  return (
-    <View
-      collapsable={false}
-      renderToHardwareTextureAndroid
-      needsOffscreenAlphaCompositing
-      style={{
-        width: size + 8,
-        height: size + 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-      }}
-    >
-      <View
-        style={{
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: isTop
-            ? tokens.colors.accentGreen
-            : tokens.colors.accentMustard,
-          borderWidth: 3,
-          borderColor: tokens.colors.surfaceDark,
-        }}
-      />
-    </View>
-  );
-}
-
-/** Region marker — wraps the dot in a Marker and runs the dual tracksViewChanges
- * trick (start tracking so the layout is captured, then stop tracking once
- * the view has settled so Android doesn't re-snapshot and reintroduce the
- * square-clipping bug on subsequent renders). */
+/** Region marker — default platform pin (teardrop) coloured by tier. Custom
+ * round-view markers consistently rendered as squares on this Android setup
+ * (the borderRadius didn't survive the Marker bitmap snapshot, even with
+ * hardware-texture + offscreen-alpha composition + dual tracksViewChanges).
+ * Default pins are bitmap-safe and instantly readable. */
 function HeritageRegionMarker({
   cluster,
   isTop,
-  size,
   onPress,
 }: {
   cluster: RegionCluster;
   isTop: boolean;
-  size: number;
   onPress: () => void;
 }) {
-  const [tracks, setTracks] = useState(true);
-  useEffect(() => {
-    const t = setTimeout(() => setTracks(false), 800);
-    return () => clearTimeout(t);
-  }, []);
   return (
     <Marker
       coordinate={cluster.coords}
       onPress={onPress}
       title={cluster.region}
       description={`${cluster.members.length} member${cluster.members.length === 1 ? '' : 's'}`}
-      anchor={{ x: 0.5, y: 0.5 }}
-      tracksViewChanges={tracks}
-    >
-      <HeritageRegionDot size={size} isTop={isTop} />
-    </Marker>
+      pinColor={isTop ? tokens.colors.accentGreen : tokens.colors.accentMustard}
+    />
   );
 }
 
@@ -326,13 +277,11 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
 
           {clusters.map((cluster) => {
             const isTop = topRegion?.region === cluster.region;
-            const size = markerSizeForCount(cluster.members.length);
             return (
               <HeritageRegionMarker
                 key={`region-${cluster.region}`}
                 cluster={cluster}
                 isTop={isTop}
-                size={size}
                 onPress={() => handleMarkerPress(cluster.region)}
               />
             );
@@ -357,6 +306,8 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
             style={styles.sheetScroll}
             contentContainerStyle={styles.sheetContent}
             showsVerticalScrollIndicator
+            nestedScrollEnabled
+            keyboardShouldPersistTaps="handled"
           >
             {clusters.map((cluster) => {
               const isTop = topRegion?.region === cluster.region;
@@ -512,8 +463,8 @@ const styles = StyleSheet.create({
     borderColor: tokens.colors.surfaceDark,
     paddingTop: 8,
     paddingHorizontal: 16,
-    maxHeight: '55%',
-    minHeight: 220,
+    maxHeight: '75%',
+    minHeight: 240,
     ...shadows.lg,
   },
   sheetHandle: {
