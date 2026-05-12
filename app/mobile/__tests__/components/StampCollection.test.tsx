@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import {
   StampCollection,
   normalizeStamp,
@@ -33,7 +33,7 @@ describe('StampCollection', () => {
     expect(getByLabelText('Stamp collection loading')).toBeTruthy();
   });
 
-  it('groups stamps by category and shows count badges', () => {
+  it('groups stamps by category and renders a section title per category', () => {
     const stamps: Stamp[] = [
       stamp({ id: 1, name: 'Anatolian', category: 'heritage' }),
       stamp({ id: 2, name: 'Black Sea', category: 'heritage' }),
@@ -47,10 +47,42 @@ describe('StampCollection', () => {
     const { getByText } = render(<StampCollection stamps={stamps} />);
     expect(getByText('Heritage')).toBeTruthy();
     expect(getByText('Story')).toBeTruthy();
-    expect(getByText('2')).toBeTruthy();
-    expect(getByText('1')).toBeTruthy();
     expect(getByText('Anatolian')).toBeTruthy();
+    expect(getByText('Black Sea')).toBeTruthy();
     expect(getByText('First Story')).toBeTruthy();
+  });
+
+  it('renders all category sections always open (no accordion)', () => {
+    const stamps: Stamp[] = [
+      stamp({ id: 1, name: 'Anatolian', category: 'heritage' }),
+      stamp({ id: 2, name: 'Tale One', category: 'story', rarity: 'silver' }),
+    ];
+    const { getByText, getByTestId } = render(
+      <StampCollection stamps={stamps} />,
+    );
+    // every group renders a grid container — items inside are visible without interaction
+    expect(getByTestId('stamp-grid-heritage')).toBeTruthy();
+    expect(getByTestId('stamp-grid-story')).toBeTruthy();
+    expect(getByText('Anatolian')).toBeTruthy();
+    expect(getByText('Tale One')).toBeTruthy();
+  });
+
+  it('puts each stamp inside its category grid as a StampCard', () => {
+    const stamps: Stamp[] = [
+      stamp({ id: 1, name: 'Anatolian', category: 'heritage' }),
+      stamp({ id: 2, name: 'Black Sea', category: 'heritage' }),
+    ];
+    const { getByTestId } = render(<StampCollection stamps={stamps} />);
+    const grid = getByTestId('stamp-grid-heritage');
+    // both cards should be descendants of the heritage grid
+    expect(getByTestId('stamp-card-1')).toBeTruthy();
+    expect(getByTestId('stamp-card-2')).toBeTruthy();
+    // grid uses row + wrap layout for the 2-column shape
+    const style = Array.isArray(grid.props.style)
+      ? Object.assign({}, ...grid.props.style.filter(Boolean))
+      : grid.props.style;
+    expect(style.flexDirection).toBe('row');
+    expect(style.flexWrap).toBe('wrap');
   });
 
   it('formats earned date as "MMM YYYY"', () => {
@@ -78,24 +110,9 @@ describe('StampCollection', () => {
     );
     expect(getByText('🔒')).toBeTruthy();
     expect(queryByText(/2026/)).toBeNull();
-    // a11y label includes "locked"
     expect(
       getByLabelText('Hidden Heritage, Legendary, locked'),
     ).toBeTruthy();
-  });
-
-  it('toggles a category open/closed when its header is pressed', () => {
-    const stamps: Stamp[] = [
-      stamp({ id: 1, name: 'Anatolian', category: 'heritage' }),
-    ];
-    const { getByLabelText, queryByText } = render(
-      <StampCollection stamps={stamps} />,
-    );
-    expect(queryByText('Anatolian')).toBeTruthy();
-    fireEvent.press(getByLabelText('Heritage stamps, 1 expanded'));
-    expect(queryByText('Anatolian')).toBeNull();
-    fireEvent.press(getByLabelText('Heritage stamps, 1 collapsed'));
-    expect(queryByText('Anatolian')).toBeTruthy();
   });
 
   it('exposes accessibility labels with name, rarity and status', () => {
