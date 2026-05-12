@@ -1,7 +1,35 @@
 .story-list-heading {
   font-size: 2rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1rem;
   color: var(--color-text);
+}
+
+.list-search-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+  margin: 0 0 1.5rem;
+  max-width: 560px;
+}
+
+.list-search-input {
+  flex: 1;
+  font: inherit;
+  padding: 0.55rem 0.9rem;
+  border: 1.5px solid var(--color-border, #e0d8c8);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface-input, var(--color-surface, #FAF7EF));
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.list-search-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #C4521E);
+  box-shadow: 0 0 0 3px rgba(196, 82, 30, 0.12);
+}
+
+.list-search-btn {
+  flex-shrink: 0;
 }
 
 .story-list-empty {
