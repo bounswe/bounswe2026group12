@@ -90,6 +90,15 @@ describe('CalendarPage', () => {
     expect(within(panel).getByRole('link', { name: /sumalak/i })).toHaveAttribute('href', '/recipes/10');
   });
 
+  it('scrolls the detail panel into view when an event card is clicked', async () => {
+    const scrollSpy = jest.fn();
+    window.HTMLElement.prototype.scrollIntoView = scrollSpy;
+    renderPage();
+    const card = await screen.findByRole('button', { name: /open nevruz details/i });
+    await userEvent.click(card);
+    expect(scrollSpy).toHaveBeenCalled();
+  });
+
   it('renders only the selected month panel when the month filter is set', async () => {
     culturalEventService.fetchCulturalEvents.mockResolvedValue([
       { id: 100, name: 'Spring Equinox', date_rule: 'fixed:03-21', region: { id: 1, name: 'Anatolia' }, description: '', recipes: [] },

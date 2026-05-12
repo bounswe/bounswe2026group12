@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCulturalEvents } from '../services/culturalEventService';
 import { parseEventDate } from '../services/calendarService';
@@ -50,12 +50,20 @@ export default function CalendarPage() {
   const [month, setMonth] = useState('');
   const [region, setRegion] = useState('');
   const [selected, setSelected] = useState(null);
+  const detailRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
     fetchRegions().then((data) => { if (!cancelled) setRegions(data); }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    if (typeof detailRef.current?.scrollIntoView === 'function') {
+      detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [selected]);
 
   useEffect(() => {
     let cancelled = false;
@@ -171,7 +179,7 @@ export default function CalendarPage() {
       )}
 
       {selected && (
-        <aside className="calendar-event-detail" data-testid="event-detail">
+        <aside ref={detailRef} className="calendar-event-detail" data-testid="event-detail">
           <button
             type="button"
             className="calendar-event-detail-close"
