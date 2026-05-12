@@ -51,6 +51,7 @@ export default function RecipeCreatePage() {
   const [thumbnail, setThumbnail] = useState(null);
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState([makeRow()]);
+  const [steps, setSteps] = useState(['']);
 
   const [ingredients, setIngredients] = useState([]);
   const [units, setUnits] = useState([]);
@@ -60,7 +61,7 @@ export default function RecipeCreatePage() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
-  const draftState = { title, description, region, qaEnabled, rows };
+  const draftState = { title, description, region, qaEnabled, rows, steps };
   const { savedDraft, clearDraft } = useDraftAutosave(DRAFT_KEY, draftState, { enabled: true });
 
   const isDirty = useRef(false);
@@ -95,6 +96,7 @@ export default function RecipeCreatePage() {
     if (draft.region !== undefined) setRegion(draft.region);
     if (draft.qaEnabled !== undefined) setQaEnabled(draft.qaEnabled);
     if (Array.isArray(draft.rows) && draft.rows.length > 0) setRows(draft.rows);
+    if (Array.isArray(draft.steps)) setSteps(draft.steps);
     clearDraft();
   }
 
@@ -151,6 +153,7 @@ export default function RecipeCreatePage() {
       region: region ? Number(region) : null,
       qa_enabled: qaEnabled,
       is_published: publish,
+      steps: steps.map((s) => s.trim()).filter(Boolean),
       ingredients_write: validRows.map((r) => ({
         ingredient: r.ingredientId,
         amount: r.amount,
@@ -322,10 +325,54 @@ export default function RecipeCreatePage() {
           </button>
         </section>
 
-        {/* ── Step 3: Media & options ── */}
-        <section className="form-step">
+        {/* ── Step 3: Cooking steps ── */}
+        <section className="form-step steps-section">
           <StepHeader
             number="3"
+            title="Cooking Steps"
+            hint="Break the recipe into numbered steps. Each step should be one clear action."
+          />
+          <ol className="recipe-steps-editor" aria-label="Cooking steps">
+            {steps.map((step, i) => (
+              <li key={i} className="recipe-step-row">
+                <span className="recipe-step-number">{i + 1}</span>
+                <textarea
+                  className="recipe-step-input"
+                  rows={2}
+                  value={step}
+                  placeholder={`Step ${i + 1}…`}
+                  onChange={(e) => {
+                    markDirty();
+                    setSteps((prev) => prev.map((s, idx) => idx === i ? e.target.value : s));
+                  }}
+                  aria-label={`Step ${i + 1}`}
+                />
+                {steps.length > 1 && (
+                  <button
+                    type="button"
+                    className="recipe-step-remove"
+                    onClick={() => setSteps((prev) => prev.filter((_, idx) => idx !== i))}
+                    aria-label={`Remove step ${i + 1}`}
+                  >
+                    ×
+                  </button>
+                )}
+              </li>
+            ))}
+          </ol>
+          <button
+            type="button"
+            className="btn btn-outline add-step-btn"
+            onClick={() => { markDirty(); setSteps((prev) => [...prev, '']); }}
+          >
+            + Add Step
+          </button>
+        </section>
+
+        {/* ── Step 4: Media & options ── */}
+        <section className="form-step">
+          <StepHeader
+            number="4"
             title="Media & Options"
             hint="Upload a photo or video, and choose your settings."
           />

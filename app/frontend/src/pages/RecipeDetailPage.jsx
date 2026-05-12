@@ -261,6 +261,20 @@ export default function RecipeDetailPage() {
         <p className="recipe-description">{recipe.description}</p>
       )}
 
+      {Array.isArray(recipe.steps) && recipe.steps.length > 0 && (
+        <section className="recipe-steps">
+          <h2>Steps</h2>
+          <ol className="recipe-steps-list">
+            {recipe.steps.map((step, i) => (
+              <li key={i} className="recipe-step-item">
+                <span className="recipe-step-num">{i + 1}</span>
+                <p className="recipe-step-text">{step}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
       {/* ── Ingredients (#372 check-off, #370 substitution, #377 unit toggle) ── */}
       <section className="recipe-ingredients">
         <div className="ingredients-header">
