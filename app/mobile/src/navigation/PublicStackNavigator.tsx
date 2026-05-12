@@ -5,6 +5,7 @@ import HeritageMapScreen from '../screens/HeritageMapScreen';
 import HeritageScreen from '../screens/HeritageScreen';
 import IngredientMigrationMapScreen from '../screens/IngredientMigrationMapScreen';
 import CulturalCalendarScreen from '../screens/CulturalCalendarScreen';
+import CultureDetailScreen from '../screens/CultureDetailScreen';
 import HomeScreen from '../screens/HomeScreen';
 import InboxScreen from '../screens/InboxScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -146,6 +147,11 @@ export function PublicStackNavigator() {
         name="Notifications"
         component={NotificationsScreen}
         options={{ title: 'Notifications' }}
+      />
+      <Stack.Screen
+        name="CultureDetail"
+        component={CultureDetailScreen}
+        options={{ title: 'Culture' }}
       />
     </Stack.Navigator>
   );

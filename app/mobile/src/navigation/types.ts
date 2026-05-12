@@ -28,6 +28,7 @@ export type RootStackParamList = {
   RegionMapDetail: { regionId: number; regionName: string };
   IngredientMigrationMap: undefined;
   Notifications: undefined;
+  CultureDetail: { username: string; cultureName: string };
 };
 
 declare global {
