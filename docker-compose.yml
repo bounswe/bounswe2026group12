@@ -27,6 +27,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genipe_mvp_2026}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
+      # Run the idempotent seed_* management commands on container start (see
+      # app/backend/docker-entrypoint.sh). On by default for the compose stack
+      # so dev and prod both come up with reference + demo content; set
+      # RUN_SEEDERS=0 in .env to skip.
+      RUN_SEEDERS: ${RUN_SEEDERS:-1}
       # Optional S3-compatible object storage. Leave empty to use the local
       # media_data volume; set AWS_STORAGE_BUCKET_NAME (and the rest) in .env
       # to switch DEFAULT_FILE_STORAGE to S3Boto3Storage.
@@ -44,12 +49,14 @@ services:
     restart: unless-stopped
     # /admin/login/ renders without hitting the DB, so this is a clean
     # liveness probe for gunicorn. urlopen raises on non-2xx, exiting non-zero.
+    # start_period covers migrate + collectstatic + the seed_* commands
+    # (RUN_SEEDERS), which gunicorn only starts after.
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/admin/login/')"]
       interval: 15s
       timeout: 5s
       retries: 3
-      start_period: 40s
+      start_period: 180s
 
   web:
     build:
@@ -66,8 +73,11 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
+    # NOTE: prod overrides this — see docker-compose.prod.yml. The prod nginx
+    # config (ops/nginx-prod.conf) only listens on 0.0.0.0 and :80 redirects
+    # to https, so this plain-http check only works for the dev/default image.
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 3
