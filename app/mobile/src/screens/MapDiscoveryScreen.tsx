@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MapZoomControls } from '../components/map/MapZoomControls';
@@ -104,6 +104,17 @@ export default function MapDiscoveryScreen({ navigation }: Props) {
 
         <MapZoomControls mapRef={mapRef} />
 
+        <View style={styles.routesCtaWrap} pointerEvents="box-none">
+          <Pressable
+            onPress={() => navigation.navigate('IngredientMigrationMap')}
+            style={({ pressed }) => [styles.routesCta, pressed && styles.routesCtaPressed]}
+            accessibilityLabel="Open ingredient migration routes"
+          >
+            <Text style={styles.routesCtaIcon}>🧭</Text>
+            <Text style={styles.routesCtaText}>Ingredient routes</Text>
+          </Pressable>
+        </View>
+
         {!focused ? (
           <View style={styles.hintWrap} pointerEvents="none">
             <View style={styles.hintCard}>
@@ -185,4 +196,26 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   hintText: { fontSize: 13, color: tokens.colors.text, fontWeight: '700' },
+  routesCtaWrap: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 24,
+    alignItems: 'center',
+  },
+  routesCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: tokens.colors.accentGreen,
+    borderWidth: 2,
+    borderColor: tokens.colors.surfaceDark,
+    ...shadows.md,
+  },
+  routesCtaPressed: { opacity: 0.9 },
+  routesCtaIcon: { fontSize: 16 },
+  routesCtaText: { color: tokens.colors.textOnDark, fontSize: 15, fontWeight: '800' },
 });
