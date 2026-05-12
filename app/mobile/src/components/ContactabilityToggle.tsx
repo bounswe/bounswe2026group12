@@ -29,7 +29,11 @@ export function ContactabilityToggle() {
       // an unhandled promise rejection that crashes the toggle.
       await updateUser({ ...user, is_contactable: next });
       const updated = await updateMe({ is_contactable: next });
-      await updateUser({ ...user, ...updated });
+      // Use the server response as source of truth — it already contains the
+      // new `is_contactable` plus any side-effects (timestamps, etc). Spreading
+      // a stale `user` from the captured closure on top was racing with the
+      // optimistic update above and silently reverting the toggle (#450).
+      await updateUser(updated);
     } catch (e) {
       try {
         await updateUser({ ...user, is_contactable: previous });
