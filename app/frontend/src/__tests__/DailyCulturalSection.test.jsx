@@ -42,24 +42,19 @@ test('unknown kind falls back to globe emoji and default class', () => {
   expect(document.querySelector('.card-default')).toBeInTheDocument();
 });
 
-test('Read more link points to /recipes/:id when link.kind=recipe', () => {
+test('Read more always routes to /highlights/:id (link target may be stale)', () => {
   wrap(<DailyCulturalSection items={[{ ...ITEMS[0], link: { kind: 'recipe', id: 42 } }]} />);
-  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/recipes/42');
+  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/highlights/1');
 });
 
-test('Read more link points to /stories/:id when link.kind=story', () => {
-  wrap(<DailyCulturalSection items={[{ ...ITEMS[1], link: { kind: 'story', id: 7 } }]} />);
-  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/stories/7');
-});
-
-test('Read more link points to /calendar when link.kind=event', () => {
-  wrap(<DailyCulturalSection items={[{ ...ITEMS[3], link: { kind: 'event', id: 3 } }]} />);
-  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/calendar');
-});
-
-test('Read more falls back to /highlights/:id when no link is present', () => {
+test('Read more routes to /highlights/:id when there is no link at all', () => {
   wrap(<DailyCulturalSection items={[ITEMS[0]]} />);
   expect(screen.getByText('Read more →')).toHaveAttribute('href', '/highlights/1');
+});
+
+test('Read more URL-encodes the highlight id', () => {
+  wrap(<DailyCulturalSection items={[{ ...ITEMS[0], id: 'dc-fact-7' }]} />);
+  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/highlights/dc-fact-7');
 });
 
 test('renders nothing when items is empty', () => {

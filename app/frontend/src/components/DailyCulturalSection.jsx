@@ -9,21 +9,14 @@ const KIND_CONFIG = {
 };
 const FALLBACK = { emoji: '🌍', colorClass: 'card-default', label: 'Culture' };
 
-// Backend ships an optional `link: { kind, id }` per card pointing at the
-// recipe / story / event that owns the highlight. Map that to a real route
-// so "Read more" actually opens something instead of dumping the title into
-// the search box. Items without a link fall back to /highlights/:id which
-// renders the card's full body on a dedicated page.
+// Always route Read more to the dedicated highlight detail page. The backend
+// ships an optional `link: { kind, id }` per card, but its target may have
+// been deleted between when the highlight was authored and when the user
+// clicks — sending the user straight to /recipes/:id only to greet them with
+// "could not load recipe" is worse than landing on the highlight page where
+// the body is always available. The detail page itself surfaces the linked
+// content as a secondary action.
 function targetForItem(item) {
-  const link = item?.link;
-  if (link && link.kind && link.id != null) {
-    switch (String(link.kind).toLowerCase()) {
-      case 'recipe': return `/recipes/${link.id}`;
-      case 'story':  return `/stories/${link.id}`;
-      case 'event':  return '/calendar';
-      default:       break;
-    }
-  }
   return `/highlights/${encodeURIComponent(item.id)}`;
 }
 

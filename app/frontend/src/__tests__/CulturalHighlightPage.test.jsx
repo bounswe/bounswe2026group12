@@ -55,4 +55,32 @@ describe('CulturalHighlightPage', () => {
     renderAt('dc-fact-1');
     expect(await screen.findByText(/could not load this highlight/i)).toBeInTheDocument();
   });
+
+  it('surfaces a "View the linked recipe" link when item.link.kind=recipe', async () => {
+    culturalContentService.fetchDailyCulturalContent.mockResolvedValue([
+      { id: 'dc-fact-1', kind: 'fact', title: 'X', body: '', region: null, tags: [], link: { kind: 'recipe', id: 42 } },
+    ]);
+    renderAt('dc-fact-1');
+    const link = await screen.findByRole('link', { name: /view the linked recipe/i });
+    expect(link).toHaveAttribute('href', '/recipes/42');
+  });
+
+  it('surfaces a "Read the linked story" link when item.link.kind=story', async () => {
+    culturalContentService.fetchDailyCulturalContent.mockResolvedValue([
+      { id: 'dc-fact-2', kind: 'fact', title: 'X', body: '', region: null, tags: [], link: { kind: 'story', id: 7 } },
+    ]);
+    renderAt('dc-fact-2');
+    const link = await screen.findByRole('link', { name: /read the linked story/i });
+    expect(link).toHaveAttribute('href', '/stories/7');
+  });
+
+  it('omits the related link when item has no link', async () => {
+    culturalContentService.fetchDailyCulturalContent.mockResolvedValue([
+      { id: 'dc-fact-3', kind: 'fact', title: 'X', body: '', region: null, tags: [], link: null },
+    ]);
+    renderAt('dc-fact-3');
+    await screen.findByRole('heading', { name: /x/i });
+    expect(screen.queryByRole('link', { name: /view the linked/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /read the linked/i })).not.toBeInTheDocument();
+  });
 });
