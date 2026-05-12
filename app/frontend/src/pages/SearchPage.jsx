@@ -52,11 +52,8 @@ export default function SearchPage() {
   const q = searchParams.get('q') || '';
   const region = searchParams.get('region') || '';
   const ingredient = searchParams.get('ingredient') || '';
-  const ingredientExclude = searchParams.get('ingredient_exclude') || '';
   const diet = searchParams.get('diet') || '';
-  const dietExclude = searchParams.get('diet_exclude') || '';
   const event = searchParams.get('event') || '';
-  const eventExclude = searchParams.get('event_exclude') || '';
   const mealType = searchParams.get('meal_type') || '';
   const storyType = searchParams.get('story_type') || '';
   const language = searchParams.get('language') || '';
@@ -65,11 +62,8 @@ export default function SearchPage() {
   const [localRegion, setLocalRegion] = useState(region);
   const [localMealType, setLocalMealType] = useState(mealType);
   const [localIngredientInclude, setLocalIngredientInclude] = useState(parseCsv(ingredient));
-  const [localIngredientExclude, setLocalIngredientExclude] = useState(parseCsv(ingredientExclude));
   const [localDietInclude, setLocalDietInclude] = useState(parseCsv(diet));
-  const [localDietExclude, setLocalDietExclude] = useState(parseCsv(dietExclude));
   const [localEventInclude, setLocalEventInclude] = useState(parseCsv(event));
-  const [localEventExclude, setLocalEventExclude] = useState(parseCsv(eventExclude));
   const [regions, setRegions] = useState([]);
   const [dietaryTags, setDietaryTags] = useState([]);
   const [eventTags, setEventTags] = useState([]);
@@ -92,23 +86,17 @@ export default function SearchPage() {
     setLocalQ(q);
     setLocalRegion(region);
     setLocalIngredientInclude(parseCsv(ingredient));
-    setLocalIngredientExclude(parseCsv(ingredientExclude));
     setLocalDietInclude(parseCsv(diet));
-    setLocalDietExclude(parseCsv(dietExclude));
     setLocalEventInclude(parseCsv(event));
-    setLocalEventExclude(parseCsv(eventExclude));
     setLocalMealType(mealType);
-  }, [q, region, ingredient, ingredientExclude, diet, dietExclude, event, eventExclude, mealType]);
+  }, [q, region, ingredient, diet, event, mealType]);
 
   const filters = useMemo(() => ({
     ingredient,
-    ingredient_exclude: ingredientExclude,
     diet,
-    diet_exclude: dietExclude,
     event,
-    event_exclude: eventExclude,
     meal_type: mealType,
-  }), [ingredient, ingredientExclude, diet, dietExclude, event, eventExclude, mealType]);
+  }), [ingredient, diet, event, mealType]);
 
   useEffect(() => {
     let cancelled = false;
@@ -146,36 +134,24 @@ export default function SearchPage() {
   }
 
   const activeFilters = [
-    ingredient && { label: `Ingredient+: ${ingredient}`, key: 'ingredient' },
-    ingredientExclude && { label: `Ingredient-: ${ingredientExclude}`, key: 'ingredient_exclude' },
-    diet && { label: `Diet+: ${diet}`, key: 'diet' },
-    dietExclude && { label: `Diet-: ${dietExclude}`, key: 'diet_exclude' },
-    event && { label: `Event+: ${event}`, key: 'event' },
-    eventExclude && { label: `Event-: ${eventExclude}`, key: 'event_exclude' },
+    ingredient && { label: `Ingredient: ${ingredient}`, key: 'ingredient' },
+    diet && { label: `Diet: ${diet}`, key: 'diet' },
+    event && { label: `Event: ${event}`, key: 'event' },
     mealType && { label: `Meal type: ${mealType}`, key: 'meal_type' },
     storyType && { label: `Story type: ${storyType}`, key: 'story_type' },
     region && { label: `Region: ${region}`, key: 'region' },
   ].filter(Boolean);
 
-  function toggleFilterValue(value, includeState, excludeState, setInclude, setExclude) {
+  // Single-state toggle: clicking a pill adds it to the include list, clicking
+  // again removes it. The previous +/- pair UI doubled every chip and the
+  // include filter covers the typical case — keep advanced exclude for later
+  // if a real product need surfaces.
+  function toggleFilterValue(value, includeState, setInclude) {
     if (includeState.includes(value)) {
       setInclude(includeState.filter((v) => v !== value));
       return;
     }
-    if (excludeState.includes(value)) {
-      setExclude(excludeState.filter((v) => v !== value));
-      return;
-    }
     setInclude([...includeState, value]);
-  }
-
-  function setExcludeOnly(value, includeState, excludeState, setInclude, setExclude) {
-    if (excludeState.includes(value)) {
-      setExclude(excludeState.filter((v) => v !== value));
-      return;
-    }
-    setInclude(includeState.filter((v) => v !== value));
-    setExclude([...excludeState, value]);
   }
 
   function handleSubmit(e) {
@@ -183,11 +159,8 @@ export default function SearchPage() {
     navigate(
       `/search?q=${encodeURIComponent(localQ)}&region=${encodeURIComponent(localRegion)}` +
       `&ingredient=${encodeURIComponent(formatCsv(localIngredientInclude))}` +
-      `&ingredient_exclude=${encodeURIComponent(formatCsv(localIngredientExclude))}` +
       `&diet=${encodeURIComponent(formatCsv(localDietInclude))}` +
-      `&diet_exclude=${encodeURIComponent(formatCsv(localDietExclude))}` +
       `&event=${encodeURIComponent(formatCsv(localEventInclude))}` +
-      `&event_exclude=${encodeURIComponent(formatCsv(localEventExclude))}` +
       `&meal_type=${encodeURIComponent(localMealType)}` +
       `&story_type=${encodeURIComponent(storyType)}` +
       `&language=${encodeURIComponent(language)}`
@@ -249,72 +222,60 @@ export default function SearchPage() {
         </div>
 
         <div className="rich-filter-panels">
-          <FilterAccordion title="Dietary Tags" activeCount={localDietInclude.length + localDietExclude.length}>
+          <FilterAccordion title="Dietary Tags" activeCount={localDietInclude.length}>
             <div className="rich-chip-list">
-              {dietaryTags.map((tag) => (
-                <div className="rich-chip-wrap" key={tag.id}>
+              {dietaryTags.map((tag) => {
+                const selected = localDietInclude.includes(tag.name);
+                return (
                   <button
+                    key={tag.id}
                     type="button"
-                    className={`rich-chip ${localDietInclude.includes(tag.name) ? 'rich-chip-include' : ''}`}
-                    onClick={() => toggleFilterValue(tag.name, localDietInclude, localDietExclude, setLocalDietInclude, setLocalDietExclude)}
+                    className={`rich-chip ${selected ? 'rich-chip-include' : ''}`}
+                    aria-pressed={selected}
+                    onClick={() => toggleFilterValue(tag.name, localDietInclude, setLocalDietInclude)}
                   >
-                    + {tag.name}
+                    {tag.name}
                   </button>
-                  <button
-                    type="button"
-                    className={`rich-chip rich-chip-exclude ${localDietExclude.includes(tag.name) ? 'rich-chip-exclude-active' : ''}`}
-                    onClick={() => setExcludeOnly(tag.name, localDietInclude, localDietExclude, setLocalDietInclude, setLocalDietExclude)}
-                  >
-                    - {tag.name}
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </FilterAccordion>
 
-          <FilterAccordion title="Event Tags" activeCount={localEventInclude.length + localEventExclude.length}>
+          <FilterAccordion title="Event Tags" activeCount={localEventInclude.length}>
             <div className="rich-chip-list">
-              {eventTags.map((tag) => (
-                <div className="rich-chip-wrap" key={tag.id}>
+              {eventTags.map((tag) => {
+                const selected = localEventInclude.includes(tag.name);
+                return (
                   <button
+                    key={tag.id}
                     type="button"
-                    className={`rich-chip ${localEventInclude.includes(tag.name) ? 'rich-chip-include' : ''}`}
-                    onClick={() => toggleFilterValue(tag.name, localEventInclude, localEventExclude, setLocalEventInclude, setLocalEventExclude)}
+                    className={`rich-chip ${selected ? 'rich-chip-include' : ''}`}
+                    aria-pressed={selected}
+                    onClick={() => toggleFilterValue(tag.name, localEventInclude, setLocalEventInclude)}
                   >
-                    + {tag.name}
+                    {tag.name}
                   </button>
-                  <button
-                    type="button"
-                    className={`rich-chip rich-chip-exclude ${localEventExclude.includes(tag.name) ? 'rich-chip-exclude-active' : ''}`}
-                    onClick={() => setExcludeOnly(tag.name, localEventInclude, localEventExclude, setLocalEventInclude, setLocalEventExclude)}
-                  >
-                    - {tag.name}
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </FilterAccordion>
 
-          <FilterAccordion title="Ingredients" activeCount={localIngredientInclude.length + localIngredientExclude.length}>
+          <FilterAccordion title="Ingredients" activeCount={localIngredientInclude.length}>
             <div className="rich-chip-list">
-              {ingredientTags.map((tag) => (
-                <div className="rich-chip-wrap" key={tag.id}>
+              {ingredientTags.map((tag) => {
+                const selected = localIngredientInclude.includes(tag.name);
+                return (
                   <button
+                    key={tag.id}
                     type="button"
-                    className={`rich-chip ${localIngredientInclude.includes(tag.name) ? 'rich-chip-include' : ''}`}
-                    onClick={() => toggleFilterValue(tag.name, localIngredientInclude, localIngredientExclude, setLocalIngredientInclude, setLocalIngredientExclude)}
+                    className={`rich-chip ${selected ? 'rich-chip-include' : ''}`}
+                    aria-pressed={selected}
+                    onClick={() => toggleFilterValue(tag.name, localIngredientInclude, setLocalIngredientInclude)}
                   >
-                    + {tag.name}
+                    {tag.name}
                   </button>
-                  <button
-                    type="button"
-                    className={`rich-chip rich-chip-exclude ${localIngredientExclude.includes(tag.name) ? 'rich-chip-exclude-active' : ''}`}
-                    onClick={() => setExcludeOnly(tag.name, localIngredientInclude, localIngredientExclude, setLocalIngredientInclude, setLocalIngredientExclude)}
-                  >
-                    - {tag.name}
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </FilterAccordion>
         </div>
