@@ -8,6 +8,9 @@ function QuestItem({ quest }) {
   const completed = Boolean(quest.completed_at);
   const pct = quest.target_count > 0 ? Math.min(100, (quest.progress / quest.target_count) * 100) : 0;
   const rewardLabel = quest.reward_value ?? quest.reward_type ?? '';
+  // Backend ships `event_end` for time-limited event quests; older mocks used
+  // `deadline`. Accept either.
+  const deadline = quest.event_end ?? quest.deadline ?? null;
 
   return (
     <div className={`quest-item${completed ? ' quest-item--done' : ''}`}>
@@ -23,8 +26,8 @@ function QuestItem({ quest }) {
       )}
       <div className="quest-meta">
         {rewardLabel && <span className="quest-reward">🎁 {rewardLabel}</span>}
-        {quest.deadline && !completed && (
-          <span className="quest-deadline">⏰ {formatDeadline(quest.deadline)}</span>
+        {deadline && !completed && (
+          <span className="quest-deadline">⏰ {formatDeadline(deadline)}</span>
         )}
         {!completed && (
           <span className="quest-count">{quest.progress}/{quest.target_count}</span>

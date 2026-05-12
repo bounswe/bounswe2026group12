@@ -8,3 +8,14 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./ops/nginx-prod.conf:/etc/nginx/conf.d/default.conf:ro
+    # Override the dev healthcheck: nginx-prod.conf only listens on 0.0.0.0
+    # (the base image's IPv6-listen patch can't run — the config is mounted
+    # read-only), and :80 301-redirects to https with the genipe.app cert, so
+    # `wget http://localhost/` can never pass. Hit https on loopback IPv4 with
+    # cert verification off — that serves the SPA index.html and returns 200.
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO /dev/null --no-check-certificate https://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

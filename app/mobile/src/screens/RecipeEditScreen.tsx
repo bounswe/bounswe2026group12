@@ -10,6 +10,10 @@ import {
 } from '../components/recipe/buildRecipeUpdateFormData';
 import { InlineFieldError } from '../components/recipe/InlineFieldError';
 import { RecipeIngredientRowsSection } from '../components/recipe/RecipeIngredientRowsSection';
+import {
+  RecipeStepsRepeater,
+  trimStepsForPayload,
+} from '../components/recipe/RecipeStepsRepeater';
 import { RecipeVideoSection } from '../components/recipe/RecipeVideoSection';
 import {
   authoringRowsFromRecipe,
@@ -57,6 +61,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
   const [region, setRegion] = useState('');
   const [qaEnabled, setQaEnabled] = useState(true);
   const [rows, setRows] = useState<AuthoringIngredientRow[]>([makeEmptyIngredientRow()]);
+  const [steps, setSteps] = useState<string[]>([]);
   const [localImage, setLocalImage] = useState<{
     uri: string;
     fileName?: string;
@@ -78,6 +83,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
     setRegion(recipe.region ?? '');
     setQaEnabled(recipe.qa_enabled ?? true);
     setRows(authoringRowsFromRecipe(recipe.ingredients));
+    setSteps(Array.isArray(recipe.steps) ? recipe.steps.slice() : []);
     setLocalImage(null);
     setLocalVideo(null);
     setRemoteVideoUrl(recipe.video ?? null);
@@ -224,6 +230,7 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
       description,
       qaEnabled,
       rows,
+      steps: trimStepsForPayload(steps),
     });
 
     void (async () => {
@@ -398,6 +405,8 @@ export default function RecipeEditScreen({ route, navigation }: Props) {
           />
           {attemptedSubmit ? <InlineFieldError message={validation.description} /> : null}
         </View>
+
+        <RecipeStepsRepeater steps={steps} onChange={setSteps} />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Region</Text>

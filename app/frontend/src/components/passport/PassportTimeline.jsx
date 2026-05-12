@@ -20,23 +20,33 @@ export default function PassportTimeline({ events }) {
 
   return (
     <ol className="passport-timeline">
-      {events.map(event => (
-        <li key={event.id} className="timeline-event">
-          <span className="timeline-icon" aria-hidden="true">{EVENT_ICONS[event.event_type] ?? '📌'}</span>
-          <div className="timeline-body">
-            <p className="timeline-description">
-              {event.event_type?.replace('_', ' ')}
-              {event.related_recipe && (
-                <Link to={`/recipes/${event.related_recipe}`} className="timeline-link"> · Recipe #{event.related_recipe}</Link>
-              )}
-              {event.related_story && (
-                <Link to={`/stories/${event.related_story}`} className="timeline-link"> · Story #{event.related_story}</Link>
-              )}
-            </p>
-            <time className="timeline-date" dateTime={event.timestamp}>{formatDate(event.timestamp)}</time>
-          </div>
-        </li>
-      ))}
+      {events.map(event => {
+        // Backend ships a human-readable `description` like
+        // "Earned a bronze stamp for Black Sea" — prefer it over the raw
+        // event_type slug. Fall back to the slug (with underscores swapped
+        // for spaces) when the description is missing.
+        const label = event.description
+          || (typeof event.event_type === 'string'
+            ? event.event_type.replace(/_/g, ' ')
+            : 'event');
+        return (
+          <li key={event.id} className="timeline-event">
+            <span className="timeline-icon" aria-hidden="true">{EVENT_ICONS[event.event_type] ?? '📌'}</span>
+            <div className="timeline-body">
+              <p className="timeline-description">
+                {label}
+                {event.related_recipe && (
+                  <Link to={`/recipes/${event.related_recipe}`} className="timeline-link"> · Recipe #{event.related_recipe}</Link>
+                )}
+                {event.related_story && (
+                  <Link to={`/stories/${event.related_story}`} className="timeline-link"> · Story #{event.related_story}</Link>
+                )}
+              </p>
+              <time className="timeline-date" dateTime={event.timestamp}>{formatDate(event.timestamp)}</time>
+            </div>
+          </li>
+        );
+      })}
     </ol>
   );
 }

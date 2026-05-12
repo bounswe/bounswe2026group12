@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ContactabilityToggle from '../components/ContactabilityToggle';
-import { fetchMyRecipes, fetchBookmarkedRecipes } from '../services/recipeService';
+import { fetchMyRecipes, fetchMyBookmarks } from '../services/recipeService';
 import { fetchMyStories } from '../services/storyService';
 import './ProfilePage.css';
 
@@ -58,7 +58,7 @@ export default function ProfilePage() {
       .then(setMyStories)
       .catch(() => setMyStories([]))
       .finally(() => setLoadingStories(false));
-    fetchBookmarkedRecipes()
+    fetchMyBookmarks()
       .then(setSavedRecipes)
       .catch(() => setSavedRecipes([]))
       .finally(() => setLoadingSaved(false));

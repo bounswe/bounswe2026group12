@@ -3,6 +3,16 @@ import { Link } from 'react-router-dom';
 import { NotificationContext } from '../context/NotificationContext';
 import './NotificationTray.css';
 
+const ICONS = {
+  question: '💬',
+  reply: '↪',
+  rating: '★',
+};
+
+function iconFor(type) {
+  return ICONS[type] ?? '🔔';
+}
+
 function formatRelativeDate(isoDate) {
   const date = new Date(isoDate);
   const now = new Date();
@@ -89,6 +99,7 @@ export default function NotificationTray() {
                       setOpen(false);
                     }}
                   >
+                    <span className="notification-icon" aria-hidden="true">{iconFor(item.type)}</span>
                     <p className="notification-message">{getNotificationText(item)}</p>
                     <span className="notification-time">{formatRelativeDate(item.createdAt)}</span>
                   </Link>

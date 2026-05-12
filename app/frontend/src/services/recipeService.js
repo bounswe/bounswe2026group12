@@ -98,3 +98,56 @@ export async function fetchEventTags() {
   const response = await apiClient.get('/api/event-tags/');
   return response.data;
 }
+
+/**
+ * Submit or update the current user's rating for a recipe (#736).
+ * Backend: `POST /api/recipes/<id>/rate/` body `{ score: 1-5 }`.
+ * Returns `{ average_rating, rating_count, user_rating }`. 403 if the
+ * authenticated user is the recipe author.
+ */
+export async function rateRecipe(id, score) {
+  if (USE_MOCK) return { average_rating: score, rating_count: 1, user_rating: score };
+  const response = await apiClient.post(`/api/recipes/${id}/rate/`, { score });
+  return response.data;
+}
+
+/**
+ * Clear the current user's rating for a recipe (#736).
+ * Backend: `DELETE /api/recipes/<id>/rate/`. Returns the updated summary.
+ */
+export async function unrateRecipe(id) {
+  if (USE_MOCK) return { average_rating: null, rating_count: 0, user_rating: null };
+  const response = await apiClient.delete(`/api/recipes/${id}/rate/`);
+  return response.data;
+}
+
+/**
+ * Toggle the current user's bookmark on a recipe (#707).
+ * Backend: `POST /api/recipes/<id>/bookmark/` — idempotent toggle, no body.
+ * Returns `{ is_bookmarked, bookmark_count }`.
+ */
+export async function toggleBookmark(id) {
+  if (USE_MOCK) return { is_bookmarked: true, bookmark_count: 1 };
+  const response = await apiClient.post(`/api/recipes/${id}/bookmark/`);
+  return response.data;
+}
+
+/**
+ * Recipes authored by a specific user (#709 — "My recipes" section).
+ * Backend: `GET /api/recipes/?author=<userId>`.
+ */
+export async function fetchMyRecipes(authorId) {
+  if (USE_MOCK) return MOCK_RECIPES_LIST.filter((r) => r.author === authorId);
+  const response = await apiClient.get('/api/recipes/', { params: { author: authorId } });
+  return response.data.results ?? response.data;
+}
+
+/**
+ * Recipes the current user has bookmarked (#709 — "Saved recipes").
+ * Backend: `GET /api/recipes/?bookmarked=true` (requires authentication).
+ */
+export async function fetchMyBookmarks() {
+  if (USE_MOCK) return [];
+  const response = await apiClient.get('/api/recipes/', { params: { bookmarked: 'true' } });
+  return response.data.results ?? response.data;
+}

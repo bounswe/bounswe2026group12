@@ -3,6 +3,12 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CultureGrid } from '../components/passport/CultureGrid';
+import { JourneyTimeline } from '../components/passport/JourneyTimeline';
+import { PassportCover } from '../components/passport/PassportCover';
+import { PassportWorldMap } from '../components/passport/PassportWorldMap';
+import { QuestList } from '../components/passport/QuestList';
+import { StampCollection } from '../components/passport/StampCollection';
 import { ErrorView } from '../components/ui/ErrorView';
 import { LoadingView } from '../components/ui/LoadingView';
 import { useAuth } from '../context/AuthContext';
@@ -11,8 +17,10 @@ import {
   fetchBookmarkedRecipes,
   type BookmarkedRecipeListItem,
 } from '../services/bookmarkService';
+import { fetchPassport, type Passport } from '../services/passportService';
 import { fetchRecipesList } from '../services/recipeService';
 import { fetchStoriesList } from '../services/storyService';
+import { resolveTheme } from '../utils/passportTheme';
 import { shadows, tokens } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'UserProfile'>;
@@ -25,6 +33,27 @@ type ListItem = {
 };
 
 type TabKey = 'recipes' | 'stories' | 'saved';
+
+type PassportTabKey = 'stamps' | 'cultures' | 'map' | 'timeline' | 'quests';
+
+const PASSPORT_TABS: { key: PassportTabKey; label: string }[] = [
+  { key: 'stamps', label: 'Stamps' },
+  { key: 'cultures', label: 'Cultures' },
+  { key: 'map', label: 'Map' },
+  { key: 'timeline', label: 'Timeline' },
+  { key: 'quests', label: 'Quests' },
+];
+
+/**
+ * Four stats surfaced in the passport stats bar. Keys mirror what
+ * `/api/users/<u>/passport/` returns; missing keys fall back to 0 in the service.
+ */
+const PASSPORT_STAT_FIELDS: { key: string; label: string }[] = [
+  { key: 'recipes_tried', label: 'Recipes tried' },
+  { key: 'stories_saved', label: 'Stories saved' },
+  { key: 'cultures_count', label: 'Cultures' },
+  { key: 'heritage_shared', label: 'Heritage shared' },
+];
 
 export default function UserProfileScreen({ route, navigation }: Props) {
   const { userId, username } = route.params;
@@ -43,6 +72,14 @@ export default function UserProfileScreen({ route, navigation }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const [activeTab, setActiveTab] = useState<TabKey>('recipes');
+
+  // Passport state — fetched inline on screen focus, mirroring the (now removed)
+  // standalone PassportScreen behavior so toggling a stamp/quest elsewhere
+  // reflects on return. See #831.
+  const [passport, setPassport] = useState<Passport | null>(null);
+  const [passportLoading, setPassportLoading] = useState(true);
+  const [passportError, setPassportError] = useState<string | null>(null);
+  const [activePassportTab, setActivePassportTab] = useState<PassportTabKey>('stamps');
 
   useEffect(() => {
     let cancelled = false;
@@ -100,6 +137,34 @@ export default function UserProfileScreen({ route, navigation }: Props) {
     }, [isOwnProfile, activeTab, loadSaved]),
   );
 
+  const loadPassport = useCallback(async () => {
+    if (!username) {
+      setPassport(null);
+      setPassportLoading(false);
+      setPassportError(null);
+      return;
+    }
+    setPassportLoading(true);
+    setPassportError(null);
+    try {
+      const data = await fetchPassport(username);
+      setPassport(data);
+    } catch (e) {
+      setPassport(null);
+      setPassportError(e instanceof Error ? e.message : 'Could not load passport.');
+    } finally {
+      setPassportLoading(false);
+    }
+  }, [username]);
+
+  // Refetch passport whenever this screen regains focus, so changes made on
+  // sibling screens (stamp toggles, quest completions) reflect on return.
+  useFocusEffect(
+    useCallback(() => {
+      void loadPassport();
+    }, [loadPassport]),
+  );
+
   // Initial fetch when the user first opens the Saved tab.
   useEffect(() => {
     if (isOwnProfile && activeTab === 'saved' && savedRecipes.length === 0 && !savedLoading && !savedError) {
@@ -142,18 +207,6 @@ export default function UserProfileScreen({ route, navigation }: Props) {
           <Text style={styles.username} accessibilityRole="header">
             {username ?? `User #${userIdStr}`}
           </Text>
-          {username ? (
-            <Pressable
-              onPress={() =>
-                navigation.navigate('Passport', { username, isOwn: isOwnProfile })
-              }
-              style={({ pressed }) => [styles.passportPill, pressed && styles.pressed]}
-              accessibilityRole="button"
-              accessibilityLabel={`Open ${isOwnProfile ? 'your' : `${username}'s`} passport`}
-            >
-              <Text style={styles.passportPillText}>🛂 Passport</Text>
-            </Pressable>
-          ) : null}
         </View>
 
         {canMessage ? (
@@ -271,6 +324,79 @@ export default function UserProfileScreen({ route, navigation }: Props) {
               ))}
             </View>
           )
+        ) : null}
+
+        {username ? (
+          <View style={styles.passportSection}>
+            <Text style={styles.passportSectionTitle} accessibilityRole="header">
+              Cultural passport
+            </Text>
+            {passportLoading ? (
+              <View style={styles.passportCentered}>
+                <LoadingView message="Loading passport…" />
+              </View>
+            ) : passportError || !passport ? (
+              <ErrorView
+                message={passportError ?? 'Passport unavailable.'}
+                onRetry={() => void loadPassport()}
+              />
+            ) : (
+              <>
+                <PassportCover
+                  theme={resolveTheme(passport.active_theme, passport.level)}
+                  level={passport.level}
+                  totalPoints={passport.total_points}
+                  username={username}
+                />
+                <View style={styles.passportStatsBar} accessibilityRole="summary">
+                  {PASSPORT_STAT_FIELDS.map((field) => {
+                    const value = passport.stats[field.key] ?? 0;
+                    return (
+                      <View key={field.key} style={styles.passportStatCell}>
+                        <Text style={styles.passportStatValue}>{value}</Text>
+                        <Text style={styles.passportStatLabel} numberOfLines={2}>
+                          {field.label}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+                <View style={styles.tabBar} accessibilityRole="tablist">
+                  {PASSPORT_TABS.map((tab) => (
+                    <TabButton
+                      key={tab.key}
+                      label={tab.label}
+                      active={activePassportTab === tab.key}
+                      onPress={() => setActivePassportTab(tab.key)}
+                    />
+                  ))}
+                </View>
+                <View style={styles.passportTabBody}>
+                  {activePassportTab === 'stamps' && (
+                    <StampCollection stamps={passport.stamps} />
+                  )}
+                  {activePassportTab === 'cultures' && (
+                    <CultureGrid
+                      cultures={passport.culture_summaries}
+                      username={username}
+                    />
+                  )}
+                  {activePassportTab === 'map' && (
+                    <PassportWorldMap cultures={passport.culture_summaries} />
+                  )}
+                  {activePassportTab === 'timeline' && (
+                    <JourneyTimeline
+                      username={username}
+                      initialEvents={passport.timeline}
+                    />
+                  )}
+                  {activePassportTab === 'quests' && (
+                    <QuestList quests={passport.active_quests} />
+                  )}
+                </View>
+              </>
+            )}
+          </View>
         ) : null}
       </ScrollView>
     </SafeAreaView>
@@ -411,19 +537,56 @@ const styles = StyleSheet.create({
   rowTitle: { fontSize: 15, fontWeight: '700', color: tokens.colors.text, flexShrink: 1 },
   rowMeta: { marginTop: 4, fontSize: 12, color: tokens.colors.textMuted },
   savedCentered: { paddingVertical: 24, alignItems: 'center' },
-  passportPill: {
-    marginLeft: 'auto',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: tokens.colors.accentMustard,
-    borderWidth: 1.5,
-    borderColor: tokens.colors.surfaceDark,
+  passportSection: {
+    marginTop: 8,
+    paddingTop: 18,
+    borderTopWidth: 1,
+    borderTopColor: tokens.colors.border,
   },
-  passportPillText: {
-    fontSize: 12,
+  passportSectionTitle: {
+    fontSize: 22,
     fontWeight: '800',
     color: tokens.colors.text,
-    letterSpacing: 0.3,
+    fontFamily: tokens.typography.display.fontFamily,
+    marginBottom: 14,
+  },
+  passportCentered: { paddingVertical: 24, alignItems: 'center' },
+  passportStatsBar: {
+    flexDirection: 'row',
+    backgroundColor: tokens.colors.surface,
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.lg,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    marginBottom: 18,
+    ...shadows.sm,
+  },
+  passportStatCell: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    gap: 2,
+  },
+  passportStatValue: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: tokens.colors.text,
+  },
+  passportStatLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: tokens.colors.textMuted,
+    textAlign: 'center',
+  },
+  passportTabBody: {
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    borderRadius: tokens.radius.lg,
+    backgroundColor: tokens.colors.surface,
+    padding: 18,
+    minHeight: 90,
+    justifyContent: 'center',
+    ...shadows.sm,
   },
 });
