@@ -30,7 +30,7 @@ function toNum(value: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-function normalizeCulture(raw: unknown): CultureSummary | null {
+export function normalizeCulture(raw: unknown): CultureSummary | null {
   if (!raw || typeof raw !== 'object') return null;
   const r = raw as Record<string, unknown>;
   // Backend ships `culture`; the issue contract uses `culture_name`. Accept both.

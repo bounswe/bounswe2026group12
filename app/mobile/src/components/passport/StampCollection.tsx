@@ -40,6 +40,9 @@ export type Stamp = {
   earned_at: string | null;
   progress_percent?: number;
   is_locked?: boolean;
+  /** From `GET …/passport/` stamp rows — links earned stamp to content. */
+  source_recipe?: number | string | null;
+  source_story?: number | string | null;
 };
 
 type Props = {
@@ -77,6 +80,16 @@ const categoryLabel = (cat: string): string =>
  * onto `earned_at`. Unknown shapes fall back to sensible defaults so the
  * row never blanks.
  */
+function foreignKey(raw: unknown): number | string | null {
+  if (raw == null || raw === '') return null;
+  if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) return raw;
+  if (typeof raw === 'string') {
+    const n = Number(raw.trim());
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return null;
+}
+
 export function normalizeStamp(raw: any): Stamp {
   const r = raw || {};
   const name: string =
@@ -105,6 +118,8 @@ export function normalizeStamp(raw: any): Stamp {
     earned_at,
     progress_percent,
     is_locked,
+    source_recipe: foreignKey(r.source_recipe),
+    source_story: foreignKey(r.source_story),
   };
 }
 
@@ -168,11 +183,9 @@ export function StampCollection({ stamps, loading = false }: Props) {
           </Text>
           <View style={styles.grid} testID={`stamp-grid-${category}`}>
             {items.map((stamp) => (
-              <StampCard
-                key={String(stamp.id)}
-                stamp={stamp}
-                locked={isLocked(stamp)}
-              />
+              <View key={String(stamp.id)} style={styles.gridCell}>
+                <StampCard stamp={stamp} locked={isLocked(stamp)} compact />
+              </View>
             ))}
           </View>
         </View>
@@ -185,10 +198,10 @@ export default StampCollection;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 24,
-    gap: 20,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 20,
+    gap: 16,
   },
   loadingText: {
     ...tokens.typography.body,
@@ -220,12 +233,17 @@ const styles = StyleSheet.create({
   },
   groupTitle: {
     ...tokens.typography.display,
-    fontSize: 18,
+    fontSize: 16,
     color: tokens.colors.text,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 8,
+    justifyContent: 'space-between',
+  },
+  gridCell: {
+    width: '48%',
+    minWidth: 0,
   },
 });

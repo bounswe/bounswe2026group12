@@ -45,15 +45,32 @@ const PASSPORT_TABS: { key: PassportTabKey; label: string }[] = [
 ];
 
 /**
- * Four stats surfaced in the passport stats bar. Keys mirror what
- * `/api/users/<u>/passport/` returns; missing keys fall back to 0 in the service.
+ * Stats order matches web `PassportStatsBar.jsx`: Cultures, Recipes Tried,
+ * Stories, Heritage; level badge is rendered as the fifth cell.
  */
 const PASSPORT_STAT_FIELDS: { key: string; label: string }[] = [
-  { key: 'recipes_tried', label: 'Recipes tried' },
-  { key: 'stories_saved', label: 'Stories saved' },
   { key: 'cultures_count', label: 'Cultures' },
-  { key: 'heritage_shared', label: 'Heritage shared' },
+  { key: 'recipes_tried', label: 'Recipes Tried' },
+  { key: 'stories_saved', label: 'Stories' },
+  { key: 'heritage_shared', label: 'Heritage' },
 ];
+
+const PASSPORT_LEVEL_TITLES: Record<number, string> = {
+  1: 'Bronze Explorer',
+  2: 'Silver Wanderer',
+  3: 'Gold Traveler',
+  4: 'Emerald Voyager',
+  5: 'Legendary Master',
+  6: 'World Kitchen Master',
+};
+
+function passportLevelTitle(level: number, apiLevelName?: string): string {
+  const titled = PASSPORT_LEVEL_TITLES[level];
+  if (titled) return titled;
+  const fromApi = apiLevelName?.trim();
+  if (fromApi) return fromApi;
+  return `Level ${level}`;
+}
 
 export default function UserProfileScreen({ route, navigation }: Props) {
   const { userId, username } = route.params;
@@ -199,7 +216,12 @@ export default function UserProfileScreen({ route, navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        /** Map + markers need taps; parent scroll steals them on Android when enabled. */
+        scrollEnabled={activePassportTab !== 'map'}
+        nestedScrollEnabled
+      >
         <View style={styles.headerCard}>
           <View style={styles.avatar} accessibilityLabel="User avatar">
             <Text style={styles.avatarText}>{initial}</Text>
@@ -360,6 +382,11 @@ export default function UserProfileScreen({ route, navigation }: Props) {
                       </View>
                     );
                   })}
+                  <View style={styles.passportStatCellLevel} accessibilityLabel="Passport level">
+                    <Text style={styles.passportLevelName} numberOfLines={3}>
+                      {passportLevelTitle(passport.level, passport.stats_level_name)}
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.tabBar} accessibilityRole="tablist">
                   {PASSPORT_TABS.map((tab) => (
@@ -382,12 +409,16 @@ export default function UserProfileScreen({ route, navigation }: Props) {
                     />
                   )}
                   {activePassportTab === 'map' && (
-                    <PassportWorldMap cultures={passport.culture_summaries} />
+                    <PassportWorldMap
+                      cultures={passport.culture_summaries}
+                      stamps={passport.stamps}
+                    />
                   )}
                   {activePassportTab === 'timeline' && (
                     <JourneyTimeline
                       username={username}
                       initialEvents={passport.timeline}
+                      embeddedInParentScroll
                     />
                   )}
                   {activePassportTab === 'quests' && (
@@ -565,8 +596,28 @@ const styles = StyleSheet.create({
   passportStatCell: {
     flex: 1,
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
     gap: 2,
+    minWidth: 0,
+  },
+  passportStatCellLevel: {
+    flex: 1.15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    marginLeft: 2,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.colors.accentGreenTint,
+    borderWidth: 1,
+    borderColor: tokens.colors.surfaceDark,
+    minWidth: 0,
+  },
+  passportLevelName: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: tokens.colors.text,
+    textAlign: 'center',
   },
   passportStatValue: {
     fontSize: 20,

@@ -15,6 +15,8 @@ import type { Stamp } from './StampCollection';
 export type StampCardProps = {
   stamp: Stamp;
   locked?: boolean;
+  /** Smaller tile for dense 2-column passport grids. */
+  compact?: boolean;
 };
 
 const RARITY_COLOURS: Record<string, string> = {
@@ -54,7 +56,7 @@ const formatEarned = (iso: string | null | undefined): string => {
   return `${months[d.getMonth()]} ${d.getFullYear()}`;
 };
 
-export function StampCard({ stamp, locked }: StampCardProps) {
+export function StampCard({ stamp, locked, compact }: StampCardProps) {
   const isLocked =
     typeof locked === 'boolean'
       ? locked
@@ -73,26 +75,27 @@ export function StampCard({ stamp, locked }: StampCardProps) {
       accessibilityLabel={a11y}
       style={[
         styles.card,
+        compact && styles.cardCompact,
         { borderColor: swatch },
         isLocked && styles.cardLocked,
       ]}
       testID={`stamp-card-${stamp.id}`}
     >
-      <View style={[styles.stripe, { backgroundColor: swatch }]} />
-      <View style={styles.body}>
+      <View style={[styles.stripe, compact && styles.stripeCompact, { backgroundColor: swatch }]} />
+      <View style={[styles.body, compact && styles.bodyCompact]}>
         <Text
-          style={[styles.name, isLocked && styles.nameLocked]}
+          style={[styles.name, compact && styles.nameCompact, isLocked && styles.nameLocked]}
           numberOfLines={2}
         >
           {stamp.name}
         </Text>
-        <Text style={styles.rarity}>{rLabel}</Text>
+        <Text style={[styles.rarity, compact && styles.rarityCompact]}>{rLabel}</Text>
         {isLocked ? (
-          <Text style={styles.lockGlyph} accessibilityLabel="locked">
+          <Text style={[styles.lockGlyph, compact && styles.lockGlyphCompact]} accessibilityLabel="locked">
             🔒
           </Text>
         ) : dateStr ? (
-          <Text style={styles.date}>{dateStr}</Text>
+          <Text style={[styles.date, compact && styles.dateCompact]}>{dateStr}</Text>
         ) : null}
       </View>
     </View>
@@ -110,6 +113,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     overflow: 'hidden',
   },
+  cardCompact: {
+    width: '100%',
+    aspectRatio: 1,
+    alignSelf: 'stretch',
+    maxHeight: 118,
+    borderRadius: tokens.radius.sm,
+    borderWidth: 1.5,
+  },
   cardLocked: {
     backgroundColor: tokens.colors.surfaceDark,
     opacity: 0.5,
@@ -118,6 +129,9 @@ const styles = StyleSheet.create({
     height: 8,
     width: '100%',
   },
+  stripeCompact: {
+    height: 4,
+  },
   body: {
     flex: 1,
     paddingHorizontal: 10,
@@ -125,10 +139,19 @@ const styles = StyleSheet.create({
     gap: 4,
     justifyContent: 'space-between',
   },
+  bodyCompact: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    gap: 2,
+  },
   name: {
     ...tokens.typography.display,
     fontSize: 14,
     color: tokens.colors.text,
+  },
+  nameCompact: {
+    fontSize: 11,
+    lineHeight: 14,
   },
   nameLocked: {
     color: tokens.colors.bg,
@@ -140,12 +163,22 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  rarityCompact: {
+    fontSize: 9,
+    letterSpacing: 0.3,
+  },
   date: {
     ...tokens.typography.body,
     fontSize: 12,
     color: tokens.colors.textMuted,
   },
+  dateCompact: {
+    fontSize: 10,
+  },
   lockGlyph: {
     fontSize: 18,
+  },
+  lockGlyphCompact: {
+    fontSize: 14,
   },
 });
