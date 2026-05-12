@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { getPublicProfile, getPassport } from '../services/passportService';
 import { extractApiError } from '../services/api';
+import Avatar from '../components/Avatar';
 import PassportCover from '../components/passport/PassportCover';
 import PassportStatsBar from '../components/passport/PassportStatsBar';
 import StampGrid from '../components/passport/StampGrid';
@@ -69,7 +70,7 @@ export default function UserProfilePage() {
 
       {/* Header */}
       <div className="user-profile-header">
-        <div className="user-profile-avatar">{profile.username?.[0]?.toUpperCase() ?? '?'}</div>
+        <Avatar user={profile} size="md" className="user-profile-avatar" />
         <div className="user-profile-identity">
           <h1 className="user-profile-username">@{profile.username}</h1>
           {profile.region && <span className="user-profile-region">📍 {profile.region}</span>}
@@ -77,7 +78,7 @@ export default function UserProfilePage() {
         </div>
         {isOwn && (
           <Link to="/account" className="btn btn-outline btn-sm user-profile-edit-btn">
-            Edit preferences
+            Edit Preferences
           </Link>
         )}
       </div>

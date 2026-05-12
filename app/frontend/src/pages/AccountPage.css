@@ -2,6 +2,19 @@
   max-width: 640px;
 }
 
+.account-page-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+.account-page-back:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
 .account-page-header {
   margin-bottom: 2rem;
 }

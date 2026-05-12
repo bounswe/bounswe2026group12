@@ -2,6 +2,7 @@ import { useContext, useState, useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import NotificationTray from './NotificationTray';
+import Avatar from './Avatar';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -70,24 +71,18 @@ export default function Navbar() {
             <>
               <NotificationTray />
               <div className="navbar-user-menu" ref={menuRef}>
-                <div className="navbar-user-btn-area">
-                  <button
-                    className="navbar-user-btn"
-                    onClick={() => setMenuOpen(o => !o)}
-                    aria-expanded={menuOpen}
-                    aria-haspopup="true"
-                    aria-label={`User menu for @${user.username}`}
-                  >
-                    <span className="navbar-avatar">
-                      {user.username?.[0]?.toUpperCase() ?? '?'}
-                    </span>
-                    <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
-                  </button>
-                  <Link
-                    to={`/users/${user.username}`}
-                    className="navbar-username"
-                  >@{user.username}</Link>
-                </div>
+                <button
+                  type="button"
+                  className="navbar-user-btn"
+                  onClick={() => setMenuOpen(o => !o)}
+                  aria-expanded={menuOpen}
+                  aria-haspopup="true"
+                  aria-label={`User menu for @${user.username}`}
+                >
+                  <Avatar user={user} size="sm" />
+                  <span className="navbar-username">@{user.username}</span>
+                  <span className={`navbar-chevron${menuOpen ? ' open' : ''}`} aria-hidden="true" />
+                </button>
                 {menuOpen && (
                   <div className="navbar-dropdown" role="menu">
                     <Link
@@ -98,7 +93,7 @@ export default function Navbar() {
                       Profile
                     </Link>
                     <Link
-                      to="/account"
+                      to={`/users/${user.username}`}
                       className="navbar-dropdown-item"
                       onClick={() => setMenuOpen(false)}
                     >

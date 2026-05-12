@@ -76,6 +76,21 @@ describe('Navbar', () => {
     expect(link).toHaveAttribute('href', '/profile');
   });
 
+  it('routes "My Account" to the user\'s public profile by username', () => {
+    renderNavbar({ id: 1, username: 'eren' });
+    fireEvent.click(screen.getByRole('button', { name: /@eren/i }));
+    const link = screen.getByRole('link', { name: /my account/i });
+    expect(link).toHaveAttribute('href', '/users/eren');
+  });
+
+  it('renders @username inside the toggle button (no separate profile link)', () => {
+    renderNavbar({ id: 1, username: 'eren' });
+    const toggle = screen.getByRole('button', { name: /@eren/i });
+    expect(toggle.textContent).toContain('@eren');
+    // The username text should not be a standalone link in the header anymore.
+    expect(screen.queryByRole('link', { name: '@eren' })).not.toBeInTheDocument();
+  });
+
   it('renders a Calendar link to /calendar', () => {
     renderNavbar();
     const link = screen.getByRole('link', { name: /calendar/i });

@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { extractApiError } from '../services/api';
 import { updateMe } from '../services/authService';
@@ -97,6 +98,11 @@ export default function AccountPage() {
 
   return (
     <main className="page-card account-page">
+      {user?.username && (
+        <Link to={`/users/${user.username}`} className="account-page-back">
+          ← Back to my profile
+        </Link>
+      )}
       <div className="account-page-header">
         <h1>My Account</h1>
         <p className="account-page-sub">Manage your cultural preferences.</p>
