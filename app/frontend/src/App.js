@@ -19,6 +19,7 @@ import InboxPage from './pages/InboxPage';
 import ThreadPage from './pages/ThreadPage';
 import OnboardingPage from './pages/OnboardingPage';
 import ProfilePage from './pages/ProfilePage';
+import UserProfilePage from './pages/UserProfilePage';
 import MapPage from './pages/MapPage';
 import ExplorePage from './pages/ExplorePage';
 import EventDetailPage from './pages/EventDetailPage';
@@ -128,6 +129,7 @@ export default function App() {
             element={<ProtectedRoute><ModerationPage /></ProtectedRoute>}
           />
 
+          <Route path="/users/:username" element={<UserProfilePage />} />
           <Route path="/heritage/:id" element={<HeritagePage />} />
           <Route path="/heritage/:id/map" element={<HeritageMapPage />} />
           <Route path="/calendar" element={<CalendarPage />} />

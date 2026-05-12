@@ -65,29 +65,42 @@
   position: relative;
 }
 
+.navbar-user-btn-area {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.navbar-user-btn-area:hover {
+  background: var(--color-surface-dark);
+  border-color: var(--color-primary);
+}
+
+.navbar-user-btn-area:hover .navbar-username {
+  color: var(--color-surface);
+}
+
+.navbar-user-btn-area:hover .navbar-chevron {
+  border-color: var(--color-surface);
+}
+
 .navbar-user-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   background: none;
-  border: 1.5px solid var(--color-border);
-  border-radius: 999px;
-  padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .navbar-user-btn:hover {
-  background: var(--color-surface-dark);
-  border-color: var(--color-primary);
-}
-
-.navbar-user-btn:hover .navbar-username {
-  color: var(--color-surface);
-}
-
-.navbar-user-btn:hover .navbar-chevron {
-  border-color: var(--color-surface);
+  background: none;
 }
 
 .navbar-avatar {
