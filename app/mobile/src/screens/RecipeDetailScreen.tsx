@@ -15,6 +15,7 @@ import { removeRating, submitRating } from '../services/ratingService';
 import { EndangeredHeritageSection } from '../components/heritage/EndangeredHeritageSection';
 import { HeritageBadge } from '../components/heritage/HeritageBadge';
 import { RecipeCommentsSection } from '../components/recipe/RecipeCommentsSection';
+import { RecipeStepsSection } from '../components/recipe/RecipeStepsSection';
 import { DidYouKnowSection } from '../components/cultural/DidYouKnowSection';
 import { fetchCulturalFactsByRegion, type CulturalFact } from '../services/culturalFactService';
 import type { RootStackParamList } from '../navigation/types';
@@ -571,6 +572,8 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
           ) : (
             <Text style={styles.muted}>No description.</Text>
           )}
+
+          <RecipeStepsSection steps={recipe.steps ?? []} />
 
           <View style={styles.ingredientsHeader}>
             <Text style={styles.sectionTitle}>Ingredients</Text>
