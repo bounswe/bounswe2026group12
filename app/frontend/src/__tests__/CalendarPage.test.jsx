@@ -89,6 +89,19 @@ describe('CalendarPage', () => {
     expect(within(panel).getByRole('heading', { name: /nevruz/i })).toBeInTheDocument();
     expect(within(panel).getByRole('link', { name: /sumalak/i })).toHaveAttribute('href', '/recipes/10');
   });
+
+  it('renders only the selected month panel when the month filter is set', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 100, name: 'Spring Equinox', date_rule: 'fixed:03-21', region: { id: 1, name: 'Anatolia' }, description: '', recipes: [] },
+    ]);
+    const { container } = renderPage();
+    await screen.findByText('Spring Equinox');
+    expect(container.querySelectorAll('[data-testid^="calendar-month-"]').length).toBe(12);
+    await userEvent.selectOptions(screen.getByLabelText(/month/i), '03');
+    await waitFor(() => expect(culturalEventService.fetchCulturalEvents).toHaveBeenLastCalledWith({ month: '03', region: '' }));
+    expect(container.querySelectorAll('[data-testid^="calendar-month-"]').length).toBe(1);
+    expect(container.querySelector('[data-testid="calendar-month-3"]')).toBeInTheDocument();
+  });
 });
 
 describe('CalendarPage — lunar resolution + subline (#669)', () => {

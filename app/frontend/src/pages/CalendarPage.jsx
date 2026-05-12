@@ -119,7 +119,11 @@ export default function CalendarPage() {
       {loading && <p className="page-status">Loading…</p>}
 
       <div className="calendar-grid">
-        {MONTHS.map((label, idx) => {
+        {(month
+          ? [parseInt(month, 10) - 1].filter((i) => i >= 0 && i <= 11)
+          : MONTHS.map((_, i) => i)
+        ).map((idx) => {
+          const label = MONTHS[idx];
           const monthEvents = grouped.byMonth[idx];
           return (
             <section
