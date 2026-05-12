@@ -46,7 +46,7 @@ describe('storyService — new functions', () => {
   it('fetchStories calls GET /api/stories/ and returns data', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Test' }] });
     const result = await storyService.fetchStories();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Test' }]);
   });
 
@@ -97,12 +97,28 @@ describe('fetchMyStories', () => {
   it('GETs /api/stories/?author=<id> and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 3, title: 'Mine' }] });
     const result = await fetchMyStories(42);
-    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { author: 42 } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { author: 42, page_size: 100 } });
     expect(result).toEqual([{ id: 3, title: 'Mine' }]);
   });
 
   it('unwraps paginated DRF responses', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [{ id: 8 }] } });
     expect(await fetchMyStories(42)).toEqual([{ id: 8 }]);
+  });
+});
+
+describe('fetchStories — pagination cap (#851)', () => {
+  it('passes page_size=100', async () => {
+    apiClient.get.mockResolvedValue({ data: { count: 1, next: null, results: [{ id: 1 }] } });
+    await storyService.fetchStories();
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { page_size: 100 } });
+  });
+});
+
+describe('fetchMyStories — pagination cap (#851)', () => {
+  it('keeps author param and adds page_size=100', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 7 }] });
+    await fetchMyStories(42);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/stories/', { params: { author: 42, page_size: 100 } });
   });
 });

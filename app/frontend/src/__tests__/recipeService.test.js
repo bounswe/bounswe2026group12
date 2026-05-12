@@ -125,7 +125,7 @@ describe('fetchRecipes', () => {
   it('calls GET /api/recipes/ and returns data', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Baklava' }] });
     const result = await fetchRecipes();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/');
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Baklava' }]);
   });
 });
@@ -285,7 +285,7 @@ describe('fetchMyRecipes', () => {
   it('GETs /api/recipes/?author=<id> and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 1, title: 'Mine' }] });
     const result = await fetchMyRecipes(42);
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42 } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42, page_size: 100 } });
     expect(result).toEqual([{ id: 1, title: 'Mine' }]);
   });
 
@@ -299,12 +299,36 @@ describe('fetchMyBookmarks', () => {
   it('GETs /api/recipes/?bookmarked=true and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 9, title: 'Saved' }] });
     const result = await fetchMyBookmarks();
-    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true' } });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true', page_size: 100 } });
     expect(result).toEqual([{ id: 9, title: 'Saved' }]);
   });
 
   it('unwraps paginated DRF responses', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [{ id: 10 }] } });
     expect(await fetchMyBookmarks()).toEqual([{ id: 10 }]);
+  });
+});
+
+describe('fetchRecipes — pagination cap (#851)', () => {
+  it('passes page_size=100 so the list endpoint returns a full page', async () => {
+    apiClient.get.mockResolvedValue({ data: { count: 1, next: null, results: [{ id: 1 }] } });
+    await fetchRecipes();
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { page_size: 100 } });
+  });
+});
+
+describe('fetchMyRecipes — pagination cap (#851)', () => {
+  it('keeps author param and adds page_size=100', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 7 }] });
+    await fetchMyRecipes(42);
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { author: 42, page_size: 100 } });
+  });
+});
+
+describe('fetchMyBookmarks — pagination cap (#851)', () => {
+  it('keeps bookmarked=true and adds page_size=100', async () => {
+    apiClient.get.mockResolvedValue({ data: [{ id: 9 }] });
+    await fetchMyBookmarks();
+    expect(apiClient.get).toHaveBeenCalledWith('/api/recipes/', { params: { bookmarked: 'true', page_size: 100 } });
   });
 });

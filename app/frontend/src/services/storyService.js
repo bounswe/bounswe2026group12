@@ -11,7 +11,7 @@ export async function fetchStory(id) {
 
 export async function fetchStories() {
   if (USE_MOCK) return MOCK_STORIES_LIST;
-  const response = await apiClient.get('/api/stories/');
+  const response = await apiClient.get('/api/stories/', { params: { page_size: 100 } });
   return response.data.results ?? response.data;
 }
 
@@ -55,6 +55,6 @@ export async function unpublishStory(id) {
  */
 export async function fetchMyStories(authorId) {
   if (USE_MOCK) return MOCK_STORIES_LIST.filter((s) => s.author === authorId);
-  const response = await apiClient.get('/api/stories/', { params: { author: authorId } });
+  const response = await apiClient.get('/api/stories/', { params: { author: authorId, page_size: 100 } });
   return response.data.results ?? response.data;
 }

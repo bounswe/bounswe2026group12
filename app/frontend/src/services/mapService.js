@@ -10,6 +10,6 @@ export async function fetchMapRegions() {
 }
 
 export async function fetchMapRegionContent(regionId) {
-  const response = await apiClient.get(`/api/map/regions/${regionId}/content/`);
+  const response = await apiClient.get(`/api/map/regions/${regionId}/content/`, { params: { page_size: 100 } });
   return response.data.results ?? response.data;
 }
