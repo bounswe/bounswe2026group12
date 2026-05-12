@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event';
 import CultureGrid from '../components/passport/CultureGrid';
 
 const cultures = [
-  { id: 1, name: 'Ottoman',   emblem: '🕌', stamp_rarity: 'gold',   recipe_count: 5, story_count: 2, heritage_count: 1, ingredients_count: 10, favorite_dish: 'Baklava', upgrade_progress: 70, upgrade_max: 100 },
-  { id: 2, name: 'Aegean',    emblem: '🫒', stamp_rarity: 'silver', recipe_count: 3, story_count: 1, heritage_count: 0, ingredients_count: 6,  favorite_dish: 'Zeytinyağlı', upgrade_progress: 40, upgrade_max: 100 },
+  { culture: 'Ottoman', rarity: 'gold',   recipes_tried: 5, stories_saved: 2, interactions: 10 },
+  { culture: 'Aegean',  rarity: 'silver', recipes_tried: 3, stories_saved: 1, interactions: 6  },
 ];
 
 describe('CultureGrid', () => {
@@ -28,13 +28,12 @@ describe('CultureGrid', () => {
     render(<CultureGrid cultures={cultures} />);
     await userEvent.click(screen.getByRole('button', { name: /ottoman/i }));
     expect(screen.getByRole('region', { name: /ottoman details/i })).toBeInTheDocument();
-    expect(screen.getByText('Baklava')).toBeInTheDocument();
   });
 
-  it('detail panel shows stat values', async () => {
+  it('detail panel shows recipes_tried value', async () => {
     render(<CultureGrid cultures={cultures} />);
     await userEvent.click(screen.getByRole('button', { name: /ottoman/i }));
-    expect(screen.getByText('5')).toBeInTheDocument(); // recipe_count
+    expect(screen.getByText('5')).toBeInTheDocument();
   });
 
   it('close button hides the detail panel', async () => {

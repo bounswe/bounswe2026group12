@@ -5,27 +5,29 @@ function formatDeadline(iso) {
 }
 
 function QuestItem({ quest }) {
-  const pct = quest.max_progress > 0 ? Math.min(100, (quest.progress / quest.max_progress) * 100) : 0;
+  const completed = Boolean(quest.completed_at);
+  const pct = quest.target_count > 0 ? Math.min(100, (quest.progress / quest.target_count) * 100) : 0;
+  const rewardLabel = quest.reward_value ?? quest.reward_type ?? '';
 
   return (
-    <div className={`quest-item${quest.completed ? ' quest-item--done' : ''}`}>
+    <div className={`quest-item${completed ? ' quest-item--done' : ''}`}>
       <div className="quest-header">
         <span className="quest-name">{quest.name}</span>
-        {quest.completed && <span className="quest-done-badge">✓ Done</span>}
+        {completed && <span className="quest-done-badge">✓ Done</span>}
       </div>
       <p className="quest-description">{quest.description}</p>
-      {!quest.completed && (
-        <div className="quest-progress-bar" role="progressbar" aria-valuenow={quest.progress} aria-valuemax={quest.max_progress}>
+      {!completed && (
+        <div className="quest-progress-bar" role="progressbar" aria-valuenow={quest.progress} aria-valuemax={quest.target_count}>
           <div className="quest-progress-fill" style={{ width: `${pct}%` }} />
         </div>
       )}
       <div className="quest-meta">
-        <span className="quest-reward">🎁 {quest.reward}</span>
-        {quest.deadline && !quest.completed && (
+        {rewardLabel && <span className="quest-reward">🎁 {rewardLabel}</span>}
+        {quest.deadline && !completed && (
           <span className="quest-deadline">⏰ {formatDeadline(quest.deadline)}</span>
         )}
-        {!quest.completed && (
-          <span className="quest-count">{quest.progress}/{quest.max_progress}</span>
+        {!completed && (
+          <span className="quest-count">{quest.progress}/{quest.target_count}</span>
         )}
       </div>
     </div>
@@ -37,8 +39,8 @@ export default function QuestList({ quests }) {
     return <p className="passport-empty">No quests yet. Keep exploring to unlock quests!</p>;
   }
 
-  const active    = quests.filter(q => !q.completed);
-  const completed = quests.filter(q => q.completed);
+  const active    = quests.filter(q => !q.completed_at);
+  const completed = quests.filter(q => Boolean(q.completed_at));
 
   return (
     <div className="quest-list-wrapper">

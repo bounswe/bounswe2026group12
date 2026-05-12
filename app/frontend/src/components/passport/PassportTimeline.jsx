@@ -22,18 +22,18 @@ export default function PassportTimeline({ events }) {
     <ol className="passport-timeline">
       {events.map(event => (
         <li key={event.id} className="timeline-event">
-          <span className="timeline-icon" aria-hidden="true">{EVENT_ICONS[event.type] ?? '📌'}</span>
+          <span className="timeline-icon" aria-hidden="true">{EVENT_ICONS[event.event_type] ?? '📌'}</span>
           <div className="timeline-body">
             <p className="timeline-description">
-              {event.description}
-              {event.recipe_id && (
-                <Link to={`/recipes/${event.recipe_id}`} className="timeline-link"> · {event.recipe_title}</Link>
+              {event.event_type?.replace('_', ' ')}
+              {event.related_recipe && (
+                <Link to={`/recipes/${event.related_recipe}`} className="timeline-link"> · Recipe #{event.related_recipe}</Link>
               )}
-              {event.story_id && (
-                <Link to={`/stories/${event.story_id}`} className="timeline-link"> · {event.story_title}</Link>
+              {event.related_story && (
+                <Link to={`/stories/${event.related_story}`} className="timeline-link"> · Story #{event.related_story}</Link>
               )}
             </p>
-            <time className="timeline-date" dateTime={event.date}>{formatDate(event.date)}</time>
+            <time className="timeline-date" dateTime={event.timestamp}>{formatDate(event.timestamp)}</time>
           </div>
         </li>
       ))}

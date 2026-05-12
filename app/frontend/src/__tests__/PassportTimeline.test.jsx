@@ -3,11 +3,11 @@ import { MemoryRouter } from 'react-router-dom';
 import PassportTimeline from '../components/passport/PassportTimeline';
 
 const events = [
-  { id: 1, type: 'recipe_tried',    date: '2025-04-20T00:00:00Z', description: 'Tried Baklava',      recipe_id: 1, recipe_title: 'Baklava', story_id: null },
-  { id: 2, type: 'story_saved',     date: '2025-04-18T00:00:00Z', description: 'Saved a story',      recipe_id: null, story_id: 3, story_title: "Grandma's Kitchen" },
-  { id: 3, type: 'stamp_earned',    date: '2025-03-15T00:00:00Z', description: 'Earned a stamp',     recipe_id: null, story_id: null },
-  { id: 4, type: 'quest_completed', date: '2025-02-10T00:00:00Z', description: 'Quest done',         recipe_id: null, story_id: null },
-  { id: 5, type: 'heritage_shared', date: '2025-01-05T00:00:00Z', description: 'Shared heritage',    recipe_id: 2, recipe_title: 'Pilaf', story_id: null },
+  { id: 1, event_type: 'recipe_tried',    timestamp: '2025-04-20T00:00:00Z', related_recipe: 1, related_story: null },
+  { id: 2, event_type: 'story_saved',     timestamp: '2025-04-18T00:00:00Z', related_recipe: null, related_story: 3 },
+  { id: 3, event_type: 'stamp_earned',    timestamp: '2025-03-15T00:00:00Z', related_recipe: null, related_story: null },
+  { id: 4, event_type: 'quest_completed', timestamp: '2025-02-10T00:00:00Z', related_recipe: null, related_story: null },
+  { id: 5, event_type: 'heritage_shared', timestamp: '2025-01-05T00:00:00Z', related_recipe: 2, related_story: null },
 ];
 
 function renderTimeline(evts) {
@@ -25,22 +25,22 @@ describe('PassportTimeline', () => {
     expect(screen.getByText(/no passport events yet/i)).toBeInTheDocument();
   });
 
-  it('renders all event descriptions', () => {
+  it('renders event type labels', () => {
     renderTimeline(events);
-    expect(screen.getByText(/tried baklava/i)).toBeInTheDocument();
-    expect(screen.getByText(/saved a story/i)).toBeInTheDocument();
-    expect(screen.getByText(/earned a stamp/i)).toBeInTheDocument();
+    expect(screen.getByText(/recipe tried/i)).toBeInTheDocument();
+    expect(screen.getByText(/story saved/i)).toBeInTheDocument();
+    expect(screen.getByText(/stamp earned/i)).toBeInTheDocument();
   });
 
-  it('recipe_tried event has link to recipe', () => {
+  it('recipe event has link to recipe using id', () => {
     renderTimeline(events);
-    const link = screen.getByRole('link', { name: /baklava/i });
+    const link = screen.getByRole('link', { name: /recipe #1/i });
     expect(link).toHaveAttribute('href', '/recipes/1');
   });
 
-  it('story_saved event has link to story', () => {
+  it('story event has link to story using id', () => {
     renderTimeline(events);
-    const link = screen.getByRole('link', { name: /grandma/i });
+    const link = screen.getByRole('link', { name: /story #3/i });
     expect(link).toHaveAttribute('href', '/stories/3');
   });
 

@@ -1,4 +1,3 @@
-import { resolveTheme } from '../../utils/culturalCalendar';
 import './PassportCover.css';
 
 const THEME_LABELS = {
@@ -19,13 +18,13 @@ const THEME_LABELS = {
   easter:                'Easter',
 };
 
-export default function PassportCover({ profile, level }) {
-  const theme = resolveTheme(profile, level, new Date());
-  const label = THEME_LABELS[theme] ?? theme;
+export default function PassportCover({ theme }) {
+  const resolvedTheme = theme ?? 'classic_traveler';
+  const label = THEME_LABELS[resolvedTheme] ?? resolvedTheme;
 
   return (
     <div
-      className={`passport-cover passport-cover--${theme}`}
+      className={`passport-cover passport-cover--${resolvedTheme}`}
       role="img"
       aria-label={`Cultural Passport — ${label} theme`}
     >

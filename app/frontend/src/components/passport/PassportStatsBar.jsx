@@ -9,7 +9,7 @@ const LEVEL_COLORS = {
   6: { cls: 'level-master',    label: 'World Kitchen Master' },
 };
 
-export default function PassportStatsBar({ stats }) {
+export default function PassportStatsBar({ stats, level }) {
   if (!stats) {
     return (
       <div className="passport-stats-bar passport-stats-bar--skeleton">
@@ -20,7 +20,7 @@ export default function PassportStatsBar({ stats }) {
     );
   }
 
-  const levelInfo = LEVEL_COLORS[stats.level] ?? { cls: 'level-bronze', label: `Level ${stats.level}` };
+  const levelInfo = LEVEL_COLORS[level] ?? { cls: 'level-bronze', label: stats.level_name ?? `Level ${level}` };
 
   return (
     <div className="passport-stats-bar">

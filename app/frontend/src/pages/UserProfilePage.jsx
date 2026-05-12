@@ -1,13 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import {
-  getPublicProfile,
-  getPassportStats,
-  getPassportStamps,
-  getPassportTimeline,
-  getPassportQuests,
-} from '../services/passportService';
+import { getPublicProfile, getPassport } from '../services/passportService';
 import { extractApiError } from '../services/api';
 import PassportCover from '../components/passport/PassportCover';
 import PassportStatsBar from '../components/passport/PassportStatsBar';
@@ -25,15 +19,11 @@ export default function UserProfilePage() {
   const { user: currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [profile, setProfile]           = useState(null);
-  const [loading, setLoading]           = useState(true);
-  const [error, setError]               = useState('');
-
-  const [passportStats, setPassportStats]   = useState(null);
-  const [stamps, setStamps]                 = useState([]);
-  const [timeline, setTimeline]             = useState([]);
-  const [quests, setQuests]                 = useState([]);
-  const [tab, setTab]                       = useState('stamps');
+  const [profile, setProfile]   = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState('');
+  const [passport, setPassport] = useState(null);
+  const [tab, setTab]           = useState('stamps');
 
   const isOwn = currentUser?.username === username;
 
@@ -55,17 +45,7 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     if (!username) return;
-    Promise.allSettled([
-      getPassportStats(username),
-      getPassportStamps(username),
-      getPassportTimeline(username),
-      getPassportQuests(username),
-    ]).then(([statsRes, stampsRes, timelineRes, questsRes]) => {
-      if (statsRes.status    === 'fulfilled') setPassportStats(statsRes.value);
-      if (stampsRes.status   === 'fulfilled') setStamps(stampsRes.value);
-      if (timelineRes.status === 'fulfilled') setTimeline(timelineRes.value);
-      if (questsRes.status   === 'fulfilled') setQuests(questsRes.value);
-    });
+    getPassport(username).then(setPassport).catch(() => {});
   }, [username]);
 
   if (loading) return <p className="page-status">Loading…</p>;
@@ -135,8 +115,8 @@ export default function UserProfilePage() {
 
       {/* Cultural Passport */}
       <section className="user-profile-passport">
-        <PassportCover profile={profile} level={passportStats?.level} />
-        <PassportStatsBar stats={passportStats} />
+        <PassportCover theme={passport?.active_theme} />
+        <PassportStatsBar stats={passport?.stats} level={passport?.level} />
 
         <nav className="passport-tab-nav" aria-label="Passport sections">
           {TABS.map(t => (
@@ -152,11 +132,11 @@ export default function UserProfilePage() {
         </nav>
 
         <div className="passport-tab-content">
-          {tab === 'stamps'   && <StampGrid stamps={stamps} />}
-          {tab === 'cultures' && <CultureGrid cultures={passportStats?.cultures} />}
-          {tab === 'map'      && <PassportMap cultures={passportStats?.cultures} />}
-          {tab === 'timeline' && <PassportTimeline events={timeline} />}
-          {tab === 'quests'   && <QuestList quests={quests} />}
+          {tab === 'stamps'   && <StampGrid stamps={passport?.stamps ?? []} />}
+          {tab === 'cultures' && <CultureGrid cultures={passport?.culture_summaries ?? []} />}
+          {tab === 'map'      && <PassportMap cultures={passport?.culture_summaries ?? []} />}
+          {tab === 'timeline' && <PassportTimeline events={passport?.timeline ?? []} />}
+          {tab === 'quests'   && <QuestList quests={passport?.active_quests ?? []} />}
         </div>
       </section>
 

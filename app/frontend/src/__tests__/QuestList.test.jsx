@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import QuestList from '../components/passport/QuestList';
 
 const quests = [
-  { id: 1, name: 'Spice Trader',  description: 'Try 5 saffron recipes', progress: 3, max_progress: 5,  reward: 'Spice badge',  deadline: null,                    completed: false },
-  { id: 2, name: 'Ramadan Table', description: 'Try 3 Ramadan recipes', progress: 3, max_progress: 3,  reward: 'Gold Crescent', deadline: '2025-04-10T00:00:00Z', completed: true  },
-  { id: 3, name: 'Timed Quest',   description: 'Limited time quest',    progress: 1, max_progress: 5,  reward: 'Badge',         deadline: '2025-12-31T00:00:00Z', completed: false },
+  { id: 1, name: 'Spice Trader',  description: 'Try 5 saffron recipes', progress: 3, target_count: 5, reward_type: 'badge', reward_value: 'Spice badge',   deadline: null,                    completed_at: null },
+  { id: 2, name: 'Ramadan Table', description: 'Try 3 Ramadan recipes', progress: 3, target_count: 3, reward_type: 'stamp', reward_value: 'Gold Crescent', deadline: '2025-04-10T00:00:00Z', completed_at: '2025-04-09T00:00:00Z' },
+  { id: 3, name: 'Timed Quest',   description: 'Limited time quest',    progress: 1, target_count: 5, reward_type: 'badge', reward_value: 'Badge',          deadline: '2025-12-31T00:00:00Z', completed_at: null },
 ];
 
 describe('QuestList', () => {
@@ -29,7 +29,7 @@ describe('QuestList', () => {
     expect(container.querySelector('.quest-progress-bar')).toBeInTheDocument();
   });
 
-  it('completed quest appears in Completed section', () => {
+  it('completed quest (completed_at set) appears in Completed section', () => {
     render(<QuestList quests={quests} />);
     expect(screen.getByText('Completed')).toBeInTheDocument();
     expect(screen.getByText('Ramadan Table')).toBeInTheDocument();

@@ -12,17 +12,16 @@ export default function CultureGrid({ cultures }) {
   return (
     <div className="culture-grid-wrapper">
       <div className="culture-grid">
-        {cultures.map(culture => (
+        {cultures.map(entry => (
           <button
-            key={culture.id}
-            className={`culture-card${selected?.id === culture.id ? ' culture-card--active' : ''}`}
-            onClick={() => setSelected(selected?.id === culture.id ? null : culture)}
-            aria-expanded={selected?.id === culture.id}
+            key={entry.culture}
+            className={`culture-card${selected?.culture === entry.culture ? ' culture-card--active' : ''}`}
+            onClick={() => setSelected(selected?.culture === entry.culture ? null : entry)}
+            aria-expanded={selected?.culture === entry.culture}
           >
-            <span className="culture-card-emblem">{culture.emblem}</span>
-            <span className="culture-card-name">{culture.name}</span>
-            <span className={`culture-card-rarity culture-card-rarity--${culture.stamp_rarity}`}>
-              {culture.stamp_rarity}
+            <span className="culture-card-name">{entry.culture}</span>
+            <span className={`culture-card-rarity culture-card-rarity--${entry.rarity}`}>
+              {entry.rarity}
             </span>
           </button>
         ))}
