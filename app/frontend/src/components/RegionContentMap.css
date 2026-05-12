@@ -1,0 +1,31 @@
+.region-content-map {
+  position: relative;
+  width: 100%;
+}
+
+.region-content-map svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.region-content-map-popover {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--color-surface, #FAF7EF);
+  border: 1.5px solid var(--color-surface-dark, #3D1500);
+  border-radius: var(--radius-md, 8px);
+  padding: 0.55rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08));
+  font-size: 0.875rem;
+  pointer-events: none;
+  max-width: 220px;
+}
+
+.region-content-map-popover strong {
+  color: var(--color-surface-dark, #3D1500);
+}
