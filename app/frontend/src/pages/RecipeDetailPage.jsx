@@ -70,6 +70,14 @@ export default function RecipeDetailPage() {
   }, [tryingRecipe, tried, id]);
 
   useEffect(() => {
+    setChecked(new Set());
+    setShowShoppingList(false);
+    setOpenSubPanel(null);
+    setSubstitutes({});
+    setAppliedSubs({});
+  }, [id]);
+
+  useEffect(() => {
     let cancelled = false;
     fetchRegions().then((r) => { if (!cancelled) setRegions(r); }).catch(() => {});
     fetchRecipe(id)
@@ -165,10 +173,10 @@ export default function RecipeDetailPage() {
   const isAuthor = user && user.id === recipe.author;
   const regionName = regions.find((r) => r.id === recipe.region)?.name;
 
-  const hasConverted = recipe.ingredients.some((ri) => ri.converted_amount);
+  const hasConverted = (recipe.ingredients ?? []).some((ri) => ri.converted_amount);
 
   // Shopping list: unchecked ingredients with substitutions applied
-  const shoppingItems = recipe.ingredients
+  const shoppingItems = (recipe.ingredients ?? [])
     .filter((ri) => !checked.has(ri.ingredient))
     .map((ri) => {
       const sub = appliedSubs[ri.ingredient];
@@ -217,7 +225,7 @@ export default function RecipeDetailPage() {
               className="btn btn-outline btn-sm"
               onClick={() =>
                 navigate(
-                  `/inbox?compose=true&to=${recipe.author}&toUsername=${recipe.author_username}` +
+                  `/inbox?compose=true&to=${recipe.author}&toUsername=${encodeURIComponent(recipe.author_username)}` +
                   `&recipeId=${recipe.id}&recipeTitle=${encodeURIComponent(recipe.title)}`
                 )
               }
@@ -286,7 +294,7 @@ export default function RecipeDetailPage() {
         </div>
 
         <ul className="ingredients-list">
-          {recipe.ingredients.map((ri) => {
+          {(recipe.ingredients ?? []).map((ri, index) => {
             const isChecked = checked.has(ri.ingredient);
             const sub = appliedSubs[ri.ingredient];
             const amount = useConverted && ri.converted_amount ? ri.converted_amount : ri.amount;
@@ -294,7 +302,7 @@ export default function RecipeDetailPage() {
             const isSubOpen = openSubPanel === ri.ingredient;
 
             return (
-              <li key={ri.ingredient} className={`ingredient-item${isChecked ? ' checked' : ''}`}>
+              <li key={`${ri.ingredient}-${index}`} className={`ingredient-item${isChecked ? ' checked' : ''}`}>
                 <div className="ingredient-row">
                   {user && (
                     <input

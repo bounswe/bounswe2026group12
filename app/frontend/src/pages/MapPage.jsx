@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -10,7 +10,9 @@ export default function MapPage() {
   const [selected, setSelected] = useState(null);
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [contentLoading, setContentLoading] = useState(false);
+  const currentRegionId = useRef(null);
 
   useEffect(() => {
     fetchMapRegions()
@@ -18,15 +20,25 @@ export default function MapPage() {
         setRegions(data);
         if (data.length > 0) selectRegion(data[0]);
       })
+      .catch(() => setLoadError('Could not load regions.'))
       .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function selectRegion(region) {
     setSelected(region);
     setContentLoading(true);
+    currentRegionId.current = region.id;
     fetchMapRegionContent(region.id)
-      .then(setContent)
-      .finally(() => setContentLoading(false));
+      .then((data) => {
+        if (currentRegionId.current === region.id) setContent(data);
+      })
+      .catch(() => {
+        if (currentRegionId.current === region.id) setContent([]);
+      })
+      .finally(() => {
+        if (currentRegionId.current === region.id) setContentLoading(false);
+      });
   }
 
   const recipes = content.filter((c) => c.content_type === 'recipe');
@@ -75,6 +87,7 @@ export default function MapPage() {
             </MapContainer>
           )}
           {loading && <div className="map-loading">Loading map…</div>}
+          {loadError && <div className="map-loading map-error">{loadError}</div>}
         </div>
 
         <aside className="map-panel">
@@ -82,8 +95,8 @@ export default function MapPage() {
             <>
               <h2 className="map-panel-title">{selected.name}</h2>
               <div className="map-panel-counts">
-                <span>{selected.content_count.recipes} recipes</span>
-                <span>{selected.content_count.stories} stories</span>
+                <span>{selected.content_count?.recipes ?? 0} recipes</span>
+                <span>{selected.content_count?.stories ?? 0} stories</span>
               </div>
 
               {contentLoading && <p className="map-panel-empty">Loading…</p>}
