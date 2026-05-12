@@ -69,7 +69,9 @@ export async function submitUnit(name) {
 
 export async function fetchRecipes(params = {}) {
   if (USE_MOCK) return MOCK_RECIPES_LIST;
-  const response = await apiClient.get('/api/recipes/', { params });
+  const response = Object.keys(params).length > 0
+    ? await apiClient.get('/api/recipes/', { params })
+    : await apiClient.get('/api/recipes/');
   return response.data.results ?? response.data;
 }
 
