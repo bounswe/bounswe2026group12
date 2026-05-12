@@ -13,6 +13,7 @@ import MapDiscoveryScreen from '../screens/MapDiscoveryScreen';
 import MessageThreadScreen from '../screens/MessageThreadScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 import RecipeCreateScreen from '../screens/RecipeCreateScreen';
 import RecipeDetailScreen from '../screens/RecipeDetailScreen';
 import RecipeEditScreen from '../screens/RecipeEditScreen';
@@ -108,6 +109,11 @@ export function PublicStackNavigator() {
         name="Onboarding"
         component={OnboardingScreen}
         options={{ title: 'Cultural Onboarding' }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: 'Edit profile', headerShown: false }}
       />
       <Stack.Screen
         name="MapDiscovery"
