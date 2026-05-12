@@ -269,28 +269,27 @@ export default function HeritageMapScreen({ route, navigation }: Props) {
                 anchor={{ x: 0.5, y: 0.5 }}
               >
                 <View collapsable={false} style={styles.regionMarkerWrap}>
-                  <View
+                  <Text
                     style={[
-                      styles.regionMarker,
+                      styles.regionMarkerDot,
                       {
-                        width: size,
-                        height: size,
-                        borderRadius: size / 2,
-                        backgroundColor: isTop
+                        fontSize: size,
+                        color: isTop
                           ? tokens.colors.accentGreen
                           : tokens.colors.accentMustard,
                       },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.regionMarkerCount,
-                        { fontSize: size >= 56 ? 20 : size >= 44 ? 16 : 13 },
-                      ]}
-                    >
-                      {cluster.members.length}
-                    </Text>
-                  </View>
+                    ●
+                  </Text>
+                  <Text
+                    style={[
+                      styles.regionMarkerCount,
+                      { fontSize: size >= 56 ? 22 : size >= 44 ? 18 : 14 },
+                    ]}
+                  >
+                    {cluster.members.length}
+                  </Text>
                 </View>
               </Marker>
             );
@@ -439,19 +438,21 @@ const styles = StyleSheet.create({
   emptyBody: { fontSize: 15, color: tokens.colors.textMuted, lineHeight: 22 },
   regionMarkerWrap: {
     backgroundColor: 'transparent',
-    padding: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  regionMarker: {
-    borderWidth: 3,
-    borderColor: tokens.colors.surfaceDark,
-    alignItems: 'center',
-    justifyContent: 'center',
+  regionMarkerDot: {
+    textAlign: 'center',
+    lineHeight: undefined,
+    textShadowColor: tokens.colors.surfaceDark,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 1.5,
   },
   regionMarkerCount: {
+    position: 'absolute',
     fontWeight: '900',
     color: tokens.colors.surfaceDark,
+    textAlign: 'center',
   },
   legend: {
     position: 'absolute',
