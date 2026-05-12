@@ -67,11 +67,8 @@ describe('SearchPage', () => {
     await waitFor(() => {
       expect(searchService.search).toHaveBeenCalledWith('soup', 'Aegean', '', {
         ingredient: 'Tomato',
-        ingredient_exclude: '',
         diet: '',
-        diet_exclude: '',
         event: '',
-        event_exclude: '',
         meal_type: '',
       });
     });
@@ -113,7 +110,7 @@ describe('SearchPage', () => {
     searchService.search.mockResolvedValue([]);
     renderPage('?q=&region=Aegean&ingredient=yogurt&meal_type=');
     await waitFor(() => screen.getByText(/no results/i));
-    expect(screen.getByText(/ingredient\+: yogurt/i)).toBeInTheDocument();
+    expect(screen.getByText(/ingredient: yogurt/i)).toBeInTheDocument();
     expect(screen.getByText(/region: aegean/i)).toBeInTheDocument();
   });
 
@@ -167,11 +164,8 @@ describe('SearchPage', () => {
     await waitFor(() => {
       expect(searchService.search).toHaveBeenCalledWith('soup', '', '', {
         ingredient: '',
-        ingredient_exclude: '',
         diet: '',
-        diet_exclude: '',
         event: '',
-        event_exclude: '',
         meal_type: '',
       });
     });
@@ -183,25 +177,31 @@ describe('SearchPage', () => {
     expect(await screen.findByText(/ranked using your cultural onboarding profile/i)).toBeInTheDocument();
   });
 
-  it('applies include/exclude chips and region together in URL on submit', async () => {
+  it('toggles a chip on click and includes it in the search params on submit', async () => {
     searchService.search.mockResolvedValue([]);
     renderPage('?q=&region=Aegean&ingredient=&meal_type=');
-    await waitFor(() => screen.getByText('+ Vegan'));
-    fireEvent.click(screen.getByText('+ Vegan'));
-    fireEvent.click(screen.getByText('- Wedding'));
+    const veganChip = await screen.findByRole('button', { name: 'Vegan' });
+    fireEvent.click(veganChip);
+    expect(veganChip).toHaveAttribute('aria-pressed', 'true');
     fireEvent.submit(screen.getByRole('form', { name: /refine search/i }));
     await waitFor(() => {
       expect(searchService.search).toHaveBeenLastCalledWith('', 'Aegean', '', {
         ingredient: '',
-        ingredient_exclude: '',
         diet: 'Vegan',
-        diet_exclude: '',
         event: '',
-        event_exclude: 'Wedding',
         meal_type: '',
       });
     });
-    expect(screen.getByText(/diet\+: vegan/i)).toBeInTheDocument();
-    expect(screen.getByText(/event-: wedding/i)).toBeInTheDocument();
+    expect(screen.getByText(/diet: vegan/i)).toBeInTheDocument();
+  });
+
+  it('untoggles a chip when clicked a second time', async () => {
+    searchService.search.mockResolvedValue([]);
+    renderPage();
+    const veganChip = await screen.findByRole('button', { name: 'Vegan' });
+    fireEvent.click(veganChip);
+    expect(veganChip).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(veganChip);
+    expect(veganChip).toHaveAttribute('aria-pressed', 'false');
   });
 });
