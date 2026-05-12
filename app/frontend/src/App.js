@@ -30,6 +30,7 @@ import ModerationPage from './pages/ModerationPage';
 import HeritagePage from './pages/HeritagePage';
 import HeritageMapPage from './pages/HeritageMapPage';
 import EndangeredListPage from './pages/EndangeredListPage';
+import MigrationRoutesPage from './pages/MigrationRoutesPage';
 import CalendarPage from './pages/CalendarPage';
 import CulturalHighlightPage from './pages/CulturalHighlightPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/explore/:eventId" element={<EventDetailPage />} />
           <Route path="/endangered" element={<EndangeredListPage />} />
+          <Route path="/migration-routes" element={<MigrationRoutesPage />} />
 
           <Route
             path="/recipes/new"
