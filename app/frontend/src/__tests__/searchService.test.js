@@ -33,6 +33,14 @@ describe('search', () => {
     });
   });
 
+  it('sends meal_type to the API when provided (#700)', async () => {
+    apiClient.get.mockResolvedValue({ data: [] });
+    await search('soup', '', '', { meal_type: 'breakfast' });
+    expect(apiClient.get).toHaveBeenCalledWith('/api/search/', {
+      params: { q: 'soup', meal_type: 'breakfast' },
+    });
+  });
+
   it('omits region and language from params when not provided', async () => {
     apiClient.get.mockResolvedValue({ data: [] });
     await search('soup', '', '');

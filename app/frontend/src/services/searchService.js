@@ -27,6 +27,7 @@ export async function search(q, region, language, filters = {}) {
     'event_exclude',
     'ingredient',
     'ingredient_exclude',
+    'meal_type',
   ];
   filterKeys.forEach((key) => {
     if (filters[key]) params[key] = filters[key];

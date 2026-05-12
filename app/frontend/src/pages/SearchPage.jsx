@@ -106,7 +106,8 @@ export default function SearchPage() {
     diet_exclude: dietExclude,
     event,
     event_exclude: eventExclude,
-  }), [ingredient, ingredientExclude, diet, dietExclude, event, eventExclude]);
+    meal_type: mealType,
+  }), [ingredient, ingredientExclude, diet, dietExclude, event, eventExclude, mealType]);
 
   useEffect(() => {
     let cancelled = false;
@@ -129,11 +130,7 @@ export default function SearchPage() {
     ].some((list) => Array.isArray(list) && list.length > 0);
   }, [user]);
 
-  const displayResults = mealType.trim()
-    ? results.filter((r) =>
-        r.title.toLowerCase().includes(mealType.toLowerCase())
-      )
-    : results;
+  const displayResults = results;
 
   function removeFilter(paramKey) {
     const next = new URLSearchParams(searchParams);

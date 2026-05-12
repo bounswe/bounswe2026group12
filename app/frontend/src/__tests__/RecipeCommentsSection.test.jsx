@@ -134,4 +134,20 @@ describe('RecipeCommentsSection', () => {
       expect(screen.getAllByRole('button', { name: /mark helpful/i })[0]).toBeInTheDocument();
     });
   });
+
+  it('surfaces an inline error to the user when deleteComment fails (#699)', async () => {
+    commentService.deleteComment.mockRejectedValueOnce(new Error('boom'));
+    renderSection({ id: 11, username: 'chef' });
+    await waitFor(() => screen.getByText('About 20 minutes.'));
+
+    // Open the action menu for the reply authored by chef (id=11).
+    const menuButtons = screen.getAllByRole('button', { name: /comment actions/i });
+    fireEvent.click(menuButtons[menuButtons.length - 1]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /delete/i }));
+
+    await waitFor(() => expect(commentService.deleteComment).toHaveBeenCalledWith(2));
+    expect(await screen.findByText(/could not delete comment/i)).toBeInTheDocument();
+    // Comment is still on screen because the delete failed.
+    expect(screen.getByText('About 20 minutes.')).toBeInTheDocument();
+  });
 });

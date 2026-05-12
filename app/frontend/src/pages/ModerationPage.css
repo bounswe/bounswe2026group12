@@ -60,6 +60,11 @@
   padding: 3rem 0;
 }
 
+.moderation-error {
+  color: var(--color-error, #b00020);
+  margin: 0 0 1rem;
+}
+
 /* ── Queue list ──────────────────── */
 .moderation-list {
   list-style: none;

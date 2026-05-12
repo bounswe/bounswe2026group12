@@ -214,6 +214,7 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
   const [replyTo, setReplyTo] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [votePendingIds, setVotePendingIds] = useState([]);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -245,12 +246,14 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
   }
 
   async function handleDelete(commentId) {
+    setDeleteError('');
     try {
       await deleteComment(commentId);
       setComments((prev) => prev.filter((comment) => comment.id !== commentId && comment.parentComment !== commentId));
       setOpenMenuId(null);
     } catch {
       setOpenMenuId(null);
+      setDeleteError('Could not delete comment. Please try again.');
     }
   }
 
@@ -294,6 +297,7 @@ export default function RecipeCommentsSection({ recipeId, qaEnabled, currentUser
 
       {loading && <p className="qa-status">Loading comments…</p>}
       {error && <p className="qa-status qa-error">{error}</p>}
+      {deleteError && <p className="qa-status qa-error" role="alert">{deleteError}</p>}
       {!loading && !error && roots.length === 0 && <p className="qa-status">No comments yet.</p>}
 
       {!loading && !error && roots.length > 0 && (

@@ -191,3 +191,42 @@ describe('AuthContext logout — backend coordination', () => {
     expect(authService.logoutRequest).not.toHaveBeenCalled();
   });
 });
+
+describe('AuthContext — auth:token-refreshed event (#701)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    authService.fetchMe.mockResolvedValue({ id: 1, username: 'restored-user' });
+    authService.logoutRequest.mockResolvedValue();
+    deviceTokenService.registerWebDeviceToken.mockResolvedValue({});
+  });
+
+  afterEach(() => { jest.clearAllMocks(); });
+
+  it('updates token and refreshToken when api.js dispatches auth:token-refreshed', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-old', 'refresh-old');
+    });
+    act(() => {
+      window.dispatchEvent(new CustomEvent('auth:token-refreshed', {
+        detail: { access: 'access-new', refresh: 'refresh-new' },
+      }));
+    });
+    expect(result.current.token).toBe('access-new');
+    expect(result.current.refreshToken).toBe('refresh-new');
+  });
+
+  it('keeps existing refresh token when event detail omits refresh', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    act(() => {
+      result.current.login({ id: 1, username: 'a' }, 'access-old', 'refresh-keep');
+    });
+    act(() => {
+      window.dispatchEvent(new CustomEvent('auth:token-refreshed', {
+        detail: { access: 'access-new' },
+      }));
+    });
+    expect(result.current.token).toBe('access-new');
+    expect(result.current.refreshToken).toBe('refresh-keep');
+  });
+});

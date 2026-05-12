@@ -26,6 +26,8 @@ export default function ModerationPage() {
   const [statusFilter, setStatusFilter] = useState('pending');
   const [processing, setProcessing] = useState(null);
   const [rejectReasons, setRejectReasons] = useState({});
+  const [fetchError, setFetchError] = useState('');
+  const [actionError, setActionError] = useState('');
 
   useEffect(() => {
     if (authLoading) return;
@@ -33,11 +35,13 @@ export default function ModerationPage() {
     if (!user.is_staff) { setLoading(false); return; }
     fetchModerationQueue()
       .then(setQueue)
+      .catch(() => setFetchError('Could not load moderation queue.'))
       .finally(() => setLoading(false));
   }, [user, authLoading, navigate]);
 
   const handle = async (typeKey, id, action, reason = '') => {
     setProcessing(id);
+    setActionError('');
     try {
       if (action === 'approve') await approveTag(typeKey, id);
       else await rejectTag(typeKey, id, reason);
@@ -50,6 +54,8 @@ export default function ModerationPage() {
           return next;
         });
       }
+    } catch {
+      setActionError(`Could not ${action} tag. Please try again.`);
     } finally {
       setProcessing(null);
     }
@@ -66,6 +72,7 @@ export default function ModerationPage() {
   }
 
   if (loading) return <p className="page-status">Loading…</p>;
+  if (fetchError) return <p className="page-status page-error" role="alert">{fetchError}</p>;
 
   return (
     <main className="page-card moderation-page">
@@ -90,6 +97,8 @@ export default function ModerationPage() {
           </button>
         ))}
       </div>
+
+      {actionError && <p className="moderation-error" role="alert">{actionError}</p>}
 
       {filtered.length === 0 ? (
         <p className="moderation-empty">No {statusFilter} tags.</p>

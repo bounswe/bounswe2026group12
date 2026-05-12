@@ -93,6 +93,31 @@ describe('publishStory / unpublishStory', () => {
   });
 });
 
+describe('updateStory — mock guard (#701)', () => {
+  let updateStoryMock;
+  let mockApi;
+  const original = process.env.REACT_APP_USE_MOCK;
+  beforeAll(() => {
+    process.env.REACT_APP_USE_MOCK = 'true';
+    jest.resetModules();
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
+    }));
+    ({ updateStory: updateStoryMock } = require('../services/storyService'));
+    ({ apiClient: mockApi } = require('../services/api'));
+  });
+  afterAll(() => {
+    process.env.REACT_APP_USE_MOCK = original;
+    jest.dontMock('../services/api');
+    jest.resetModules();
+  });
+  it('returns mock data without calling apiClient.patch when USE_MOCK=true', async () => {
+    const result = await updateStoryMock(2, new FormData());
+    expect(result).toEqual({ id: 2 });
+    expect(mockApi.patch).not.toHaveBeenCalled();
+  });
+});
+
 describe('fetchMyStories', () => {
   it('GETs /api/stories/?author=<id> and returns the list', async () => {
     apiClient.get.mockResolvedValue({ data: [{ id: 3, title: 'Mine' }] });

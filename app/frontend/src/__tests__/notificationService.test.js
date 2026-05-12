@@ -54,3 +54,27 @@ describe('notificationService', () => {
   });
 });
 
+describe('markAllAsRead — mock guard (#701)', () => {
+  let markAllAsReadMock;
+  let mockApi;
+  const original = process.env.REACT_APP_USE_MOCK;
+  beforeAll(() => {
+    process.env.REACT_APP_USE_MOCK = 'true';
+    jest.resetModules();
+    jest.doMock('../services/api', () => ({
+      apiClient: { get: jest.fn(), post: jest.fn(), patch: jest.fn() },
+    }));
+    ({ markAllAsRead: markAllAsReadMock } = require('../services/notificationService'));
+    ({ apiClient: mockApi } = require('../services/api'));
+  });
+  afterAll(() => {
+    process.env.REACT_APP_USE_MOCK = original;
+    jest.dontMock('../services/api');
+    jest.resetModules();
+  });
+  it('returns without calling apiClient.post when USE_MOCK=true', async () => {
+    await expect(markAllAsReadMock()).resolves.toBeUndefined();
+    expect(mockApi.post).not.toHaveBeenCalled();
+  });
+});
+
