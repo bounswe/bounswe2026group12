@@ -90,6 +90,24 @@ describe('CalendarPage', () => {
     expect(within(panel).getByRole('link', { name: /sumalak/i })).toHaveAttribute('href', '/recipes/10');
   });
 
+  it('renders a date-rule legend below the header explaining badge colors', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([]);
+    renderPage();
+    const legend = await screen.findByLabelText(/date legend/i);
+    const { within } = require('@testing-library/react');
+    expect(within(legend).getByText(/gregorian date/i)).toBeInTheDocument();
+    expect(within(legend).getByText(/lunar.+movable/i)).toBeInTheDocument();
+  });
+
+  it('does NOT render the per-card lunar subline (replaced by the legend)', async () => {
+    culturalEventService.fetchCulturalEvents.mockResolvedValue([
+      { id: 9, name: 'Eid al-Adha', date_rule: 'lunar:eid-adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
+    ]);
+    renderPage();
+    await screen.findByText(/eid al-adha/i);
+    expect(screen.queryByText(/on the lunar calendar/i)).not.toBeInTheDocument();
+  });
+
   it('scrolls the detail panel into view when an event card is clicked', async () => {
     const scrollSpy = jest.fn();
     window.HTMLElement.prototype.scrollIntoView = scrollSpy;
@@ -134,14 +152,6 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
     expect(within(monthPanel).getAllByText(/ramadan/i).length).toBeGreaterThan(0);
   });
 
-  it('shows a lunar subline on every lunar event card', async () => {
-    culturalEventService.fetchCulturalEvents.mockResolvedValue([
-      { id: 2, name: 'Eid al-Adha', date_rule: 'lunar:eid-adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
-    ]);
-    renderPage();
-    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
-  });
-
   it('keeps unresolved lunar events in a "Lunar / movable feasts" section with (movable)', async () => {
     culturalEventService.fetchCulturalEvents.mockResolvedValue([
       { id: 3, name: 'Made-up Lunar', date_rule: 'lunar:unknown-name', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
@@ -167,7 +177,7 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
       { id: 6, name: 'Eid al-Adha', date_rule: 'lunar:eid_al_adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
     ]);
     renderPage();
-    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
+    expect(await screen.findByText(/eid al-adha/i)).toBeInTheDocument();
     // (movable) only appears when unresolved; with the table entry it must NOT appear.
     expect(screen.queryByText(/\(movable\)/i)).not.toBeInTheDocument();
   });
@@ -177,15 +187,7 @@ describe('CalendarPage — lunar resolution + subline (#669)', () => {
       { id: 7, name: 'Diwali', date_rule: 'lunar:diwali', region: { id: 1, name: 'Indian' }, description: '', recipes: [] },
     ]);
     renderPage();
-    expect(await screen.findByText(/on the lunar calendar/i)).toBeInTheDocument();
+    expect(await screen.findByText(/diwali/i)).toBeInTheDocument();
     expect(screen.queryByText(/\(movable\)/i)).not.toBeInTheDocument();
-  });
-
-  it('shows the pretty event name in the subline rather than the raw slug', async () => {
-    culturalEventService.fetchCulturalEvents.mockResolvedValue([
-      { id: 8, name: 'Eid al-Adha', date_rule: 'lunar:eid_al_adha', region: { id: 1, name: 'All Regions' }, description: '', recipes: [] },
-    ]);
-    renderPage();
-    expect(await screen.findByText(/On the lunar calendar: Eid al-Adha this year/i)).toBeInTheDocument();
   });
 });

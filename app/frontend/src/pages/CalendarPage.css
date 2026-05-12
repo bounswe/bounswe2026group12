@@ -216,8 +216,19 @@
   color: var(--color-surface, #FAF7EF);
 }
 
-.calendar-event-lunar-subline {
-  font-style: italic;
-  font-size: 0.8rem;
+.calendar-legend {
+  list-style: none;
+  margin: 0.75rem 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted, #6b6b6b);
+}
+
+.calendar-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }

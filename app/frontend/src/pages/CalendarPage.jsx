@@ -10,32 +10,6 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const LUNAR_PRETTY = {
-  'ramadan': 'Ramadan',
-  'eid-fitr': 'Eid al-Fitr',
-  'eid-al-fitr': 'Eid al-Fitr',
-  'eid-adha': 'Eid al-Adha',
-  'eid-al-adha': 'Eid al-Adha',
-  'kurban-bayrami': 'Eid al-Adha',
-  'mevlid': 'Mevlid',
-  'ashura': 'Ashura',
-  'diwali': 'Diwali',
-  'chuseok': 'Chuseok',
-  'carnaval': 'Carnaval',
-  'chinese-new-year': 'Chinese New Year',
-  'lunar-new-year': 'Lunar New Year',
-  'chunjie': 'Lunar New Year',
-  'homowo': 'Homowo',
-  'maslenitsa': 'Maslenitsa',
-};
-
-function prettyLunar(slug) {
-  if (!slug) return '';
-  const normalized = slug.toLowerCase().replace(/_/g, '-');
-  if (LUNAR_PRETTY[normalized]) return LUNAR_PRETTY[normalized];
-  return normalized.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
-}
-
 function ruleFromEvent(event) {
   const r = event.date_rule;
   if (typeof r !== 'string') return null;
@@ -101,6 +75,17 @@ export default function CalendarPage() {
           Explore which foods belong to which seasons, rituals and celebrations.
         </p>
       </header>
+
+      <ul className="calendar-legend" aria-label="Date legend">
+        <li>
+          <span className="calendar-event-badge" aria-hidden="true">Mar 21</span>
+          Gregorian date
+        </li>
+        <li>
+          <span className="calendar-event-badge is-lunar" aria-hidden="true">Mar 19</span>
+          Lunar / movable feast
+        </li>
+      </ul>
 
       <div className="calendar-filters">
         <label className="calendar-filter">
@@ -217,7 +202,6 @@ export default function CalendarPage() {
 function CalendarEventCard({ event, parsed, onSelect }) {
   const isLunar = Boolean(parsed?.isLunar);
   const isMovable = isLunar && parsed?.lunarUnresolved;
-  const pretty = isLunar ? prettyLunar(parsed.lunarName) : '';
   const dateLabel = isMovable
     ? '(movable)'
     : `${MONTHS[parsed.monthIndex].slice(0, 3)} ${parsed.day}`;
@@ -236,12 +220,6 @@ function CalendarEventCard({ event, parsed, onSelect }) {
         <span className="calendar-event-name">{event.name}</span>
         {event.region?.name && (
           <span className="calendar-event-region">{event.region.name}</span>
-        )}
-        {isLunar && (
-          <span className="calendar-event-lunar-subline">
-            ☾ On the lunar calendar: {pretty} this year
-            {isMovable ? ' (movable)' : ''}
-          </span>
         )}
       </button>
     </li>
