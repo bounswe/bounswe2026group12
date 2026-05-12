@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'apps.drafts',
     'apps.heritage',
     'apps.passport',
+    'apps.feedback',
 ]
 
 # Custom user model
@@ -129,6 +130,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'feedback_anon': '5/hour',
+        'feedback_auth': '30/hour',
+    }
 }
 
 # JWT Settings
