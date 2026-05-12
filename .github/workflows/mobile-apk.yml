@@ -3,6 +3,12 @@ name: Mobile APK (EAS)
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      attach_to_release:
+        description: "Attach the built APK to the latest GitHub release"
+        type: boolean
+        default: false
 
 concurrency:
   group: mobile-apk-main
@@ -11,6 +17,8 @@ concurrency:
 jobs:
   build-android-apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: app/mobile
@@ -64,6 +72,16 @@ jobs:
         with:
           name: app-release.apk
           path: app/mobile/app-release.apk
+
+      # Optional: when manually dispatched with attach_to_release, attach the APK to the latest GitHub release.
+      - name: Attach APK to latest release
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.attach_to_release && hashFiles('app/mobile/app-release.apk') != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="$(gh release view --json tagName -q .tagName)"
+          echo "Attaching app-release.apk to release $tag"
+          gh release upload "$tag" app-release.apk --clobber
 
       - name: Job summary
         if: always()
