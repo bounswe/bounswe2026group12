@@ -25,6 +25,10 @@ const MOCK_DAILY = [
 ];
 
 function normalize(item) {
+  const link =
+    item.link && item.link.kind && item.link.id != null
+      ? { kind: String(item.link.kind), id: item.link.id }
+      : null;
   return {
     id: item.id,
     kind: item.kind || null,
@@ -33,6 +37,7 @@ function normalize(item) {
     region: item.region || null,
     imageUrl: item.image_url || null,
     tags: Array.isArray(item.cultural_tags) ? item.cultural_tags : [],
+    link,
   };
 }
 

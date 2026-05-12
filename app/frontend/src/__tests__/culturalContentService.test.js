@@ -24,8 +24,30 @@ describe('fetchDailyCulturalContent', () => {
     });
     const result = await fetchDailyCulturalContent();
     expect(result).toEqual([
-      { id: 1, kind: null, title: 'Card', body: 'Body', region: null, imageUrl: '/img.jpg', tags: ['Aegean'] },
+      { id: 1, kind: null, title: 'Card', body: 'Body', region: null, imageUrl: '/img.jpg', tags: ['Aegean'], link: null },
     ]);
+  });
+
+  it('passes through backend link { kind, id } so Read more can route directly', async () => {
+    apiClient.get.mockResolvedValue({
+      data: [
+        { id: 2, title: 'Pilav', body: '', kind: 'dish', link: { kind: 'recipe', id: 42 } },
+      ],
+    });
+    const result = await fetchDailyCulturalContent();
+    expect(result[0].link).toEqual({ kind: 'recipe', id: 42 });
+  });
+
+  it('drops malformed link objects (missing kind or id) so the UI hides Read more', async () => {
+    apiClient.get.mockResolvedValue({
+      data: [
+        { id: 3, title: 'A', link: { kind: 'recipe' } },
+        { id: 4, title: 'B', link: { id: 9 } },
+      ],
+    });
+    const result = await fetchDailyCulturalContent();
+    expect(result[0].link).toBeNull();
+    expect(result[1].link).toBeNull();
   });
 });
 

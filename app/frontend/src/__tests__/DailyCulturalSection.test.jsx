@@ -42,10 +42,24 @@ test('unknown kind falls back to globe emoji and default class', () => {
   expect(document.querySelector('.card-default')).toBeInTheDocument();
 });
 
-test('Read more link points to search with item title', () => {
+test('Read more link points to /recipes/:id when link.kind=recipe', () => {
+  wrap(<DailyCulturalSection items={[{ ...ITEMS[0], link: { kind: 'recipe', id: 42 } }]} />);
+  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/recipes/42');
+});
+
+test('Read more link points to /stories/:id when link.kind=story', () => {
+  wrap(<DailyCulturalSection items={[{ ...ITEMS[1], link: { kind: 'story', id: 7 } }]} />);
+  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/stories/7');
+});
+
+test('Read more link points to /calendar when link.kind=event', () => {
+  wrap(<DailyCulturalSection items={[{ ...ITEMS[3], link: { kind: 'event', id: 3 } }]} />);
+  expect(screen.getByText('Read more →')).toHaveAttribute('href', '/calendar');
+});
+
+test('hides Read more entirely when the item has no link', () => {
   wrap(<DailyCulturalSection items={[ITEMS[0]]} />);
-  const link = screen.getByText('Read more →');
-  expect(link).toHaveAttribute('href', expect.stringContaining('Coffee+Reading'));
+  expect(screen.queryByText('Read more →')).not.toBeInTheDocument();
 });
 
 test('renders nothing when items is empty', () => {
