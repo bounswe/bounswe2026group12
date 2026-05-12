@@ -36,4 +36,11 @@ export type RecipeDetail = {
     source_url: string;
     created_at?: string;
   }>;
+  /**
+   * Bookmark fields surfaced by backend (#706). Optional because older
+   * responses and minimal-list shapes can omit them — UI must treat
+   * `undefined` as "not yet known" rather than "false".
+   */
+  is_bookmarked?: boolean;
+  bookmark_count?: number;
 };
