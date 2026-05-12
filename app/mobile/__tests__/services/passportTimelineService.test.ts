@@ -51,6 +51,37 @@ describe('normalizeEvent', () => {
   it('returns null when id is missing', () => {
     expect(normalizeEvent({ event_type: 'recipe_tried' } as any)).toBeNull();
   });
+
+  it('folds backend recipe_title and story_title into payload (#871)', () => {
+    const out = normalizeEvent({
+      id: 9,
+      event_type: 'stamp_earned',
+      description: 'Got a stamp',
+      timestamp: 't',
+      related_recipe: 12,
+      related_story: 34,
+      recipe_title: 'Trabzon Butter Kuymak',
+      story_title: 'When Yogurt Connects Continents',
+    });
+    expect(out!.payload).toEqual({
+      related_recipe: 12,
+      related_story: 34,
+      recipe_title: 'Trabzon Butter Kuymak',
+      story_title: 'When Yogurt Connects Continents',
+    });
+  });
+
+  it('skips empty title strings so the ID fallback still kicks in', () => {
+    const out = normalizeEvent({
+      id: 10,
+      event_type: 'recipe_tried',
+      description: 'Tried something',
+      timestamp: 't',
+      related_recipe: 5,
+      recipe_title: '',
+    });
+    expect(out!.payload).toEqual({ related_recipe: 5 });
+  });
 });
 
 describe('fetchTimeline — dedicated endpoint path', () => {

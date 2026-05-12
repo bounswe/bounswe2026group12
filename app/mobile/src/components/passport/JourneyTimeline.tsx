@@ -182,6 +182,9 @@ function TimelineRow({ event, isFirst, isLast }: RowProps) {
   const { recipeId, storyId } = extractRelatedIds(event);
   const showRecipePill = recipeId !== null && !messageMentions(event.message, 'Recipe');
   const showStoryPill = storyId !== null && !messageMentions(event.message, 'Story');
+  const payload = event.payload ?? {};
+  const recipeTitle = typeof payload.recipe_title === 'string' ? payload.recipe_title : null;
+  const storyTitle = typeof payload.story_title === 'string' ? payload.story_title : null;
   return (
     <View style={styles.row} accessible accessibilityLabel={a11y}>
       <View style={styles.rail}>
@@ -208,9 +211,9 @@ function TimelineRow({ event, isFirst, isLast }: RowProps) {
                   pressed && styles.pillPressed,
                 ]}
                 accessibilityRole="link"
-                accessibilityLabel={`Open Recipe ${recipeId}`}
+                accessibilityLabel={`Open recipe ${recipeTitle ?? `#${recipeId}`}`}
               >
-                <Text style={styles.pillText}>{`Recipe #${recipeId} →`}</Text>
+                <Text style={styles.pillText}>{`${recipeTitle ?? `Recipe #${recipeId}`} →`}</Text>
               </Pressable>
             ) : null}
             {showStoryPill && storyId !== null ? (
@@ -224,9 +227,9 @@ function TimelineRow({ event, isFirst, isLast }: RowProps) {
                   pressed && styles.pillPressed,
                 ]}
                 accessibilityRole="link"
-                accessibilityLabel={`Open Story ${storyId}`}
+                accessibilityLabel={`Open story ${storyTitle ?? `#${storyId}`}`}
               >
-                <Text style={styles.pillText}>{`Story #${storyId} →`}</Text>
+                <Text style={styles.pillText}>{`${storyTitle ?? `Story #${storyId}`} →`}</Text>
               </Pressable>
             ) : null}
           </View>
