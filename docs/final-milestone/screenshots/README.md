@@ -6,33 +6,42 @@ section 4.4. Each PNG corresponds to one row in the screenshots table.
 
 ## Capture instructions
 
-All screenshots are captured against the production deploy at
-[https://genipe.app](https://genipe.app) (web) and the signed APK attached to
-the [`final-milestone`](https://github.com/bounswe/bounswe2026group12/releases/tag/final-milestone)
-release (mobile). Use the seeded `demo@genipe.app / demo-password` account
-for both surfaces (see project [`README.md`](../../../README.md#default-credentials)).
+Web screenshots are captured with Playwright against the production deploy
+at [https://genipe.app](https://genipe.app) using the seeded `Cred User2`
+account (see project [`README.md`](../../../README.md#default-credentials)).
+Viewport is 1440×900 and full-page mode is on.
 
-| # | File | Surface | Capture target |
-|---|---|---|---|
-| 1 | `home-redesign.png` | Web | `/` — region map + weekly rails + feedback bar + closing banner |
-| 2 | `calendar-single-month.png` | Web | `/calendar` with a single month filter active |
-| 3 | `calendar-lunar-bucket.png` | Web | `/calendar` showing the "Lunar / movable feasts" panel |
-| 4 | `search-toggle-pills.png` | Web | `/search` with two diet pills toggled on |
-| 5 | `recipe-detail-actions.png` | Web | `/recipes/<id>` showing star rating + bookmark + "I Tried This" |
-| 6 | `passport-web-stamps.png` | Web | `/users/<me>/passport` — Stamps tab |
-| 7 | `passport-mobile.png` | Mobile | PassportScreen — stamps grid + cultures + world map |
-| 8 | `heritage-map.png` | Web | `/heritage/<group>/map` — 🏛 centre with radiating arrows |
-| 9 | `region-detail-sheet.png` | Mobile | Map Discovery → region tap → bottom sheet |
-| 10 | `floating-chat-tray.png` | Web | any page with the chat tray expanded |
-| 11 | `cultural-highlight-detail.png` | Web | `/highlights/<slug>` — Read more landing |
-| 12 | `did-you-know-mobile.png` | Mobile | RecipeDetail → Did You Know cards + ingredient migration overlay |
+| # | File | Surface | Captured | Capture target |
+|---|---|---|---|---|
+| 1 | `home-redesign.png` | Web | ✅ | `/` — region map + weekly rails + feedback bar + closing banner |
+| 2 | `calendar-full-year.png` | Web | ✅ | `/calendar` — twelve-month grid with legend |
+| 3 | `calendar-single-month.png` | Web | ✅ | `/calendar` with single-month filter (March) |
+| 4 | `search-toggle-pills.png` | Web | ✅ | `/search?q=baklava` with Vegan + Vegetarian dietary pills toggled on (`aria-pressed`) |
+| 5 | `recipe-detail-actions.png` | Web | ✅ | `/recipes/195` — star rating + bookmark + "I Tried This" |
+| 6 | `passport-web-stamps.png` | Web | ✅ | `/users/sarah` — passport with stamps |
+| 7 | `heritage-map.png` | Web | ✅ | `/heritage/6/map` — Dumplings of the Silk Road heritage map |
+| 8 | `floating-chat-tray.png` | Web | ✅ | Home with the floating Messages chat tray expanded |
+| 9 | `passport-mobile.png` | Mobile | ⏳ | PassportScreen — stamps grid + cultures + world map. Must be captured from the signed APK. |
+| 10 | `region-detail-sheet.png` | Mobile | ⏳ | Map Discovery → region tap → bottom sheet. APK capture. |
+| 11 | `did-you-know-mobile.png` | Mobile | ⏳ | RecipeDetail → Did You Know cards + ingredient migration overlay. APK capture. |
 
-## Why this folder is mostly empty in the repo
+## Reproducing captures
 
-GitHub renders inline images that are embedded via wiki page editor uploads
-or attached to GitHub Issues. Final-submission images are uploaded directly
-on the wiki page (`Progress Based on Teamwork` § 4.4) using GitHub's
-image-attachment editor. This folder remains as the canonical filename
-contract so the wiki references can be made authoritative if a reviewer
-prefers the in-repo path. To add a file: capture per the table, save with
-the exact filename, commit, then update the wiki link.
+```bash
+# from repo root, requires Playwright (npx playwright install if missing)
+python -m playwright install chromium       # one-off
+# Web screenshots are taken with the Playwright MCP server during the wiki
+# refresh. See the chat-history accompanying this PR for the exact tool
+# invocations.
+```
+
+## Mobile pending
+
+The three mobile entries are not yet committed because they require either
+an Android emulator or a physical device running the signed APK. To add:
+
+1. Install the APK from the [`final-milestone`](https://github.com/bounswe/bounswe2026group12/releases/tag/final-milestone) release.
+2. Log in with `Cred User2`.
+3. Capture the three screens listed above.
+4. Save with the exact filenames in this folder.
+5. Commit and update the wiki `Progress Based on Teamwork` § 4.4 table.
