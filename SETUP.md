@@ -105,8 +105,46 @@ Then either:
 - Press `w` to open in a browser (limited; mobile-only screens may not
   render correctly).
 
-The mobile client points at the same API URL as web. Configure it in
-`app/mobile/src/config` if you need to override.
+The mobile client points at the same API URL as web. Copy
+`app/mobile/.env.example` to `app/mobile/.env` and adjust the
+`EXPO_PUBLIC_API_URL` value to match where your backend is reachable
+from the device.
+
+### Mobile network configuration (host IP resolution)
+
+`localhost` inside an Android device or iOS simulator does **not** mean
+the laptop running `runserver` — it means the device itself. Pick the
+URL that matches your runtime:
+
+| Runtime | Set `EXPO_PUBLIC_API_URL` to | Why |
+|---|---|---|
+| iOS Simulator (same Mac) | `http://localhost:8000` | Simulator shares the host loopback. |
+| Android Emulator (AVD) | `http://10.0.2.2:8000` | The emulator routes `10.0.2.2` to the host. |
+| Physical device on the same Wi-Fi | `http://<laptop-LAN-IP>:8000` (e.g. `http://192.168.1.42:8000`) | Device has no view of `localhost`. |
+| Docker Compose dev stack on the host | `http://localhost:8000` (simulator) or `http://<host-LAN-IP>:8000` (device) | Compose binds `8000` on the host. |
+| Production | `https://genipe.app` | Hits the live deploy. |
+
+To find your laptop's LAN IP:
+
+```bash
+# macOS
+ipconfig getifaddr en0      # Wi-Fi
+ipconfig getifaddr en1      # Ethernet adapters can vary
+
+# Linux
+hostname -I | awk '{print $1}'
+
+# Windows (PowerShell)
+(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias 'Wi-Fi').IPAddress
+```
+
+If the Expo dev server reports a different IP than your backend, that's
+because Expo's tunnel-mode IP is for the bundler, not the API. Use the
+backend's IP from the commands above for `EXPO_PUBLIC_API_URL`.
+
+Common symptom of a wrong API URL: the login screen spins forever or
+returns "Network request failed." Open `expo start` with `--clear` after
+changing `.env` so the cached bundle is rebuilt.
 
 ## Database (optional Postgres parity)
 

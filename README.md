@@ -56,6 +56,48 @@ For local development, see [SETUP.md](SETUP.md).
 
 For production deploys, see [ops/PROD.md](ops/PROD.md).
 
+## Default credentials
+
+Two pre-created accounts exist on the live deploy at
+[https://genipe.app](https://genipe.app) (and on the production database
+seeded by the `final-milestone` release). Reviewers can log in
+immediately with either account on both the web app and the signed APK.
+
+| Role | Username | Email | Password |
+|---|---|---|---|
+| Admin | `Cred User1` | `creduser1@gmail.com` | `creduser1` |
+| Regular user | `Cred User2` | `creduser2@gmail.com` | `creduser2` |
+
+`Cred User1` has Django-admin (`/admin/`) access in addition to the
+regular app surfaces. `Cred User2` is a plain user account intended for
+walking through the standard flows (browse → search → create → message →
+rate → I-Tried-This → passport).
+
+## Data seeding
+
+The backend ships with a canonical seed catalogue covering regions,
+ingredients, dietary tags, recipes, stories, cultural events, heritage
+groups and the cultural-passport reward graph. Two ways to load it:
+
+1. **Local dev (recommended for first run):**
+   ```bash
+   cd app/backend
+   source venv/bin/activate
+   python manage.py migrate
+   python manage.py seed_canonical
+   python manage.py seed_cultural_facts
+   python manage.py seed_ingredient_routes
+   python manage.py seed_region_geo
+   python manage.py seed_story_coordinates
+   ```
+   See [SETUP.md](SETUP.md#backend-django) for the full bring-up.
+
+2. **Production:** seeding runs automatically at container start via
+   the `docker-entrypoint.sh` script. The `seed-db` GitHub Actions
+   workflow can re-run it on demand without redeploying — see
+   [`.github/workflows/seed-db.yml`](.github/workflows/seed-db.yml) and
+   [`ops/PROD.md`](ops/PROD.md).
+
 ## Team
 
 | Area | Members |

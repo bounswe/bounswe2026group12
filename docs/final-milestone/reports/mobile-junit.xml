@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="202" failures="0" errors="0" time="5.899">
+  <testsuite name="engagementLevel" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="1.454" tests="16">
+    <testcase classname="engagementLevel returns 0 when the culture is null or undefined" name="engagementLevel returns 0 when the culture is null or undefined" time="0.003">
+    </testcase>
+    <testcase classname="engagementLevel returns 0 when there is no engagement signal of any kind" name="engagementLevel returns 0 when there is no engagement signal of any kind" time="0">
+    </testcase>
+    <testcase classname="engagementLevel returns 1 (silver) for stories-saved-only" name="engagementLevel returns 1 (silver) for stories-saved-only" time="0">
+    </testcase>
+    <testcase classname="engagementLevel returns 1 (silver) when rarity is silver even with zero counters" name="engagementLevel returns 1 (silver) when rarity is silver even with zero counters" time="0.001">
+    </testcase>
+    <testcase classname="engagementLevel returns 2 (bronze) for at least one recipe tried" name="engagementLevel returns 2 (bronze) for at least one recipe tried" time="0">
+    </testcase>
+    <testcase classname="engagementLevel returns 2 (bronze) when rarity is bronze" name="engagementLevel returns 2 (bronze) when rarity is bronze" time="0">
+    </testcase>
+    <testcase classname="engagementLevel returns 3 (emerald) for an explicit heritage_recipes count" name="engagementLevel returns 3 (emerald) for an explicit heritage_recipes count" time="0">
+    </testcase>
+    <testcase classname="engagementLevel returns 3 (emerald) when rarity is emerald or gold" name="engagementLevel returns 3 (emerald) when rarity is emerald or gold" time="0.001">
+    </testcase>
+    <testcase classname="engagementLevel returns 4 (legendary) and prefers it over every other signal" name="engagementLevel returns 4 (legendary) and prefers it over every other signal" time="0">
+    </testcase>
+    <testcase classname="engagementLevel falls back to counters when the rarity string is unknown" name="engagementLevel falls back to counters when the rarity string is unknown" time="0">
+    </testcase>
+    <testcase classname="engagementLevel accepts the raw backend keys (`culture` + `rarity`)" name="engagementLevel accepts the raw backend keys (`culture` + `rarity`)" time="0">
+    </testcase>
+    <testcase classname="engagementLevel tolerates missing optional fields without throwing" name="engagementLevel tolerates missing optional fields without throwing" time="0">
+    </testcase>
+    <testcase classname="engagementLevel rarity is case-insensitive" name="engagementLevel rarity is case-insensitive" time="0.001">
+    </testcase>
+    <testcase classname="colorForLevel returns null for level 0" name="colorForLevel returns null for level 0" time="0">
+    </testcase>
+    <testcase classname="colorForLevel returns silver / bronze / emerald / purple for levels 1..4" name="colorForLevel returns silver / bronze / emerald / purple for levels 1..4" time="0">
+    </testcase>
+    <testcase classname="colorForLevel exports the same colours via ENGAGEMENT_COLORS" name="colorForLevel exports the same colours via ENGAGEMENT_COLORS" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="normalizeEvent" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="1.509" tests="8">
+    <testcase classname="normalizeEvent maps backend description+timestamp into message+created_at" name="normalizeEvent maps backend description+timestamp into message+created_at" time="0.004">
+    </testcase>
+    <testcase classname="normalizeEvent falls back to `type` when `event_type` is absent" name="normalizeEvent falls back to `type` when `event_type` is absent" time="0">
+    </testcase>
+    <testcase classname="normalizeEvent returns null when id is missing" name="normalizeEvent returns null when id is missing" time="0">
+    </testcase>
+    <testcase classname="fetchTimeline — dedicated endpoint path returns events and walks the DRF `next` link as the cursor" name="fetchTimeline — dedicated endpoint path returns events and walks the DRF `next` link as the cursor" time="0.037">
+    </testcase>
+    <testcase classname="fetchTimeline — dedicated endpoint path returns nextCursor null when there is no more data" name="fetchTimeline — dedicated endpoint path returns nextCursor null when there is no more data" time="0">
+    </testcase>
+    <testcase classname="fetchTimeline — fallback to full passport falls back to the passport endpoint on 404 and chunks 20 per page" name="fetchTimeline — fallback to full passport falls back to the passport endpoint on 404 and chunks 20 per page" time="0.001">
+    </testcase>
+    <testcase classname="fetchTimeline — fallback to full passport returns an empty page when the passport has no timeline" name="fetchTimeline — fallback to full passport returns an empty page when the passport has no timeline" time="0">
+    </testcase>
+    <testcase classname="fetchTimeline — fallback to full passport propagates non-404 errors from the dedicated endpoint" name="fetchTimeline — fallback to full passport propagates non-404 errors from the dedicated endpoint" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchRegionPins" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="1.525" tests="4">
+    <testcase classname="fetchRegionPins prefers backend lat/lng but falls back to the regionGeo table when missing" name="fetchRegionPins prefers backend lat/lng but falls back to the regionGeo table when missing" time="0.003">
+    </testcase>
+    <testcase classname="fetchRegionPins defaults recipeCount to 0 when content_count is missing" name="fetchRegionPins defaults recipeCount to 0 when content_count is missing" time="0.001">
+    </testcase>
+    <testcase classname="fetchRegionRecipes walks pagination and splits recipes into located vs unlocated" name="fetchRegionRecipes walks pagination and splits recipes into located vs unlocated" time="0.042">
+    </testcase>
+    <testcase classname="fetchRegionRecipes falls back to regionGeo centroid when backend metadata lookup fails" name="fetchRegionRecipes falls back to regionGeo centroid when backend metadata lookup fails" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="parseQuest" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="1.496" tests="8">
+    <testcase classname="parseQuest flattens backend fields into the Quest shape" name="parseQuest flattens backend fields into the Quest shape" time="0.006">
+    </testcase>
+    <testcase classname="parseQuest formats points rewards with a &quot;points&quot; suffix" name="parseQuest formats points rewards with a &quot;points&quot; suffix" time="0.003">
+    </testcase>
+    <testcase classname="parseQuest marks completed when completed_at is set, and surfaces event_end for event quests" name="parseQuest marks completed when completed_at is set, and surfaces event_end for event quests" time="0">
+    </testcase>
+    <testcase classname="parseQuest defaults numeric and string fields when raw values are missing or unparseable" name="parseQuest defaults numeric and string fields when raw values are missing or unparseable" time="0.001">
+    </testcase>
+    <testcase classname="parseQuest coerces string numerics defensively" name="parseQuest coerces string numerics defensively" time="0">
+    </testcase>
+    <testcase classname="fetchQuests handles a bare array response (unpaginated)" name="fetchQuests handles a bare array response (unpaginated)" time="0">
+    </testcase>
+    <testcase classname="fetchQuests walks DRF pagination, combining results across pages" name="fetchQuests walks DRF pagination, combining results across pages" time="0.033">
+    </testcase>
+    <testcase classname="fetchQuests returns an empty array when results is missing" name="fetchQuests returns an empty array when results is missing" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="groupQuests" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:45" time="1.252" tests="8">
+    <testcase classname="groupQuests routes completed quests into the completed bucket" name="groupQuests routes completed quests into the completed bucket" time="0.001">
+    </testcase>
+    <testcase classname="groupQuests moves a quest between sections when is_completed flips" name="groupQuests moves a quest between sections when is_completed flips" time="0.001">
+    </testcase>
+    <testcase classname="&lt;QuestList /&gt; shows the empty state when there are no active quests" name="&lt;QuestList /&gt; shows the empty state when there are no active quests" time="0.352">
+    </testcase>
+    <testcase classname="&lt;QuestList /&gt; renders an active and a completed section with count badges" name="&lt;QuestList /&gt; renders an active and a completed section with count badges" time="0.015">
+    </testcase>
+    <testcase classname="&lt;QuestList /&gt; renders the progress text &quot;&lt;current&gt; / &lt;target&gt;&quot; on each card" name="&lt;QuestList /&gt; renders the progress text &quot;&lt;current&gt; / &lt;target&gt;&quot; on each card" time="0.002">
+    </testcase>
+    <testcase classname="&lt;QuestList /&gt; shows the reward chip when the quest has a reward" name="&lt;QuestList /&gt; shows the reward chip when the quest has a reward" time="0.002">
+    </testcase>
+    <testcase classname="&lt;QuestList /&gt; renders the countdown for active event quests with a future end date" name="&lt;QuestList /&gt; renders the countdown for active event quests with a future end date" time="0.003">
+    </testcase>
+    <testcase classname="&lt;QuestList /&gt; exposes accessibilityRole=progressbar on the progress track" name="&lt;QuestList /&gt; exposes accessibilityRole=progressbar on the progress track" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="StampCard" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:45" time="1.271" tests="11">
+    <testcase classname="StampCard renders earned stamp with name, rarity label and MMM YYYY date" name="StampCard renders earned stamp with name, rarity label and MMM YYYY date" time="0.369">
+    </testcase>
+    <testcase classname="StampCard renders locked stamp with 🔒 instead of date" name="StampCard renders locked stamp with 🔒 instead of date" time="0.003">
+    </testcase>
+    <testcase classname="StampCard respects explicit locked prop over earned_at" name="StampCard respects explicit locked prop over earned_at" time="0.003">
+    </testcase>
+    <testcase classname="StampCard exposes accessibilityLabel with name, rarity and earned status" name="StampCard exposes accessibilityLabel with name, rarity and earned status" time="0.001">
+    </testcase>
+    <testcase classname="StampCard exposes accessibilityLabel with locked status when locked" name="StampCard exposes accessibilityLabel with locked status when locked" time="0.003">
+    </testcase>
+    <testcase classname="StampCard rarity colours applies the bronze colour as the card border" name="StampCard rarity colours applies the bronze colour as the card border" time="0.001">
+    </testcase>
+    <testcase classname="StampCard rarity colours applies the silver colour as the card border" name="StampCard rarity colours applies the silver colour as the card border" time="0.002">
+    </testcase>
+    <testcase classname="StampCard rarity colours applies the gold colour as the card border" name="StampCard rarity colours applies the gold colour as the card border" time="0.002">
+    </testcase>
+    <testcase classname="StampCard rarity colours applies the emerald colour as the card border" name="StampCard rarity colours applies the emerald colour as the card border" time="0.002">
+    </testcase>
+    <testcase classname="StampCard rarity colours applies the legendary colour as the card border" name="StampCard rarity colours applies the legendary colour as the card border" time="0.003">
+    </testcase>
+    <testcase classname="StampCard rarity colours falls back to a default border colour for unknown rarities" name="StampCard rarity colours falls back to a default border colour for unknown rarities" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="StampCollection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="2.807" tests="12">
+    <testcase classname="StampCollection renders the empty state when there are no stamps" name="StampCollection renders the empty state when there are no stamps" time="0.353">
+    </testcase>
+    <testcase classname="StampCollection renders a loading state when loading" name="StampCollection renders a loading state when loading" time="0.002">
+    </testcase>
+    <testcase classname="StampCollection groups stamps by category and renders a section title per category" name="StampCollection groups stamps by category and renders a section title per category" time="0.015">
+    </testcase>
+    <testcase classname="StampCollection renders all category sections always open (no accordion)" name="StampCollection renders all category sections always open (no accordion)" time="0.004">
+    </testcase>
+    <testcase classname="StampCollection puts each stamp inside its category grid as a StampCard" name="StampCollection puts each stamp inside its category grid as a StampCard" time="0.004">
+    </testcase>
+    <testcase classname="StampCollection formats earned date as &quot;MMM YYYY&quot;" name="StampCollection formats earned date as &quot;MMM YYYY&quot;" time="0.003">
+    </testcase>
+    <testcase classname="StampCollection renders locked stamps with a lock glyph and no date" name="StampCollection renders locked stamps with a lock glyph and no date" time="0.003">
+    </testcase>
+    <testcase classname="StampCollection exposes accessibility labels with name, rarity and status" name="StampCollection exposes accessibility labels with name, rarity and status" time="0.002">
+    </testcase>
+    <testcase classname="normalizeStamp aliases backend culture/kind/unlocked_at keys" name="normalizeStamp aliases backend culture/kind/unlocked_at keys" time="0">
+    </testcase>
+    <testcase classname="normalizeStamp prefers explicit name/category/rarity/earned_at when present" name="normalizeStamp prefers explicit name/category/rarity/earned_at when present" time="0">
+    </testcase>
+    <testcase classname="normalizeStamp preserves source_recipe and source_story from API-shaped rows" name="normalizeStamp preserves source_recipe and source_story from API-shaped rows" time="0.001">
+    </testcase>
+    <testcase classname="normalizeStamp falls back to safe defaults for missing fields" name="normalizeStamp falls back to safe defaults for missing fields" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="recipeAndStoryIdsForCulture" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="2.854" tests="9">
+    <testcase classname="recipeAndStoryIdsForCulture returns nulls when stamps are missing" name="recipeAndStoryIdsForCulture returns nulls when stamps are missing" time="0.005">
+    </testcase>
+    <testcase classname="recipeAndStoryIdsForCulture matches stamp culture name case-insensitively and prefers latest earned" name="recipeAndStoryIdsForCulture matches stamp culture name case-insensitively and prefers latest earned" time="0.002">
+    </testcase>
+    <testcase classname="PassportWorldMap renders one Marker per culture with engagement + known coords" name="PassportWorldMap renders one Marker per culture with engagement + known coords" time="0.382">
+    </testcase>
+    <testcase classname="PassportWorldMap skips cultures with no engagement (level 0)" name="PassportWorldMap skips cultures with no engagement (level 0)" time="0.004">
+    </testcase>
+    <testcase classname="PassportWorldMap skips cultures whose name has no regionGeo centroid" name="PassportWorldMap skips cultures whose name has no regionGeo centroid" time="0.004">
+    </testcase>
+    <testcase classname="PassportWorldMap colours each pin by engagement level (silver / bronze / emerald / purple)" name="PassportWorldMap colours each pin by engagement level (silver / bronze / emerald / purple)" time="0.005">
+    </testcase>
+    <testcase classname="PassportWorldMap renders the empty banner when no pins are placeable" name="PassportWorldMap renders the empty banner when no pins are placeable" time="0.005">
+    </testcase>
+    <testcase classname="PassportWorldMap opens selection card on marker press and shows link buttons when stamps have ids" name="PassportWorldMap opens selection card on marker press and shows link buttons when stamps have ids" time="0.013">
+    </testcase>
+    <testcase classname="PassportWorldMap navigates to recipe when Open recipe is pressed" name="PassportWorldMap navigates to recipe when Open recipe is pressed" time="0.013">
+    </testcase>
+  </testsuite>
+  <testsuite name="resolveTheme" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:46" time="0.082" tests="11">
+    <testcase classname="resolveTheme resolves an exact catalogue name" name="resolveTheme resolves an exact catalogue name" time="0">
+    </testcase>
+    <testcase classname="resolveTheme resolves a backend slug string (&quot;classic_traveler&quot;)" name="resolveTheme resolves a backend slug string (&quot;classic_traveler&quot;)" time="0">
+    </testcase>
+    <testcase classname="resolveTheme resolves alias slugs to their canonical theme" name="resolveTheme resolves alias slugs to their canonical theme" time="0">
+    </testcase>
+    <testcase classname="resolveTheme resolves calendar-based themes by name" name="resolveTheme resolves calendar-based themes by name" time="0">
+    </testcase>
+    <testcase classname="resolveTheme falls back to a level-based theme when name is unknown" name="resolveTheme falls back to a level-based theme when name is unknown" time="0.003">
+    </testcase>
+    <testcase classname="resolveTheme falls back when active is null/undefined/empty" name="resolveTheme falls back when active is null/undefined/empty" time="0">
+    </testcase>
+    <testcase classname="resolveTheme defaults to Classic Traveler when level is missing" name="resolveTheme defaults to Classic Traveler when level is missing" time="0">
+    </testcase>
+    <testcase classname="themeForLevel maps levels into the right bucket" name="themeForLevel maps levels into the right bucket" time="0.008">
+    </testcase>
+    <testcase classname="themeForLevel treats invalid levels as level 1" name="themeForLevel treats invalid levels as level 1" time="0.001">
+    </testcase>
+    <testcase classname="PASSPORT_THEMES catalogue exposes all 11 themes from the spec" name="PASSPORT_THEMES catalogue exposes all 11 themes from the spec" time="0">
+    </testcase>
+    <testcase classname="PASSPORT_THEMES catalogue each theme has the required visual fields" name="PASSPORT_THEMES catalogue each theme has the required visual fields" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchIngredientRoutes" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:46" time="0.149" tests="4">
+    <testcase classname="fetchIngredientRoutes normalizes string lat/lng to numbers and id/ingredient as numbers" name="fetchIngredientRoutes normalizes string lat/lng to numbers and id/ingredient as numbers" time="0.001">
+    </testcase>
+    <testcase classname="fetchIngredientRoutes drops waypoints with null or non-numeric lat/lng" name="fetchIngredientRoutes drops waypoints with null or non-numeric lat/lng" time="0">
+    </testcase>
+    <testcase classname="fetchIngredientRoutes walks pagination, combining results from each page" name="fetchIngredientRoutes walks pagination, combining results from each page" time="0.029">
+    </testcase>
+    <testcase classname="fetchIngredientRoutes handles a bare array response (unpaginated)" name="fetchIngredientRoutes handles a bare array response (unpaginated)" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchCultureDetail" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:46" time="0.202" tests="5">
+    <testcase classname="fetchCultureDetail finds a culture by name and normalizes backend field names" name="fetchCultureDetail finds a culture by name and normalizes backend field names" time="0.007">
+    </testcase>
+    <testcase classname="fetchCultureDetail returns null when no culture matches" name="fetchCultureDetail returns null when no culture matches" time="0">
+    </testcase>
+    <testcase classname="fetchCultureDetail matches case-insensitively" name="fetchCultureDetail matches case-insensitively" time="0">
+    </testcase>
+    <testcase classname="fetchCultureDetail returns null when the passport has no culture_summaries field" name="fetchCultureDetail returns null when the passport has no culture_summaries field" time="0">
+    </testcase>
+    <testcase classname="fetchCultures normalizes all entries and drops malformed rows" name="fetchCultures normalizes all entries and drops malformed rows" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="parseEventDate" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.109" tests="8">
+    <testcase classname="parseEventDate parses a fixed:MM-DD rule into a Gregorian label" name="parseEventDate parses a fixed:MM-DD rule into a Gregorian label" time="0">
+    </testcase>
+    <testcase classname="parseEventDate clamps an out-of-range fixed month to a valid index" name="parseEventDate clamps an out-of-range fixed month to a valid index" time="0">
+    </testcase>
+    <testcase classname="parseEventDate returns a passthrough label when the fixed parts are not numeric" name="parseEventDate returns a passthrough label when the fixed parts are not numeric" time="0.001">
+    </testcase>
+    <testcase classname="parseEventDate resolves a known lunar rule for the current year (Ramadan 2026)" name="parseEventDate resolves a known lunar rule for the current year (Ramadan 2026)" time="0.002">
+    </testcase>
+    <testcase classname="parseEventDate returns lunarUnresolved when the year has no entry" name="parseEventDate returns lunarUnresolved when the year has no entry" time="0.001">
+    </testcase>
+    <testcase classname="parseEventDate prettifies multi-word lunar keys" name="parseEventDate prettifies multi-word lunar keys" time="0.001">
+    </testcase>
+    <testcase classname="parseEventDate returns the trimmed rule for unrecognised prefixes" name="parseEventDate returns the trimmed rule for unrecognised prefixes" time="0">
+    </testcase>
+    <testcase classname="parseEventDate exports 12 month labels in order" name="parseEventDate exports 12 month labels in order" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="trimStepsForPayload" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:45" time="1.6" tests="9">
+    <testcase classname="trimStepsForPayload trims whitespace and drops empty rows" name="trimStepsForPayload trims whitespace and drops empty rows" time="0.001">
+    </testcase>
+    <testcase classname="trimStepsForPayload returns an empty array when nothing survives the trim" name="trimStepsForPayload returns an empty array when nothing survives the trim" time="0">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater renders the empty hint and no rows when steps is empty" name="RecipeStepsRepeater renders the empty hint and no rows when steps is empty" time="0.378">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater adds a step when &quot;Add step&quot; is pressed" name="RecipeStepsRepeater adds a step when &quot;Add step&quot; is pressed" time="0.336">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater removes the targeted row" name="RecipeStepsRepeater removes the targeted row" time="0.007">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater reorders rows with the up control" name="RecipeStepsRepeater reorders rows with the up control" time="0.011">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater reorders rows with the down control" name="RecipeStepsRepeater reorders rows with the down control" time="0.009">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater disables move-up on the first row and move-down on the last row" name="RecipeStepsRepeater disables move-up on the first row and move-down on the last row" time="0.005">
+    </testcase>
+    <testcase classname="RecipeStepsRepeater forwards text edits through onChange" name="RecipeStepsRepeater forwards text edits through onChange" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="regionFromPinCoordinates" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.077" tests="9">
+    <testcase classname="regionFromPinCoordinates returns INITIAL_MAP_REGION when there are no pins" name="regionFromPinCoordinates returns INITIAL_MAP_REGION when there are no pins" time="0">
+    </testcase>
+    <testcase classname="regionFromPinCoordinates returns a broad single-pin camera" name="regionFromPinCoordinates returns a broad single-pin camera" time="0.009">
+    </testcase>
+    <testcase classname="regionFromPinCoordinates frames multiple pins with bounded deltas" name="regionFromPinCoordinates frames multiple pins with bounded deltas" time="0.004">
+    </testcase>
+    <testcase classname="coordsForRegion returns coordinates for a known region" name="coordsForRegion returns coordinates for a known region" time="0.001">
+    </testcase>
+    <testcase classname="coordsForRegion returns coordinates for a multi-word region name" name="coordsForRegion returns coordinates for a multi-word region name" time="0">
+    </testcase>
+    <testcase classname="coordsForRegion returns null for an unknown region" name="coordsForRegion returns null for an unknown region" time="0">
+    </testcase>
+    <testcase classname="coordsForRegion is case-sensitive (lookup uses exact keys)" name="coordsForRegion is case-sensitive (lookup uses exact keys)" time="0">
+    </testcase>
+    <testcase classname="coordsForRegion returns null when given null, undefined, or empty string" name="coordsForRegion returns null when given null, undefined, or empty string" time="0">
+    </testcase>
+    <testcase classname="INITIAL_MAP_REGION exposes a sane default camera centered over the Anatolian region" name="INITIAL_MAP_REGION exposes a sane default camera centered over the Anatolian region" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="tryRecipe" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.079" tests="5">
+    <testcase classname="tryRecipe POSTs to the passport try endpoint and returns the parsed flag" name="tryRecipe POSTs to the passport try endpoint and returns the parsed flag" time="0.001">
+    </testcase>
+    <testcase classname="tryRecipe falls back to the optimistic value when the backend returns no body" name="tryRecipe falls back to the optimistic value when the backend returns no body" time="0">
+    </testcase>
+    <testcase classname="saveStoryToPassport POSTs to the passport save endpoint and accepts either response field" name="saveStoryToPassport POSTs to the passport save endpoint and accepts either response field" time="0">
+    </testcase>
+    <testcase classname="saveStoryToPassport also accepts a `saved` field on the response" name="saveStoryToPassport also accepts a `saved` field on the response" time="0">
+    </testcase>
+    <testcase classname="saveStoryToPassport falls back to the optimistic value when the backend returns no body" name="saveStoryToPassport falls back to the optimistic value when the backend returns no body" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="patchRecipeJson — steps payload (#806)" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.169" tests="3">
+    <testcase classname="patchRecipeJson — steps payload (#806) forwards a `steps` array on the JSON PATCH body" name="patchRecipeJson — steps payload (#806) forwards a `steps` array on the JSON PATCH body" time="0.001">
+    </testcase>
+    <testcase classname="patchRecipeJson — steps payload (#806) omits `steps` from the body when caller does not pass it (so server value stays)" name="patchRecipeJson — steps payload (#806) omits `steps` from the body when caller does not pass it (so server value stays)" time="0">
+    </testcase>
+    <testcase classname="patchRecipeJson — steps payload (#806) sends an empty `steps: []` when caller explicitly clears all rows" name="patchRecipeJson — steps payload (#806) sends an empty `steps: []` when caller explicitly clears all rows" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="profileService" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.106" tests="3">
+    <testcase classname="profileService fetchOwnProfile GETs /api/users/me/ and returns the profile body" name="profileService fetchOwnProfile GETs /api/users/me/ and returns the profile body" time="0.001">
+    </testcase>
+    <testcase classname="profileService updateOwnProfile PATCHes /api/users/me/ with the partial body and returns the updated profile" name="profileService updateOwnProfile PATCHes /api/users/me/ with the partial body and returns the updated profile" time="0">
+    </testcase>
+    <testcase classname="profileService updateOwnProfile supports an empty patch (no-op)" name="profileService updateOwnProfile supports an empty patch (no-op)" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="PassportCover" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.145" tests="4">
+    <testcase classname="PassportCover renders the username, level pill, and theme copy" name="PassportCover renders the username, level pill, and theme copy" time="0.009">
+    </testcase>
+    <testcase classname="PassportCover renders the theme glyph" name="PassportCover renders the theme glyph" time="0.001">
+    </testcase>
+    <testcase classname="PassportCover exposes a descriptive accessibility label" name="PassportCover exposes a descriptive accessibility label" time="0.001">
+    </testcase>
+    <testcase classname="PassportCover works with a calendar-based theme resolved by name" name="PassportCover works with a calendar-based theme resolved by name" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="EndangeredHeritageSection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.14" tests="4">
+    <testcase classname="EndangeredHeritageSection renders nothing when status is &apos;none&apos; and notes are empty" name="EndangeredHeritageSection renders nothing when status is &apos;none&apos; and notes are empty" time="0.001">
+    </testcase>
+    <testcase classname="EndangeredHeritageSection renders nothing when status is null/undefined and there are no notes" name="EndangeredHeritageSection renders nothing when status is null/undefined and there are no notes" time="0.002">
+    </testcase>
+    <testcase classname="EndangeredHeritageSection renders the endangered badge and blurb for status=endangered" name="EndangeredHeritageSection renders the endangered badge and blurb for status=endangered" time="0.013">
+    </testcase>
+    <testcase classname="EndangeredHeritageSection renders sourced notes even when status is none" name="EndangeredHeritageSection renders sourced notes even when status is none" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="formatCountdown" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.055" tests="7">
+    <testcase classname="formatCountdown returns &quot;Xd Yh&quot; when more than a day remains" name="formatCountdown returns &quot;Xd Yh&quot; when more than a day remains" time="0.001">
+    </testcase>
+    <testcase classname="formatCountdown returns &quot;Xh Ym&quot; when between one and twenty-four hours remain" name="formatCountdown returns &quot;Xh Ym&quot; when between one and twenty-four hours remain" time="0">
+    </testcase>
+    <testcase classname="formatCountdown returns &quot;Xm&quot; when under one hour remains" name="formatCountdown returns &quot;Xm&quot; when under one hour remains" time="0">
+    </testcase>
+    <testcase classname="formatCountdown rounds a sub-minute remainder up to &quot;1m&quot;" name="formatCountdown rounds a sub-minute remainder up to &quot;1m&quot;" time="0">
+    </testcase>
+    <testcase classname="formatCountdown returns &quot;Event ended&quot; when the end has passed" name="formatCountdown returns &quot;Event ended&quot; when the end has passed" time="0">
+    </testcase>
+    <testcase classname="formatCountdown returns &quot;Event ended&quot; exactly at the boundary" name="formatCountdown returns &quot;Event ended&quot; exactly at the boundary" time="0">
+    </testcase>
+    <testcase classname="formatCountdown returns &quot;Event ended&quot; for null, empty, or invalid input" name="formatCountdown returns &quot;Event ended&quot; for null, empty, or invalid input" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeStepsSection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.107" tests="4">
+    <testcase classname="RecipeStepsSection renders nothing when steps is empty" name="RecipeStepsSection renders nothing when steps is empty" time="0.003">
+    </testcase>
+    <testcase classname="RecipeStepsSection renders nothing when steps is undefined (defensive)" name="RecipeStepsSection renders nothing when steps is undefined (defensive)" time="0.004">
+    </testcase>
+    <testcase classname="RecipeStepsSection renders the heading and a numbered list when steps are present" name="RecipeStepsSection renders the heading and a numbered list when steps are present" time="0.007">
+    </testcase>
+    <testcase classname="RecipeStepsSection preserves embedded newlines inside a single step" name="RecipeStepsSection preserves embedded newlines inside a single step" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="DidYouKnowSection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.129" tests="3">
+    <testcase classname="DidYouKnowSection returns null when there are no facts" name="DidYouKnowSection returns null when there are no facts" time="0.001">
+    </testcase>
+    <testcase classname="DidYouKnowSection renders the heading and each fact text" name="DidYouKnowSection renders the heading and each fact text" time="0.02">
+    </testcase>
+    <testcase classname="DidYouKnowSection exposes a recognisable accessibility label on the section" name="DidYouKnowSection exposes a recognisable accessibility label on the section" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="parseAuthorId" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.059" tests="6">
+    <testcase classname="parseAuthorId returns null for null, undefined, and empty string" name="parseAuthorId returns null for null, undefined, and empty string" time="0">
+    </testcase>
+    <testcase classname="parseAuthorId returns the number as-is when given a finite number" name="parseAuthorId returns the number as-is when given a finite number" time="0">
+    </testcase>
+    <testcase classname="parseAuthorId parses numeric strings" name="parseAuthorId parses numeric strings" time="0">
+    </testcase>
+    <testcase classname="parseAuthorId returns null for non-numeric strings" name="parseAuthorId returns null for non-numeric strings" time="0">
+    </testcase>
+    <testcase classname="parseAuthorId unwraps a nested object with an id field" name="parseAuthorId unwraps a nested object with an id field" time="0.001">
+    </testcase>
+    <testcase classname="parseAuthorId returns null for an object without a usable id" name="parseAuthorId returns null for an object without a usable id" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="rankReasonLabel" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.074" tests="3">
+    <testcase classname="rankReasonLabel maps known reason codes to user-facing labels" name="rankReasonLabel maps known reason codes to user-facing labels" time="0.004">
+    </testcase>
+    <testcase classname="rankReasonLabel returns null for unknown codes" name="rankReasonLabel returns null for unknown codes" time="0">
+    </testcase>
+    <testcase classname="rankReasonLabel returns null for null, undefined, and empty string" name="rankReasonLabel returns null for null, undefined, and empty string" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="targetUnitFor" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.084" tests="3">
+    <testcase classname="targetUnitFor maps metric units to imperial / cooking targets" name="targetUnitFor maps metric units to imperial / cooking targets" time="0.001">
+    </testcase>
+    <testcase classname="targetUnitFor maps volumetric cooking units to millilitres" name="targetUnitFor maps volumetric cooking units to millilitres" time="0.001">
+    </testcase>
+    <testcase classname="targetUnitFor returns null for unknown units" name="targetUnitFor returns null for unknown units" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Mobile test harness smoke test" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="0.106" tests="2">
+    <testcase classname="Mobile test harness smoke test renders the error message when one is provided" name="Mobile test harness smoke test renders the error message when one is provided" time="0.021">
+    </testcase>
+    <testcase classname="Mobile test harness smoke test renders nothing when message is undefined" name="Mobile test harness smoke test renders nothing when message is undefined" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="CultureGrid" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:47" time="1.299" tests="3">
+    <testcase classname="CultureGrid renders the empty-state copy when no cultures are provided" name="CultureGrid renders the empty-state copy when no cultures are provided" time="0.005">
+    </testcase>
+    <testcase classname="CultureGrid renders one cell per culture" name="CultureGrid renders one cell per culture" time="1.175">
+    </testcase>
+    <testcase classname="CultureGrid navigates to CultureDetail when a cell is tapped" name="CultureGrid navigates to CultureDetail when a cell is tapped" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="CulturalCalendarScreen" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:46" time="1.661" tests="3">
+    <testcase classname="CulturalCalendarScreen renders fetched events grouped under their resolved month" name="CulturalCalendarScreen renders fetched events grouped under their resolved month" time="1.394">
+    </testcase>
+    <testcase classname="CulturalCalendarScreen renders an empty state when the service returns no events" name="CulturalCalendarScreen renders an empty state when the service returns no events" time="0.008">
+    </testcase>
+    <testcase classname="CulturalCalendarScreen renders an error view when the service rejects" name="CulturalCalendarScreen renders an error view when the service rejects" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="formatTimeAgo" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:44" time="4.542" tests="23">
+    <testcase classname="formatTimeAgo returns `now` for sub-minute deltas" name="formatTimeAgo returns `now` for sub-minute deltas" time="0.009">
+    </testcase>
+    <testcase classname="formatTimeAgo returns minutes for sub-hour deltas" name="formatTimeAgo returns minutes for sub-hour deltas" time="0.003">
+    </testcase>
+    <testcase classname="formatTimeAgo returns hours for sub-day deltas" name="formatTimeAgo returns hours for sub-day deltas" time="0">
+    </testcase>
+    <testcase classname="formatTimeAgo returns Yesterday for one-day-old events" name="formatTimeAgo returns Yesterday for one-day-old events" time="0.001">
+    </testcase>
+    <testcase classname="formatTimeAgo returns Mon D once we cross a week" name="formatTimeAgo returns Mon D once we cross a week" time="0.006">
+    </testcase>
+    <testcase classname="formatTimeAgo handles garbage input gracefully" name="formatTimeAgo handles garbage input gracefully" time="0.001">
+    </testcase>
+    <testcase classname="composeTitle uses the server message when present" name="composeTitle uses the server message when present" time="0">
+    </testcase>
+    <testcase classname="composeTitle falls back to recipe payload" name="composeTitle falls back to recipe payload" time="0.002">
+    </testcase>
+    <testcase classname="composeTitle handles unknown event types with a generic title" name="composeTitle handles unknown event types with a generic title" time="0">
+    </testcase>
+    <testcase classname="extractRelatedIds finds related_recipe id" name="extractRelatedIds finds related_recipe id" time="0.001">
+    </testcase>
+    <testcase classname="extractRelatedIds finds story id under linked_story" name="extractRelatedIds finds story id under linked_story" time="0">
+    </testcase>
+    <testcase classname="extractRelatedIds returns nulls when payload is empty" name="extractRelatedIds returns nulls when payload is empty" time="0.001">
+    </testcase>
+    <testcase classname="extractRelatedIds ignores non-positive or non-numeric values" name="extractRelatedIds ignores non-positive or non-numeric values" time="0">
+    </testcase>
+    <testcase classname="JourneyTimeline renders the empty state when there are no events" name="JourneyTimeline renders the empty state when there are no events" time="0.374">
+    </testcase>
+    <testcase classname="JourneyTimeline renders the correct icon for each event type" name="JourneyTimeline renders the correct icon for each event type" time="1.637">
+    </testcase>
+    <testcase classname="JourneyTimeline calls fetchTimeline once when initialEvents is supplied (pagination sync)" name="JourneyTimeline calls fetchTimeline once when initialEvents is supplied (pagination sync)" time="0.002">
+    </testcase>
+    <testcase classname="JourneyTimeline embeddedInParentScroll shows Refresh journey and Load more when API has next page" name="JourneyTimeline embeddedInParentScroll shows Refresh journey and Load more when API has next page" time="0.01">
+    </testcase>
+    <testcase classname="JourneyTimeline fetches on mount when no initialEvents are supplied" name="JourneyTimeline fetches on mount when no initialEvents are supplied" time="0.052">
+    </testcase>
+    <testcase classname="JourneyTimeline renders a Recipe pill when payload has related_recipe and tapping navigates" name="JourneyTimeline renders a Recipe pill when payload has related_recipe and tapping navigates" time="0.004">
+    </testcase>
+    <testcase classname="JourneyTimeline renders both Recipe and Story pills when both ids are present" name="JourneyTimeline renders both Recipe and Story pills when both ids are present" time="0.002">
+    </testcase>
+    <testcase classname="JourneyTimeline renders no pill when payload has no related ids" name="JourneyTimeline renders no pill when payload has no related ids" time="0.002">
+    </testcase>
+    <testcase classname="JourneyTimeline skips the Recipe pill when the message already mentions Recipe #" name="JourneyTimeline skips the Recipe pill when the message already mentions Recipe #" time="0.002">
+    </testcase>
+    <testcase classname="JourneyTimeline renders a time-ago label for recent events" name="JourneyTimeline renders a time-ago label for recent events" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="EditProfileScreen" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:45" time="3.024" tests="2">
+    <testcase classname="EditProfileScreen renders the fetched profile and prefills the bio and region inputs" name="EditProfileScreen renders the fetched profile and prefills the bio and region inputs" time="1.955">
+    </testcase>
+    <testcase classname="EditProfileScreen calls updateOwnProfile with only the changed fields and navigates back on save" name="EditProfileScreen calls updateOwnProfile with only the changed fields and navigates back on save" time="0.057">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomeScreen notifications bell" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:46" time="2.478" tests="2">
+    <testcase classname="HomeScreen notifications bell renders the bell for anonymous users and routes to Login on press" name="HomeScreen notifications bell renders the bell for anonymous users and routes to Login on press" time="0.107">
+    </testcase>
+    <testcase classname="HomeScreen notifications bell renders the bell for authenticated users and routes to Notifications on press" name="HomeScreen notifications bell renders the bell for authenticated users and routes to Notifications on press" time="0.052">
+    </testcase>
+  </testsuite>
+</testsuites>
