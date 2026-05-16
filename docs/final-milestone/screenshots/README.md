@@ -21,9 +21,9 @@ Viewport is 1440×900 and full-page mode is on.
 | 6 | `passport-web-stamps.png` | Web | ✅ | `/users/sarah` — passport with stamps |
 | 7 | `heritage-map.png` | Web | ✅ | `/heritage/6/map` — Dumplings of the Silk Road heritage map |
 | 8 | `floating-chat-tray.png` | Web | ✅ | Home with the floating Messages chat tray expanded |
-| 9 | `passport-mobile.png` | Mobile | ⏳ | PassportScreen — stamps grid + cultures + world map. Must be captured from the signed APK. |
-| 10 | `region-detail-sheet.png` | Mobile | ⏳ | Map Discovery → region tap → bottom sheet. APK capture. |
-| 11 | `did-you-know-mobile.png` | Mobile | ⏳ | RecipeDetail → Did You Know cards + ingredient migration overlay. APK capture. |
+| 9 | `profile-mobile.png` | Mobile | ✅ | Profile screen — Cultural Passport cover (Mustafa Ocak, Classic Traveler, Level 1) + stats bar + Stamps tab with Black Sea bronze story stamp |
+| 10 | `passport-mobile.png` | Mobile | ✅ | Cultural Passport — Cultures tab showing Black Sea (bronze, 0 recipes) |
+| 11 | `did-you-know-mobile.png` | Mobile | ✅ | Recipe detail — Did You Know cultural fact cards (Portuguese bacalhau, Jamon iberico, Spain tapas) |
 
 ## Reproducing captures
 
@@ -35,13 +35,8 @@ python -m playwright install chromium       # one-off
 # invocations.
 ```
 
-## Mobile pending
+## Mobile captures
 
-The three mobile entries are not yet committed because they require either
-an Android emulator or a physical device running the signed APK. To add:
-
-1. Install the APK from the [`final-milestone`](https://github.com/bounswe/bounswe2026group12/releases/tag/final-milestone) release.
-2. Log in with `Cred User2`.
-3. Capture the three screens listed above.
-4. Save with the exact filenames in this folder.
-5. Commit and update the wiki `Progress Based on Teamwork` § 4.4 table.
+The three mobile entries were captured on a physical Android device running the
+signed APK from the [`final-milestone`](https://github.com/bounswe/bounswe2026group12/releases/tag/final-milestone)
+release. Original WhatsApp-shared JPEGs were converted to PNG (1080×2280, ~330–550 KB).
