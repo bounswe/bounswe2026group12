@@ -1,0 +1,1775 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="794" failures="0" errors="0" time="10.435">
+  <testsuite name="fetchRecipe" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="1.504" tests="34">
+    <testcase classname="fetchRecipe calls GET /api/recipes/:id/" name="fetchRecipe calls GET /api/recipes/:id/" time="0.003">
+    </testcase>
+    <testcase classname="fetchRecipe propagates API errors to the caller" name="fetchRecipe propagates API errors to the caller" time="0.017">
+    </testcase>
+    <testcase classname="createRecipe calls POST /api/recipes/ with FormData" name="createRecipe calls POST /api/recipes/ with FormData" time="0">
+    </testcase>
+    <testcase classname="createRecipe propagates API errors to the caller" name="createRecipe propagates API errors to the caller" time="0.001">
+    </testcase>
+    <testcase classname="updateRecipe calls PATCH /api/recipes/:id/ with FormData" name="updateRecipe calls PATCH /api/recipes/:id/ with FormData" time="0">
+    </testcase>
+    <testcase classname="deleteRecipe calls DELETE /api/recipes/:id/" name="deleteRecipe calls DELETE /api/recipes/:id/" time="0">
+    </testcase>
+    <testcase classname="deleteRecipe propagates API errors to the caller" name="deleteRecipe propagates API errors to the caller" time="0">
+    </testcase>
+    <testcase classname="fetchIngredients calls GET /api/ingredients/" name="fetchIngredients calls GET /api/ingredients/" time="0">
+    </testcase>
+    <testcase classname="fetchUnits calls GET /api/units/" name="fetchUnits calls GET /api/units/" time="0">
+    </testcase>
+    <testcase classname="submitIngredient calls POST /api/ingredients/ with name" name="submitIngredient calls POST /api/ingredients/ with name" time="0">
+    </testcase>
+    <testcase classname="submitIngredient propagates API errors to the caller" name="submitIngredient propagates API errors to the caller" time="0.001">
+    </testcase>
+    <testcase classname="submitUnit calls POST /api/units/ with name" name="submitUnit calls POST /api/units/ with name" time="0">
+    </testcase>
+    <testcase classname="fetchRecipes calls GET /api/recipes/ and returns data" name="fetchRecipes calls GET /api/recipes/ and returns data" time="0.004">
+    </testcase>
+    <testcase classname="fetchIngredients — promise cache calls GET /api/ingredients/ only once on repeated calls" name="fetchIngredients — promise cache calls GET /api/ingredients/ only once on repeated calls" time="0.001">
+    </testcase>
+    <testcase classname="fetchIngredients — promise cache returns the same data on repeated calls" name="fetchIngredients — promise cache returns the same data on repeated calls" time="0.001">
+    </testcase>
+    <testcase classname="fetchIngredients — promise cache fires only one request when called concurrently" name="fetchIngredients — promise cache fires only one request when called concurrently" time="0">
+    </testcase>
+    <testcase classname="fetchIngredients — promise cache retries after a fetch error" name="fetchIngredients — promise cache retries after a fetch error" time="0.014">
+    </testcase>
+    <testcase classname="fetchUnits — promise cache calls GET /api/units/ only once on repeated calls" name="fetchUnits — promise cache calls GET /api/units/ only once on repeated calls" time="0.001">
+    </testcase>
+    <testcase classname="fetchUnits — promise cache returns the same data on repeated calls" name="fetchUnits — promise cache returns the same data on repeated calls" time="0">
+    </testcase>
+    <testcase classname="fetchUnits — promise cache fires only one request when called concurrently" name="fetchUnits — promise cache fires only one request when called concurrently" time="0.001">
+    </testcase>
+    <testcase classname="fetchUnits — promise cache retries after a fetch error" name="fetchUnits — promise cache retries after a fetch error" time="0.003">
+    </testcase>
+    <testcase classname="rateRecipe POSTs /api/recipes/:id/rate/ with { score } and returns the summary" name="rateRecipe POSTs /api/recipes/:id/rate/ with { score } and returns the summary" time="0.001">
+    </testcase>
+    <testcase classname="rateRecipe propagates API errors" name="rateRecipe propagates API errors" time="0.002">
+    </testcase>
+    <testcase classname="unrateRecipe DELETEs /api/recipes/:id/rate/ and returns the summary" name="unrateRecipe DELETEs /api/recipes/:id/rate/ and returns the summary" time="0.001">
+    </testcase>
+    <testcase classname="toggleBookmark POSTs /api/recipes/:id/bookmark/ and returns the toggle result" name="toggleBookmark POSTs /api/recipes/:id/bookmark/ and returns the toggle result" time="0">
+    </testcase>
+    <testcase classname="toggleBookmark propagates API errors" name="toggleBookmark propagates API errors" time="0">
+    </testcase>
+    <testcase classname="fetchMyRecipes GETs /api/recipes/?author=&lt;id&gt; and returns the list" name="fetchMyRecipes GETs /api/recipes/?author=&lt;id&gt; and returns the list" time="0">
+    </testcase>
+    <testcase classname="fetchMyRecipes unwraps paginated DRF responses" name="fetchMyRecipes unwraps paginated DRF responses" time="0">
+    </testcase>
+    <testcase classname="fetchMyBookmarks GETs /api/recipes/?bookmarked=true and returns the list" name="fetchMyBookmarks GETs /api/recipes/?bookmarked=true and returns the list" time="0">
+    </testcase>
+    <testcase classname="fetchMyBookmarks unwraps paginated DRF responses" name="fetchMyBookmarks unwraps paginated DRF responses" time="0.001">
+    </testcase>
+    <testcase classname="fetchRecipesByRegion GETs /api/recipes/?region=&lt;name&gt;&amp;page_size=100 and returns the list" name="fetchRecipesByRegion GETs /api/recipes/?region=&lt;name&gt;&amp;page_size=100 and returns the list" time="0">
+    </testcase>
+    <testcase classname="fetchRecipesByRegion unwraps paginated DRF responses" name="fetchRecipesByRegion unwraps paginated DRF responses" time="0">
+    </testcase>
+    <testcase classname="fetchFeaturedRecipes returns the first &lt;limit&gt; recipes from the list endpoint" name="fetchFeaturedRecipes returns the first &lt;limit&gt; recipes from the list endpoint" time="0">
+    </testcase>
+    <testcase classname="fetchFeaturedRecipes defaults limit to 6 when not provided" name="fetchFeaturedRecipes defaults limit to 6 when not provided" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthContext" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="4.856" tests="17">
+    <testcase classname="AuthContext provides null user and token by default" name="AuthContext provides null user and token by default" time="0.023">
+    </testcase>
+    <testcase classname="AuthContext login() sets user and token" name="AuthContext login() sets user and token" time="0.023">
+    </testcase>
+    <testcase classname="AuthContext login() persists token to localStorage" name="AuthContext login() persists token to localStorage" time="0.007">
+    </testcase>
+    <testcase classname="AuthContext logout() clears user and token" name="AuthContext logout() clears user and token" time="0.008">
+    </testcase>
+    <testcase classname="AuthContext logout() removes token from localStorage" name="AuthContext logout() removes token from localStorage" time="0.004">
+    </testcase>
+    <testcase classname="AuthContext restores token from localStorage on mount" name="AuthContext restores token from localStorage on mount" time="0.023">
+    </testcase>
+    <testcase classname="AuthContext restores user from /api/users/me/ when token exists on mount" name="AuthContext restores user from /api/users/me/ when token exists on mount" time="0.013">
+    </testcase>
+    <testcase classname="AuthContext loading is true while fetching and false after fetchMe resolves" name="AuthContext loading is true while fetching and false after fetchMe resolves" time="0.005">
+    </testcase>
+    <testcase classname="AuthContext calls logout() and clears token when fetchMe returns a 401 error" name="AuthContext calls logout() and clears token when fetchMe returns a 401 error" time="0.009">
+    </testcase>
+    <testcase classname="AuthContext refresh-token persistence stores refresh token from login() in localStorage" name="AuthContext refresh-token persistence stores refresh token from login() in localStorage" time="0.002">
+    </testcase>
+    <testcase classname="AuthContext refresh-token persistence clears refresh token on logout()" name="AuthContext refresh-token persistence clears refresh token on logout()" time="0.001">
+    </testcase>
+    <testcase classname="AuthContext refresh-token persistence initializes refresh token from localStorage on mount" name="AuthContext refresh-token persistence initializes refresh token from localStorage on mount" time="0.123">
+    </testcase>
+    <testcase classname="AuthContext logout — backend coordination calls logoutRequest with the current refresh token on logout" name="AuthContext logout — backend coordination calls logoutRequest with the current refresh token on logout" time="0.001">
+    </testcase>
+    <testcase classname="AuthContext logout — backend coordination still clears local state when logoutRequest rejects" name="AuthContext logout — backend coordination still clears local state when logoutRequest rejects" time="0.001">
+    </testcase>
+    <testcase classname="AuthContext logout — backend coordination does not call logoutRequest when there is no refresh token" name="AuthContext logout — backend coordination does not call logoutRequest when there is no refresh token" time="0.001">
+    </testcase>
+    <testcase classname="AuthContext — auth:token-refreshed event (#701) updates token and refreshToken when api.js dispatches auth:token-refreshed" name="AuthContext — auth:token-refreshed event (#701) updates token and refreshToken when api.js dispatches auth:token-refreshed" time="0.001">
+    </testcase>
+    <testcase classname="AuthContext — auth:token-refreshed event (#701) keeps existing refresh token when event detail omits refresh" name="AuthContext — auth:token-refreshed event (#701) keeps existing refresh token when event detail omits refresh" time="0.009">
+    </testcase>
+  </testsuite>
+  <testsuite name="CalendarPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:02" time="3.708" tests="12">
+    <testcase classname="CalendarPage renders all 12 month panels" name="CalendarPage renders all 12 month panels" time="0.258">
+    </testcase>
+    <testcase classname="CalendarPage places fixed events under the correct month and resolves lunar events into their month panel" name="CalendarPage places fixed events under the correct month and resolves lunar events into their month panel" time="0.03">
+    </testcase>
+    <testcase classname="CalendarPage filters events when the month filter is changed" name="CalendarPage filters events when the month filter is changed" time="0.061">
+    </testcase>
+    <testcase classname="CalendarPage filters events when the region filter is changed" name="CalendarPage filters events when the region filter is changed" time="0.044">
+    </testcase>
+    <testcase classname="CalendarPage reveals an event detail panel with linked recipes when an event card is clicked" name="CalendarPage reveals an event detail panel with linked recipes when an event card is clicked" time="0.052">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) drops a current-year lunar event into its resolved month panel" name="CalendarPage — lunar resolution + subline (#669) drops a current-year lunar event into its resolved month panel" time="0.016">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) shows a lunar subline on every lunar event card" name="CalendarPage — lunar resolution + subline (#669) shows a lunar subline on every lunar event card" time="0.029">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) keeps unresolved lunar events in a &quot;Lunar / movable feasts&quot; section with (movable)" name="CalendarPage — lunar resolution + subline (#669) keeps unresolved lunar events in a &quot;Lunar / movable feasts&quot; section with (movable)" time="0.025">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) renders a dark badge on lunar cards and the regular badge on fixed cards" name="CalendarPage — lunar resolution + subline (#669) renders a dark badge on lunar cards and the regular badge on fixed cards" time="0.019">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) resolves backend snake_case slugs (eid_al_adha) the same as kebab-case" name="CalendarPage — lunar resolution + subline (#669) resolves backend snake_case slugs (eid_al_adha) the same as kebab-case" time="0.017">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) resolves Diwali (newly added to the lookup) instead of marking it movable" name="CalendarPage — lunar resolution + subline (#669) resolves Diwali (newly added to the lookup) instead of marking it movable" time="0.01">
+    </testcase>
+    <testcase classname="CalendarPage — lunar resolution + subline (#669) shows the pretty event name in the subline rather than the raw slug" name="CalendarPage — lunar resolution + subline (#669) shows the pretty event name in the subline rather than the raw slug" time="0.013">
+    </testcase>
+  </testsuite>
+  <testsuite name="SearchPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="5.296" tests="15">
+    <testcase classname="SearchPage shows loading state initially" name="SearchPage shows loading state initially" time="0.199">
+    </testcase>
+    <testcase classname="SearchPage renders result cards after API resolves" name="SearchPage renders result cards after API resolves" time="0.039">
+    </testcase>
+    <testcase classname="SearchPage combines q and ingredient into a single search call" name="SearchPage combines q and ingredient into a single search call" time="0.023">
+    </testcase>
+    <testcase classname="SearchPage passes meal_type server-side to the search API (#700)" name="SearchPage passes meal_type server-side to the search API (#700)" time="0.02">
+    </testcase>
+    <testcase classname="SearchPage applies story_type client-side to filter story results only" name="SearchPage applies story_type client-side to filter story results only" time="0.03">
+    </testcase>
+    <testcase classname="SearchPage renders a story_type active-filter chip when the URL carries one" name="SearchPage renders a story_type active-filter chip when the URL carries one" time="0.021">
+    </testcase>
+    <testcase classname="SearchPage shows active filter chips for non-empty filters" name="SearchPage shows active filter chips for non-empty filters" time="0.024">
+    </testcase>
+    <testcase classname="SearchPage shows empty state message when no results returned" name="SearchPage shows empty state message when no results returned" time="0.014">
+    </testcase>
+    <testcase classname="SearchPage shows error message when API fails" name="SearchPage shows error message when API fails" time="0.01">
+    </testcase>
+    <testcase classname="SearchPage renders search input and region filter on the results page" name="SearchPage renders search input and region filter on the results page" time="0.042">
+    </testcase>
+    <testcase classname="SearchPage populates region dropdown from API on results page" name="SearchPage populates region dropdown from API on results page" time="0.029">
+    </testcase>
+    <testcase classname="SearchPage search input is pre-filled with current query" name="SearchPage search input is pre-filled with current query" time="0.014">
+    </testcase>
+    <testcase classname="SearchPage submitting filter form triggers new search with updated params" name="SearchPage submitting filter form triggers new search with updated params" time="0.056">
+    </testcase>
+    <testcase classname="SearchPage shows personalization note when user has onboarding data" name="SearchPage shows personalization note when user has onboarding data" time="0.011">
+    </testcase>
+    <testcase classname="SearchPage applies include/exclude chips and region together in URL on submit" name="SearchPage applies include/exclude chips and region together in URL on submit" time="0.038">
+    </testcase>
+  </testsuite>
+  <testsuite name="StoryDetailPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="5.299" tests="26">
+    <testcase classname="StoryDetailPage shows loading state initially" name="StoryDetailPage shows loading state initially" time="0.195">
+    </testcase>
+    <testcase classname="StoryDetailPage displays story title after load" name="StoryDetailPage displays story title after load" time="0.021">
+    </testcase>
+    <testcase classname="StoryDetailPage displays story body after load" name="StoryDetailPage displays story body after load" time="0.009">
+    </testcase>
+    <testcase classname="StoryDetailPage displays author username" name="StoryDetailPage displays author username" time="0.012">
+    </testcase>
+    <testcase classname="StoryDetailPage shows linked recipe title when recipe is attached" name="StoryDetailPage shows linked recipe title when recipe is attached" time="0.008">
+    </testcase>
+    <testcase classname="StoryDetailPage linked recipe element links to /recipes/:id" name="StoryDetailPage linked recipe element links to /recipes/:id" time="0.039">
+    </testcase>
+    <testcase classname="StoryDetailPage does NOT show linked recipe section when no recipe is attached" name="StoryDetailPage does NOT show linked recipe section when no recipe is attached" time="0.005">
+    </testcase>
+    <testcase classname="StoryDetailPage does NOT show Edit Story button when user is not authenticated" name="StoryDetailPage does NOT show Edit Story button when user is not authenticated" time="0.012">
+    </testcase>
+    <testcase classname="StoryDetailPage does not render any Edit Story control for non-authors" name="StoryDetailPage does not render any Edit Story control for non-authors" time="0.025">
+    </testcase>
+    <testcase classname="StoryDetailPage shows Edit Story as a link to /stories/:id/edit when user is the author" name="StoryDetailPage shows Edit Story as a link to /stories/:id/edit when user is the author" time="0.019">
+    </testcase>
+    <testcase classname="StoryDetailPage shows error message when API fails" name="StoryDetailPage shows error message when API fails" time="0.01">
+    </testcase>
+    <testcase classname="StoryDetailPage delete flow shows Delete only to the author" name="StoryDetailPage delete flow shows Delete only to the author" time="0.015">
+    </testcase>
+    <testcase classname="StoryDetailPage delete flow does not show Delete to non-authors" name="StoryDetailPage delete flow does not show Delete to non-authors" time="0.014">
+    </testcase>
+    <testcase classname="StoryDetailPage delete flow confirms, deletes, and navigates to /stories" name="StoryDetailPage delete flow confirms, deletes, and navigates to /stories" time="0.037">
+    </testcase>
+    <testcase classname="StoryDetailPage delete flow disables the Delete button while a delete request is in flight" name="StoryDetailPage delete flow disables the Delete button while a delete request is in flight" time="0.047">
+    </testcase>
+    <testcase classname="StoryDetailPage delete flow does nothing when the user cancels the confirm" name="StoryDetailPage delete flow does nothing when the user cancels the confirm" time="0.009">
+    </testcase>
+    <testcase classname="StoryDetailPage delete flow shows an inline error if delete fails and keeps the story rendered" name="StoryDetailPage delete flow shows an inline error if delete fails and keeps the story rendered" time="0.02">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow shows &quot;Unpublish&quot; for the author when the story is published" name="StoryDetailPage publish/unpublish flow shows &quot;Unpublish&quot; for the author when the story is published" time="0.013">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow shows &quot;Publish&quot; for the author when the story is a draft" name="StoryDetailPage publish/unpublish flow shows &quot;Publish&quot; for the author when the story is a draft" time="0.009">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow does NOT show publish/unpublish control to non-authors" name="StoryDetailPage publish/unpublish flow does NOT show publish/unpublish control to non-authors" time="0.012">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow does NOT show publish/unpublish control when unauthenticated" name="StoryDetailPage publish/unpublish flow does NOT show publish/unpublish control when unauthenticated" time="0.005">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow clicking &quot;Unpublish&quot; calls unpublishStory and flips the control to &quot;Publish&quot;" name="StoryDetailPage publish/unpublish flow clicking &quot;Unpublish&quot; calls unpublishStory and flips the control to &quot;Publish&quot;" time="0.045">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow clicking &quot;Publish&quot; calls publishStory and flips the control to &quot;Unpublish&quot;" name="StoryDetailPage publish/unpublish flow clicking &quot;Publish&quot; calls publishStory and flips the control to &quot;Unpublish&quot;" time="0.027">
+    </testcase>
+    <testcase classname="StoryDetailPage publish/unpublish flow shows an inline error if publish fails" name="StoryDetailPage publish/unpublish flow shows an inline error if publish fails" time="0.024">
+    </testcase>
+    <testcase classname="StoryDetailPage heritage badge renders the heritage badge when story.heritage_group is present" name="StoryDetailPage heritage badge renders the heritage badge when story.heritage_group is present" time="0.012">
+    </testcase>
+    <testcase classname="StoryDetailPage heritage badge renders no heritage badge when story.heritage_group is null" name="StoryDetailPage heritage badge renders no heritage badge when story.heritage_group is null" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchStory" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.087" tests="18">
+    <testcase classname="fetchStory calls GET /api/stories/:id/ and returns data" name="fetchStory calls GET /api/stories/:id/ and returns data" time="0">
+    </testcase>
+    <testcase classname="fetchStory propagates API errors" name="fetchStory propagates API errors" time="0.005">
+    </testcase>
+    <testcase classname="createStory calls POST /api/stories/ with story data" name="createStory calls POST /api/stories/ with story data" time="0">
+    </testcase>
+    <testcase classname="createStory includes linked_recipe id when provided" name="createStory includes linked_recipe id when provided" time="0">
+    </testcase>
+    <testcase classname="storyService — new functions fetchStories calls GET /api/stories/ and returns data" name="storyService — new functions fetchStories calls GET /api/stories/ and returns data" time="0.001">
+    </testcase>
+    <testcase classname="storyService — new functions updateStory calls PATCH /api/stories/:id/ and returns data" name="storyService — new functions updateStory calls PATCH /api/stories/:id/ and returns data" time="0.001">
+    </testcase>
+    <testcase classname="storyService — new functions deleteStory DELETEs /api/stories/:id/" name="storyService — new functions deleteStory DELETEs /api/stories/:id/" time="0">
+    </testcase>
+    <testcase classname="publishStory / unpublishStory publishStory POSTs to /api/stories/:id/publish/ and returns data" name="publishStory / unpublishStory publishStory POSTs to /api/stories/:id/publish/ and returns data" time="0">
+    </testcase>
+    <testcase classname="publishStory / unpublishStory unpublishStory POSTs to /api/stories/:id/unpublish/ and returns data" name="publishStory / unpublishStory unpublishStory POSTs to /api/stories/:id/unpublish/ and returns data" time="0">
+    </testcase>
+    <testcase classname="publishStory / unpublishStory publishStory propagates API errors" name="publishStory / unpublishStory publishStory propagates API errors" time="0">
+    </testcase>
+    <testcase classname="publishStory / unpublishStory unpublishStory propagates API errors" name="publishStory / unpublishStory unpublishStory propagates API errors" time="0">
+    </testcase>
+    <testcase classname="updateStory — mock guard (#701) returns mock data without calling apiClient.patch when USE_MOCK=true" name="updateStory — mock guard (#701) returns mock data without calling apiClient.patch when USE_MOCK=true" time="0">
+    </testcase>
+    <testcase classname="fetchMyStories GETs /api/stories/?author=&lt;id&gt; and returns the list" name="fetchMyStories GETs /api/stories/?author=&lt;id&gt; and returns the list" time="0">
+    </testcase>
+    <testcase classname="fetchMyStories unwraps paginated DRF responses" name="fetchMyStories unwraps paginated DRF responses" time="0">
+    </testcase>
+    <testcase classname="fetchStoriesByRegion GETs /api/stories/?region=&lt;name&gt;&amp;page_size=100 and returns the list" name="fetchStoriesByRegion GETs /api/stories/?region=&lt;name&gt;&amp;page_size=100 and returns the list" time="0.001">
+    </testcase>
+    <testcase classname="fetchStoriesByRegion unwraps paginated DRF responses" name="fetchStoriesByRegion unwraps paginated DRF responses" time="0">
+    </testcase>
+    <testcase classname="fetchFeaturedStories returns the first &lt;limit&gt; stories from the list endpoint" name="fetchFeaturedStories returns the first &lt;limit&gt; stories from the list endpoint" time="0">
+    </testcase>
+    <testcase classname="fetchFeaturedStories defaults limit to 6 when not provided" name="fetchFeaturedStories defaults limit to 6 when not provided" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeEditPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="5.375" tests="20">
+    <testcase classname="RecipeEditPage pre-populates title from existing recipe" name="RecipeEditPage pre-populates title from existing recipe" time="0.182">
+    </testcase>
+    <testcase classname="RecipeEditPage pre-populates description from existing recipe" name="RecipeEditPage pre-populates description from existing recipe" time="0.021">
+    </testcase>
+    <testcase classname="RecipeEditPage pre-populates Q&amp;A toggle from existing recipe (qa_enabled: false)" name="RecipeEditPage pre-populates Q&amp;A toggle from existing recipe (qa_enabled: false)" time="0.026">
+    </testcase>
+    <testcase classname="RecipeEditPage shows validation error when title is cleared" name="RecipeEditPage shows validation error when title is cleared" time="0.059">
+    </testcase>
+    <testcase classname="RecipeEditPage shows error when both description and video are absent on submit" name="RecipeEditPage shows error when both description and video are absent on submit" time="0.031">
+    </testcase>
+    <testcase classname="RecipeEditPage calls updateRecipe and shows success toast on valid submit" name="RecipeEditPage calls updateRecipe and shows success toast on valid submit" time="0.043">
+    </testcase>
+    <testcase classname="RecipeEditPage calls updateRecipe with is_published: false when &quot;Save as draft&quot; is clicked" name="RecipeEditPage calls updateRecipe with is_published: false when &quot;Save as draft&quot; is clicked" time="0.032">
+    </testcase>
+    <testcase classname="RecipeEditPage shows &quot;Publish&quot; as the primary button when the recipe is a draft" name="RecipeEditPage shows &quot;Publish&quot; as the primary button when the recipe is a draft" time="0.015">
+    </testcase>
+    <testcase classname="RecipeEditPage shows error toast when API call fails" name="RecipeEditPage shows error toast when API call fails" time="0.047">
+    </testcase>
+    <testcase classname="RecipeEditPage shows error message when initial load fails" name="RecipeEditPage shows error message when initial load fails" time="0.008">
+    </testcase>
+    <testcase classname="RecipeEditPage redirects non-authors to the detail page" name="RecipeEditPage redirects non-authors to the detail page" time="0.016">
+    </testcase>
+    <testcase classname="RecipeEditPage renders a thumbnail upload field" name="RecipeEditPage renders a thumbnail upload field" time="0.014">
+    </testcase>
+    <testcase classname="RecipeEditPage shows error when no ingredients are filled in" name="RecipeEditPage shows error when no ingredients are filled in" time="0.025">
+    </testcase>
+    <testcase classname="RecipeEditPage renders region as a combobox (select element)" name="RecipeEditPage renders region as a combobox (select element)" time="0.009">
+    </testcase>
+    <testcase classname="RecipeEditPage pre-populates region dropdown with value from recipe" name="RecipeEditPage pre-populates region dropdown with value from recipe" time="0.013">
+    </testcase>
+    <testcase classname="RecipeEditPage — draft auto-save shows DraftRestoreBanner when a draft exists for this recipe" name="RecipeEditPage — draft auto-save shows DraftRestoreBanner when a draft exists for this recipe" time="0.01">
+    </testcase>
+    <testcase classname="RecipeEditPage — draft auto-save restores title from draft when Restore is clicked" name="RecipeEditPage — draft auto-save restores title from draft when Restore is clicked" time="0.013">
+    </testcase>
+    <testcase classname="RecipeEditPage — steps pre-fills the StepsEditor from recipe.steps on load" name="RecipeEditPage — steps pre-fills the StepsEditor from recipe.steps on load" time="0.011">
+    </testcase>
+    <testcase classname="RecipeEditPage — steps renders no step rows when recipe.steps is missing" name="RecipeEditPage — steps renders no step rows when recipe.steps is missing" time="0.007">
+    </testcase>
+    <testcase classname="RecipeEditPage — steps PATCHes the recipe with the trimmed steps array on save" name="RecipeEditPage — steps PATCHes the recipe with the trimmed steps array on save" time="0.093">
+    </testcase>
+  </testsuite>
+  <testsuite name="StoryCreatePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.503" tests="16">
+    <testcase classname="StoryCreatePage renders the Create Story heading" name="StoryCreatePage renders the Create Story heading" time="0.076">
+    </testcase>
+    <testcase classname="StoryCreatePage renders title, body, and language fields" name="StoryCreatePage renders title, body, and language fields" time="0.006">
+    </testcase>
+    <testcase classname="StoryCreatePage shows validation error when title is empty on submit" name="StoryCreatePage shows validation error when title is empty on submit" time="0.027">
+    </testcase>
+    <testcase classname="StoryCreatePage shows validation error when body is empty on submit" name="StoryCreatePage shows validation error when body is empty on submit" time="0.028">
+    </testcase>
+    <testcase classname="StoryCreatePage submits with title, body, language and no linked recipe" name="StoryCreatePage submits with title, body, language and no linked recipe" time="0.024">
+    </testcase>
+    <testcase classname="StoryCreatePage submits with is_published=false when &quot;Save as draft&quot; is clicked" name="StoryCreatePage submits with is_published=false when &quot;Save as draft&quot; is clicked" time="0.024">
+    </testcase>
+    <testcase classname="StoryCreatePage renders hint text below action buttons" name="StoryCreatePage renders hint text below action buttons" time="0.003">
+    </testcase>
+    <testcase classname="StoryCreatePage navigates to story detail page after successful submission" name="StoryCreatePage navigates to story detail page after successful submission" time="0.024">
+    </testcase>
+    <testcase classname="StoryCreatePage renders the recipe linking section with a search input" name="StoryCreatePage renders the recipe linking section with a search input" time="0.01">
+    </testcase>
+    <testcase classname="StoryCreatePage filters recipe list by search term" name="StoryCreatePage filters recipe list by search term" time="0.007">
+    </testcase>
+    <testcase classname="StoryCreatePage allows selecting a recipe and reflects it as linked" name="StoryCreatePage allows selecting a recipe and reflects it as linked" time="0.019">
+    </testcase>
+    <testcase classname="StoryCreatePage submits linked_recipe id in FormData when a recipe is linked" name="StoryCreatePage submits linked_recipe id in FormData when a recipe is linked" time="0.061">
+    </testcase>
+    <testcase classname="StoryCreatePage renders a photo upload field" name="StoryCreatePage renders a photo upload field" time="0.014">
+    </testcase>
+    <testcase classname="StoryCreatePage — draft auto-save shows DraftRestoreBanner when a draft exists in localStorage" name="StoryCreatePage — draft auto-save shows DraftRestoreBanner when a draft exists in localStorage" time="0.008">
+    </testcase>
+    <testcase classname="StoryCreatePage — draft auto-save restores title from draft when Restore is clicked" name="StoryCreatePage — draft auto-save restores title from draft when Restore is clicked" time="0.014">
+    </testcase>
+    <testcase classname="StoryCreatePage — draft auto-save hides the banner after Discard is clicked" name="StoryCreatePage — draft auto-save hides the banner after Discard is clicked" time="0.016">
+    </testcase>
+  </testsuite>
+  <testsuite name="apiClient" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.066" tests="10">
+    <testcase classname="apiClient creates an axios instance with the correct base URL" name="apiClient creates an axios instance with the correct base URL" time="0.001">
+    </testcase>
+    <testcase classname="apiClient registers a request interceptor" name="apiClient registers a request interceptor" time="0.005">
+    </testcase>
+    <testcase classname="apiClient attaches Bearer token when token exists in localStorage" name="apiClient attaches Bearer token when token exists in localStorage" time="0">
+    </testcase>
+    <testcase classname="apiClient does not attach Authorization header when no token in localStorage" name="apiClient does not attach Authorization header when no token in localStorage" time="0">
+    </testcase>
+    <testcase classname="apiClient 401 response interceptor registers a response interceptor" name="apiClient 401 response interceptor registers a response interceptor" time="0.001">
+    </testcase>
+    <testcase classname="apiClient 401 response interceptor attempts refresh and retries the original request on 401" name="apiClient 401 response interceptor attempts refresh and retries the original request on 401" time="0.001">
+    </testcase>
+    <testcase classname="apiClient 401 response interceptor logs out and rejects when refresh fails" name="apiClient 401 response interceptor logs out and rejects when refresh fails" time="0.001">
+    </testcase>
+    <testcase classname="apiClient 401 response interceptor passes through non-401 errors untouched" name="apiClient 401 response interceptor passes through non-401 errors untouched" time="0">
+    </testcase>
+    <testcase classname="apiClient 401 response interceptor does not retry on 401 if request already has _retry=true" name="apiClient 401 response interceptor does not retry on 401 if request already has _retry=true" time="0">
+    </testcase>
+    <testcase classname="apiClient 401 response interceptor deduplicates concurrent 401s into a single refresh call" name="apiClient 401 response interceptor deduplicates concurrent 401s into a single refresh call" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="NotificationTray" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.378" tests="14">
+    <testcase classname="NotificationTray renders the bell toggle with aria-label &quot;Notifications&quot;" name="NotificationTray renders the bell toggle with aria-label &quot;Notifications&quot;" time="0.019">
+    </testcase>
+    <testcase classname="NotificationTray renders a badge with the unread count when unreadCount &gt; 0" name="NotificationTray renders a badge with the unread count when unreadCount &gt; 0" time="0.001">
+    </testcase>
+    <testcase classname="NotificationTray does not render a badge when unreadCount is 0" name="NotificationTray does not render a badge when unreadCount is 0" time="0.002">
+    </testcase>
+    <testcase classname="NotificationTray toggles aria-expanded when the bell is clicked" name="NotificationTray toggles aria-expanded when the bell is clicked" time="0.008">
+    </testcase>
+    <testcase classname="NotificationTray shows the loading state inside the open panel" name="NotificationTray shows the loading state inside the open panel" time="0.005">
+    </testcase>
+    <testcase classname="NotificationTray shows the empty state when there are no notifications" name="NotificationTray shows the empty state when there are no notifications" time="0.004">
+    </testcase>
+    <testcase classname="NotificationTray renders a notification with a link to /recipes/&lt;recipeId&gt; when recipeId is present" name="NotificationTray renders a notification with a link to /recipes/&lt;recipeId&gt; when recipeId is present" time="0.024">
+    </testcase>
+    <testcase classname="NotificationTray falls back to /inbox when notification has no recipeId" name="NotificationTray falls back to /inbox when notification has no recipeId" time="0.025">
+    </testcase>
+    <testcase classname="NotificationTray renders a &quot;Mark all read&quot; button when unreadCount &gt; 0 and invokes context.markAllRead on click" name="NotificationTray renders a &quot;Mark all read&quot; button when unreadCount &gt; 0 and invokes context.markAllRead on click" time="0.022">
+    </testcase>
+    <testcase classname="NotificationTray does not render the &quot;Mark all read&quot; button when unreadCount is 0" name="NotificationTray does not render the &quot;Mark all read&quot; button when unreadCount is 0" time="0.014">
+    </testcase>
+    <testcase classname="NotificationTray calls markRead(id) and closes the panel when a notification is clicked" name="NotificationTray calls markRead(id) and closes the panel when a notification is clicked" time="0.028">
+    </testcase>
+    <testcase classname="NotificationTray — rating notifications (#739) renders a star icon for type === &quot;rating&quot;" name="NotificationTray — rating notifications (#739) renders a star icon for type === &quot;rating&quot;" time="0.017">
+    </testcase>
+    <testcase classname="NotificationTray — rating notifications (#739) links a rating notification to /recipes/&lt;recipeId&gt;" name="NotificationTray — rating notifications (#739) links a rating notification to /recipes/&lt;recipeId&gt;" time="0.022">
+    </testcase>
+    <testcase classname="NotificationTray — rating notifications (#739) keeps question / reply icons unchanged" name="NotificationTray — rating notifications (#739) keeps question / reply icons unchanged" time="0.02">
+    </testcase>
+  </testsuite>
+  <testsuite name="ChatTray" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.389" tests="15">
+    <testcase classname="ChatTray renders nothing when user is null" name="ChatTray renders nothing when user is null" time="0.006">
+    </testcase>
+    <testcase classname="ChatTray renders the Messages tab when user is logged in" name="ChatTray renders the Messages tab when user is logged in" time="0.023">
+    </testcase>
+    <testcase classname="ChatTray shows unread badge when totalUnread &gt; 0" name="ChatTray shows unread badge when totalUnread &gt; 0" time="0.005">
+    </testcase>
+    <testcase classname="ChatTray does not show badge when totalUnread is 0" name="ChatTray does not show badge when totalUnread is 0" time="0.005">
+    </testcase>
+    <testcase classname="ChatTray opens the panel on toggle click" name="ChatTray opens the panel on toggle click" time="0.014">
+    </testcase>
+    <testcase classname="ChatTray closes the panel on second toggle click" name="ChatTray closes the panel on second toggle click" time="0.033">
+    </testcase>
+    <testcase classname="ChatTray closes the panel on click-outside" name="ChatTray closes the panel on click-outside" time="0.011">
+    </testcase>
+    <testcase classname="ChatTray shows thread list with username and unread count in open panel" name="ChatTray shows thread list with username and unread count in open panel" time="0.013">
+    </testcase>
+    <testcase classname="ChatTray calls markRead when a thread is clicked" name="ChatTray calls markRead when a thread is clicked" time="0.03">
+    </testcase>
+    <testcase classname="ChatTray shows &quot;No conversations yet.&quot; when threads are empty" name="ChatTray shows &quot;No conversations yet.&quot; when threads are empty" time="0.009">
+    </testcase>
+    <testcase classname="relativeTime and isRecentlyActive helpers shows seconds for recent timestamps" name="relativeTime and isRecentlyActive helpers shows seconds for recent timestamps" time="0.004">
+    </testcase>
+    <testcase classname="relativeTime and isRecentlyActive helpers shows minutes for older timestamps" name="relativeTime and isRecentlyActive helpers shows minutes for older timestamps" time="0.005">
+    </testcase>
+    <testcase classname="relativeTime and isRecentlyActive helpers clamps negative diff to 0s for future timestamps" name="relativeTime and isRecentlyActive helpers clamps negative diff to 0s for future timestamps" time="0.007">
+    </testcase>
+    <testcase classname="relativeTime and isRecentlyActive helpers shows green dot for threads active within 5 minutes" name="relativeTime and isRecentlyActive helpers shows green dot for threads active within 5 minutes" time="0.005">
+    </testcase>
+    <testcase classname="relativeTime and isRecentlyActive helpers no green dot for threads older than 5 minutes" name="relativeTime and isRecentlyActive helpers no green dot for threads older than 5 minutes" time="0.012">
+    </testcase>
+  </testsuite>
+  <testsuite name="Passport action buttons — RecipeDetailPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.479" tests="8">
+    <testcase classname="Passport action buttons — RecipeDetailPage does not show I Tried This button when logged out" name="Passport action buttons — RecipeDetailPage does not show I Tried This button when logged out" time="0.021">
+    </testcase>
+    <testcase classname="Passport action buttons — RecipeDetailPage shows I Tried This button when logged in" name="Passport action buttons — RecipeDetailPage shows I Tried This button when logged in" time="0.043">
+    </testcase>
+    <testcase classname="Passport action buttons — RecipeDetailPage clicking I Tried This calls tryRecipe and disables the button" name="Passport action buttons — RecipeDetailPage clicking I Tried This calls tryRecipe and disables the button" time="0.062">
+    </testcase>
+    <testcase classname="Passport action buttons — RecipeDetailPage tryRecipe failure shows error, button stays clickable" name="Passport action buttons — RecipeDetailPage tryRecipe failure shows error, button stays clickable" time="0.092">
+    </testcase>
+    <testcase classname="Passport action buttons — StoryDetailPage does not show Save to Passport button when logged out" name="Passport action buttons — StoryDetailPage does not show Save to Passport button when logged out" time="0.004">
+    </testcase>
+    <testcase classname="Passport action buttons — StoryDetailPage shows Save to Passport button when logged in" name="Passport action buttons — StoryDetailPage shows Save to Passport button when logged in" time="0.014">
+    </testcase>
+    <testcase classname="Passport action buttons — StoryDetailPage clicking Save to Passport calls saveStoryToPassport and disables the button" name="Passport action buttons — StoryDetailPage clicking Save to Passport calls saveStoryToPassport and disables the button" time="0.027">
+    </testcase>
+    <testcase classname="Passport action buttons — StoryDetailPage saveStoryToPassport failure shows error, button stays clickable" name="Passport action buttons — StoryDetailPage saveStoryToPassport failure shows error, button stays clickable" time="0.029">
+    </testcase>
+  </testsuite>
+  <testsuite name="StoryEditPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="0.388" tests="10">
+    <testcase classname="StoryEditPage shows loading state initially" name="StoryEditPage shows loading state initially" time="0.017">
+    </testcase>
+    <testcase classname="StoryEditPage pre-populates title and body from existing story" name="StoryEditPage pre-populates title and body from existing story" time="0.014">
+    </testcase>
+    <testcase classname="StoryEditPage redirects non-authors to the detail page" name="StoryEditPage redirects non-authors to the detail page" time="0.014">
+    </testcase>
+    <testcase classname="StoryEditPage shows title required error on empty submit" name="StoryEditPage shows title required error on empty submit" time="0.049">
+    </testcase>
+    <testcase classname="StoryEditPage calls updateStory and shows success toast on valid save" name="StoryEditPage calls updateStory and shows success toast on valid save" time="0.025">
+    </testcase>
+    <testcase classname="StoryEditPage calls updateStory with is_published=false when &quot;Save as draft&quot; is clicked" name="StoryEditPage calls updateStory with is_published=false when &quot;Save as draft&quot; is clicked" time="0.026">
+    </testcase>
+    <testcase classname="StoryEditPage shows &quot;Publish&quot; as the primary button when the story is a draft" name="StoryEditPage shows &quot;Publish&quot; as the primary button when the story is a draft" time="0.018">
+    </testcase>
+    <testcase classname="StoryEditPage shows error toast when updateStory fails" name="StoryEditPage shows error toast when updateStory fails" time="0.023">
+    </testcase>
+    <testcase classname="StoryEditPage — draft auto-save shows DraftRestoreBanner when a draft exists for this story" name="StoryEditPage — draft auto-save shows DraftRestoreBanner when a draft exists for this story" time="0.008">
+    </testcase>
+    <testcase classname="StoryEditPage — draft auto-save restores title from draft when Restore is clicked" name="StoryEditPage — draft auto-save restores title from draft when Restore is clicked" time="0.02">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeDetailPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="5.9" tests="38">
+    <testcase classname="RecipeDetailPage shows loading state initially" name="RecipeDetailPage shows loading state initially" time="0.145">
+    </testcase>
+    <testcase classname="RecipeDetailPage displays title and description after load" name="RecipeDetailPage displays title and description after load" time="0.04">
+    </testcase>
+    <testcase classname="RecipeDetailPage renders image when image URL is present" name="RecipeDetailPage renders image when image URL is present" time="0.04">
+    </testcase>
+    <testcase classname="RecipeDetailPage does not render image element when image is null" name="RecipeDetailPage does not render image element when image is null" time="0.018">
+    </testcase>
+    <testcase classname="RecipeDetailPage renders a video element when video URL is present" name="RecipeDetailPage renders a video element when video URL is present" time="0.015">
+    </testcase>
+    <testcase classname="RecipeDetailPage displays ingredient list with amounts and units" name="RecipeDetailPage displays ingredient list with amounts and units" time="0.027">
+    </testcase>
+    <testcase classname="RecipeDetailPage shows error message when API fails" name="RecipeDetailPage shows error message when API fails" time="0.007">
+    </testcase>
+    <testcase classname="RecipeDetailPage does NOT show Edit button when user is not logged in" name="RecipeDetailPage does NOT show Edit button when user is not logged in" time="0.012">
+    </testcase>
+    <testcase classname="RecipeDetailPage does NOT show Edit button when logged-in user is not the author" name="RecipeDetailPage does NOT show Edit button when logged-in user is not the author" time="0.015">
+    </testcase>
+    <testcase classname="RecipeDetailPage displays author username" name="RecipeDetailPage displays author username" time="0.017">
+    </testcase>
+    <testcase classname="RecipeDetailPage shows Edit button when logged-in user is the author" name="RecipeDetailPage shows Edit button when logged-in user is the author" time="0.029">
+    </testcase>
+    <testcase classname="RecipeDetailPage renders Q&amp;A section heading" name="RecipeDetailPage renders Q&amp;A section heading" time="0.018">
+    </testcase>
+    <testcase classname="RecipeDetailPage always renders an enabled Message button for non-authors" name="RecipeDetailPage always renders an enabled Message button for non-authors" time="0.025">
+    </testcase>
+    <testcase classname="RecipeDetailPage delete flow shows a Delete button only to the author" name="RecipeDetailPage delete flow shows a Delete button only to the author" time="0.017">
+    </testcase>
+    <testcase classname="RecipeDetailPage delete flow does not show a Delete button to non-authors" name="RecipeDetailPage delete flow does not show a Delete button to non-authors" time="0.023">
+    </testcase>
+    <testcase classname="RecipeDetailPage delete flow confirms, deletes, and navigates to /recipes on success" name="RecipeDetailPage delete flow confirms, deletes, and navigates to /recipes on success" time="0.08">
+    </testcase>
+    <testcase classname="RecipeDetailPage delete flow does nothing when the user cancels the confirm" name="RecipeDetailPage delete flow does nothing when the user cancels the confirm" time="0.028">
+    </testcase>
+    <testcase classname="RecipeDetailPage delete flow disables the Delete button while a delete request is in flight" name="RecipeDetailPage delete flow disables the Delete button while a delete request is in flight" time="0.022">
+    </testcase>
+    <testcase classname="RecipeDetailPage delete flow shows an inline error if delete fails and keeps the recipe rendered" name="RecipeDetailPage delete flow shows an inline error if delete fails and keeps the recipe rendered" time="0.027">
+    </testcase>
+    <testcase classname="RecipeDetailPage ingredient check-off persistence does not render ingredient checkboxes for anonymous users" name="RecipeDetailPage ingredient check-off persistence does not render ingredient checkboxes for anonymous users" time="0.013">
+    </testcase>
+    <testcase classname="RecipeDetailPage ingredient check-off persistence fetches the canonical checked set on mount for a logged-in user" name="RecipeDetailPage ingredient check-off persistence fetches the canonical checked set on mount for a logged-in user" time="0.021">
+    </testcase>
+    <testcase classname="RecipeDetailPage ingredient check-off persistence optimistically toggles and reconciles with the canonical list from the server" name="RecipeDetailPage ingredient check-off persistence optimistically toggles and reconciles with the canonical list from the server" time="0.046">
+    </testcase>
+    <testcase classname="RecipeDetailPage ingredient check-off persistence reverts the optimistic toggle when the server rejects it" name="RecipeDetailPage ingredient check-off persistence reverts the optimistic toggle when the server rejects it" time="0.045">
+    </testcase>
+    <testcase classname="RecipeDetailPage substitute panel renders match-type chips with friendly labels (e.g. &quot;Flavor&quot;, not &quot;flavor&quot; or &quot;Flavor Match&quot;)" name="RecipeDetailPage substitute panel renders match-type chips with friendly labels (e.g. &quot;Flavor&quot;, not &quot;flavor&quot; or &quot;Flavor Match&quot;)" time="0.054">
+    </testcase>
+    <testcase classname="RecipeDetailPage heritage badge renders the heritage badge when recipe.heritage_group is present" name="RecipeDetailPage heritage badge renders the heritage badge when recipe.heritage_group is present" time="0.021">
+    </testcase>
+    <testcase classname="RecipeDetailPage heritage badge renders no heritage badge when recipe.heritage_group is null" name="RecipeDetailPage heritage badge renders no heritage badge when recipe.heritage_group is null" time="0.024">
+    </testcase>
+    <testcase classname="RecipeDetailPage cultural facts fetches and renders facts when recipe has a heritage_group" name="RecipeDetailPage cultural facts fetches and renders facts when recipe has a heritage_group" time="0.023">
+    </testcase>
+    <testcase classname="RecipeDetailPage cultural facts does not call the facts service when recipe has no heritage_group" name="RecipeDetailPage cultural facts does not call the facts service when recipe has no heritage_group" time="0.012">
+    </testcase>
+    <testcase classname="RecipeDetailPage steps section renders a numbered Steps section when recipe.steps has items" name="RecipeDetailPage steps section renders a numbered Steps section when recipe.steps has items" time="0.014">
+    </testcase>
+    <testcase classname="RecipeDetailPage steps section hides the Steps section when recipe.steps is empty" name="RecipeDetailPage steps section hides the Steps section when recipe.steps is empty" time="0.009">
+    </testcase>
+    <testcase classname="RecipeDetailPage steps section hides the Steps section when recipe.steps is missing entirely" name="RecipeDetailPage steps section hides the Steps section when recipe.steps is missing entirely" time="0.007">
+    </testcase>
+    <testcase classname="RecipeDetailPage star rating renders read-only stars with the average + count when present" name="RecipeDetailPage star rating renders read-only stars with the average + count when present" time="0.008">
+    </testcase>
+    <testcase classname="RecipeDetailPage star rating disables interactivity for the recipe author with a tooltip" name="RecipeDetailPage star rating disables interactivity for the recipe author with a tooltip" time="0.015">
+    </testcase>
+    <testcase classname="RecipeDetailPage star rating lets a non-author authenticated user submit a rating via POST" name="RecipeDetailPage star rating lets a non-author authenticated user submit a rating via POST" time="0.033">
+    </testcase>
+    <testcase classname="RecipeDetailPage bookmark button hides the bookmark button for anonymous viewers" name="RecipeDetailPage bookmark button hides the bookmark button for anonymous viewers" time="0.011">
+    </testcase>
+    <testcase classname="RecipeDetailPage bookmark button hides the bookmark button for the recipe author" name="RecipeDetailPage bookmark button hides the bookmark button for the recipe author" time="0.014">
+    </testcase>
+    <testcase classname="RecipeDetailPage bookmark button renders an unsaved bookmark button for a non-author authenticated viewer" name="RecipeDetailPage bookmark button renders an unsaved bookmark button for a non-author authenticated viewer" time="0.014">
+    </testcase>
+    <testcase classname="RecipeDetailPage bookmark button calls toggleBookmark and flips state on click" name="RecipeDetailPage bookmark button calls toggleBookmark and flips state on click" time="0.045">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchThreads" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.065" tests="10">
+    <testcase classname="fetchThreads GETs /api/threads/ and normalizes a paginated response" name="fetchThreads GETs /api/threads/ and normalizes a paginated response" time="0">
+    </testcase>
+    <testcase classname="fetchThreads handles a plain array response with no last_message" name="fetchThreads handles a plain array response with no last_message" time="0">
+    </testcase>
+    <testcase classname="fetchMessages GETs /api/threads/:id/messages/ and normalizes messages" name="fetchMessages GETs /api/threads/:id/messages/ and normalizes messages" time="0">
+    </testcase>
+    <testcase classname="sendMessage POSTs body to /api/threads/:id/send/ and returns normalized data" name="sendMessage POSTs body to /api/threads/:id/send/ and returns normalized data" time="0">
+    </testcase>
+    <testcase classname="sendMessage propagates API errors to the caller" name="sendMessage propagates API errors to the caller" time="0.004">
+    </testcase>
+    <testcase classname="createThread POSTs other_user_id to /api/threads/ and normalizes response" name="createThread POSTs other_user_id to /api/threads/ and normalizes response" time="0.001">
+    </testcase>
+    <testcase classname="createThread falls back to provided toUsername when response omits other_username" name="createThread falls back to provided toUsername when response omits other_username" time="0">
+    </testcase>
+    <testcase classname="markThreadRead POSTs to /api/threads/:id/read/ with no body" name="markThreadRead POSTs to /api/threads/:id/read/ with no body" time="0">
+    </testcase>
+    <testcase classname="fetchMessages — cursor pagination (#851) follows the cursor `next` link and concatenates all pages" name="fetchMessages — cursor pagination (#851) follows the cursor `next` link and concatenates all pages" time="0.002">
+    </testcase>
+    <testcase classname="fetchMessages — cursor pagination (#851) falls back to a single-page array response" name="fetchMessages — cursor pagination (#851) falls back to a single-page array response" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ThreadPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.424" tests="9">
+    <testcase classname="ThreadPage shows a loading state while messages are loading" name="ThreadPage shows a loading state while messages are loading" time="0.019">
+    </testcase>
+    <testcase classname="ThreadPage renders messages returned by fetchMessages, in order" name="ThreadPage renders messages returned by fetchMessages, in order" time="0.053">
+    </testcase>
+    <testcase classname="ThreadPage typing and clicking Send calls sendMessage(threadId, body) and appends the message" name="ThreadPage typing and clicking Send calls sendMessage(threadId, body) and appends the message" time="0.042">
+    </testcase>
+    <testcase classname="ThreadPage disables the Send button while a send is in flight" name="ThreadPage disables the Send button while a send is in flight" time="0.052">
+    </testcase>
+    <testcase classname="ThreadPage does not call sendMessage when the body is empty or whitespace" name="ThreadPage does not call sendMessage when the body is empty or whitespace" time="0.025">
+    </testcase>
+    <testcase classname="ThreadPage shows an error state when fetchMessages rejects" name="ThreadPage shows an error state when fetchMessages rejects" time="0.008">
+    </testcase>
+    <testcase classname="ThreadPage calls scrollIntoView after messages render (auto scroll-to-bottom)" name="ThreadPage calls scrollIntoView after messages render (auto scroll-to-bottom)" time="0.007">
+    </testcase>
+    <testcase classname="ThreadPage surfaces an inline error alert when sendMessage rejects and preserves the draft" name="ThreadPage surfaces an inline error alert when sendMessage rejects and preserves the draft" time="0.047">
+    </testcase>
+    <testcase classname="ThreadPage calls markThreadRead with the URL threadId after messages load" name="ThreadPage calls markThreadRead with the URL threadId after messages load" time="0.011">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeListPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.269" tests="11">
+    <testcase classname="RecipeListPage shows loading state initially" name="RecipeListPage shows loading state initially" time="0.014">
+    </testcase>
+    <testcase classname="RecipeListPage renders all recipe titles after load" name="RecipeListPage renders all recipe titles after load" time="0.018">
+    </testcase>
+    <testcase classname="RecipeListPage each recipe card links to /recipes/:id" name="RecipeListPage each recipe card links to /recipes/:id" time="0.019">
+    </testcase>
+    <testcase classname="RecipeListPage shows empty message when no recipes exist" name="RecipeListPage shows empty message when no recipes exist" time="0.006">
+    </testcase>
+    <testcase classname="RecipeListPage displays region name (not ID) on recipe cards" name="RecipeListPage displays region name (not ID) on recipe cards" time="0.011">
+    </testcase>
+    <testcase classname="RecipeListPage does not show region tag when region_name is absent" name="RecipeListPage does not show region tag when region_name is absent" time="0.028">
+    </testcase>
+    <testcase classname="RecipeListPage renders recipe image when image is present" name="RecipeListPage renders recipe image when image is present" time="0.013">
+    </testcase>
+    <testcase classname="RecipeListPage shows error message when API fails" name="RecipeListPage shows error message when API fails" time="0.007">
+    </testcase>
+    <testcase classname="RecipeListPage star rating shows read-only stars with the average and count next to each card" name="RecipeListPage star rating shows read-only stars with the average and count next to each card" time="0.011">
+    </testcase>
+    <testcase classname="RecipeListPage bookmark icon renders a filled bookmark icon when recipe.is_bookmarked is true" name="RecipeListPage bookmark icon renders a filled bookmark icon when recipe.is_bookmarked is true" time="0.014">
+    </testcase>
+    <testcase classname="RecipeListPage bookmark icon renders an empty bookmark icon when recipe.is_bookmarked is false / missing" name="RecipeListPage bookmark icon renders an empty bookmark icon when recipe.is_bookmarked is false / missing" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeCommentsSection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.371" tests="7">
+    <testcase classname="RecipeCommentsSection loads and renders threaded comments" name="RecipeCommentsSection loads and renders threaded comments" time="0.043">
+    </testcase>
+    <testcase classname="RecipeCommentsSection submits a new question" name="RecipeCommentsSection submits a new question" time="0.044">
+    </testcase>
+    <testcase classname="RecipeCommentsSection shows login hint when user is not authenticated" name="RecipeCommentsSection shows login hint when user is not authenticated" time="0.013">
+    </testcase>
+    <testcase classname="RecipeCommentsSection opens action menu and toggles helpful vote" name="RecipeCommentsSection opens action menu and toggles helpful vote" time="0.022">
+    </testcase>
+    <testcase classname="RecipeCommentsSection applies optimistic helpful count and disables button while request is in flight" name="RecipeCommentsSection applies optimistic helpful count and disables button while request is in flight" time="0.048">
+    </testcase>
+    <testcase classname="RecipeCommentsSection rolls back optimistic helpful state on API error" name="RecipeCommentsSection rolls back optimistic helpful state on API error" time="0.049">
+    </testcase>
+    <testcase classname="RecipeCommentsSection surfaces an inline error to the user when deleteComment fails (#699)" name="RecipeCommentsSection surfaces an inline error to the user when deleteComment fails (#699)" time="0.035">
+    </testcase>
+  </testsuite>
+  <testsuite name="ExplorePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.488" tests="9">
+    <testcase classname="ExplorePage shows skeleton rails while events load" name="ExplorePage shows skeleton rails while events load" time="0.025">
+    </testcase>
+    <testcase classname="ExplorePage renders the featured rail + region rails after fetch resolves" name="ExplorePage renders the featured rail + region rails after fetch resolves" time="0.093">
+    </testcase>
+    <testcase classname="ExplorePage renders the region jump-nav with one chip per region rail" name="ExplorePage renders the region jump-nav with one chip per region rail" time="0.038">
+    </testcase>
+    <testcase classname="ExplorePage renders &quot;See all&quot; only on non-featured rails" name="ExplorePage renders &quot;See all&quot; only on non-featured rails" time="0.057">
+    </testcase>
+    <testcase classname="ExplorePage renders an empty state with CTAs when no rails have items" name="ExplorePage renders an empty state with CTAs when no rails have items" time="0.017">
+    </testcase>
+    <testcase classname="ExplorePage shows the sign-in banner only when not authenticated" name="ExplorePage shows the sign-in banner only when not authenticated" time="0.021">
+    </testcase>
+    <testcase classname="ExplorePage hides the sign-in banner when authenticated" name="ExplorePage hides the sign-in banner when authenticated" time="0.022">
+    </testcase>
+    <testcase classname="ExplorePage shows the bookmark button on recipe cards only when signed in" name="ExplorePage shows the bookmark button on recipe cards only when signed in" time="0.027">
+    </testcase>
+    <testcase classname="ExplorePage shows an error message when fetchExploreEvents rejects" name="ExplorePage shows an error message when fetchExploreEvents rejects" time="0.012">
+    </testcase>
+  </testsuite>
+  <testsuite name="InboxPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.284" tests="7">
+    <testcase classname="InboxPage shows a loading state while threads are loading" name="InboxPage shows a loading state while threads are loading" time="0.009">
+    </testcase>
+    <testcase classname="InboxPage renders thread rows after fetch resolves" name="InboxPage renders thread rows after fetch resolves" time="0.039">
+    </testcase>
+    <testcase classname="InboxPage shows the empty-state message when there are no threads" name="InboxPage shows the empty-state message when there are no threads" time="0.009">
+    </testcase>
+    <testcase classname="InboxPage renders the compose form when ?compose=true&amp;to=...&amp;toUsername=... is in the URL" name="InboxPage renders the compose form when ?compose=true&amp;to=...&amp;toUsername=... is in the URL" time="0.013">
+    </testcase>
+    <testcase classname="InboxPage compose: typing and clicking Send calls createThread with the right args and navigates" name="InboxPage compose: typing and clicking Send calls createThread with the right args and navigates" time="0.034">
+    </testcase>
+    <testcase classname="InboxPage compose: Cancel button navigates back to /inbox without compose form" name="InboxPage compose: Cancel button navigates back to /inbox without compose form" time="0.018">
+    </testcase>
+    <testcase classname="InboxPage shows an error message when fetchThreads rejects" name="InboxPage shows an error message when fetchThreads rejects" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProfilePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.306" tests="9">
+    <testcase classname="ProfilePage displays the current user info" name="ProfilePage displays the current user info" time="0.018">
+    </testcase>
+    <testcase classname="ProfilePage renders the ContactabilityToggle" name="ProfilePage renders the ContactabilityToggle" time="0.011">
+    </testcase>
+    <testcase classname="ProfilePage logs the user out when Log Out is clicked" name="ProfilePage logs the user out when Log Out is clicked" time="0.016">
+    </testcase>
+    <testcase classname="ProfilePage has a link back to onboarding to edit cultural preferences" name="ProfilePage has a link back to onboarding to edit cultural preferences" time="0.008">
+    </testcase>
+    <testcase classname="ProfilePage — my recipes / stories / bookmarks renders three section headings (My recipes, My stories, Saved recipes)" name="ProfilePage — my recipes / stories / bookmarks renders three section headings (My recipes, My stories, Saved recipes)" time="0.025">
+    </testcase>
+    <testcase classname="ProfilePage — my recipes / stories / bookmarks renders one card per recipe / story / bookmark with a link to detail" name="ProfilePage — my recipes / stories / bookmarks renders one card per recipe / story / bookmark with a link to detail" time="0.031">
+    </testcase>
+    <testcase classname="ProfilePage — my recipes / stories / bookmarks shows an empty-state hint when a section has no items" name="ProfilePage — my recipes / stories / bookmarks shows an empty-state hint when a section has no items" time="0.012">
+    </testcase>
+    <testcase classname="ProfilePage — my recipes / stories / bookmarks handles per-section fetch failures gracefully (other sections still render)" name="ProfilePage — my recipes / stories / bookmarks handles per-section fetch failures gracefully (other sections still render)" time="0.017">
+    </testcase>
+    <testcase classname="ProfilePage — edit link (#660) renders an &quot;Edit profile&quot; link pointing at /profile/edit" name="ProfilePage — edit link (#660) renders an &quot;Edit profile&quot; link pointing at /profile/edit" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchExploreEvents" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.067" tests="9">
+    <testcase classname="fetchExploreEvents GETs /api/recommendations/ with surface=explore" name="fetchExploreEvents GETs /api/recommendations/ with surface=explore" time="0.001">
+    </testcase>
+    <testcase classname="fetchExploreEvents groups results into a featured rail + region rails when multiple regions are present" name="fetchExploreEvents groups results into a featured rail + region rails when multiple regions are present" time="0">
+    </testcase>
+    <testcase classname="fetchExploreEvents caps duplicate authors within a rail at the configured limit" name="fetchExploreEvents caps duplicate authors within a rail at the configured limit" time="0">
+    </testcase>
+    <testcase classname="fetchExploreEvents falls back to type-based rails when no regions are present" name="fetchExploreEvents falls back to type-based rails when no regions are present" time="0.001">
+    </testcase>
+    <testcase classname="fetchExploreEvents returns an empty list when results are empty" name="fetchExploreEvents returns an empty list when results are empty" time="0">
+    </testcase>
+    <testcase classname="fetchEventDetail returns the matching region rail by id" name="fetchEventDetail returns the matching region rail by id" time="0.001">
+    </testcase>
+    <testcase classname="fetchEventDetail returns the legacy recipes bucket for id=recipes" name="fetchEventDetail returns the legacy recipes bucket for id=recipes" time="0">
+    </testcase>
+    <testcase classname="fetchEventDetail returns the Discover bucket for an unknown id" name="fetchEventDetail returns the Discover bucket for an unknown id" time="0.001">
+    </testcase>
+    <testcase classname="fetchEventDetail propagates API errors to the caller" name="fetchEventDetail propagates API errors to the caller" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="NotificationContext" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.419" tests="6">
+    <testcase classname="NotificationContext without a token, does not fetch and starts with empty notifications" name="NotificationContext without a token, does not fetch and starts with empty notifications" time="0.024">
+    </testcase>
+    <testcase classname="NotificationContext with a token, fetches notifications and populates unreadCount" name="NotificationContext with a token, fetches notifications and populates unreadCount" time="0.057">
+    </testcase>
+    <testcase classname="NotificationContext markRead(id) marks the notification as read and decrements unreadCount" name="NotificationContext markRead(id) marks the notification as read and decrements unreadCount" time="0.066">
+    </testcase>
+    <testcase classname="NotificationContext markRead is a no-op when the notification is already read" name="NotificationContext markRead is a no-op when the notification is already read" time="0.057">
+    </testcase>
+    <testcase classname="NotificationContext markAllRead() calls the service and zeros unreadCount optimistically" name="NotificationContext markAllRead() calls the service and zeros unreadCount optimistically" time="0.058">
+    </testcase>
+    <testcase classname="NotificationContext sets error and clears loading when fetch rejects" name="NotificationContext sets error and clears loading when fetch rejects" time="0.055">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.175" tests="11">
+    <testcase classname=" prompt is not visible before scroll" name=" prompt is not visible before scroll" time="0.007">
+    </testcase>
+    <testcase classname=" prompt appears after scrollY &gt; 300" name=" prompt appears after scrollY &gt; 300" time="0.002">
+    </testcase>
+    <testcase classname=" dismiss button hides prompt and sets sessionStorage" name=" dismiss button hides prompt and sets sessionStorage" time="0.005">
+    </testcase>
+    <testcase classname=" region chips are rendered in the balloon" name=" region chips are rendered in the balloon" time="0.001">
+    </testcase>
+    <testcase classname=" does not render when regions list is empty" name=" does not render when regions list is empty" time="0.001">
+    </testcase>
+    <testcase classname=" clicking a region chip opens the modal" name=" clicking a region chip opens the modal" time="0.009">
+    </testcase>
+    <testcase classname=" modal shows region name as header" name=" modal shows region name as header" time="0.013">
+    </testcase>
+    <testcase classname=" modal shows story card with Read story link" name=" modal shows story card with Read story link" time="0.016">
+    </testcase>
+    <testcase classname=" clicking backdrop closes modal" name=" clicking backdrop closes modal" time="0.007">
+    </testcase>
+    <testcase classname=" modal close button closes modal" name=" modal close button closes modal" time="0.008">
+    </testcase>
+    <testcase classname=" prompt does not appear when sessionStorage flag is already set" name=" prompt does not appear when sessionStorage flag is already set" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="MapPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.283" tests="5">
+    <testcase classname="MapPage builds &quot;See all from {region}&quot; using region.name, not region.id" name="MapPage builds &quot;See all from {region}&quot; using region.name, not region.id" time="0.019">
+    </testcase>
+    <testcase classname="MapPage — recipe and story pins (#732) renders a pin per located recipe and per located story with distinct colours" name="MapPage — recipe and story pins (#732) renders a pin per located recipe and per located story with distinct colours" time="0.038">
+    </testcase>
+    <testcase classname="MapPage — recipe and story pins (#732) lists unlocated items in the &quot;Without a location&quot; panel" name="MapPage — recipe and story pins (#732) lists unlocated items in the &quot;Without a location&quot; panel" time="0.019">
+    </testcase>
+    <testcase classname="MapPage — recipe and story pins (#732) renders an explicit &quot;X recipes + Y stories on map · Z without a location&quot; count line" name="MapPage — recipe and story pins (#732) renders an explicit &quot;X recipes + Y stories on map · Z without a location&quot; count line" time="0.016">
+    </testcase>
+    <testcase classname="MapPage — recipe and story pins (#732) links recipe pins to /recipes/:id and story pins to /stories/:id" name="MapPage — recipe and story pins (#732) links recipe pins to /recipes/:id and story pins to /stories/:id" time="0.061">
+    </testcase>
+  </testsuite>
+  <testsuite name="HeritageMapPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.889" tests="9">
+    <testcase classname="HeritageMapPage centres the map on the top region (most recipes)" name="HeritageMapPage centres the map on the top region (most recipes)" time="0.017">
+    </testcase>
+    <testcase classname="HeritageMapPage renders one region pin per non-center region (no per-member duplicates)" name="HeritageMapPage renders one region pin per non-center region (no per-member duplicates)" time="0.01">
+    </testcase>
+    <testcase classname="HeritageMapPage renders one polyline per non-center region" name="HeritageMapPage renders one polyline per non-center region" time="0.006">
+    </testcase>
+    <testcase classname="HeritageMapPage renders no polylines for a single-region heritage" name="HeritageMapPage renders no polylines for a single-region heritage" time="0.012">
+    </testcase>
+    <testcase classname="HeritageMapPage clicking the center marker opens the panel for the center region" name="HeritageMapPage clicking the center marker opens the panel for the center region" time="0.102">
+    </testcase>
+    <testcase classname="HeritageMapPage clicking a region pin opens the panel for that region" name="HeritageMapPage clicking a region pin opens the panel for that region" time="0.033">
+    </testcase>
+    <testcase classname="HeritageMapPage panel shows placeholder text when no region is selected" name="HeritageMapPage panel shows placeholder text when no region is selected" time="0.008">
+    </testcase>
+    <testcase classname="HeritageMapPage links &quot;Back to Heritage Page&quot; to /heritage/:id" name="HeritageMapPage links &quot;Back to Heritage Page&quot; to /heritage/:id" time="0.008">
+    </testcase>
+    <testcase classname="HeritageMapPage shows an empty-state message when no members have coordinates" name="HeritageMapPage shows an empty-state message when no members have coordinates" time="0.015">
+    </testcase>
+  </testsuite>
+  <testsuite name="RegisterPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:07" time="0.307" tests="7">
+    <testcase classname="RegisterPage renders username, email, password fields and submit button" name="RegisterPage renders username, email, password fields and submit button" time="0.06">
+    </testcase>
+    <testcase classname="RegisterPage shows validation error when username is empty" name="RegisterPage shows validation error when username is empty" time="0.015">
+    </testcase>
+    <testcase classname="RegisterPage shows validation error when email is empty" name="RegisterPage shows validation error when email is empty" time="0.013">
+    </testcase>
+    <testcase classname="RegisterPage shows validation error when password is empty" name="RegisterPage shows validation error when password is empty" time="0.018">
+    </testcase>
+    <testcase classname="RegisterPage calls registerRequest and login() on valid submit" name="RegisterPage calls registerRequest and login() on valid submit" time="0.025">
+    </testcase>
+    <testcase classname="RegisterPage passes refresh token from register response to AuthContext.login()" name="RegisterPage passes refresh token from register response to AuthContext.login()" time="0.01">
+    </testcase>
+    <testcase classname="RegisterPage shows error message when registerRequest fails" name="RegisterPage shows error message when registerRequest fails" time="0.022">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchModerationQueue" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.105" tests="8">
+    <testcase classname="fetchModerationQueue normalizes pending backend item to frontend shape" name="fetchModerationQueue normalizes pending backend item to frontend shape" time="0.001">
+    </testcase>
+    <testcase classname="fetchModerationQueue derives status approved when is_approved is true and reviewed_at is set" name="fetchModerationQueue derives status approved when is_approved is true and reviewed_at is set" time="0">
+    </testcase>
+    <testcase classname="fetchModerationQueue derives status rejected when is_approved is false and reviewed_at is set" name="fetchModerationQueue derives status rejected when is_approved is false and reviewed_at is set" time="0">
+    </testcase>
+    <testcase classname="fetchModerationQueue accepts a paginated { results: [...] } response shape" name="fetchModerationQueue accepts a paginated { results: [...] } response shape" time="0.001">
+    </testcase>
+    <testcase classname="fetchModerationQueue propagates API errors to the caller" name="fetchModerationQueue propagates API errors to the caller" time="0.01">
+    </testcase>
+    <testcase classname="approveTag POSTs to /api/moderation/cultural-tags/&lt;typeKey&gt;/&lt;id&gt;/approve/" name="approveTag POSTs to /api/moderation/cultural-tags/&lt;typeKey&gt;/&lt;id&gt;/approve/" time="0">
+    </testcase>
+    <testcase classname="rejectTag POSTs to /api/moderation/cultural-tags/&lt;typeKey&gt;/&lt;id&gt;/reject/ with a reason body" name="rejectTag POSTs to /api/moderation/cultural-tags/&lt;typeKey&gt;/&lt;id&gt;/reject/ with a reason body" time="0.001">
+    </testcase>
+    <testcase classname="rejectTag defaults the reason to an empty string when not provided" name="rejectTag defaults the reason to an empty string when not provided" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="CulturalHighlightPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.301" tests="7">
+    <testcase classname="CulturalHighlightPage renders the matching item title, body, region and tags" name="CulturalHighlightPage renders the matching item title, body, region and tags" time="0.071">
+    </testcase>
+    <testcase classname="CulturalHighlightPage shows a kind badge that matches the item kind" name="CulturalHighlightPage shows a kind badge that matches the item kind" time="0.039">
+    </testcase>
+    <testcase classname="CulturalHighlightPage renders a not-found view when no item matches" name="CulturalHighlightPage renders a not-found view when no item matches" time="0.005">
+    </testcase>
+    <testcase classname="CulturalHighlightPage renders an error state when the fetch fails" name="CulturalHighlightPage renders an error state when the fetch fails" time="0.005">
+    </testcase>
+    <testcase classname="CulturalHighlightPage surfaces a &quot;View the linked recipe&quot; link when item.link.kind=recipe" name="CulturalHighlightPage surfaces a &quot;View the linked recipe&quot; link when item.link.kind=recipe" time="0.006">
+    </testcase>
+    <testcase classname="CulturalHighlightPage surfaces a &quot;Read the linked story&quot; link when item.link.kind=story" name="CulturalHighlightPage surfaces a &quot;Read the linked story&quot; link when item.link.kind=story" time="0.007">
+    </testcase>
+    <testcase classname="CulturalHighlightPage omits the related link when item has no link" name="CulturalHighlightPage omits the related link when item has no link" time="0.011">
+    </testcase>
+  </testsuite>
+  <testsuite name="AccountPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.366" tests="8">
+    <testcase classname="AccountPage renders saved preferences in view mode" name="AccountPage renders saved preferences in view mode" time="0.022">
+    </testcase>
+    <testcase classname="AccountPage shows &quot;None selected&quot; for empty preference lists" name="AccountPage shows &quot;None selected&quot; for empty preference lists" time="0.016">
+    </testcase>
+    <testcase classname="AccountPage enters edit mode on Edit Preferences click" name="AccountPage enters edit mode on Edit Preferences click" time="0.013">
+    </testcase>
+    <testcase classname="AccountPage cancel returns to view mode without saving" name="AccountPage cancel returns to view mode without saving" time="0.024">
+    </testcase>
+    <testcase classname="AccountPage calls updateMe with current draft on Save Changes" name="AccountPage calls updateMe with current draft on Save Changes" time="0.033">
+    </testcase>
+    <testcase classname="AccountPage returns to view mode after successful save" name="AccountPage returns to view mode after successful save" time="0.042">
+    </testcase>
+    <testcase classname="AccountPage shows error message if updateMe fails" name="AccountPage shows error message if updateMe fails" time="0.047">
+    </testcase>
+    <testcase classname="AccountPage toggles a chip in edit mode" name="AccountPage toggles a chip in edit mode" time="0.028">
+    </testcase>
+  </testsuite>
+  <testsuite name="loginRequest" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.097" tests="12">
+    <testcase classname="loginRequest POSTs email/password to /api/auth/login/ and returns data" name="loginRequest POSTs email/password to /api/auth/login/ and returns data" time="0">
+    </testcase>
+    <testcase classname="registerRequest POSTs username/email/password to /api/auth/register/ and returns data" name="registerRequest POSTs username/email/password to /api/auth/register/ and returns data" time="0">
+    </testcase>
+    <testcase classname="fetchMe GETs /api/users/me/ and returns data" name="fetchMe GETs /api/users/me/ and returns data" time="0">
+    </testcase>
+    <testcase classname="updateMe PATCHes /api/users/me/ with payload and returns data" name="updateMe PATCHes /api/users/me/ with payload and returns data" time="0">
+    </testcase>
+    <testcase classname="updateMe propagates API errors to the caller" name="updateMe propagates API errors to the caller" time="0.002">
+    </testcase>
+    <testcase classname="refreshAccessToken POSTs refresh token to /api/auth/refresh/ via raw axios" name="refreshAccessToken POSTs refresh token to /api/auth/refresh/ via raw axios" time="0">
+    </testcase>
+    <testcase classname="logoutRequest POSTs the refresh token to /api/auth/logout/ via apiClient" name="logoutRequest POSTs the refresh token to /api/auth/logout/ via apiClient" time="0">
+    </testcase>
+    <testcase classname="getContactabilityValue returns true when user is null/undefined" name="getContactabilityValue returns true when user is null/undefined" time="0">
+    </testcase>
+    <testcase classname="getContactabilityValue prefers is_contactable when it is a boolean" name="getContactabilityValue prefers is_contactable when it is a boolean" time="0">
+    </testcase>
+    <testcase classname="getContactabilityValue falls back to contactable when is_contactable is missing" name="getContactabilityValue falls back to contactable when is_contactable is missing" time="0">
+    </testcase>
+    <testcase classname="getContactabilityValue falls back to allow_new_threads when the others are missing" name="getContactabilityValue falls back to allow_new_threads when the others are missing" time="0">
+    </testcase>
+    <testcase classname="getContactabilityValue defaults to true when no relevant fields are present" name="getContactabilityValue defaults to true when no relevant fields are present" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="locatableMembers" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.06" tests="13">
+    <testcase classname="locatableMembers keeps members with numeric lat/lng" name="locatableMembers keeps members with numeric lat/lng" time="0">
+    </testcase>
+    <testcase classname="locatableMembers drops members with null lat or lng" name="locatableMembers drops members with null lat or lng" time="0">
+    </testcase>
+    <testcase classname="locatableMembers returns an empty array when given no members" name="locatableMembers returns an empty array when given no members" time="0">
+    </testcase>
+    <testcase classname="groupByRegion returns one group per distinct region" name="groupByRegion returns one group per distinct region" time="0.001">
+    </testcase>
+    <testcase classname="groupByRegion drops members with null coordinates" name="groupByRegion drops members with null coordinates" time="0">
+    </testcase>
+    <testcase classname="groupByRegion returns empty array when all members lack coordinates" name="groupByRegion returns empty array when all members lack coordinates" time="0">
+    </testcase>
+    <testcase classname="groupByRegion returns empty array for empty input" name="groupByRegion returns empty array for empty input" time="0">
+    </testcase>
+    <testcase classname="groupByRegion preserves insertion order for tie-break" name="groupByRegion preserves insertion order for tie-break" time="0">
+    </testcase>
+    <testcase classname="topRegion returns null for empty array" name="topRegion returns null for empty array" time="0">
+    </testcase>
+    <testcase classname="topRegion returns the only group when there is one" name="topRegion returns the only group when there is one" time="0">
+    </testcase>
+    <testcase classname="topRegion picks the group with the most recipes" name="topRegion picks the group with the most recipes" time="0">
+    </testcase>
+    <testcase classname="topRegion tie-breaks to the first group (lower index)" name="topRegion tie-breaks to the first group (lower index)" time="0">
+    </testcase>
+    <testcase classname="topRegion falls back to first group when all groups have only stories" name="topRegion falls back to first group when all groups have only stories" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="IngredientRow" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.161" tests="9">
+    <testcase classname="IngredientRow renders ingredient search input, amount input, unit search input, and remove button" name="IngredientRow renders ingredient search input, amount input, unit search input, and remove button" time="0.028">
+    </testcase>
+    <testcase classname="IngredientRow shows filtered ingredient options when typing" name="IngredientRow shows filtered ingredient options when typing" time="0.007">
+    </testcase>
+    <testcase classname="IngredientRow calls onChange when an ingredient is selected" name="IngredientRow calls onChange when an ingredient is selected" time="0.004">
+    </testcase>
+    <testcase classname="IngredientRow calls onChange when amount changes" name="IngredientRow calls onChange when amount changes" time="0.005">
+    </testcase>
+    <testcase classname="IngredientRow shows &quot;Add new&quot; option when typed text does not match any ingredient" name="IngredientRow shows &quot;Add new&quot; option when typed text does not match any ingredient" time="0.002">
+    </testcase>
+    <testcase classname="IngredientRow calls onNewIngredient when &quot;Add new&quot; is clicked" name="IngredientRow calls onNewIngredient when &quot;Add new&quot; is clicked" time="0.003">
+    </testcase>
+    <testcase classname="IngredientRow calls onRemove when Remove is clicked" name="IngredientRow calls onRemove when Remove is clicked" time="0.007">
+    </testcase>
+    <testcase classname="IngredientRow surfaces an inline error when onNewIngredient rejects (#699)" name="IngredientRow surfaces an inline error when onNewIngredient rejects (#699)" time="0.004">
+    </testcase>
+    <testcase classname="IngredientRow surfaces an inline error when onNewUnit rejects (#699)" name="IngredientRow surfaces an inline error when onNewUnit rejects (#699)" time="0.015">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProfileEditPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.427" tests="7">
+    <testcase classname="ProfileEditPage prefills inputs from AuthContext user" name="ProfileEditPage prefills inputs from AuthContext user" time="0.039">
+    </testcase>
+    <testcase classname="ProfileEditPage renders email as read-only" name="ProfileEditPage renders email as read-only" time="0.003">
+    </testcase>
+    <testcase classname="ProfileEditPage Save calls authService.updateMe with edited payload and calls updateUser" name="ProfileEditPage Save calls authService.updateMe with edited payload and calls updateUser" time="0.097">
+    </testcase>
+    <testcase classname="ProfileEditPage Cancel navigates back to /profile without calling updateMe" name="ProfileEditPage Cancel navigates back to /profile without calling updateMe" time="0.017">
+    </testcase>
+    <testcase classname="ProfileEditPage shows a username-required error when username is empty" name="ProfileEditPage shows a username-required error when username is empty" time="0.04">
+    </testcase>
+    <testcase classname="ProfileEditPage surfaces a 400 username-taken error from the backend" name="ProfileEditPage surfaces a 400 username-taken error from the backend" time="0.029">
+    </testcase>
+    <testcase classname="ProfileEditPage disables Save while the request is in flight" name="ProfileEditPage disables Save while the request is in flight" time="0.028">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:06" time="1.912" tests="15">
+    <testcase classname="HomePage renders a search input" name="HomePage renders a search input" time="0.043">
+    </testcase>
+    <testcase classname="HomePage renders a submit button" name="HomePage renders a submit button" time="0.029">
+    </testcase>
+    <testcase classname="HomePage populates region chips from API" name="HomePage populates region chips from API" time="0.136">
+    </testcase>
+    <testcase classname="HomePage renders meal type chip buttons" name="HomePage renders meal type chip buttons" time="0.057">
+    </testcase>
+    <testcase classname="HomePage navigates to /search with region, meal_type and story_type on submit" name="HomePage navigates to /search with region, meal_type and story_type on submit" time="0.158">
+    </testcase>
+    <testcase classname="HomePage navigates with empty params when no input is given" name="HomePage navigates with empty params when no input is given" time="0.037">
+    </testcase>
+    <testcase classname="HomePage renders Story Type chips that are enabled and clickable" name="HomePage renders Story Type chips that are enabled and clickable" time="0.026">
+    </testcase>
+    <testcase classname="HomePage shows onboarding nudge for logged-in users without onboarding data" name="HomePage shows onboarding nudge for logged-in users without onboarding data" time="0.009">
+    </testcase>
+    <testcase classname="HomePage renders personalized daily cultural section for onboarded users" name="HomePage renders personalized daily cultural section for onboarded users" time="0.032">
+    </testcase>
+    <testcase classname="HomePage random cultural fact renders the random cultural fact when one is returned" name="HomePage random cultural fact renders the random cultural fact when one is returned" time="0.031">
+    </testcase>
+    <testcase classname="HomePage random cultural fact renders nothing when fetchRandomCulturalFact resolves null" name="HomePage random cultural fact renders nothing when fetchRandomCulturalFact resolves null" time="0.052">
+    </testcase>
+    <testcase classname="HomePage — redesign sections (#876) renders the Explore by region section" name="HomePage — redesign sections (#876) renders the Explore by region section" time="0.029">
+    </testcase>
+    <testcase classname="HomePage — redesign sections (#876) renders the This week&apos;s recipes and This week&apos;s stories rails" name="HomePage — redesign sections (#876) renders the This week&apos;s recipes and This week&apos;s stories rails" time="0.034">
+    </testcase>
+    <testcase classname="HomePage — redesign sections (#876) renders the Feedback Bar with the prompt and Send button" name="HomePage — redesign sections (#876) renders the Feedback Bar with the prompt and Send button" time="0.03">
+    </testcase>
+    <testcase classname="HomePage — redesign sections (#876) renders the closing brand banner" name="HomePage — redesign sections (#876) renders the closing brand banner" time="0.023">
+    </testcase>
+  </testsuite>
+  <testsuite name="StampGrid" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.207" tests="10">
+    <testcase classname="StampGrid shows empty state when stamps array is empty" name="StampGrid shows empty state when stamps array is empty" time="0.006">
+    </testcase>
+    <testcase classname="StampGrid shows empty state when stamps is null" name="StampGrid shows empty state when stamps is null" time="0.002">
+    </testcase>
+    <testcase classname="StampGrid renders stamp culture names" name="StampGrid renders stamp culture names" time="0.046">
+    </testcase>
+    <testcase classname="StampGrid renders category headers" name="StampGrid renders category headers" time="0.013">
+    </testcase>
+    <testcase classname="StampGrid unearned stamp (earned_at null) has locked CSS class" name="StampGrid unearned stamp (earned_at null) has locked CSS class" time="0.005">
+    </testcase>
+    <testcase classname="StampGrid earned stamps do not have locked class" name="StampGrid earned stamps do not have locked class" time="0.005">
+    </testcase>
+    <testcase classname="StampGrid earned stamp shows formatted date" name="StampGrid earned stamp shows formatted date" time="0.002">
+    </testcase>
+    <testcase classname="StampGrid unearned stamp shows lock icon" name="StampGrid unearned stamp shows lock icon" time="0.001">
+    </testcase>
+    <testcase classname="StampGrid groups stamps by the backend lowercase category value" name="StampGrid groups stamps by the backend lowercase category value" time="0.047">
+    </testcase>
+    <testcase classname="StampGrid puts stamps with unknown categories under &quot;Other&quot;" name="StampGrid puts stamps with unknown categories under &quot;Other&quot;" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="Navbar" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.375" tests="11">
+    <testcase classname="Navbar renders brand link pointing to /" name="Navbar renders brand link pointing to /" time="0.021">
+    </testcase>
+    <testcase classname="Navbar shows Log In and Sign Up links when logged out" name="Navbar shows Log In and Sign Up links when logged out" time="0.019">
+    </testcase>
+    <testcase classname="Navbar does not show Log Out button when logged out" name="Navbar does not show Log Out button when logged out" time="0.003">
+    </testcase>
+    <testcase classname="Navbar shows username and nav links when logged in" name="Navbar shows username and nav links when logged in" time="0.047">
+    </testcase>
+    <testcase classname="Navbar calls logout when Log Out clicked" name="Navbar calls logout when Log Out clicked" time="0.026">
+    </testcase>
+    <testcase classname="Navbar renders Recipes browse link" name="Navbar renders Recipes browse link" time="0.013">
+    </testcase>
+    <testcase classname="Navbar renders Stories browse link" name="Navbar renders Stories browse link" time="0.01">
+    </testcase>
+    <testcase classname="Navbar exposes a Profile link to /profile inside the user dropdown" name="Navbar exposes a Profile link to /profile inside the user dropdown" time="0.058">
+    </testcase>
+    <testcase classname="Navbar routes &quot;My Account&quot; to the user&apos;s public profile by username" name="Navbar routes &quot;My Account&quot; to the user&apos;s public profile by username" time="0.015">
+    </testcase>
+    <testcase classname="Navbar renders @username inside the toggle button (no separate profile link)" name="Navbar renders @username inside the toggle button (no separate profile link)" time="0.014">
+    </testcase>
+    <testcase classname="Navbar renders a Calendar link to /calendar" name="Navbar renders a Calendar link to /calendar" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="search" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.054" tests="8">
+    <testcase classname="search calls GET /api/search/ with all params" name="search calls GET /api/search/ with all params" time="0">
+    </testcase>
+    <testcase classname="search sends meal_type to the API when provided (#700)" name="search sends meal_type to the API when provided (#700)" time="0">
+    </testcase>
+    <testcase classname="search omits region and language from params when not provided" name="search omits region and language from params when not provided" time="0">
+    </testcase>
+    <testcase classname="search normalizes and merges recipes and stories from the response" name="search normalizes and merges recipes and stories from the response" time="0">
+    </testcase>
+    <testcase classname="search uses ranked unified results when backend returns results[]" name="search uses ranked unified results when backend returns results[]" time="0">
+    </testcase>
+    <testcase classname="search propagates API errors" name="search propagates API errors" time="0.004">
+    </testcase>
+    <testcase classname="fetchRegions calls GET /api/map/regions/ with geo_only and returns data" name="fetchRegions calls GET /api/map/regions/ with geo_only and returns data" time="0">
+    </testcase>
+    <testcase classname="fetchRegions propagates API errors" name="fetchRegions propagates API errors" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ModerationPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.279" tests="5">
+    <testcase classname="ModerationPage redirects non-staff users to home" name="ModerationPage redirects non-staff users to home" time="0.019">
+    </testcase>
+    <testcase classname="ModerationPage renders the moderation queue for staff users" name="ModerationPage renders the moderation queue for staff users" time="0.013">
+    </testcase>
+    <testcase classname="ModerationPage renders a Religion chip for a pending religion tag" name="ModerationPage renders a Religion chip for a pending religion tag" time="0.01">
+    </testcase>
+    <testcase classname="ModerationPage calls approveTag with the row tag_type and id" name="ModerationPage calls approveTag with the row tag_type and id" time="0.028">
+    </testcase>
+    <testcase classname="ModerationPage calls rejectTag with the typed reason" name="ModerationPage calls rejectTag with the typed reason" time="0.079">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeCreatePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:01" time="7.393" tests="20">
+    <testcase classname="RecipeCreatePage renders title, description, region select, and video fields" name="RecipeCreatePage renders title, description, region select, and video fields" time="0.239">
+    </testcase>
+    <testcase classname="RecipeCreatePage shows error when both description and video are absent on submit" name="RecipeCreatePage shows error when both description and video are absent on submit" time="0.081">
+    </testcase>
+    <testcase classname="RecipeCreatePage renders Q&amp;A toggle checkbox" name="RecipeCreatePage renders Q&amp;A toggle checkbox" time="0.024">
+    </testcase>
+    <testcase classname="RecipeCreatePage shows validation error when title is empty on submit" name="RecipeCreatePage shows validation error when title is empty on submit" time="0.055">
+    </testcase>
+    <testcase classname="RecipeCreatePage shows validation error when ingredient amount is not a positive number" name="RecipeCreatePage shows validation error when ingredient amount is not a positive number" time="0.053">
+    </testcase>
+    <testcase classname="RecipeCreatePage calls createRecipe and shows success toast on valid submit" name="RecipeCreatePage calls createRecipe and shows success toast on valid submit" time="1.607">
+    </testcase>
+    <testcase classname="RecipeCreatePage calls createRecipe with is_published: false when &quot;Save as draft&quot; is clicked" name="RecipeCreatePage calls createRecipe with is_published: false when &quot;Save as draft&quot; is clicked" time="0.073">
+    </testcase>
+    <testcase classname="RecipeCreatePage saves draft with only a title — no description or ingredients required" name="RecipeCreatePage saves draft with only a title — no description or ingredients required" time="0.051">
+    </testcase>
+    <testcase classname="RecipeCreatePage draft save still rejects invalid ingredient amount" name="RecipeCreatePage draft save still rejects invalid ingredient amount" time="0.025">
+    </testcase>
+    <testcase classname="RecipeCreatePage shows error toast when API call fails" name="RecipeCreatePage shows error toast when API call fails" time="0.063">
+    </testcase>
+    <testcase classname="RecipeCreatePage renders a thumbnail upload field" name="RecipeCreatePage renders a thumbnail upload field" time="0.008">
+    </testcase>
+    <testcase classname="RecipeCreatePage shows error when no ingredients are filled in" name="RecipeCreatePage shows error when no ingredients are filled in" time="0.046">
+    </testcase>
+    <testcase classname="RecipeCreatePage renders region as a combobox (select element)" name="RecipeCreatePage renders region as a combobox (select element)" time="0.032">
+    </testcase>
+    <testcase classname="RecipeCreatePage populates region dropdown from API" name="RecipeCreatePage populates region dropdown from API" time="0.038">
+    </testcase>
+    <testcase classname="RecipeCreatePage — draft auto-save shows DraftRestoreBanner when a draft exists in localStorage" name="RecipeCreatePage — draft auto-save shows DraftRestoreBanner when a draft exists in localStorage" time="0.012">
+    </testcase>
+    <testcase classname="RecipeCreatePage — draft auto-save restores title from draft when Restore is clicked" name="RecipeCreatePage — draft auto-save restores title from draft when Restore is clicked" time="0.022">
+    </testcase>
+    <testcase classname="RecipeCreatePage — draft auto-save hides the banner after Discard is clicked" name="RecipeCreatePage — draft auto-save hides the banner after Discard is clicked" time="0.024">
+    </testcase>
+    <testcase classname="RecipeCreatePage — draft auto-save includes typed steps in the create payload (trimmed, empties dropped)" name="RecipeCreatePage — draft auto-save includes typed steps in the create payload (trimmed, empties dropped)" time="0.156">
+    </testcase>
+    <testcase classname="RecipeCreatePage — draft auto-save sends an empty steps array when no steps are added" name="RecipeCreatePage — draft auto-save sends an empty steps array when no steps are added" time="0.064">
+    </testcase>
+    <testcase classname="RecipeCreatePage — draft auto-save restores draft steps when Restore is clicked" name="RecipeCreatePage — draft auto-save restores draft steps when Restore is clicked" time="0.027">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchCommentsForRecipe" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.064" tests="7">
+    <testcase classname="fetchCommentsForRecipe GETs /api/recipes/:id/comments/ and returns normalized comments" name="fetchCommentsForRecipe GETs /api/recipes/:id/comments/ and returns normalized comments" time="0">
+    </testcase>
+    <testcase classname="fetchCommentsForRecipe follows the paginated next URL until exhausted" name="fetchCommentsForRecipe follows the paginated next URL until exhausted" time="0.001">
+    </testcase>
+    <testcase classname="postComment POSTs body+type to /api/recipes/:id/comments/ and returns normalized data" name="postComment POSTs body+type to /api/recipes/:id/comments/ and returns normalized data" time="0">
+    </testcase>
+    <testcase classname="postComment includes parent_comment when provided" name="postComment includes parent_comment when provided" time="0">
+    </testcase>
+    <testcase classname="deleteComment DELETEs /api/comments/:id/" name="deleteComment DELETEs /api/comments/:id/" time="0">
+    </testcase>
+    <testcase classname="toggleCommentVote POSTs to /api/comments/:id/vote/ and returns response data" name="toggleCommentVote POSTs to /api/comments/:id/vote/ and returns response data" time="0">
+    </testcase>
+    <testcase classname="toggleCommentVote propagates API errors to the caller" name="toggleCommentVote propagates API errors to the caller" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="UserProfilePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.502" tests="9">
+    <testcase classname="UserProfilePage renders username and stats after load" name="UserProfilePage renders username and stats after load" time="0.026">
+    </testcase>
+    <testcase classname="UserProfilePage renders cultural preference tags" name="UserProfilePage renders cultural preference tags" time="0.007">
+    </testcase>
+    <testcase classname="UserProfilePage renders bio when present" name="UserProfilePage renders bio when present" time="0.011">
+    </testcase>
+    <testcase classname="UserProfilePage shows Edit preferences link in own-profile mode" name="UserProfilePage shows Edit preferences link in own-profile mode" time="0.024">
+    </testcase>
+    <testcase classname="UserProfilePage does not show Edit preferences link in visitor mode" name="UserProfilePage does not show Edit preferences link in visitor mode" time="0.002">
+    </testcase>
+    <testcase classname="UserProfilePage does not show Edit preferences link when logged out" name="UserProfilePage does not show Edit preferences link when logged out" time="0.014">
+    </testcase>
+    <testcase classname="UserProfilePage shows 404 message when profile not found" name="UserProfilePage shows 404 message when profile not found" time="0.006">
+    </testcase>
+    <testcase classname="UserProfilePage shows error message on other failures" name="UserProfilePage shows error message on other failures" time="0.004">
+    </testcase>
+    <testcase classname="UserProfilePage handles empty username gracefully (no crash)" name="UserProfilePage handles empty username gracefully (no crash)" time="0.02">
+    </testcase>
+  </testsuite>
+  <testsuite name="ChatContext" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.15" tests="6">
+    <testcase classname="ChatContext starts with empty threads when user is null" name="ChatContext starts with empty threads when user is null" time="0.008">
+    </testcase>
+    <testcase classname="ChatContext fetches threads on mount when user is set" name="ChatContext fetches threads on mount when user is set" time="0.004">
+    </testcase>
+    <testcase classname="ChatContext computes totalUnread from threads" name="ChatContext computes totalUnread from threads" time="0.004">
+    </testcase>
+    <testcase classname="ChatContext polls again after 30s" name="ChatContext polls again after 30s" time="0.004">
+    </testcase>
+    <testcase classname="ChatContext markRead zeroes unreadCount locally and calls markThreadRead service" name="ChatContext markRead zeroes unreadCount locally and calls markThreadRead service" time="0.006">
+    </testcase>
+    <testcase classname="ChatContext clears threads when user becomes null" name="ChatContext clears threads when user becomes null" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="RegionContentMap" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.139" tests="6">
+    <testcase classname="RegionContentMap shows N recipes · M stories on hover for a mapped country" name="RegionContentMap shows N recipes · M stories on hover for a mapped country" time="0.011">
+    </testcase>
+    <testcase classname="RegionContentMap shows the &quot;not part of a culinary region yet&quot; fallback for an unmapped country" name="RegionContentMap shows the &quot;not part of a culinary region yet&quot; fallback for an unmapped country" time="0.005">
+    </testcase>
+    <testcase classname="RegionContentMap navigates to /search?region=&lt;name&gt; when a mapped country is clicked" name="RegionContentMap navigates to /search?region=&lt;name&gt; when a mapped country is clicked" time="0.01">
+    </testcase>
+    <testcase classname="RegionContentMap does not navigate when an unmapped country is clicked" name="RegionContentMap does not navigate when an unmapped country is clicked" time="0.003">
+    </testcase>
+    <testcase classname="RegionContentMap tints higher-traffic regions darker than lower-traffic ones" name="RegionContentMap tints higher-traffic regions darker than lower-traffic ones" time="0.001">
+    </testcase>
+    <testcase classname="RegionContentMap uses the neutral cream fill for unmapped countries" name="RegionContentMap uses the neutral cream fill for unmapped countries" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="LoginPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.227" tests="6">
+    <testcase classname="LoginPage renders email and password fields and submit button" name="LoginPage renders email and password fields and submit button" time="0.022">
+    </testcase>
+    <testcase classname="LoginPage shows validation error when email is empty on submit" name="LoginPage shows validation error when email is empty on submit" time="0.011">
+    </testcase>
+    <testcase classname="LoginPage shows validation error when password is empty on submit" name="LoginPage shows validation error when password is empty on submit" time="0.012">
+    </testcase>
+    <testcase classname="LoginPage calls loginRequest and login() on valid submit" name="LoginPage calls loginRequest and login() on valid submit" time="0.01">
+    </testcase>
+    <testcase classname="LoginPage passes refresh token from login response to AuthContext.login()" name="LoginPage passes refresh token from login response to AuthContext.login()" time="0.011">
+    </testcase>
+    <testcase classname="LoginPage shows error message when loginRequest fails" name="LoginPage shows error message when loginRequest fails" time="0.021">
+    </testcase>
+  </testsuite>
+  <testsuite name="OnboardingPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.359" tests="5">
+    <testcase classname="OnboardingPage renders first onboarding step" name="OnboardingPage renders first onboarding step" time="0.043">
+    </testcase>
+    <testcase classname="OnboardingPage supports skip path" name="OnboardingPage supports skip path" time="0.005">
+    </testcase>
+    <testcase classname="OnboardingPage submits all preference fields on finish" name="OnboardingPage submits all preference fields on finish" time="0.061">
+    </testcase>
+    <testcase classname="OnboardingPage keeps Finish disabled until at least one selection in each step" name="OnboardingPage keeps Finish disabled until at least one selection in each step" time="0.043">
+    </testcase>
+    <testcase classname="OnboardingPage enables Finish once every step has at least one selection" name="OnboardingPage enables Finish once every step has at least one selection" time="0.084">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchMapRegions" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.064" tests="7">
+    <testcase classname="fetchMapRegions GETs /api/map/regions/ and returns data" name="fetchMapRegions GETs /api/map/regions/ and returns data" time="0.001">
+    </testcase>
+    <testcase classname="fetchMapRegions propagates API errors to the caller" name="fetchMapRegions propagates API errors to the caller" time="0.006">
+    </testcase>
+    <testcase classname="fetchMapRegionContent GETs /api/map/regions/:id/content/ and returns response.data.results when paginated" name="fetchMapRegionContent GETs /api/map/regions/:id/content/ and returns response.data.results when paginated" time="0.004">
+    </testcase>
+    <testcase classname="fetchMapRegionContent falls back to response.data when results is absent" name="fetchMapRegionContent falls back to response.data when results is absent" time="0">
+    </testcase>
+    <testcase classname="fetchMapRegionContent — pagination cap (#851) passes page_size=100" name="fetchMapRegionContent — pagination cap (#851) passes page_size=100" time="0">
+    </testcase>
+    <testcase classname="fetchMapRegionContent — pagination cap (#851) unwraps DRF results" name="fetchMapRegionContent — pagination cap (#851) unwraps DRF results" time="0">
+    </testcase>
+    <testcase classname="fetchMapRegionContent — mock guard (#701) returns [] without calling apiClient.get when USE_MOCK=true" name="fetchMapRegionContent — mock guard (#701) returns [] without calling apiClient.get when USE_MOCK=true" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchDailyCulturalContent" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.07" tests="6">
+    <testcase classname="fetchDailyCulturalContent calls daily cultural content endpoint" name="fetchDailyCulturalContent calls daily cultural content endpoint" time="0">
+    </testcase>
+    <testcase classname="fetchDailyCulturalContent normalizes API response fields" name="fetchDailyCulturalContent normalizes API response fields" time="0">
+    </testcase>
+    <testcase classname="fetchDailyCulturalContent passes through backend link { kind, id } so Read more can route directly" name="fetchDailyCulturalContent passes through backend link { kind, id } so Read more can route directly" time="0">
+    </testcase>
+    <testcase classname="fetchDailyCulturalContent drops malformed link objects (missing kind or id) so the UI hides Read more" name="fetchDailyCulturalContent drops malformed link objects (missing kind or id) so the UI hides Read more" time="0">
+    </testcase>
+    <testcase classname="fetchRegionStories returns only items whose content_type is &quot;story&quot;" name="fetchRegionStories returns only items whose content_type is &quot;story&quot;" time="0">
+    </testcase>
+    <testcase classname="fetchRegionStories returns an empty array when there are no stories" name="fetchRegionStories returns an empty array when there are no stories" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="HeritagePage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.323" tests="6">
+    <testcase classname="HeritagePage shows loading state then renders the heritage name and description" name="HeritagePage shows loading state then renders the heritage name and description" time="0.034">
+    </testcase>
+    <testcase classname="HeritagePage renders a &quot;Show Heritage Map&quot; link to /heritage/:id/map" name="HeritagePage renders a &quot;Show Heritage Map&quot; link to /heritage/:id/map" time="0.043">
+    </testcase>
+    <testcase classname="HeritagePage renders one card per member with title, author, region and link" name="HeritagePage renders one card per member with title, author, region and link" time="0.091">
+    </testcase>
+    <testcase classname="HeritagePage renders the journey section when the group has steps" name="HeritagePage renders the journey section when the group has steps" time="0.014">
+    </testcase>
+    <testcase classname="HeritagePage renders cultural facts when present" name="HeritagePage renders cultural facts when present" time="0.011">
+    </testcase>
+    <testcase classname="HeritagePage shows an error message when fetch fails" name="HeritagePage shows an error message when fetch fails" time="0.009">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.1" tests="9">
+    <testcase classname=" renders tradition card with candle emoji and amber class" name=" renders tradition card with candle emoji and amber class" time="0.01">
+    </testcase>
+    <testcase classname=" renders dish card with fork emoji and terracotta class" name=" renders dish card with fork emoji and terracotta class" time="0.007">
+    </testcase>
+    <testcase classname=" renders fact card with leaf emoji and blue class" name=" renders fact card with leaf emoji and blue class" time="0.001">
+    </testcase>
+    <testcase classname=" renders holiday card with party emoji and green class" name=" renders holiday card with party emoji and green class" time="0.002">
+    </testcase>
+    <testcase classname=" unknown kind falls back to globe emoji and default class" name=" unknown kind falls back to globe emoji and default class" time="0.003">
+    </testcase>
+    <testcase classname=" Read more always routes to /highlights/:id (link target may be stale)" name=" Read more always routes to /highlights/:id (link target may be stale)" time="0.002">
+    </testcase>
+    <testcase classname=" Read more routes to /highlights/:id when there is no link at all" name=" Read more routes to /highlights/:id when there is no link at all" time="0.001">
+    </testcase>
+    <testcase classname=" Read more URL-encodes the highlight id" name=" Read more URL-encodes the highlight id" time="0.002">
+    </testcase>
+    <testcase classname=" renders nothing when items is empty" name=" renders nothing when items is empty" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="PassportTimeline" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.143" tests="8">
+    <testcase classname="PassportTimeline shows empty state when events is null" name="PassportTimeline shows empty state when events is null" time="0.006">
+    </testcase>
+    <testcase classname="PassportTimeline shows empty state when events is empty" name="PassportTimeline shows empty state when events is empty" time="0.006">
+    </testcase>
+    <testcase classname="PassportTimeline renders event type labels" name="PassportTimeline renders event type labels" time="0.02">
+    </testcase>
+    <testcase classname="PassportTimeline recipe event has link to recipe using id" name="PassportTimeline recipe event has link to recipe using id" time="0.018">
+    </testcase>
+    <testcase classname="PassportTimeline story event has link to story using id" name="PassportTimeline story event has link to story using id" time="0.009">
+    </testcase>
+    <testcase classname="PassportTimeline stamp_earned event has no link" name="PassportTimeline stamp_earned event has no link" time="0.002">
+    </testcase>
+    <testcase classname="PassportTimeline prefers the human-readable description when the backend provides one" name="PassportTimeline prefers the human-readable description when the backend provides one" time="0.001">
+    </testcase>
+    <testcase classname="PassportTimeline falls back to the event_type slug when description is missing" name="PassportTimeline falls back to the event_type slug when description is missing" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="StepsEditor" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="0.263" tests="9">
+    <testcase classname="StepsEditor renders with an empty list when value is []" name="StepsEditor renders with an empty list when value is []" time="0.025">
+    </testcase>
+    <testcase classname="StepsEditor renders one numbered textarea per step" name="StepsEditor renders one numbered textarea per step" time="0.006">
+    </testcase>
+    <testcase classname="StepsEditor calls onChange with the new array when &quot;Add step&quot; is clicked" name="StepsEditor calls onChange with the new array when &quot;Add step&quot; is clicked" time="0.014">
+    </testcase>
+    <testcase classname="StepsEditor calls onChange with the row removed when &quot;Remove&quot; is clicked" name="StepsEditor calls onChange with the row removed when &quot;Remove&quot; is clicked" time="0.017">
+    </testcase>
+    <testcase classname="StepsEditor moves a step up when &quot;Move step N up&quot; is clicked" name="StepsEditor moves a step up when &quot;Move step N up&quot; is clicked" time="0.021">
+    </testcase>
+    <testcase classname="StepsEditor moves a step down when &quot;Move step N down&quot; is clicked" name="StepsEditor moves a step down when &quot;Move step N down&quot; is clicked" time="0.009">
+    </testcase>
+    <testcase classname="StepsEditor disables &quot;up&quot; on the first row and &quot;down&quot; on the last row" name="StepsEditor disables &quot;up&quot; on the first row and &quot;down&quot; on the last row" time="0.052">
+    </testcase>
+    <testcase classname="StepsEditor calls onChange with the typed value when the textarea content changes" name="StepsEditor calls onChange with the typed value when the textarea content changes" time="0.003">
+    </testcase>
+    <testcase classname="StepsEditor treats non-array values as an empty list" name="StepsEditor treats non-array values as an empty list" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="notificationService" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.055" tests="5">
+    <testcase classname="notificationService fetchNotifications handles paginated response" name="notificationService fetchNotifications handles paginated response" time="0.004">
+    </testcase>
+    <testcase classname="notificationService markNotificationAsRead POSTs once and does not call PATCH" name="notificationService markNotificationAsRead POSTs once and does not call PATCH" time="0">
+    </testcase>
+    <testcase classname="notificationService markAllAsRead POSTs to /api/notifications/read-all/" name="notificationService markAllAsRead POSTs to /api/notifications/read-all/" time="0">
+    </testcase>
+    <testcase classname="notificationService registerDeviceToken posts token payload" name="notificationService registerDeviceToken posts token payload" time="0">
+    </testcase>
+    <testcase classname="markAllAsRead — mock guard (#701) returns without calling apiClient.post when USE_MOCK=true" name="markAllAsRead — mock guard (#701) returns without calling apiClient.post when USE_MOCK=true" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="countriesForCulture" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.073" tests="9">
+    <testcase classname="countriesForCulture returns [] for unknown culture names" name="countriesForCulture returns [] for unknown culture names" time="0">
+    </testcase>
+    <testcase classname="countriesForCulture returns [] for non-string input" name="countriesForCulture returns [] for non-string input" time="0.001">
+    </testcase>
+    <testcase classname="countriesForCulture maps known sub-regions to their countries" name="countriesForCulture maps known sub-regions to their countries" time="0">
+    </testcase>
+    <testcase classname="countriesForCulture is case-insensitive and trims whitespace" name="countriesForCulture is case-insensitive and trims whitespace" time="0">
+    </testcase>
+    <testcase classname="buildCountryCultureIndex returns an empty object for null / undefined / empty input" name="buildCountryCultureIndex returns an empty object for null / undefined / empty input" time="0.001">
+    </testcase>
+    <testcase classname="buildCountryCultureIndex indexes each mapped country to its source culture" name="buildCountryCultureIndex indexes each mapped country to its source culture" time="0">
+    </testcase>
+    <testcase classname="buildCountryCultureIndex skips unmapped culture names without throwing" name="buildCountryCultureIndex skips unmapped culture names without throwing" time="0">
+    </testcase>
+    <testcase classname="buildCountryCultureIndex resolves duplicate-claim conflicts by engagement (recipes_tried + stories_saved)" name="buildCountryCultureIndex resolves duplicate-claim conflicts by engagement (recipes_tried + stories_saved)" time="0">
+    </testcase>
+    <testcase classname="buildCountryCultureIndex accepts the older mock `name` / `recipe_count` / `story_count` shape too" name="buildCountryCultureIndex accepts the older mock `name` / `recipe_count` / `story_count` shape too" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="useDraftAutosave" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.11" tests="7">
+    <testcase classname="useDraftAutosave writes state to localStorage after 1500ms debounce when enabled" name="useDraftAutosave writes state to localStorage after 1500ms debounce when enabled" time="0.012">
+    </testcase>
+    <testcase classname="useDraftAutosave does not write to localStorage when enabled is false" name="useDraftAutosave does not write to localStorage when enabled is false" time="0">
+    </testcase>
+    <testcase classname="useDraftAutosave returns savedDraft when a draft exists in localStorage on mount" name="useDraftAutosave returns savedDraft when a draft exists in localStorage on mount" time="0">
+    </testcase>
+    <testcase classname="useDraftAutosave returns null savedDraft when no draft exists in localStorage" name="useDraftAutosave returns null savedDraft when no draft exists in localStorage" time="0">
+    </testcase>
+    <testcase classname="useDraftAutosave clearDraft removes the key from localStorage" name="useDraftAutosave clearDraft removes the key from localStorage" time="0">
+    </testcase>
+    <testcase classname="useDraftAutosave clearDraft sets savedDraft to null" name="useDraftAutosave clearDraft sets savedDraft to null" time="0.001">
+    </testcase>
+    <testcase classname="useDraftAutosave debounces: multiple rapid state changes result in one write" name="useDraftAutosave debounces: multiple rapid state changes result in one write" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ChipGroup" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.162" tests="5">
+    <testcase classname="ChipGroup renders all children and no toggle when items fit within visibleCount" name="ChipGroup renders all children and no toggle when items fit within visibleCount" time="0.017">
+    </testcase>
+    <testcase classname="ChipGroup hides overflow chips and shows &quot;+ N more&quot; toggle when items exceed visibleCount" name="ChipGroup hides overflow chips and shows &quot;+ N more&quot; toggle when items exceed visibleCount" time="0.006">
+    </testcase>
+    <testcase classname="ChipGroup expands to show all chips when toggle is clicked, then collapses again" name="ChipGroup expands to show all chips when toggle is clicked, then collapses again" time="0.027">
+    </testcase>
+    <testcase classname="ChipGroup renders an optional icon next to the label" name="ChipGroup renders an optional icon next to the label" time="0.003">
+    </testcase>
+    <testcase classname="ChipGroup starts collapsed once async children arrive past the visibleCount" name="ChipGroup starts collapsed once async children arrive past the visibleCount" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="resolveTheme — calendar events" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.065" tests="14">
+    <testcase classname="resolveTheme — calendar events returns ramadan theme during March" name="resolveTheme — calendar events returns ramadan theme during March" time="0.006">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns eid_al_fitr theme in early April" name="resolveTheme — calendar events returns eid_al_fitr theme in early April" time="0.001">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns eid_al_adha theme in June" name="resolveTheme — calendar events returns eid_al_adha theme in June" time="0.001">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns lunar_new_year theme in late January" name="resolveTheme — calendar events returns lunar_new_year theme in late January" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns nowruz theme on 22 March (outside ramadan window)" name="resolveTheme — calendar events returns nowruz theme on 22 March (outside ramadan window)" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns diwali theme in late October" name="resolveTheme — calendar events returns diwali theme in late October" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns hanukkah theme in mid-December" name="resolveTheme — calendar events returns hanukkah theme in mid-December" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events returns christmas theme on 25 December" name="resolveTheme — calendar events returns christmas theme on 25 December" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — calendar events resolveTheme returns a string (easter window overlaps other events)" name="resolveTheme — calendar events resolveTheme returns a string (easter window overlaps other events)" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — level fallbacks level 1 → classic_traveler outside any event" name="resolveTheme — level fallbacks level 1 → classic_traveler outside any event" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — level fallbacks level 2 → vintage_recipe_book" name="resolveTheme — level fallbacks level 2 → vintage_recipe_book" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — level fallbacks level 5 → heritage_archive" name="resolveTheme — level fallbacks level 5 → heritage_archive" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — level fallbacks null level → default classic_traveler" name="resolveTheme — level fallbacks null level → default classic_traveler" time="0">
+    </testcase>
+    <testcase classname="resolveTheme — level fallbacks level 0 → default classic_traveler" name="resolveTheme — level fallbacks level 0 → default classic_traveler" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="QuestList" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.119" tests="8">
+    <testcase classname="QuestList shows empty state when quests is null" name="QuestList shows empty state when quests is null" time="0.007">
+    </testcase>
+    <testcase classname="QuestList shows empty state when quests is empty" name="QuestList shows empty state when quests is empty" time="0.002">
+    </testcase>
+    <testcase classname="QuestList renders active quest name and description" name="QuestList renders active quest name and description" time="0.005">
+    </testcase>
+    <testcase classname="QuestList active quest shows progress bar" name="QuestList active quest shows progress bar" time="0.003">
+    </testcase>
+    <testcase classname="QuestList completed quest (completed_at set) appears in Completed section" name="QuestList completed quest (completed_at set) appears in Completed section" time="0.018">
+    </testcase>
+    <testcase classname="QuestList time-limited quest shows deadline" name="QuestList time-limited quest shows deadline" time="0.001">
+    </testcase>
+    <testcase classname="QuestList completed quest shows Done badge" name="QuestList completed quest shows Done badge" time="0.001">
+    </testcase>
+    <testcase classname="QuestList accepts the backend event_end field for event quest deadlines" name="QuestList accepts the backend event_end field for event quest deadlines" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="getRegionFill" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.072" tests="11">
+    <testcase classname="getRegionFill null culture → default fill, no star" name="getRegionFill null culture → default fill, no star" time="0.001">
+    </testcase>
+    <testcase classname="getRegionFill no engagement → default fill" name="getRegionFill no engagement → default fill" time="0">
+    </testcase>
+    <testcase classname="getRegionFill story saved → light fill" name="getRegionFill story saved → light fill" time="0.001">
+    </testcase>
+    <testcase classname="getRegionFill recipe tried → medium fill" name="getRegionFill recipe tried → medium fill" time="0">
+    </testcase>
+    <testcase classname="getRegionFill heritage contributed → dark fill" name="getRegionFill heritage contributed → dark fill" time="0">
+    </testcase>
+    <testcase classname="getRegionFill legendary stamp → star flag returned" name="getRegionFill legendary stamp → star flag returned" time="0">
+    </testcase>
+    <testcase classname="getRegionFill non-legendary stamp → no star" name="getRegionFill non-legendary stamp → no star" time="0.005">
+    </testcase>
+    <testcase classname="getRegionFill canonical backend shape recipes_tried &gt; 0 → medium fill" name="getRegionFill canonical backend shape recipes_tried &gt; 0 → medium fill" time="0.003">
+    </testcase>
+    <testcase classname="getRegionFill canonical backend shape stories_saved &gt; 0 (no recipes) → light fill" name="getRegionFill canonical backend shape stories_saved &gt; 0 (no recipes) → light fill" time="0">
+    </testcase>
+    <testcase classname="getRegionFill canonical backend shape legendary rarity → dark fill with star" name="getRegionFill canonical backend shape legendary rarity → dark fill with star" time="0.001">
+    </testcase>
+    <testcase classname="getRegionFill canonical backend shape gold rarity with recipes → medium fill, no star" name="getRegionFill canonical backend shape gold rarity with recipes → medium fill, no star" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="FeedbackBar" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.262" tests="6">
+    <testcase classname="FeedbackBar renders the label, input, and Send button" name="FeedbackBar renders the label, input, and Send button" time="0.015">
+    </testcase>
+    <testcase classname="FeedbackBar blocks submission when the input is empty and shows a validation message" name="FeedbackBar blocks submission when the input is empty and shows a validation message" time="0.013">
+    </testcase>
+    <testcase classname="FeedbackBar calls submitFeedback with the entered text on submit" name="FeedbackBar calls submitFeedback with the entered text on submit" time="0.059">
+    </testcase>
+    <testcase classname="FeedbackBar shows the thank-you status after a successful submit and resets the input" name="FeedbackBar shows the thank-you status after a successful submit and resets the input" time="0.048">
+    </testcase>
+    <testcase classname="FeedbackBar clears the thank-you status after 4 seconds" name="FeedbackBar clears the thank-you status after 4 seconds" time="0.019">
+    </testcase>
+    <testcase classname="FeedbackBar shows an error alert if the submission rejects" name="FeedbackBar shows an error alert if the submission rejects" time="0.013">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomeWeeklySection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.234" tests="4">
+    <testcase classname="HomeWeeklySection renders both rail titles and Wires the right More → targets" name="HomeWeeklySection renders both rail titles and Wires the right More → targets" time="0.036">
+    </testcase>
+    <testcase classname="HomeWeeklySection fetches both featured lists on mount with limit=6" name="HomeWeeklySection fetches both featured lists on mount with limit=6" time="0.007">
+    </testcase>
+    <testcase classname="HomeWeeklySection renders a recipe card per item and routes via /recipes/:id" name="HomeWeeklySection renders a recipe card per item and routes via /recipes/:id" time="0.027">
+    </testcase>
+    <testcase classname="HomeWeeklySection surfaces a per-rail error if only one fetch fails" name="HomeWeeklySection surfaces a per-rail error if only one fetch fails" time="0.029">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomeRail" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.203" tests="7">
+    <testcase classname="HomeRail renders the title and the More → link to moreHref" name="HomeRail renders the title and the More → link to moreHref" time="0.02">
+    </testcase>
+    <testcase classname="HomeRail renders one Link per item with the per-item href from getHref" name="HomeRail renders one Link per item with the per-item href from getHref" time="0.085">
+    </testcase>
+    <testcase classname="HomeRail renders 6 skeleton cards when loading=true" name="HomeRail renders 6 skeleton cards when loading=true" time="0.004">
+    </testcase>
+    <testcase classname="HomeRail renders an alert with the error text instead of cards when error is set" name="HomeRail renders an alert with the error text instead of cards when error is set" time="0.003">
+    </testcase>
+    <testcase classname="HomeRail renders the emptyHint when items is empty and not loading and not error" name="HomeRail renders the emptyHint when items is empty and not loading and not error" time="0.002">
+    </testcase>
+    <testcase classname="HomeRail renders the optional subtitle when provided" name="HomeRail renders the optional subtitle when provided" time="0.004">
+    </testcase>
+    <testcase classname="HomeRail renders the image when item.image is truthy and a placeholder otherwise" name="HomeRail renders the image when item.image is truthy and a placeholder otherwise" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchCulturalFacts" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.039" tests="7">
+    <testcase classname="fetchCulturalFacts calls GET /api/cultural-facts/ with no params when none given" name="fetchCulturalFacts calls GET /api/cultural-facts/ with no params when none given" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalFacts passes heritage_group and region filters as params" name="fetchCulturalFacts passes heritage_group and region filters as params" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalFacts omits undefined / null filter values" name="fetchCulturalFacts omits undefined / null filter values" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalFacts unwraps paginated DRF response" name="fetchCulturalFacts unwraps paginated DRF response" time="0">
+    </testcase>
+    <testcase classname="fetchRandomCulturalFact calls GET /api/cultural-facts/random/" name="fetchRandomCulturalFact calls GET /api/cultural-facts/random/" time="0">
+    </testcase>
+    <testcase classname="fetchRandomCulturalFact returns null on 404 instead of throwing" name="fetchRandomCulturalFact returns null on 404 instead of throwing" time="0">
+    </testcase>
+    <testcase classname="fetchRandomCulturalFact propagates non-404 errors" name="fetchRandomCulturalFact propagates non-404 errors" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="StarRating — read-only mode (no onChange)" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.132" tests="9">
+    <testcase classname="StarRating — read-only mode (no onChange) shows the average + count summary when given a numeric average" name="StarRating — read-only mode (no onChange) shows the average + count summary when given a numeric average" time="0.007">
+    </testcase>
+    <testcase classname="StarRating — read-only mode (no onChange) renders a &quot;Not rated&quot; hint when no average and no count" name="StarRating — read-only mode (no onChange) renders a &quot;Not rated&quot; hint when no average and no count" time="0.003">
+    </testcase>
+    <testcase classname="StarRating — read-only mode (no onChange) accepts a string average (DRF DecimalField shape) and renders it as a number" name="StarRating — read-only mode (no onChange) accepts a string average (DRF DecimalField shape) and renders it as a number" time="0.003">
+    </testcase>
+    <testcase classname="StarRating — read-only mode (no onChange) does NOT render interactive star buttons when onChange is missing" name="StarRating — read-only mode (no onChange) does NOT render interactive star buttons when onChange is missing" time="0.009">
+    </testcase>
+    <testcase classname="StarRating — interactive mode (onChange provided) renders five radio buttons for stars" name="StarRating — interactive mode (onChange provided) renders five radio buttons for stars" time="0.007">
+    </testcase>
+    <testcase classname="StarRating — interactive mode (onChange provided) calls onChange(score) when a star is clicked" name="StarRating — interactive mode (onChange provided) calls onChange(score) when a star is clicked" time="0.011">
+    </testcase>
+    <testcase classname="StarRating — interactive mode (onChange provided) calls onChange(null) when the user re-clicks their current score (unrate)" name="StarRating — interactive mode (onChange provided) calls onChange(null) when the user re-clicks their current score (unrate)" time="0.005">
+    </testcase>
+    <testcase classname="StarRating — interactive mode (onChange provided) still renders interactive when disabledReason is empty" name="StarRating — interactive mode (onChange provided) still renders interactive when disabledReason is empty" time="0.004">
+    </testcase>
+    <testcase classname="StarRating — interactive mode (onChange provided) falls back to read-only when disabledReason is non-empty" name="StarRating — interactive mode (onChange provided) falls back to read-only when disabledReason is non-empty" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="StoryListPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.184" tests="5">
+    <testcase classname="StoryListPage shows loading state initially" name="StoryListPage shows loading state initially" time="0.012">
+    </testcase>
+    <testcase classname="StoryListPage renders all story titles after load" name="StoryListPage renders all story titles after load" time="0.012">
+    </testcase>
+    <testcase classname="StoryListPage each story card links to /stories/:id" name="StoryListPage each story card links to /stories/:id" time="0.016">
+    </testcase>
+    <testcase classname="StoryListPage shows empty message when no stories exist" name="StoryListPage shows empty message when no stories exist" time="0.01">
+    </testcase>
+    <testcase classname="StoryListPage shows error message when API fails" name="StoryListPage shows error message when API fails" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="SearchResultCard" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.137" tests="10">
+    <testcase classname="SearchResultCard renders the result title" name="SearchResultCard renders the result title" time="0.016">
+    </testcase>
+    <testcase classname="SearchResultCard renders the region tag" name="SearchResultCard renders the region tag" time="0.004">
+    </testcase>
+    <testcase classname="SearchResultCard renders a type badge for recipe" name="SearchResultCard renders a type badge for recipe" time="0.003">
+    </testcase>
+    <testcase classname="SearchResultCard renders a type badge for story" name="SearchResultCard renders a type badge for story" time="0.004">
+    </testcase>
+    <testcase classname="SearchResultCard links to /recipes/:id for recipe results" name="SearchResultCard links to /recipes/:id for recipe results" time="0.013">
+    </testcase>
+    <testcase classname="SearchResultCard links to /stories/:id for story results" name="SearchResultCard links to /stories/:id for story results" time="0.006">
+    </testcase>
+    <testcase classname="SearchResultCard renders without thumbnail when thumbnail is null" name="SearchResultCard renders without thumbnail when thumbnail is null" time="0.003">
+    </testcase>
+    <testcase classname="SearchResultCard renders an img when thumbnail is a URL" name="SearchResultCard renders an img when thumbnail is a URL" time="0.003">
+    </testcase>
+    <testcase classname="SearchResultCard does not render region when region is absent" name="SearchResultCard does not render region when region is absent" time="0.001">
+    </testcase>
+    <testcase classname="SearchResultCard shows &quot;For you&quot; badge when rankScore is positive" name="SearchResultCard shows &quot;For you&quot; badge when rankScore is positive" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomeRegionMapSection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.131" tests="4">
+    <testcase classname="HomeRegionMapSection renders the section heading and tagline" name="HomeRegionMapSection renders the section heading and tagline" time="0.016">
+    </testcase>
+    <testcase classname="HomeRegionMapSection fetches regions on mount and forwards them to RegionContentMap" name="HomeRegionMapSection fetches regions on mount and forwards them to RegionContentMap" time="0.016">
+    </testcase>
+    <testcase classname="HomeRegionMapSection shows a loading state while the fetch is in flight" name="HomeRegionMapSection shows a loading state while the fetch is in flight" time="0.001">
+    </testcase>
+    <testcase classname="HomeRegionMapSection shows an error message if the fetch fails" name="HomeRegionMapSection shows an error message if the fetch fails" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchCulturalEvents" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.045" tests="6">
+    <testcase classname="fetchCulturalEvents calls GET /api/cultural-events/ with no params when none given" name="fetchCulturalEvents calls GET /api/cultural-events/ with no params when none given" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalEvents formats numeric month as a zero-padded two-digit string" name="fetchCulturalEvents formats numeric month as a zero-padded two-digit string" time="0.001">
+    </testcase>
+    <testcase classname="fetchCulturalEvents passes month and region together" name="fetchCulturalEvents passes month and region together" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalEvents omits undefined month and region" name="fetchCulturalEvents omits undefined month and region" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalEvents unwraps paginated DRF response" name="fetchCulturalEvents unwraps paginated DRF response" time="0">
+    </testcase>
+    <testcase classname="fetchCulturalEvents propagates errors" name="fetchCulturalEvents propagates errors" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="getOrCreateWebDeviceToken" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.058" tests="5">
+    <testcase classname="getOrCreateWebDeviceToken returns the existing token from localStorage when present" name="getOrCreateWebDeviceToken returns the existing token from localStorage when present" time="0.001">
+    </testcase>
+    <testcase classname="getOrCreateWebDeviceToken creates and persists a new token when none is stored" name="getOrCreateWebDeviceToken creates and persists a new token when none is stored" time="0.001">
+    </testcase>
+    <testcase classname="getOrCreateWebDeviceToken returns the same token on a subsequent call (persistence)" name="getOrCreateWebDeviceToken returns the same token on a subsequent call (persistence)" time="0.001">
+    </testcase>
+    <testcase classname="registerWebDeviceToken registers the device token with platform &quot;web&quot;" name="registerWebDeviceToken registers the device token with platform &quot;web&quot;" time="0">
+    </testcase>
+    <testcase classname="registerWebDeviceToken propagates errors from registerDeviceToken" name="registerWebDeviceToken propagates errors from registerDeviceToken" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="CultureGrid" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.229" tests="7">
+    <testcase classname="CultureGrid shows empty state when cultures is null" name="CultureGrid shows empty state when cultures is null" time="0.009">
+    </testcase>
+    <testcase classname="CultureGrid shows empty state when cultures is empty" name="CultureGrid shows empty state when cultures is empty" time="0.001">
+    </testcase>
+    <testcase classname="CultureGrid renders culture card names" name="CultureGrid renders culture card names" time="0.01">
+    </testcase>
+    <testcase classname="CultureGrid clicking a card opens the detail panel" name="CultureGrid clicking a card opens the detail panel" time="0.028">
+    </testcase>
+    <testcase classname="CultureGrid detail panel shows recipes_tried value" name="CultureGrid detail panel shows recipes_tried value" time="0.015">
+    </testcase>
+    <testcase classname="CultureGrid close button hides the detail panel" name="CultureGrid close button hides the detail panel" time="0.04">
+    </testcase>
+    <testcase classname="CultureGrid clicking same card twice closes the panel" name="CultureGrid clicking same card twice closes the panel" time="0.039">
+    </testcase>
+  </testsuite>
+  <testsuite name="HeritageJourneySection" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.13" tests="5">
+    <testcase classname="HeritageJourneySection renders nothing when steps is empty" name="HeritageJourneySection renders nothing when steps is empty" time="0.001">
+    </testcase>
+    <testcase classname="HeritageJourneySection renders nothing when steps is undefined" name="HeritageJourneySection renders nothing when steps is undefined" time="0">
+    </testcase>
+    <testcase classname="HeritageJourneySection renders one card per step with location, story, era" name="HeritageJourneySection renders one card per step with location, story, era" time="0.034">
+    </testcase>
+    <testcase classname="HeritageJourneySection sorts steps by order ascending regardless of input order" name="HeritageJourneySection sorts steps by order ascending regardless of input order" time="0.008">
+    </testcase>
+    <testcase classname="HeritageJourneySection does not render an era badge when era is empty" name="HeritageJourneySection does not render an era badge when era is empty" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="ContactabilityToggle" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.185" tests="3">
+    <testcase classname="ContactabilityToggle renders enabled state from user profile" name="ContactabilityToggle renders enabled state from user profile" time="0.029">
+    </testcase>
+    <testcase classname="ContactabilityToggle updates preference and notifies parent on toggle" name="ContactabilityToggle updates preference and notifies parent on toggle" time="0.048">
+    </testcase>
+    <testcase classname="ContactabilityToggle rolls back UI state on failure" name="ContactabilityToggle rolls back UI state on failure" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="useKeyboardShortcuts" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.126" tests="5">
+    <testcase classname="useKeyboardShortcuts invokes the registered handler when its key is pressed" name="useKeyboardShortcuts invokes the registered handler when its key is pressed" time="0.008">
+    </testcase>
+    <testcase classname="useKeyboardShortcuts does not call any handler for an unregistered key" name="useKeyboardShortcuts does not call any handler for an unregistered key" time="0.001">
+    </testcase>
+    <testcase classname="useKeyboardShortcuts ignores keydown events while focus is inside an input" name="useKeyboardShortcuts ignores keydown events while focus is inside an input" time="0.001">
+    </testcase>
+    <testcase classname="useKeyboardShortcuts removes the keydown listener on unmount" name="useKeyboardShortcuts removes the keydown listener on unmount" time="0.001">
+    </testcase>
+    <testcase classname="useKeyboardShortcuts routes different keys to their respective handlers" name="useKeyboardShortcuts routes different keys to their respective handlers" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchHeritageGroups" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.092" tests="5">
+    <testcase classname="fetchHeritageGroups calls GET /api/heritage-groups/" name="fetchHeritageGroups calls GET /api/heritage-groups/" time="0">
+    </testcase>
+    <testcase classname="fetchHeritageGroups unwraps a paginated DRF response" name="fetchHeritageGroups unwraps a paginated DRF response" time="0.001">
+    </testcase>
+    <testcase classname="fetchHeritageGroups propagates API errors to the caller" name="fetchHeritageGroups propagates API errors to the caller" time="0.004">
+    </testcase>
+    <testcase classname="fetchHeritageGroup calls GET /api/heritage-groups/:id/" name="fetchHeritageGroup calls GET /api/heritage-groups/:id/" time="0.001">
+    </testcase>
+    <testcase classname="fetchHeritageGroup propagates API errors to the caller" name="fetchHeritageGroup propagates API errors to the caller" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="fetchSubstitutes" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.094" tests="3">
+    <testcase classname="fetchSubstitutes flattens the grouped backend response and tags each item match_type with its group" name="fetchSubstitutes flattens the grouped backend response and tags each item match_type with its group" time="0.002">
+    </testcase>
+    <testcase classname="fetchSubstitutes returns a legacy array response unchanged" name="fetchSubstitutes returns a legacy array response unchanged" time="0.001">
+    </testcase>
+    <testcase classname="fetchSubstitutes propagates API errors to the caller" name="fetchSubstitutes propagates API errors to the caller" time="0.009">
+    </testcase>
+  </testsuite>
+  <testsuite name="PassportStatsBar" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.161" tests="5">
+    <testcase classname="PassportStatsBar renders skeleton without crashing when stats is null" name="PassportStatsBar renders skeleton without crashing when stats is null" time="0.002">
+    </testcase>
+    <testcase classname="PassportStatsBar renders all 4 metric values from stats" name="PassportStatsBar renders all 4 metric values from stats" time="0.009">
+    </testcase>
+    <testcase classname="PassportStatsBar renders level badge with correct level class" name="PassportStatsBar renders level badge with correct level class" time="0.001">
+    </testcase>
+    <testcase classname="PassportStatsBar renders level 1 badge with bronze class" name="PassportStatsBar renders level 1 badge with bronze class" time="0.001">
+    </testcase>
+    <testcase classname="PassportStatsBar renders zero values without crashing" name="PassportStatsBar renders zero values without crashing" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="checkOffService" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.06" tests="3">
+    <testcase classname="checkOffService fetchCheckedIngredients GETs the canonical list" name="checkOffService fetchCheckedIngredients GETs the canonical list" time="0.001">
+    </testcase>
+    <testcase classname="checkOffService toggleCheckedIngredient POSTs {ingredient_id, checked} and returns the canonical list" name="checkOffService toggleCheckedIngredient POSTs {ingredient_id, checked} and returns the canonical list" time="0">
+    </testcase>
+    <testcase classname="checkOffService propagates errors from the underlying request" name="checkOffService propagates errors from the underlying request" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="CulturalFactCard" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.106" tests="4">
+    <testcase classname="CulturalFactCard renders the fact text and the bulb header" name="CulturalFactCard renders the fact text and the bulb header" time="0.005">
+    </testcase>
+    <testcase classname="CulturalFactCard renders a source link with the source URL" name="CulturalFactCard renders a source link with the source URL" time="0.017">
+    </testcase>
+    <testcase classname="CulturalFactCard omits the source link when source_url is empty" name="CulturalFactCard omits the source link when source_url is empty" time="0.002">
+    </testcase>
+    <testcase classname="CulturalFactCard renders nothing when fact is falsy" name="CulturalFactCard renders nothing when fact is falsy" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="DraftRestoreBanner" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.126" tests="4">
+    <testcase classname="DraftRestoreBanner renders nothing when draft is null" name="DraftRestoreBanner renders nothing when draft is null" time="0.007">
+    </testcase>
+    <testcase classname="DraftRestoreBanner renders the banner when draft is provided" name="DraftRestoreBanner renders the banner when draft is provided" time="0.004">
+    </testcase>
+    <testcase classname="DraftRestoreBanner calls onRestore with the draft when Restore is clicked" name="DraftRestoreBanner calls onRestore with the draft when Restore is clicked" time="0.012">
+    </testcase>
+    <testcase classname="DraftRestoreBanner calls onDiscard when Discard is clicked" name="DraftRestoreBanner calls onDiscard when Discard is clicked" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="RandomCulturalFact" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.157" tests="3">
+    <testcase classname="RandomCulturalFact renders the fact text when the service returns a fact" name="RandomCulturalFact renders the fact text when the service returns a fact" time="0.009">
+    </testcase>
+    <testcase classname="RandomCulturalFact renders nothing when the service returns null (no facts)" name="RandomCulturalFact renders nothing when the service returns null (no facts)" time="0.004">
+    </testcase>
+    <testcase classname="RandomCulturalFact renders nothing when the service throws" name="RandomCulturalFact renders nothing when the service throws" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="Avatar" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.11" tests="5">
+    <testcase classname="Avatar renders the username initial when no profile_picture is set" name="Avatar renders the username initial when no profile_picture is set" time="0.006">
+    </testcase>
+    <testcase classname="Avatar renders ? when there is no user" name="Avatar renders ? when there is no user" time="0.001">
+    </testcase>
+    <testcase classname="Avatar renders an &lt;img&gt; when profile_picture is present" name="Avatar renders an &lt;img&gt; when profile_picture is present" time="0.008">
+    </testcase>
+    <testcase classname="Avatar falls back to initials when the image fails to load" name="Avatar falls back to initials when the image fails to load" time="0.001">
+    </testcase>
+    <testcase classname="Avatar applies the size variant class" name="Avatar applies the size variant class" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProtectedRoute" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.167" tests="2">
+    <testcase classname="ProtectedRoute renders children when user is authenticated" name="ProtectedRoute renders children when user is authenticated" time="0.009">
+    </testcase>
+    <testcase classname="ProtectedRoute redirects to /login when user is not authenticated" name="ProtectedRoute redirects to /login when user is not authenticated" time="0.009">
+    </testcase>
+  </testsuite>
+  <testsuite name="AppBackground" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.07" tests="2">
+    <testcase classname="AppBackground renders the grid layer and the overlay layer" name="AppBackground renders the grid layer and the overlay layer" time="0.002">
+    </testcase>
+    <testcase classname="AppBackground marks both layers as aria-hidden so the grid does not pollute the a11y tree" name="AppBackground marks both layers as aria-hidden so the grid does not pollute the a11y tree" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="HeritageBadge" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.109" tests="4">
+    <testcase classname="HeritageBadge renders nothing when group is null" name="HeritageBadge renders nothing when group is null" time="0.002">
+    </testcase>
+    <testcase classname="HeritageBadge renders nothing when group is undefined" name="HeritageBadge renders nothing when group is undefined" time="0.003">
+    </testcase>
+    <testcase classname="HeritageBadge renders the heritage name with the building icon" name="HeritageBadge renders the heritage name with the building icon" time="0.005">
+    </testcase>
+    <testcase classname="HeritageBadge links to /heritage/:id" name="HeritageBadge links to /heritage/:id" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="EventDetailPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.125" tests="1">
+    <testcase classname="EventDetailPage shows a not-found panel when the event is missing" name="EventDetailPage shows a not-found panel when the event is missing" time="0.016">
+    </testcase>
+  </testsuite>
+  <testsuite name="Toast" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.12" tests="3">
+    <testcase classname="Toast renders success message" name="Toast renders success message" time="0.017">
+    </testcase>
+    <testcase classname="Toast renders error message" name="Toast renders error message" time="0.001">
+    </testcase>
+    <testcase classname="Toast renders nothing when message is empty" name="Toast renders nothing when message is empty" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="submitFeedback (#876 stub)" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.054" tests="2">
+    <testcase classname="submitFeedback (#876 stub) resolves with { message } so consumers can chain" name="submitFeedback (#876 stub) resolves with { message } so consumers can chain" time="0">
+    </testcase>
+    <testcase classname="submitFeedback (#876 stub) rejects when message is blank after trim" name="submitFeedback (#876 stub) rejects when message is blank after trim" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="NotFoundPage" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.107" tests="3">
+    <testcase classname="NotFoundPage displays a 404 heading" name="NotFoundPage displays a 404 heading" time="0.007">
+    </testcase>
+    <testcase classname="NotFoundPage displays an explanatory message" name="NotFoundPage displays an explanatory message" time="0.008">
+    </testcase>
+    <testcase classname="NotFoundPage provides a link back to home" name="NotFoundPage provides a link back to home" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="SkipLink" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.103" tests="3">
+    <testcase classname="SkipLink renders an anchor with href=&quot;#main-content&quot;" name="SkipLink renders an anchor with href=&quot;#main-content&quot;" time="0.007">
+    </testcase>
+    <testcase classname="SkipLink shows the accessible &quot;Skip to main content&quot; text" name="SkipLink shows the accessible &quot;Skip to main content&quot; text" time="0.003">
+    </testcase>
+    <testcase classname="SkipLink has the skip-link class for off-screen styling" name="SkipLink has the skip-link class for off-screen styling" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomeClosingBanner" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.099" tests="1">
+    <testcase classname="HomeClosingBanner renders a region with the brand sentence about sharing cultures" name="HomeClosingBanner renders a region with the brand sentence about sharing cultures" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="PassportMap" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:09" time="0.536" tests="5">
+    <testcase classname="PassportMap renders without crashing when cultures is null" name="PassportMap renders without crashing when cultures is null" time="0.108">
+    </testcase>
+    <testcase classname="PassportMap renders without crashing when cultures is undefined" name="PassportMap renders without crashing when cultures is undefined" time="0.151">
+    </testcase>
+    <testcase classname="PassportMap renders without crashing when cultures is empty" name="PassportMap renders without crashing when cultures is empty" time="0.037">
+    </testcase>
+    <testcase classname="PassportMap renders without crashing on the canonical backend culture shape (no `name`)" name="PassportMap renders without crashing on the canonical backend culture shape (no `name`)" time="0.034">
+    </testcase>
+    <testcase classname="PassportMap drops cultures with no usable name without throwing" name="PassportMap drops cultures with no usable name without throwing" time="0.032">
+    </testcase>
+  </testsuite>
+  <testsuite name="Public routes (unauthenticated)" errors="0" failures="0" skipped="0" timestamp="2026-05-16T18:27:08" time="1.439" tests="15">
+    <testcase classname="Public routes (unauthenticated) / renders Home page" name="Public routes (unauthenticated) / renders Home page" time="0.117">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /login renders Login page" name="Public routes (unauthenticated) /login renders Login page" time="0.028">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /register renders Register page" name="Public routes (unauthenticated) /register renders Register page" time="0.026">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /search renders Search page" name="Public routes (unauthenticated) /search renders Search page" time="0.03">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /recipes/1 renders RecipeDetail page" name="Public routes (unauthenticated) /recipes/1 renders RecipeDetail page" time="0.024">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /stories/1 renders StoryDetail page" name="Public routes (unauthenticated) /stories/1 renders StoryDetail page" time="0.021">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /heritage/1 renders HeritagePage (loading first)" name="Public routes (unauthenticated) /heritage/1 renders HeritagePage (loading first)" time="0.023">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /heritage/1/map renders HeritageMapPage (loading first)" name="Public routes (unauthenticated) /heritage/1/map renders HeritageMapPage (loading first)" time="0.021">
+    </testcase>
+    <testcase classname="Public routes (unauthenticated) /calendar renders CalendarPage" name="Public routes (unauthenticated) /calendar renders CalendarPage" time="0.03">
+    </testcase>
+    <testcase classname="Protected routes (unauthenticated) /recipes/new redirects to /login" name="Protected routes (unauthenticated) /recipes/new redirects to /login" time="0.024">
+    </testcase>
+    <testcase classname="Protected routes (unauthenticated) /stories/new redirects to /login" name="Protected routes (unauthenticated) /stories/new redirects to /login" time="0.022">
+    </testcase>
+    <testcase classname="Protected routes (unauthenticated) /onboarding redirects to /login" name="Protected routes (unauthenticated) /onboarding redirects to /login" time="0.022">
+    </testcase>
+    <testcase classname="Protected routes (authenticated) /recipes/new renders RecipeCreate page when authenticated" name="Protected routes (authenticated) /recipes/new renders RecipeCreate page when authenticated" time="0.031">
+    </testcase>
+    <testcase classname="Protected routes (authenticated) /stories/new renders StoryCreate page when authenticated" name="Protected routes (authenticated) /stories/new renders StoryCreate page when authenticated" time="0.026">
+    </testcase>
+    <testcase classname="Protected routes (authenticated) /onboarding renders Cultural Onboarding page when authenticated" name="Protected routes (authenticated) /onboarding renders Cultural Onboarding page when authenticated" time="0.025">
+    </testcase>
+  </testsuite>
+</testsuites>
