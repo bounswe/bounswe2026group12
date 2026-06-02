@@ -157,6 +157,8 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
             typeof (raw as { title?: string }).title === 'string'
           ? (raw as { title: string }).title
           : '';
+    const firstLinkImage = (data.linked_recipes as Array<{ recipe_image?: unknown }> | undefined)?.[0]
+      ?.recipe_image;
     linked_recipe = {
       id: lid,
       title,
@@ -165,9 +167,11 @@ function normalizeStoryDetail(data: StoryDetail & Record<string, unknown>): Stor
           ? (raw as { region: string }).region
           : undefined,
       image:
-        typeof raw === 'object' && raw !== null && typeof (raw as { image?: string }).image === 'string'
-          ? (raw as { image: string }).image
-          : null,
+        typeof firstLinkImage === 'string'
+          ? firstLinkImage
+          : typeof raw === 'object' && raw !== null && typeof (raw as { image?: string }).image === 'string'
+            ? (raw as { image: string }).image
+            : null,
     };
   }
 

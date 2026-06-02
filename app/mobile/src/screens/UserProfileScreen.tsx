@@ -250,8 +250,6 @@ export default function UserProfileScreen({ route, navigation }: Props) {
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <ScrollView
         contentContainerStyle={styles.scroll}
-        /** Map + markers need taps; parent scroll steals them on Android when enabled. */
-        scrollEnabled={activePassportTab !== 'map'}
         nestedScrollEnabled
       >
         <View style={styles.headerCard}>

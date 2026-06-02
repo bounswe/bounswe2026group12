@@ -10,10 +10,11 @@ class StoryRecipeLinkSerializer(serializers.ModelSerializer):
     """Read-only serializer for a recipe within a story."""
     recipe_id = serializers.IntegerField(source='recipe.id')
     recipe_title = serializers.CharField(source='recipe.title')
+    recipe_image = serializers.ImageField(source='recipe.image', read_only=True)
 
     class Meta:
         model = StoryRecipeLink
-        fields = ['recipe_id', 'recipe_title', 'order']
+        fields = ['recipe_id', 'recipe_title', 'recipe_image', 'order']
 
 
 class StorySerializer(serializers.ModelSerializer):
